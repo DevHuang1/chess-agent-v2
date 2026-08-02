@@ -1,27 +1,29 @@
 /**
  * Sentio's coach module provides natural-language chess coaching.
  *
- * It operates in two modes. The fallback mode is always active and requires no
+ * It operates in several modes. The fallback mode is always active and requires no
  * external dependencies. When the frontend sends a POST request with a FEN,
- * emotion, and optional question, the coach first parses the position using
+ * emotion, optional question, and mode, the coach first parses the position using
  * chess.js to determine whose turn it is, whether the king is in check, how
  * many legal moves exist, and whether the game is over. It then fetches
  * Stockfish's best move from the Python backend and generates structured
  * advice tailored to the position type (forcing vs. flexible) and the
  * player's emotional state. The result is a message with candidate move
- * suggestions and a clickable "Play [move]" button.
+ * suggestions and a bestMove (uci + san) the frontend can play with its
+ * coach hand animation.
  *
- * The LLM mode augments this with a local large language model served by
- * LM Studio. When COACH_LLM_ENABLED is true and the LM Studio endpoint is
- * reachable, the coach constructs a detailed prompt containing the FEN,
- * emotion history, side to move, legal move count, candidate moves, and
- * the user's question, then sends it to LM Studio's /chat/completions
- * endpoint. The system prompt changes based on query classification: if the
- * user's input contains no chess keywords and isn't a move notation like
- * "e4", the LLM ignores chess context entirely and acts as a general
- * assistant. Otherwise it acts as an empathetic chess tutor. On failure
- * (LLM unreachable, timeout, malformed response), it falls back cleanly
- * to the fallback reply with an error note.
+ * The LLM modes augment this with a large language model. The "groq" mode
+ * (default) calls the Groq cloud API using GROQ_API_KEY; the "llm" mode calls
+ * a local model served by LM Studio when COACH_LLM_ENABLED is true. When the
+ * selected provider is reachable, the coach constructs a detailed prompt
+ * containing the FEN, emotion history, side to move, legal move count,
+ * candidate moves, and the user's question, then sends it to the provider's
+ * /chat/completions endpoint. The system prompt changes based on query
+ * classification: if the user's input contains no chess keywords and isn't a
+ * move notation like "e4", the LLM ignores chess context entirely and acts as
+ * a general assistant. Otherwise it acts as an empathetic chess tutor. On
+ * failure (provider unreachable, timeout, malformed response), it falls back
+ * cleanly to the fallback reply with an error note.
  *
  * The health-check endpoint (GET /api/coach) is polled by the frontend
  * every 10 seconds to display the LLM connection status in the UI.
@@ -35,6 +37,7 @@ type CoachRequest = {
   emotion?: string;
   recentEmotions?: string[];
   question?: string;
+  mode?: string;
 };
 
 type CoachMeta = {
@@ -58,6 +61,17 @@ type CoachHealth = {
   detail: string;
   model: string;
   baseUrl: string;
+  groq: {
+    available: boolean;
+    detail: string;
+    model: string;
+  };
+};
+
+type LlmProvider = {
+  baseUrl: string;
+  apiKey?: string;
+  model: string;
 };
 
 type LlmChatCompletionResponse = {
@@ -87,10 +101,16 @@ const COACH_LLM_BASE_URL =
 const COACH_LLM_MODEL = process.env.COACH_LLM_MODEL ?? "qwen2.5-7b-instruct";
 const COACH_LLM_API_KEY = process.env.COACH_LLM_API_KEY;
 
-function getAuthHeaders(): Record<string, string> {
+const COACH_GROQ_API_KEY = process.env.GROQ_API_KEY;
+const COACH_GROQ_BASE_URL =
+  process.env.COACH_GROQ_BASE_URL ?? "https://api.groq.com/openai/v1";
+const COACH_GROQ_MODEL =
+  process.env.COACH_GROQ_MODEL ?? "llama-3.3-70b-versatile";
+
+function getAuthHeaders(apiKey?: string): Record<string, string> {
   const headers: Record<string, string> = {};
-  if (COACH_LLM_API_KEY) {
-    headers.Authorization = `Bearer ${COACH_LLM_API_KEY}`;
+  if (apiKey) {
+    headers.Authorization = `Bearer ${apiKey}`;
   }
   return headers;
 }
@@ -217,9 +237,10 @@ function isGeneralQuery(question?: string): boolean {
   return !hasChessKeywords && !isRawMove;
 }
 
-async function generateLlmCoachMessage(
+async function generateProviderMessage(
   payload: CoachRequest,
   fallback: CoachReply,
+  provider: LlmProvider,
 ): Promise<string> {
   const question = payload.question?.trim();
   const isGeneral = isGeneralQuery(question);
@@ -243,14 +264,14 @@ async function generateLlmCoachMessage(
         "Respond in plain language with: 1) quick evaluation 2) best practical plan 3) one concrete tactical warning.",
       ].join("\n");
 
-  const response = await fetch(`${COACH_LLM_BASE_URL}/chat/completions`, {
+  const response = await fetch(`${provider.baseUrl}/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...getAuthHeaders(),
+      ...getAuthHeaders(provider.apiKey),
     },
     body: JSON.stringify({
-      model: COACH_LLM_MODEL,
+      model: provider.model,
       temperature: isGeneral ? 0.7 : 0.35,
       max_tokens: isGeneral ? 600 : 220,
       messages: [
@@ -273,13 +294,13 @@ async function generateLlmCoachMessage(
   try {
     parsedBody = JSON.parse(rawBody) as LlmChatCompletionResponse;
   } catch {
-    throw new Error("LM Studio returned invalid JSON.");
+    throw new Error("LLM provider returned invalid JSON.");
   }
 
   if (!response.ok) {
     throw new Error(
       parsedBody.error?.message ??
-        `LM Studio request failed with status ${response.status}.`,
+        `LLM request failed with status ${response.status}.`,
     );
   }
 
@@ -294,7 +315,46 @@ async function generateLlmCoachMessage(
     );
   }
 
-  throw new Error("LM Studio returned an empty response.");
+  throw new Error("LLM provider returned an empty response.");
+}
+
+async function getGroqHealth(): Promise<CoachHealth["groq"]> {
+  if (!COACH_GROQ_API_KEY) {
+    return {
+      available: false,
+      detail: "Groq mode requires GROQ_API_KEY to be set.",
+      model: COACH_GROQ_MODEL,
+    };
+  }
+  try {
+    const response = await fetch(`${COACH_GROQ_BASE_URL}/models`, {
+      method: "GET",
+      headers: {
+        ...getAuthHeaders(COACH_GROQ_API_KEY),
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(2500),
+    });
+    if (!response.ok) {
+      return {
+        available: false,
+        detail: `Groq health check failed with status ${response.status}.`,
+        model: COACH_GROQ_MODEL,
+      };
+    }
+    return {
+      available: true,
+      detail: "Groq reachable.",
+      model: COACH_GROQ_MODEL,
+    };
+  } catch (error) {
+    return {
+      available: false,
+      detail:
+        error instanceof Error ? error.message : "Could not reach Groq.",
+      model: COACH_GROQ_MODEL,
+    };
+  }
 }
 
 async function getCoachHealth(): Promise<CoachHealth> {
@@ -305,6 +365,7 @@ async function getCoachHealth(): Promise<CoachHealth> {
       detail: "LLM coach is disabled by configuration.",
       model: COACH_LLM_MODEL,
       baseUrl: COACH_LLM_BASE_URL,
+      groq: await getGroqHealth(),
     };
   }
 
@@ -312,7 +373,7 @@ async function getCoachHealth(): Promise<CoachHealth> {
     const response = await fetch(`${COACH_LLM_BASE_URL}/models`, {
       method: "GET",
       headers: {
-        ...getAuthHeaders(),
+        ...getAuthHeaders(COACH_LLM_API_KEY),
       },
       cache: "no-store",
       signal: AbortSignal.timeout(2500),
@@ -325,6 +386,7 @@ async function getCoachHealth(): Promise<CoachHealth> {
         detail: `LM Studio health check failed with status ${response.status}.`,
         model: COACH_LLM_MODEL,
         baseUrl: COACH_LLM_BASE_URL,
+        groq: await getGroqHealth(),
       };
     }
 
@@ -334,6 +396,7 @@ async function getCoachHealth(): Promise<CoachHealth> {
       detail: "LM Studio reachable.",
       model: COACH_LLM_MODEL,
       baseUrl: COACH_LLM_BASE_URL,
+      groq: await getGroqHealth(),
     };
   } catch (error) {
     return {
@@ -343,6 +406,7 @@ async function getCoachHealth(): Promise<CoachHealth> {
         error instanceof Error ? error.message : "Could not reach LM Studio.",
       model: COACH_LLM_MODEL,
       baseUrl: COACH_LLM_BASE_URL,
+      groq: await getGroqHealth(),
     };
   }
 }
@@ -399,15 +463,45 @@ export async function POST(request: Request) {
     stockfishBestMove,
   );
 
+  const mode = (payload.mode ?? "groq").toLowerCase();
+
+  if (mode === "groq") {
+    if (!COACH_GROQ_API_KEY) {
+      return NextResponse.json({
+        ...fallback,
+        message: `${fallback.message}\n\n(Groq mode not configured — add GROQ_API_KEY. Standard mode active.)`,
+      });
+    }
+    try {
+      const message = await generateProviderMessage(payload, fallback, {
+        baseUrl: COACH_GROQ_BASE_URL,
+        apiKey: COACH_GROQ_API_KEY,
+        model: COACH_GROQ_MODEL,
+      });
+      return NextResponse.json({ ...fallback, message });
+    } catch (error) {
+      const detail =
+        error instanceof Error ? error.message : "Failed to query Groq.";
+      return NextResponse.json({
+        ...fallback,
+        message: `${fallback.message}\n\n(Groq fallback active: ${detail})`,
+      });
+    }
+  }
+
   if (!COACH_LLM_ENABLED) {
     return NextResponse.json(fallback);
   }
 
   try {
-    const llmMessage = await generateLlmCoachMessage(payload, fallback);
+    const message = await generateProviderMessage(payload, fallback, {
+      baseUrl: COACH_LLM_BASE_URL,
+      apiKey: COACH_LLM_API_KEY,
+      model: COACH_LLM_MODEL,
+    });
     return NextResponse.json({
       ...fallback,
-      message: llmMessage,
+      message,
     });
   } catch (error) {
     const detail =

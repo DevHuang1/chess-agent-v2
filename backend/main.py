@@ -33,10 +33,12 @@ import stat
 import subprocess
 import sys
 import tarfile
+import tempfile
+import threading
 import urllib.request
 from typing import Dict
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from stockfish import Stockfish
@@ -122,6 +124,98 @@ if not _is_executable(stockfish_path):
         print(f"[sentio] Auto-download failed. Try: sudo apt install stockfish")
 else:
     print(f"[sentio] Stockfish found at {stockfish_path}")
+
+
+WHISPER_MODEL_DIR = os.path.join(
+    os.path.dirname(__file__), "models", "whisper-small-burmese-v2-ct2"
+)
+RECORDINGS_DIR = os.path.join(os.path.dirname(__file__), "recordings")
+WHISPER_INITIAL_PROMPT = (
+    "မြင်း f3 ကို။ နိုင် e4 ကို။ ဘုရင် e1 ကနေ e2။ မိဖုရား d5 ဖမ်း။ "
+    "ဆင် c4။ ကျီ a1။ လှေ h8 ဖမ်း။ O-O။"
+)
+_transcribe_model = None
+_transcribe_model_lock = threading.Lock()
+
+
+def get_transcribe_model():
+    global _transcribe_model
+    if _transcribe_model is None:
+        with _transcribe_model_lock:
+            if _transcribe_model is None:
+                try:
+                    from faster_whisper import WhisperModel
+                except ImportError:
+                    raise HTTPException(
+                        status_code=500,
+                        detail="faster-whisper is not installed in the backend environment.",
+                    )
+                if not os.path.isdir(WHISPER_MODEL_DIR):
+                    raise HTTPException(
+                        status_code=503,
+                        detail="Local Burmese transcription model is not converted yet "
+                        f"(expected at {WHISPER_MODEL_DIR}).",
+                    )
+                print(f"[sentio] Loading local Whisper model from {WHISPER_MODEL_DIR} ...")
+                _transcribe_model = WhisperModel(
+                    WHISPER_MODEL_DIR, device="cpu", compute_type="int8"
+                )
+    return _transcribe_model
+
+
+@app.post("/api/transcribe")
+async def transcribe_audio(file: UploadFile = File(...), language: str = Form("")):
+    try:
+        model = get_transcribe_model()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to load transcription model: {e}"
+        )
+
+    try:
+        data = await file.read()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Could not read audio file.")
+
+    print(
+        f"[sentio] transcribe: filename={file.filename} "
+        f"size={len(data)} language={language or '(auto)'}"
+    )
+
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".audio")
+    try:
+        tmp.write(data)
+        tmp.close()
+        try:
+            os.makedirs(RECORDINGS_DIR, exist_ok=True)
+            import time as _time
+            with open(
+                os.path.join(RECORDINGS_DIR, f"{int(_time.time())}_{file.filename or 'audio'}"),
+                "wb",
+            ) as save:
+                save.write(data)
+        except Exception:
+            pass
+        segments_iter, _ = model.transcribe(
+            tmp.name,
+            language=language or None,
+            initial_prompt=WHISPER_INITIAL_PROMPT if language == "my" else None,
+        )
+        segments = list(segments_iter)
+        text = " ".join(segment.text for segment in segments).strip()
+        print(f"[sentio] transcribe result: {text!r}")
+        return {"text": text}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Transcription error: {e}")
+    finally:
+        try:
+            os.unlink(tmp.name)
+        except OSError:
+            pass
 
 
 EMOTION_STRENGTH_PROFILES: Dict[str, Dict[str, int]] = {

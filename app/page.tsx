@@ -185,7 +185,19 @@ type ChatMessage = {
   role: "user" | "assistant";
   content: string;
   bestMove?: { uci: string; san: string } | null;
+  playedByCoach?: boolean;
 };
+
+function questionWantsMove(question: string): boolean {
+  const s = question.toLowerCase().trim();
+  if (!s) return false;
+  if (/[a-h][1-8]/.test(s)) return true;
+  return (
+    /\b(move|play|recommend|suggest|best)\b/.test(s) ||
+    /what should i/.test(s) ||
+    /next move|make a move|your move|for me/.test(s)
+  );
+}
 
 type EngineProfile = {
   emotion: string;
@@ -311,6 +323,13 @@ export default function ChessPage() {
   const [botRemark, setBotRemark] = useState("");
   const [chatInput, setChatInput] = useState("");
   const [isCoachThinking, setIsCoachThinking] = useState(false);
+  const [coachMode, setCoachMode] = useState<"groq" | "llm">("groq");
+  const [groqAvailable, setGroqAvailable] = useState(false);
+  const [groqDetail, setGroqDetail] = useState("Checking Groq...");
+
+  const boardWrapRef = useRef<HTMLDivElement | null>(null);
+  const aiHandRef = useRef<HTMLDivElement | null>(null);
+  const aiHandRafRef = useRef<number | null>(null);
 
   const [activeTab, setActiveTab] = useState<SidebarTab>("coach");
 
@@ -444,9 +463,21 @@ export default function ChessPage() {
           connected: boolean;
           detail: string;
           model: string;
+          groq?: {
+            available: boolean;
+            detail: string;
+            model: string;
+          };
         };
 
         if (!active) return;
+
+        setGroqAvailable(data.groq?.available ?? false);
+        setGroqDetail(
+          data.groq?.available
+            ? `Groq: ${data.groq.model}`
+            : data.groq?.detail ?? "Groq unavailable.",
+        );
 
         if (!data.enabled) {
           setCoachLlmConnection("disabled");
@@ -725,6 +756,76 @@ export default function ChessPage() {
     }
   }
 
+  function playCoachMoveWithHand(uci: string) {
+    const chess = chessRef.current;
+    if (chess.turn() !== "w" || chess.isGameOver()) return;
+    const from = uci.substring(0, 2);
+    const to = uci.substring(2, 4);
+    try {
+      const test = new Chess(chess.fen());
+      const legal = test.move({
+        from: from as Square,
+        to: to as Square,
+        promotion: uci.length === 5 ? (uci[4] as "q" | "r" | "b" | "n") : undefined,
+      });
+      if (!legal) return;
+    } catch {
+      return;
+    }
+
+    const wrap = boardWrapRef.current;
+    const handEl = aiHandRef.current;
+    if (!wrap || !handEl) {
+      executeCoachMove(uci, Date.now());
+      return;
+    }
+
+    const squareCenter = (sq: string): { x: number; y: number } | null => {
+      const board = wrap.querySelector("#sentio-engine-board-board");
+      if (!board) return null;
+      for (const squareEl of Array.from(board.querySelectorAll("[data-square]"))) {
+        if (squareEl.getAttribute("data-square") === sq) {
+          const wrapRect = wrap.getBoundingClientRect();
+          const rect = squareEl.getBoundingClientRect();
+          return {
+            x: rect.x - wrapRect.x + rect.width / 2,
+            y: rect.y - wrapRect.y + rect.height / 2,
+          };
+        }
+      }
+      return null;
+    };
+
+    const startPoint = squareCenter(from);
+    const endPoint = squareCenter(to);
+    if (!startPoint || !endPoint) {
+      executeCoachMove(uci, Date.now());
+      return;
+    }
+
+    if (aiHandRafRef.current) cancelAnimationFrame(aiHandRafRef.current);
+
+    const startTime = performance.now();
+    const duration = 1500;
+    handEl.style.opacity = "1";
+    handEl.style.transform = `translate(${startPoint.x}px, ${startPoint.y}px) translate(-50%, -50%)`;
+
+    const step = (now: number) => {
+      const t = Math.min(1, (now - startTime) / duration);
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      const x = startPoint.x + (endPoint.x - startPoint.x) * eased;
+      const y = startPoint.y + (endPoint.y - startPoint.y) * eased;
+      handEl.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+      if (t < 1) {
+        aiHandRafRef.current = requestAnimationFrame(step);
+      } else {
+        handEl.style.opacity = "0";
+        executeCoachMove(uci, Date.now());
+      }
+    };
+    aiHandRafRef.current = requestAnimationFrame(step);
+  }
+
   function handleBoardTouchEndCapture(event: React.TouchEvent<HTMLDivElement>) {
     if (!event.cancelable) {
       event.stopPropagation();
@@ -754,6 +855,7 @@ export default function ChessPage() {
           emotion,
           recentEmotions: emotionHistoryRef.current,
           question,
+          mode: coachMode,
         }),
       });
 
@@ -780,7 +882,18 @@ export default function ChessPage() {
             : ""
         }`,
       };
+      if (
+        data.bestMove &&
+        questionWantsMove(question) &&
+        chessRef.current.turn() === "w" &&
+        gameOutcome === "active"
+      ) {
+        coachMessage.playedByCoach = true;
+      }
       setChatMessages((previous) => [...previous, coachMessage]);
+      if (coachMessage.playedByCoach && data.bestMove) {
+        playCoachMoveWithHand(data.bestMove.uci);
+      }
     } catch (error) {
       const coachError: ChatMessage = {
         id: `assistant-error-${now}`,
@@ -993,32 +1106,34 @@ export default function ChessPage() {
 
         <div className="flex flex-1 items-center justify-center gap-8 p-6 min-h-0">
           <div
-            className="aspect-square w-[660px] max-w-[85vw] max-h-[75vh] rounded-2xl sentio-board-frame p-3.5 shadow-2xl touch-none border border-zinc-700/40 relative overflow-hidden"
+            ref={boardWrapRef}
+            className="aspect-square w-[660px] max-w-[85vw] max-h-[75vh] rounded-2xl sentio-board-frame p-3.5 shadow-2xl touch-none border border-zinc-700/40 relative overflow-hidden light:border-slate-300"
             onTouchEndCapture={handleBoardTouchEndCapture}
           >
-            {activeTab === "3d" ? (
-              <Simulation3D
-                chessRef={chessRef}
-                gamePosition={gamePosition}
-                onMoveExecuted={() => {
-                  const nextFen = chessRef.current.fen();
-                  setSelectedSquare(null);
-                  setLegalMoveSquares([]);
-                  updateGameOutcome(chessRef.current);
-                  if (chessRef.current.turn() === "b" && !chessRef.current.isGameOver()) {
-                    void triggerBotTurn(nextFen);
-                  }
-                }}
-                setStatusMessage={setStatusMessage}
-                onExit={() => setActiveTab("coach")}
-              />
-            ) : (
-              <Chessboard options={chessboardOptions} />
-            )}
+            <Chessboard options={chessboardOptions} />
+            <div
+              ref={aiHandRef}
+              className="absolute left-0 top-0 z-30 pointer-events-none opacity-0"
+              style={{
+                transition: "opacity 120ms ease-out",
+                filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
+              }}
+              title="Coach move"
+            >
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M19.15 4.12c-.13-.14-.3-.2-.46-.2l-.02 0c-.16 0-.31.06-.42.17L14 8.28V4.5c0-.38-.31-.66-.69-.66-.38 0-.69.28-.69.66v5.23c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27V2.69c0-.38-.31-.69-.69-.69-.38 0-.69.31-.69.69v6.86c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27V4.46c0-.38-.31-.69-.69-.69-.38 0-.69.28-.69.69v6.5c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27v-2.5c0-.38-.31-.69-.69-.69-.38 0-.69.28-.69.69v7.86c0 .34.13.66.36.9l3.08 3.24c.22.24.53.36.85.36h.03c.58 0 1.15-.22 1.58-.61l4.43-4.19c.47-.45.74-1.07.74-1.72v-9.09c0-.69-1-.77-1.6-1.29zM14.02 14.71h-3.31V13h3.31v1.71z"
+                  fill="#f59e0b"
+                  stroke="#18181b"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           </div>
 
           <div className="flex flex-col items-center gap-3">
-            <div className="relative w-64 h-72 shrink-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl group">
+            <div className="relative w-64 h-72 shrink-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl group light:border-slate-300 light:bg-slate-200">
               <video
                 ref={videoRef}
                 autoPlay
@@ -1028,10 +1143,10 @@ export default function ChessPage() {
               />
               <div className="absolute inset-0 pointer-events-none border border-amber-500/10 rounded-2xl" />
               <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
-                <span className="rounded-full bg-zinc-950/80 backdrop-blur-md border border-zinc-800 px-2.5 py-1 font-mono text-[10px] text-zinc-400 uppercase tracking-wider">
+                <span className="rounded-full bg-zinc-950/80 backdrop-blur-md border border-zinc-800 px-2.5 py-1 font-mono text-[10px] text-zinc-400 uppercase tracking-wider light:bg-white/80 light:border-slate-300 light:text-slate-600">
                   Camera Feed
                 </span>
-                <span className="flex items-center gap-1.5 rounded-full bg-emerald-950/80 backdrop-blur-md border border-emerald-800/50 px-2.5 py-1 font-mono text-[10px] text-emerald-300 font-semibold">
+                <span className="flex items-center gap-1.5 rounded-full bg-emerald-950/80 backdrop-blur-md border border-emerald-800/50 px-2.5 py-1 font-mono text-[10px] text-emerald-300 font-semibold light:bg-emerald-100 light:border-emerald-300 light:text-emerald-700">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
                   {emotion}
                 </span>
@@ -1039,8 +1154,8 @@ export default function ChessPage() {
             </div>
 
             {botRemark && (
-              <div className="w-64 rounded-xl border border-amber-500/20 bg-amber-950/20 p-3 text-xs text-zinc-300 backdrop-blur-md">
-                <span className="text-amber-400 font-bold block mb-0.5">Sentio Engine:</span>
+              <div className="w-64 rounded-xl border border-amber-500/20 bg-amber-950/20 p-3 text-xs text-zinc-300 backdrop-blur-md light:border-amber-300 light:bg-amber-100 light:text-slate-700">
+                <span className="text-amber-400 font-bold block mb-0.5 light:text-amber-700">Sentio Engine:</span>
                 <span className="italic">{botRemark}</span>
               </div>
             )}
@@ -1048,16 +1163,16 @@ export default function ChessPage() {
         </div>
       </section>
 
-      <aside className="flex w-[440px] shrink-0 flex-col border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md">
+      <aside className="flex w-[440px] shrink-0 flex-col border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="font-mono text-base font-bold text-amber-400">Game Controller</h1>
-            <p className="text-xs text-zinc-400">{statusMessage}</p>
+            <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">Game Controller</h1>
+            <p className="text-xs text-zinc-400 light:text-slate-600">{statusMessage}</p>
           </div>
           <button
             type="button"
             onClick={resetGame}
-            className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-amber-300 transition-colors"
+            className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-amber-300 transition-colors light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
           >
             Reset Game
           </button>
@@ -1065,17 +1180,17 @@ export default function ChessPage() {
 
         <div className="mt-2">
           {/* eslint-disable-next-line react-hooks/refs */}
-          <GameInfo fen={chessRef.current.fen()} />
+          <GameInfo moves={chessRef.current.history({ verbose: true })} />
         </div>
 
-        <div className="mt-3 flex gap-1 rounded-xl bg-zinc-900/90 p-1 border border-zinc-800">
+        <div className="mt-3 flex gap-1 rounded-xl bg-zinc-900/90 p-1 border border-zinc-800 light:bg-slate-100 light:border-slate-300">
           <button
             type="button"
             onClick={() => setActiveTab("coach")}
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
               activeTab === "coach"
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
+                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
             }`}
           >
             AI Coach
@@ -1085,8 +1200,8 @@ export default function ChessPage() {
             onClick={() => setActiveTab("speech")}
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
               activeTab === "speech"
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
+                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
             }`}
           >
             Voice Moves
@@ -1096,39 +1211,80 @@ export default function ChessPage() {
             onClick={() => setActiveTab("3d")}
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
               activeTab === "3d"
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm"
-                : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
+                : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 light:text-slate-500 light:hover:text-slate-700 light:hover:bg-slate-200/60"
             }`}
           >
             3D Mode
           </button>
         </div>
 
-        <div className="mt-3 flex min-h-0 flex-1 flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 backdrop-blur-md">
+        <div className="mt-3 flex min-h-0 flex-1 flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-slate-300 light:bg-white/70">
           {activeTab === "coach" ? (
             <>
               <div className="flex items-center justify-between mb-2.5">
-                <p className="text-sm text-zinc-200 font-semibold">Coach Assistant</p>
-                <span
-                  title={coachLlmDetail}
-                  className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                    coachLlmConnection === "connected"
-                      ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/50"
+                <p className="text-sm text-zinc-200 font-semibold light:text-slate-800">Coach Assistant</p>
+                {coachMode === "groq" ? (
+                  <span
+                    title={groqDetail}
+                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                      groqAvailable
+                        ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300"
+                        : "bg-rose-950/80 text-rose-300 border border-rose-800/50 light:bg-rose-100 light:text-rose-700 light:border-rose-300"
+                    }`}
+                  >
+                    {groqAvailable ? "Groq Active" : "Groq Needs Key"}
+                  </span>
+                ) : (
+                  <span
+                    title={coachLlmDetail}
+                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                      coachLlmConnection === "connected"
+                        ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300"
+                        : coachLlmConnection === "disabled"
+                          ? "bg-zinc-800 text-zinc-400 border border-zinc-700 light:bg-slate-200 light:text-slate-600 light:border-slate-300"
+                          : coachLlmConnection === "checking"
+                            ? "bg-amber-950/80 text-amber-300 border border-amber-800/50 light:bg-amber-100 light:text-amber-700 light:border-amber-300"
+                            : "bg-rose-950/80 text-rose-300 border border-rose-800/50 light:bg-rose-100 light:text-rose-700 light:border-rose-300"
+                    }`}
+                  >
+                    {coachLlmConnection === "connected"
+                      ? "LLM Active"
                       : coachLlmConnection === "disabled"
-                        ? "bg-zinc-800 text-zinc-400 border border-zinc-700"
+                        ? "Standard Mode"
                         : coachLlmConnection === "checking"
-                          ? "bg-amber-950/80 text-amber-300 border border-amber-800/50"
-                          : "bg-rose-950/80 text-rose-300 border border-rose-800/50"
+                          ? "Checking LLM..."
+                          : "Offline"}
+                  </span>
+                )}
+              </div>
+              <div className="mb-2.5 flex gap-1 rounded-lg bg-zinc-900/90 p-1 border border-zinc-800 light:bg-slate-100 light:border-slate-300">
+                <button
+                  type="button"
+                  onClick={() => setCoachMode("groq")}
+                  disabled={!groqAvailable}
+                  className={`flex-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-all ${
+                    coachMode === "groq"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
+                      : "text-zinc-500 hover:text-zinc-300 disabled:opacity-40 light:text-slate-500 light:hover:text-slate-700"
                   }`}
+                  title={groqDetail}
                 >
-                  {coachLlmConnection === "connected"
-                    ? "LLM Active"
-                    : coachLlmConnection === "disabled"
-                      ? "Standard Mode"
-                      : coachLlmConnection === "checking"
-                        ? "Checking LLM..."
-                        : "Offline"}
-                </span>
+                  Groq
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCoachMode("llm")}
+                  disabled={coachLlmConnection === "disabled"}
+                  className={`flex-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-all ${
+                    coachMode === "llm"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
+                      : "text-zinc-500 hover:text-zinc-300 disabled:opacity-40 light:text-slate-500 light:hover:text-slate-700"
+                  }`}
+                  title={coachLlmDetail}
+                >
+                  Local LLM
+                </button>
               </div>
               <div
                 ref={chatScrollRef}
@@ -1139,22 +1295,21 @@ export default function ChessPage() {
                     key={message.id}
                     className={`rounded-xl border ${
                       message.role === "assistant"
-                        ? "border-zinc-800 bg-zinc-900/90 text-zinc-200"
-                        : "border-amber-500/20 bg-amber-950/20 text-amber-100"
+                        ? "border-zinc-800 bg-zinc-900/90 text-zinc-200 light:border-slate-300 light:bg-white light:text-slate-800"
+                        : "border-amber-500/20 bg-amber-950/20 text-amber-100 light:border-amber-300 light:bg-amber-100 light:text-amber-900"
                     }`}
                   >
                     <div className="p-3 text-xs leading-relaxed whitespace-pre-line">
                       {message.content}
                     </div>
-                    {message.bestMove && (
-                      <div className="border-t border-zinc-800/80 px-3 py-2">
-                        <button
-                          type="button"
-                          onClick={() => executeCoachMove(message.bestMove!.uci, Date.now())}
-                          className="w-full rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-500 transition-colors shadow-sm"
-                        >
-                          Execute Recommended Move: {message.bestMove.san}
-                        </button>
+                    {message.bestMove && message.playedByCoach && (
+                      <div className="border-t border-zinc-800/80 px-3 py-2 text-[11px] light:border-slate-300">
+                        <span className="font-mono font-bold text-amber-400 light:text-amber-700">
+                          ▶ {message.bestMove.san}
+                        </span>
+                        <span className="ml-2 text-zinc-400 light:text-slate-500">
+                          playing it now
+                        </span>
                       </div>
                     )}
                   </div>
@@ -1171,7 +1326,7 @@ export default function ChessPage() {
                     }
                   }}
                   placeholder="Ask coach for tactical advice or plan..."
-                  className="flex-1 rounded-lg border border-zinc-700/80 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/60 transition-colors"
+                  className="flex-1 rounded-lg border border-zinc-700/80 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/60 transition-colors light:border-slate-300 light:bg-white light:text-slate-800"
                 />
                 <button
                   type="button"
@@ -1204,34 +1359,34 @@ export default function ChessPage() {
           ) : (
             <div className="flex flex-1 flex-col justify-between p-1 space-y-4">
               <div className="space-y-3">
-                <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2.5">
-                  <span className="text-xs font-bold text-amber-400">3D Interactive Arena</span>
-                  <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2.5 light:border-slate-300">
+                  <span className="text-xs font-bold text-amber-400 light:text-amber-700">3D Interactive Arena</span>
+                  <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-300 light:bg-amber-100 light:border-amber-300 light:text-amber-700">
                     3D Active
                   </span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-400 leading-relaxed light:text-slate-600">
                   The board has morphed into a full 3D studio where you and Sentio AI sit face-to-face.
                 </p>
 
-                <div className="rounded-xl bg-zinc-950/80 border border-zinc-800/80 p-3 space-y-2.5 text-xs">
-                  <span className="font-semibold text-zinc-300 block">Controls:</span>
-                  <ul className="space-y-2 text-zinc-400 text-[11px]">
+                <div className="rounded-xl bg-zinc-950/80 border border-zinc-800/80 p-3 space-y-2.5 text-xs light:bg-white light:border-slate-300">
+                  <span className="font-semibold text-zinc-300 block light:text-slate-700">Controls:</span>
+                  <ul className="space-y-2 text-zinc-400 text-[11px] light:text-slate-600">
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200">Move Piece:</strong> Click and drag white pieces on the 3D board</span>
+                      <span><strong className="text-zinc-200 light:text-slate-800">Move Piece:</strong> Fist over a white piece to grab it, then hold still over a green square for 4s</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200">Orbit View:</strong> Right-click & drag canvas to tilt and rotate camera angle</span>
+                      <span><strong className="text-zinc-200 light:text-slate-800">Orbit View:</strong> Right-click & drag canvas to tilt and rotate camera angle</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200">Zoom:</strong> Scroll wheel or pinch trackpad</span>
+                      <span><strong className="text-zinc-200 light:text-slate-800">Zoom:</strong> Scroll wheel or pinch trackpad</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-purple-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200">Webcam Gestures:</strong> Palm to aim · Fist to grab · 2 fingers to place</span>
+                      <span><strong className="text-zinc-200 light:text-slate-800">Webcam Gestures:</strong> Palm to aim · Fist to grab · Hold still over a green square for 4s to place · Palm to release</span>
                     </li>
                   </ul>
                 </div>
@@ -1240,7 +1395,7 @@ export default function ChessPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab("coach")}
-                className="w-full rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-4 py-2.5 text-xs font-bold text-zinc-200 transition-all shadow-sm"
+                className="w-full rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-4 py-2.5 text-xs font-bold text-zinc-200 transition-all shadow-sm light:bg-slate-200 light:hover:bg-slate-300 light:border-slate-300 light:text-slate-800"
               >
                 Return to 2D Board & Coach
               </button>
@@ -1250,10 +1405,10 @@ export default function ChessPage() {
       </aside>
 
       {gameResultText && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/70 backdrop-blur-md">
-          <div className="rounded-2xl border border-zinc-700 bg-zinc-900/90 p-8 text-center shadow-2xl max-w-sm w-full mx-4">
-            <p className="text-3xl font-extrabold text-amber-400 mb-2">{gameResultText}</p>
-            <p className="text-xs text-zinc-400 mb-6">Game finished. Would you like to play another round?</p>
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/70 backdrop-blur-md light:bg-slate-900/60">
+          <div className="rounded-2xl border border-zinc-700 bg-zinc-900/90 p-8 text-center shadow-2xl max-w-sm w-full mx-4 light:border-slate-300 light:bg-white">
+            <p className="text-3xl font-extrabold text-amber-400 mb-2 light:text-amber-700">{gameResultText}</p>
+            <p className="text-xs text-zinc-400 mb-6 light:text-slate-600">Game finished. Would you like to play another round?</p>
             <button
               type="button"
               onClick={resetGame}
@@ -1262,6 +1417,27 @@ export default function ChessPage() {
               Play Again
             </button>
           </div>
+        </div>
+      )}
+
+      {activeTab === "3d" && (
+        <div className="fixed inset-0 z-50">
+          <Simulation3D
+            chessRef={chessRef}
+            gamePosition={gamePosition}
+            theme={theme}
+            onMoveExecuted={() => {
+              const nextFen = chessRef.current.fen();
+              setSelectedSquare(null);
+              setLegalMoveSquares([]);
+              updateGameOutcome(chessRef.current);
+              if (chessRef.current.turn() === "b" && !chessRef.current.isGameOver()) {
+                void triggerBotTurn(nextFen);
+              }
+            }}
+            setStatusMessage={setStatusMessage}
+            onExit={() => setActiveTab("coach")}
+          />
         </div>
       )}
     </main>

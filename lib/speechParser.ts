@@ -1,3 +1,5 @@
+import { Chess } from "chess.js";
+
 const PIECE_MAP: Record<string, Record<string, string>> = {
   en: { pawn: "", knight: "N", bishop: "B", rook: "R", queen: "Q", king: "K" },
   es: { peón: "", caballo: "N", alfil: "B", torre: "R", dama: "Q", rey: "K" },
@@ -5,6 +7,21 @@ const PIECE_MAP: Record<string, Record<string, string>> = {
   de: { bauer: "", springer: "N", läufer: "B", turm: "R", dame: "Q", könig: "K" },
   it: { pedone: "", cavallo: "N", alfiere: "B", torre: "R", regina: "Q", re: "K" },
   pt: { peão: "", cavalo: "N", bispo: "B", torre: "R", rainha: "Q", rei: "K" },
+  my: {
+    "ဘုရင်": "K",
+    "မိဖုရား": "Q",
+    "မိဗျား": "Q",
+    "ဘုရင်မ": "Q",
+    "ကျီ": "R",
+    "လှေ": "R",
+    "ဆင်": "B",
+    "မြင်း": "N",
+    "မြင်": "N",
+    "မြင့်": "N",
+    "မြေး": "N",
+    "နိုင်": "",
+    "စစ်သား": "",
+  },
 };
 
 const PHONETIC_PIECE_HOMOPHONES: Record<string, string> = {
@@ -67,6 +84,10 @@ const PHONETIC_PIECE_HOMOPHONES: Record<string, string> = {
   phone: "pawn",
   spawn: "pawn",
   corn: "pawn",
+  point: "pawn",
+  pont: "pawn",
+  pour: "pawn",
+  pow: "pawn",
 };
 
 const FILE_HOMOPHONES: Record<string, string> = {
@@ -120,13 +141,112 @@ const NUMBER_HOMOPHONES: Record<string, string> = {
   seven: "7",
   eight: "8",
   ate: "8",
+  // Burmese numerals
+  "တစ်": "1",
+  "နှစ်": "2",
+  "သုံး": "3",
+  "လေး": "4",
+  "ငါး": "5",
+  "ခြောက်": "6",
+  "ခုနစ်": "7",
+  "ရှစ်": "8",
 };
 
-const FILLER_WORDS = ["on", "at", "the", "a", "an", "square", "en", "à", "al", "el", "la", "le", "der", "die", "das", "il", "lo", "um", "uma", "o", "os", "as"];
+// Burmese phonetic renderings of English letters — how the Burmese fine-tuned
+// Whisper model transcribes spoken squares such as "eff-three" (f3).
+const MYANMAR_FILE_SOUNDS: Array<[string, string]> = [
+  ["အီး", "e"],
+  ["အီ", "e"],
+  ["၏", "e"],
+  ["အာပ်", "f"],
+  ["အဖ်", "f"],
+  ["အပ်", "f"],
+  ["အား", "f"],
+  ["အာ့", "f"],
+  ["အေ", "a"],
+  ["ဘီ", "b"],
+  ["စီ", "c"],
+  ["ဒီ", "d"],
+  ["ဂျီ", "g"],
+  ["အိတ်", "h"],
+];
+
+// Burmese phonetic renderings of English numbers (rank words).
+const MYANMAR_RANK_SOUNDS: Array<[string, string]> = [
+  ["သူတွေး", "3"],
+  ["သူရိလ်", "3"],
+  ["သူရိမ်", "3"],
+  ["သူတိမ်း", "3"],
+  ["သူတေ", "3"],
+  ["ဖတ်တွေ", "3"],
+  ["ဖတ်တ်", "3"],
+  ["သရီး", "3"],
+  ["သြီ", "3"],
+  ["တရီ", "3"],
+  ["ဖိုး", "4"],
+  ["ဖော်", "4"],
+  ["ဝမ်", "1"],
+  ["တူး", "2"],
+  ["တူ", "2"],
+  ["ဖိုက်", "5"],
+  ["ဆစ်", "6"],
+  ["ဆဲဗင်", "7"],
+  ["အိတ်", "8"],
+];
+
+const FILLER_WORDS = [
+  "on",
+  "at",
+  "the",
+  "a",
+  "an",
+  "square",
+  "en",
+  "à",
+  "al",
+  "el",
+  "la",
+  "le",
+  "der",
+  "die",
+  "das",
+  "il",
+  "lo",
+  "um",
+  "uma",
+  "o",
+  "os",
+  "as",
+  "ကနေ",
+  "ကို",
+  "မှာ",
+  "သို့",
+  "ထဲ",
+  "ပေါ်",
+];
+
+const MYANMAR_DIGITS: Record<string, string> = {
+  "၀": "0",
+  "၁": "1",
+  "၂": "2",
+  "၃": "3",
+  "၄": "4",
+  "၅": "5",
+  "၆": "6",
+  "၇": "7",
+  "၈": "8",
+  "၉": "9",
+};
 
 function normalizeText(text: string): string {
   let normalized = text.toLowerCase().trim();
-  normalized = normalized.replace(/[^a-zà-ÿœæéèêëîïôöùûüçñáéíóúäöüß0-9\s-]/g, " ");
+  // Keep Latin accents (à-ÿ) plus Myanmar script (U+1000-U+109F, U+AA60-U+AA7F, U+A9E0-U+A9FF).
+  normalized = normalized.replace(
+    /[^a-zà-ÿœæéèêëîïôöùûüçñáéíóúäöüß\u1000-\u109f\uAA60-\uAA7F\uA9E0-\uA9FF0-9\s-]/g,
+    " ",
+  );
+  // Normalize Myanmar numerals to Latin digits so square extraction works.
+  normalized = normalized.replace(/[၀-၉]/g, (d) => MYANMAR_DIGITS[d] ?? d);
   normalized = normalized.replace(/\s+/g, " ").trim();
   return normalized;
 }
@@ -142,6 +262,11 @@ function preprocessPhonetics(text: string): string {
 
   let joined = processed.join(" ");
 
+  // Recover Latin squares from Burmese phonetic renderings (e.g. အာပ် သူတွေး -> f 3).
+  for (const [sound, latin] of [...MYANMAR_FILE_SOUNDS, ...MYANMAR_RANK_SOUNDS]) {
+    joined = joined.split(sound).join(` ${latin} `);
+  }
+
   // Join isolated file letter + number (e.g., "c 3" or "c three" -> "c3")
   joined = joined.replace(/\b([a-h])\s+([1-8])\b/g, "$1$2");
   return joined;
@@ -152,24 +277,40 @@ function extractSquare(text: string): string | null {
   return matches ? matches[matches.length - 1] : null;
 }
 
-function detectCastle(text: string): string | null {
-  const castlePatterns = [
-    /o-o-o|queen[’']?s\s*side\s*castle|long\s*castle|grand[’']?s\s*roqu?/i,
-    /o-o|king[’']?s\s*side\s*castle|short\s*castle|petit\s*roqu?|small\s*castle/i,
-  ];
-  if (castlePatterns[0].test(text)) return "O-O-O";
-  if (castlePatterns[1].test(text)) return "O-O";
-  return null;
+function detectCastle(text: string, chess?: Chess): string | null {
+  const lower = text.toLowerCase();
+
+  const queensidePattern =
+    /o-o-o|queenside|queen['’]?s?\s*side|long\s*castle|castle\s+queenside|grand['’]?s?\s*roqu?|queen[’']?s?\s*castle/i;
+  const kingsidePattern =
+    /o-o\b|kingside|king['’]?s?\s*side|short\s*castle|small\s*castle|castle\s+kingside|petit\s*roqu?|king[’']?s?\s*castle/i;
+  const bareCastlePattern =
+    /(^|\s)(castles?|castling|cassel|castel|enroques?|enrocamiento)(\s|$)/i;
+
+  if (queensidePattern.test(lower)) return "O-O-O";
+  if (kingsidePattern.test(lower)) return "O-O";
+  if (!bareCastlePattern.test(lower)) return null;
+
+  // Ambiguous bare "castle" — prefer the legal side on the live board.
+  if (chess) {
+    const legal = chess.moves({ verbose: true });
+    const canKing = legal.some((m) => m.flags.includes("k"));
+    const canQueen = legal.some((m) => m.flags.includes("q"));
+    if (canQueen && !canKing) return "O-O-O";
+    if (canKing) return "O-O";
+  }
+  return "O-O";
 }
 
 function detectTakes(text: string, lang: string): boolean {
   const takeWords: Record<string, string[]> = {
-    en: ["takes", "captures", "takes on", "captures on", "x", "kills", "destroys", "eats"],
+    en: ["takes", "take", "takes on", "take on", "captures", "capture", "captures on", "capture on", "x", "kills", "destroys", "eats"],
     es: ["toma", "captura", "come"],
     fr: ["prend", "capture", "prends"],
     de: ["nimmt", "schlägt", "erobert"],
     it: ["prende", "cattura", "mangia"],
     pt: ["toma", "captura", "come"],
+    my: ["ယူ", "စား", "ဖမ်း"],
   };
   const words = takeWords[lang] ?? takeWords.en;
   return words.some((w) => text.includes(w));
@@ -206,7 +347,12 @@ function extractPiece(text: string, lang: string): string | null {
   const map = PIECE_MAP[lang] ?? PIECE_MAP.en;
 
   for (const [name, letter] of Object.entries(map)) {
-    if (name && new RegExp(`\\b${name}\\b`, "i").test(text)) return letter;
+    if (!name) continue;
+    // Non-Latin script (e.g. Burmese) has no ASCII word boundaries — use substring match.
+    const isLatin = /^[a-zà-ÿ]+$/i.test(name);
+    if (isLatin ? new RegExp(`\\b${name}\\b`, "i").test(text) : text.includes(name)) {
+      return letter;
+    }
   }
 
   for (const word of text.split(/\s+/)) {
@@ -240,8 +386,58 @@ function extractSanPiece(text: string, square: string): string | null {
   return `${pieceLetter}${match[2] ?? ""}`;
 }
 
-export function parseChessMove(text: string, lang: string = "en"): string | null {
-  const castle = detectCastle(text);
+/**
+ * Resolves a candidate SAN against the live board.
+ *
+ * The parser alone cannot produce a complete SAN for ambiguous moves. A pawn
+ * capture such as "Pawn takes D5" needs the origin file ("exd5") to be valid,
+ * and a piece capture like "B takes D5" may be ambiguous when two bishops can
+ * reach the square. When a `chess` instance is available we resolve the
+ * candidate to the unique legal move that matches the spoken destination,
+ * piece type, and capture, and return its canonical SAN.
+ */
+function resolveMove(
+  chess: Chess,
+  candidate: string,
+  square: string,
+  pieceLetter: string,
+  takes: boolean,
+): string | null {
+  try {
+    const move = chess.move(candidate);
+    chess.undo();
+    return move.san;
+  } catch {
+    // Candidate is not directly playable — resolve it below.
+  }
+
+  const pieceType = pieceLetter.toLowerCase();
+  const targets = chess
+    .moves({ verbose: true })
+    .filter((m) => {
+      if (m.to !== square) return false;
+      if (pieceLetter) return m.piece === pieceType;
+      return m.piece === "p";
+    });
+
+  // Prefer moves matching the spoken capture intent, but ASR frequently drops
+  // "takes" — if no move matches the flag, fall back to any unique legal move
+  // to the spoken square.
+  const exact = targets.filter((m) => {
+    if (takes) return m.captured || m.flags.includes("e");
+    return !(m.captured || m.flags.includes("e"));
+  });
+  const pool = exact.length > 0 ? exact : targets;
+  if (pool.length === 1) return pool[0].san;
+  return null;
+}
+
+export function parseChessMove(
+  text: string,
+  lang: string = "en",
+  chess?: Chess,
+): string | null {
+  const castle = detectCastle(text, chess);
   if (castle) return castle;
 
   let normalized = normalizeText(text);
@@ -253,7 +449,12 @@ export function parseChessMove(text: string, lang: string = "en"): string | null
   const takes = detectTakes(normalized, lang);
 
   for (const word of FILLER_WORDS) {
-    normalized = normalized.replace(new RegExp(`\\b${word}\\b`, "g"), "");
+    const isLatin = /^[a-zà-ÿ]+$/i.test(word);
+    if (isLatin) {
+      normalized = normalized.replace(new RegExp(`\\b${word}\\b`, "g"), "");
+    } else {
+      normalized = normalized.split(word).join(" ");
+    }
   }
   normalized = normalized.replace(/\s+/g, " ").trim();
   normalized = normalized.replace(/x/g, "");
@@ -269,9 +470,15 @@ export function parseChessMove(text: string, lang: string = "en"): string | null
   const prev = idx > 0 ? normalized[idx - 1] : "";
   const pawnCaptureFile = /^[a-h]$/.test(prev);
 
-  if (takes) {
-    if (!piece && pawnCaptureFile) return `${prev}x${square}`;
-    return `${pieceLetter}x${square}`;
+  const candidate = takes
+    ? !piece && pawnCaptureFile
+      ? `${prev}x${square}`
+      : `${pieceLetter}x${square}`
+    : `${pieceLetter}${square}`;
+
+  if (chess) {
+    const resolved = resolveMove(chess, candidate, square, pieceLetter, takes);
+    if (resolved) return resolved;
   }
-  return `${pieceLetter}${square}`;
+  return candidate;
 }

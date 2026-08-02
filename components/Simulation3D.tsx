@@ -4,7 +4,6 @@ import { Chess, Square } from "chess.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import GameInfo from "@/components/GameInfo";
-import { playMoveSound, playCaptureSound, playCheckSound } from "@/lib/audio";
 import { FilesetResolver, GestureRecognizer } from "@mediapipe/tasks-vision";
 
 // MediaPipe's wasm writes its internal logs (e.g. "INFO: Created TensorFlow
@@ -21,7 +20,7 @@ import { FilesetResolver, GestureRecognizer } from "@mediapipe/tasks-vision";
 }
 
 type HandLandmark = [number, number, number];
-type Gesture = "none" | "fist" | "palm" | "two";
+type Gesture = "none" | "fist" | "palm";
 
 const BOARD_SIZE = 8;
 const SQUARE_SIZE = 1;
@@ -328,51 +327,128 @@ function createRobot(): THREE.Group {
   const group = new THREE.Group();
 
   const bodyMat = new THREE.MeshStandardMaterial({
-    color: 0xd7dee8,
-    roughness: 0.45,
-    metalness: 0.35,
+    color: 0xc8d1dd,
+    roughness: 0.42,
+    metalness: 0.6,
   });
   const darkMat = new THREE.MeshStandardMaterial({
-    color: 0x31435c,
-    roughness: 0.4,
-    metalness: 0.3,
+    color: 0x243447,
+    roughness: 0.38,
+    metalness: 0.45,
+  });
+  const accentMat = new THREE.MeshStandardMaterial({
+    color: 0x0f172a,
+    roughness: 0.5,
+    metalness: 0.25,
   });
   const handMat = new THREE.MeshStandardMaterial({
     color: 0x22d3ee,
     emissive: 0x22d3ee,
-    emissiveIntensity: 0.15,
+    emissiveIntensity: 0.3,
+    roughness: 0.25,
+    metalness: 0.6,
+  });
+  const glowMat = new THREE.MeshStandardMaterial({
+    color: 0x67e8f9,
+    emissive: 0x22d3ee,
+    emissiveIntensity: 1.5,
     roughness: 0.3,
-    metalness: 0.5,
+    metalness: 0.1,
   });
 
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 1.0, 0.22, 16), darkMat);
-  base.position.y = 0.11;
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.7, 1.25, 16), bodyMat);
-  torso.position.y = 0.85;
-  const chest = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.3, 0.3), darkMat);
-  chest.position.y = 1.0;
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.34, 16, 12), darkMat);
-  head.position.y = 1.75;
-  const visor = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.14, 0.1), handMat);
-  visor.position.set(0, 1.8, 0.28);
-  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.25, 6), bodyMat);
-  antenna.position.y = 2.12;
-  const antennaBall = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), handMat);
-  antennaBall.position.y = 2.26;
+  // Pedestal with a glowing rim ring and recessed hatch
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.92, 1.08, 0.28, 24), darkMat);
+  base.position.y = 0.14;
+  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(1.0, 0.045, 10, 28), glowMat);
+  baseRing.rotation.x = Math.PI / 2;
+  baseRing.position.y = 0.31;
+  const baseHatch = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 0.05, 18), accentMat);
+  baseHatch.position.y = 0.06;
 
+  // Torso with glowing chest core, chest panel and waist band
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.54, 0.72, 1.4, 20), bodyMat);
+  torso.position.y = 1.02;
+  const chestCore = new THREE.Mesh(new THREE.CircleGeometry(0.17, 24), glowMat);
+  chestCore.position.set(0, 1.12, 0.53);
+  const chestPanel = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.18, 0.06), accentMat);
+  chestPanel.position.set(0, 1.38, 0.53);
+  const waistRing = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.04, 8, 20), accentMat);
+  waistRing.rotation.x = Math.PI / 2;
+  waistRing.position.y = 0.42;
+
+  // Shoulder pads
+  const padR = new THREE.Mesh(new THREE.SphereGeometry(0.27, 18, 14), darkMat);
+  padR.scale.set(0.8, 0.55, 1.2);
+  padR.position.set(0.64, 1.62, 0);
+  const padL = padR.clone();
+  padL.position.x = -0.64;
+
+  // Head: rounded helmet with dark faceplate, glowing visor and side pods
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.36, 22, 18), bodyMat);
+  head.scale.set(1, 0.92, 1.08);
+  head.position.y = 2.06;
+  const faceplate = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.44, 0.14), darkMat);
+  faceplate.position.set(0, 2.04, 0.34);
+  const visor = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.13, 0.1), glowMat);
+  visor.position.set(0, 2.08, 0.42);
+  const earR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.1, 10), accentMat);
+  earR.rotation.z = Math.PI / 2;
+  earR.position.set(0.37, 2.06, 0);
+  const earL = earR.clone();
+  earL.position.x = -0.37;
+  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.3, 6), bodyMat);
+  antenna.position.y = 2.4;
+  const antennaBall = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), glowMat);
+  antennaBall.position.y = 2.56;
+
+  // Right arm (driven by the move mechanism): shoulder anchor, stretchable arm,
+  // static joint and glowing hand
   const shoulder = new THREE.Object3D();
-  shoulder.position.set(0.6, 1.25, 0);
+  shoulder.position.set(0.66, 1.6, 0);
 
   const armMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.06, 0.09, 1, 8),
+    new THREE.CylinderGeometry(0.075, 0.105, 1, 14),
     bodyMat,
   );
   armMesh.position.copy(shoulder.position);
 
-  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 10), handMat);
-  hand.position.set(0.6, 1.2, -0.6);
+  const shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 12), darkMat);
+  shoulderJoint.position.copy(shoulder.position);
 
-  group.add(base, torso, chest, head, visor, antenna, antennaBall, shoulder, armMesh, hand);
+  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 14), handMat);
+  hand.position.set(0.66, 1.2, 0.6);
+
+  // Static left arm resting at its side
+  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.105, 0.95, 14), bodyMat);
+  armL.rotation.z = 0.25;
+  armL.position.set(-0.68, 1.25, 0.05);
+  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 10), darkMat);
+  handL.position.set(-0.9, 0.75, 0.08);
+
+  group.add(
+    base,
+    baseRing,
+    baseHatch,
+    torso,
+    chestCore,
+    chestPanel,
+    waistRing,
+    padR,
+    padL,
+    head,
+    faceplate,
+    visor,
+    earR,
+    earL,
+    antenna,
+    antennaBall,
+    shoulder,
+    armMesh,
+    shoulderJoint,
+    hand,
+    armL,
+    handL,
+  );
   group.userData = { shoulder, hand, armMesh, handMat };
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
@@ -386,65 +462,83 @@ function createHuman(): THREE.Group {
   const group = new THREE.Group();
 
   const skinMat = new THREE.MeshStandardMaterial({
-    color: 0xe6b48c,
-    roughness: 0.6,
+    color: 0xe8b68f,
+    roughness: 0.55,
     metalness: 0,
   });
   const shirtMat = new THREE.MeshStandardMaterial({
-    color: 0x3b82f6,
-    roughness: 0.7,
-    metalness: 0.05,
+    color: 0x2563eb,
+    roughness: 0.65,
+    metalness: 0.08,
   });
   const pantMat = new THREE.MeshStandardMaterial({
-    color: 0x334155,
-    roughness: 0.8,
+    color: 0x1e293b,
+    roughness: 0.75,
+    metalness: 0.02,
+  });
+  const shoeMat = new THREE.MeshStandardMaterial({
+    color: 0x111827,
+    roughness: 0.6,
+    metalness: 0.1,
   });
   const hairMat = new THREE.MeshStandardMaterial({
-    color: 0x3f2d20,
+    color: 0x3b2b1c,
     roughness: 0.9,
+    metalness: 0,
   });
   const handMat = new THREE.MeshStandardMaterial({
-    color: 0xe6b48c,
+    color: 0xe8b68f,
     emissive: 0xffa03a,
     emissiveIntensity: 0,
     roughness: 0.5,
+    metalness: 0,
   });
 
-  // Legs
-  const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.9, 10), pantMat);
-  legL.position.set(-0.28, 0.45, 0);
-  const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.9, 10), pantMat);
-  legR.position.set(0.28, 0.45, 0);
+  // Legs + shoes
+  const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.95, 12), pantMat);
+  legL.position.set(-0.27, 0.48, 0);
+  const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.95, 12), pantMat);
+  legR.position.set(0.27, 0.48, 0);
+  const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.42), shoeMat);
+  shoeL.position.set(-0.27, 0.06, -0.1);
+  const shoeR = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.42), shoeMat);
+  shoeR.position.set(0.27, 0.06, -0.1);
 
-  // Torso
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.42, 0.95, 12), shirtMat);
-  torso.position.y = 1.35;
+  // Torso with a subtle collar
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.44, 1.0, 16), shirtMat);
+  torso.position.y = 1.4;
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 8, 16), shirtMat);
+  collar.rotation.x = -Math.PI / 2;
+  collar.position.y = 1.86;
 
-  // Head + hair
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 12), skinMat);
-  head.position.y = 1.95;
+  // Head + hair + a small nose bump (facing the board / camera)
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 20, 16), skinMat);
+  head.position.y = 2.02;
   const hair = new THREE.Mesh(
-    new THREE.SphereGeometry(0.245, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.SphereGeometry(0.256, 20, 14, 0, Math.PI * 2, 0, Math.PI / 2.3),
     hairMat,
   );
-  hair.position.y = 2.0;
+  hair.position.y = 2.08;
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), skinMat);
+  nose.position.set(0, 2.0, -0.24);
 
-  // Right arm (follows the tracked hand)
+  // Right arm (driven by the hand-tracking mechanism): shoulder anchor,
+  // stretchable arm and hand that reaches toward the board
   const shoulder = new THREE.Object3D();
-  shoulder.position.set(0.4, 1.55, 0);
-  const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 1, 8), shirtMat);
+  shoulder.position.set(0.42, 1.62, 0);
+  const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.085, 1, 10), shirtMat);
   armMesh.position.copy(shoulder.position);
-  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), handMat);
+  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.13, 14, 12), handMat);
   hand.position.set(0.5, 1.1, -1.0);
 
   // Left arm (static, resting)
-  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.9, 8), shirtMat);
-  armL.rotation.z = 0.35;
-  armL.position.set(-0.75, 1.15, 0.05);
-  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), skinMat);
-  handL.position.set(-1.0, 0.8, 0.08);
+  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.085, 0.95, 10), shirtMat);
+  armL.rotation.z = -0.28;
+  armL.position.set(-0.72, 1.25, 0.05);
+  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), skinMat);
+  handL.position.set(-0.98, 0.85, 0.08);
 
-  group.add(legL, legR, torso, head, hair, shoulder, armMesh, hand, armL, handL);
+  group.add(legL, legR, shoeL, shoeR, torso, collar, head, hair, nose, shoulder, armMesh, hand, armL, handL);
   group.userData = { shoulder, hand, armMesh, handMat };
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
@@ -470,6 +564,7 @@ type Simulation3DProps = {
   onMoveExecuted: () => void;
   setStatusMessage: (msg: string) => void;
   onExit: () => void;
+  theme?: "dark" | "light";
 };
 
 export default function Simulation3D({
@@ -478,6 +573,7 @@ export default function Simulation3D({
   onMoveExecuted,
   setStatusMessage,
   onExit,
+  theme = "dark",
 }: Simulation3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -587,23 +683,32 @@ export default function Simulation3D({
     const h = container.clientHeight;
 
     const scene = new THREE.Scene();
-    // Ultra-modern dark studio background with smooth gradient radial lighting
+    // Ultra-modern studio background with smooth gradient radial lighting
     const bgCanvas = document.createElement("canvas");
     bgCanvas.width = 512;
     bgCanvas.height = 512;
     const bgCtx = bgCanvas.getContext("2d");
     if (bgCtx) {
+      const isLight = theme === "light";
       const grad = bgCtx.createRadialGradient(256, 180, 40, 256, 256, 360);
-      grad.addColorStop(0, "#1a1d28");
-      grad.addColorStop(0.5, "#0f1118");
-      grad.addColorStop(1, "#07080c");
+      if (isLight) {
+        grad.addColorStop(0, "#f1f5f9");
+        grad.addColorStop(0.5, "#e2e8f0");
+        grad.addColorStop(1, "#cbd5e1");
+      } else {
+        grad.addColorStop(0, "#1a1d28");
+        grad.addColorStop(0.5, "#0f1118");
+        grad.addColorStop(1, "#07080c");
+      }
       bgCtx.fillStyle = grad;
       bgCtx.fillRect(0, 0, 512, 512);
     }
     const bgTex = new THREE.CanvasTexture(bgCanvas);
     bgTex.colorSpace = THREE.SRGBColorSpace;
     scene.background = bgTex;
-    scene.fog = new THREE.Fog(0x07080c, 24, 64);
+    scene.fog = theme === "light"
+      ? new THREE.Fog(0xcbd5e1, 24, 64)
+      : new THREE.Fog(0x07080c, 24, 64);
 
     const camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100);
     camera.position.set(0, 12.5, 13.8);
@@ -812,12 +917,7 @@ export default function Simulation3D({
     let grabbedPieceGroup: THREE.Group | null = null;
     let detectRaf = 0;
 
-    // Pointer interaction state
-    let isPointerDragging = false;
-    let pointerGrabbedSquare: string | null = null;
-    let pointerGrabbedGroup: THREE.Group | null = null;
-    const pointerTarget = new THREE.Vector3();
-    let releaseAnim: { piece: THREE.Group; from: THREE.Vector3; to: THREE.Vector3; progress: number } | null = null;
+    // Pointer interaction state (right-drag orbit + wheel zoom + calibration clicks)
     let isOrbiting = false;
     let prevPointerX = 0;
     let prevPointerY = 0;
@@ -893,18 +993,17 @@ export default function Simulation3D({
               const frame = frameCtx.getImageData(0, 0, outW, outH);
 
               const result = gestureRecognizer.recognize(frame);
-              const cat = result.gestures?.[0]?.[0];
-              const lmRaw = result.landmarks?.[0];
-              if (cat && lmRaw) {
+              const cat0 = result.gestures?.[0]?.[0];
+              const lm0 = result.landmarks?.[0];
+
+              if (cat0 && lm0) {
                 const rawGesture: Gesture =
-                  cat.categoryName === "Open_Palm"
+                  cat0.categoryName === "Open_Palm"
                     ? "palm"
-                    : cat.categoryName === "Closed_Fist"
+                    : cat0.categoryName === "Closed_Fist"
                       ? "fist"
-                      : cat.categoryName === "Victory"
-                        ? "two"
-                        : "none";
-                const lm = lmRaw.map((l) => [l.x, l.y, l.z]) as HandLandmark[];
+                      : "none";
+                const lm = lm0.map((l) => [l.x, l.y, l.z]) as HandLandmark[];
                 processHand(lm, rawGesture);
               } else {
                 handActiveRef.current = false;
@@ -913,6 +1012,12 @@ export default function Simulation3D({
                 destHighlight.visible = false;
                 cursorRing.visible = false;
                 lastHandPosRef.current = null;
+                dwellSquare = null;
+                lastDwellRemaining = -1;
+                // Clear stale gesture state so a returning hand must build up
+                // a fresh 12-frame confirmation instead of firing instantly.
+                stableGesture = "none";
+                stableCount = 0;
               }
             } catch (e) {
               const now = performance.now();
@@ -937,8 +1042,17 @@ export default function Simulation3D({
     let grabbedPieceSquare: string | null = null;
     let stableGesture: Gesture = "none";
     let stableCount = 0;
-    let twoArmedSquare: string | null = null;
     let lastBlockMsgTime = 0;
+    // Last square under the hand that is a legal target, so the held piece
+    // rests there (instead of snapping back to its origin) whenever the cursor
+    // leaves the board.
+    let lastLegalSq: string | null = null;
+    // Dwell-to-place: rest the held piece over a legal square for DWELL_MS and
+    // it places automatically.
+    let dwellSquare: string | null = null;
+    let dwellStartedAt = 0;
+    let lastDwellRemaining = -1;
+    const DWELL_MS = 4000;
 
     function dropPiece(toSq: string | null) {
       const grabbed = grabbedPieceGroup;
@@ -982,12 +1096,15 @@ export default function Simulation3D({
         setStatusMessage(
           toSq
             ? `Illegal move ${fromSq}→${toSq} — piece returned, still your turn`
-            : "Move cancelled — keep your hand over the board to place",
+            : "Move cancelled — piece returned to its square",
         );
       }
 
       grabbedPieceSquare = null;
       grabbedPieceGroup = null;
+      lastLegalSq = null;
+      dwellSquare = null;
+      lastDwellRemaining = -1;
       setSelectedSquare(null);
       setLegalSquares([]);
       updateLegalDots([]);
@@ -1002,6 +1119,16 @@ export default function Simulation3D({
       if (robotAnimatingRef.current) return;
       handActiveRef.current = true;
       setHandActive(true);
+
+      // Defensive: a grab should always have both a square and a live group.
+      // If the square is set but the group is gone (e.g. board rebuilt), clear
+      // the grab so it can never block future grabs forever.
+      if (grabbedPieceSquare && !grabbedPieceGroup) {
+        grabbedPieceSquare = null;
+        setSelectedSquare(null);
+        setLegalSquares([]);
+        selectionRing.visible = false;
+      }
 
       // Hysteresis: only act once a gesture has been held steady for ~12 frames (~400ms).
       // This confirms intent and rejects one-frame misdetections.
@@ -1057,13 +1184,50 @@ export default function Simulation3D({
       // Green square + cursor ring follow the square under the hand in every
       // gesture, so the target is always visible while moving.
       const holding = !!grabbedPieceSquare && !!grabbedPieceGroup;
+      // Remember the last legal target under the hand so the held piece can
+      // stay put when the cursor temporarily leaves the board.
+      if (holding && cursorSq && legalRef.current.includes(cursorSq)) {
+        lastLegalSq = cursorSq;
+      }
+
+      // Dwell-to-place: while holding, resting the cursor over a legal square
+      // for DWELL_MS places the piece there automatically. Any gesture except
+      // an open palm (which releases the piece) keeps the timer running, so
+      // hand jitter or classifier flickers can't reset it. The highlight turns
+      // amber while charging so the countdown is visible.
+      let dwelling = false;
+      if (holding && gesture !== "palm" && cursorSq && legalRef.current.includes(cursorSq)) {
+        if (dwellSquare === cursorSq) {
+          if (performance.now() - dwellStartedAt >= DWELL_MS) {
+            dropPiece(cursorSq);
+            dwellSquare = null;
+          } else {
+            dwelling = true;
+          }
+        } else {
+          dwellSquare = cursorSq;
+          dwellStartedAt = performance.now();
+          dwelling = true;
+        }
+      } else {
+        if (dwellSquare) {
+          dwellSquare = null;
+          lastDwellRemaining = -1;
+        }
+      }
+
       if (cursorSq) {
         const pos = squareToPosition(cursorSq);
         destHighlight.position.set(pos.x, 0.03, pos.z);
         destHighlight.visible = true;
-        // Green on a legal target while holding, red on an illegal one
+        // Amber while the dwell timer is charging, green on a legal target,
+        // red on an illegal one
         (destHighlight.material as THREE.MeshBasicMaterial).color.setHex(
-          holding && !legalRef.current.includes(cursorSq) ? 0xff4444 : 0x00ff88,
+          dwelling
+            ? 0xffb300
+            : holding && !legalRef.current.includes(cursorSq)
+              ? 0xff4444
+              : 0x00ff88,
         );
         cursorRing.position.set(pos.x, 0.07, pos.z);
         cursorRing.visible = true;
@@ -1073,9 +1237,14 @@ export default function Simulation3D({
       }
 
       // Human hand mirrors the tracked hand; while holding, the piece snaps to
-      // the square under the hand and rides just under the fist.
+      // the square under the hand and rides just under the fist. When the
+      // cursor is off-board or on an illegal square, keep the piece on the
+      // last legal square instead of yanking it back to its origin.
       if (holding && hit) {
-        const snapSq = cursorSq ?? grabbedPieceSquare;
+        const snapSq =
+          cursorSq && legalRef.current.includes(cursorSq)
+            ? cursorSq
+            : lastLegalSq ?? grabbedPieceSquare;
         const snap = squareToPosition(snapSq!);
         pieceFollowTarget.set(snap.x, 0.85, snap.z);
         fingerFollowTarget.set(snap.x, 1.25, snap.z);
@@ -1086,18 +1255,36 @@ export default function Simulation3D({
         humanHandFollowTarget.copy(HUMAN_HAND_REST);
       }
 
-      // Pin the target square at the moment two fingers first appear, so the
-      // 400ms confirmation delay can't drift the placement square.
-      if (rawGesture === "two" && stableCount === 2) twoArmedSquare = cursorSq;
+      // Surface the dwell countdown so the user can see it charging.
+      if (dwelling) {
+        const remaining = Math.max(
+          1,
+          Math.ceil((DWELL_MS - (performance.now() - dwellStartedAt)) / 1000),
+        );
+        if (remaining !== lastDwellRemaining) {
+          lastDwellRemaining = remaining;
+          setStatusMessage(`Placing on ${cursorSq} in ${remaining}s — hold still`);
+        }
+      }
 
       if (gesture === "palm") {
         setGestureLabel("Palm");
+        // Open palm while holding releases the piece back to its square —
+        // the way to cancel a grab instead of placing it.
+        if (holding) {
+          dropPiece(null);
+        }
       } else if (gesture === "fist") {
         setGestureLabel("Fist");
 
         // Grab the nearest movable white piece to the cursor. Proximity-based,
         // so a slightly-off calibration or fist drift still grabs the right piece.
         if (!grabbedPieceSquare) {
+          // Let any in-flight placement/cancel animation finish first — a new
+          // grab must not cancel it, or the committed move never completes and
+          // the game freezes waiting for the bot.
+          if (gestureAnim) return;
+
           const chess = chessRef.current;
 
           // chess.js moves({square}) respects the side to move, so while the
@@ -1139,7 +1326,7 @@ export default function Simulation3D({
                 const pos = squareToPosition(grabSq);
                 selectionRing.position.set(pos.x, 0.05, pos.z);
                 selectionRing.visible = true;
-                setStatusMessage(`Holding ${grabSq} · open palm to move · 2 fingers to place`);
+                setStatusMessage(`Holding ${grabSq} · hold still over a green square for 4s to place · palm to release`);
 
                 const pieceGroup = pieces.get(grabSq);
                 if (pieceGroup) {
@@ -1151,14 +1338,6 @@ export default function Simulation3D({
               }
             }
           }
-        }
-      } else if (gesture === "two") {
-        setGestureLabel("2 fingers");
-
-        // Place the held piece on the pinned square
-        if (grabbedPieceSquare && grabbedPieceGroup) {
-          dropPiece(twoArmedSquare ?? cursorSq);
-          twoArmedSquare = null;
         }
       } else {
         setGestureLabel("");
@@ -1195,46 +1374,9 @@ export default function Simulation3D({
           calibRef.current.bottomY = pos.y;
           calibModeRef.current = "off";
           setCalibMode("off");
-          setStatusMessage("Calibration done — palm to move · fist to hold · 2 fingers to place");
+          setStatusMessage("Calibration done — palm to move · fist to hold · hold still 4s over a green square to place");
         }
         return;
-      }
-
-      pointer.set(
-        (e.clientX / container.clientWidth) * 2 - 1,
-        -(e.clientY / container.clientHeight) * 2 + 1,
-      );
-      raycaster.setFromCamera(pointer, camera);
-
-      const pieceList: THREE.Object3D[] = [];
-      for (const [, p] of pieces) pieceList.push(p);
-      const intersects = raycaster.intersectObjects(pieceList, true);
-
-      if (intersects.length > 0) {
-        let obj: THREE.Object3D = intersects[0].object;
-        while (obj.parent && !(obj.parent instanceof THREE.Scene)) {
-          obj = obj.parent;
-        }
-        if (obj.userData?.color === "w") {
-          const sq = obj.userData.square as string;
-          isPointerDragging = true;
-          pointerGrabbedSquare = sq;
-          pointerGrabbedGroup = pieces.get(sq) ?? null;
-
-          const pos = squareToPosition(sq);
-          if (pointerGrabbedGroup) {
-            pointerGrabbedGroup.position.y = 1.2;
-            pointerTarget.set(pos.x, 1.2, pos.z);
-          }
-
-          setSelectedSquare(sq);
-          const moves = chessRef.current.moves({ square: sq as Square, verbose: true });
-          setLegalSquares(moves.map((m) => m.to));
-          updateLegalDots(moves.map((m) => m.to));
-          selectionRing.position.set(pos.x, 0.05, pos.z);
-          selectionRing.visible = true;
-          setStatusMessage(`Holding ${sq}`);
-        }
       }
     });
 
@@ -1258,69 +1400,12 @@ export default function Simulation3D({
         prevPointerY = e.clientY;
         return;
       }
-
-      if (!isPointerDragging || !pointerGrabbedGroup) return;
-
-      pointer.set(
-        (e.clientX / container.clientWidth) * 2 - 1,
-        -(e.clientY / container.clientHeight) * 2 + 1,
-      );
-      raycaster.setFromCamera(pointer, camera);
-      const planeY = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      const hitPoint = new THREE.Vector3();
-      raycaster.ray.intersectPlane(planeY, hitPoint);
-
-      pointerTarget.set(hitPoint.x, 1.2, hitPoint.z);
-
-      const sq = positionToSquare(hitPoint.x, hitPoint.z);
-      if (sq && legalRef.current.includes(sq)) {
-        destHighlight.position.set(squareToPosition(sq).x, 0.03, squareToPosition(sq).z);
-        destHighlight.visible = true;
-      } else {
-        destHighlight.visible = false;
-      }
     });
 
     canvas.addEventListener("pointerup", (e) => {
       if (e.button === 2) {
         isOrbiting = false;
-        return;
       }
-      if (!isPointerDragging) return;
-      isPointerDragging = false;
-
-      const fromSq = pointerGrabbedSquare;
-      const grabbed = pointerGrabbedGroup;
-      const toSq = positionToSquare(pointerTarget.x, pointerTarget.z);
-
-      if (fromSq && toSq && legalRef.current.includes(toSq)) {
-        const chess = chessRef.current;
-        const move = chess.move({ from: fromSq as Square, to: toSq as Square, promotion: "q" });
-        if (move) {
-          if (move.captured) playCaptureSound();
-          else if (chess.inCheck()) playCheckSound();
-          else playMoveSound();
-
-          setStatusMessage(`3D Move: ${move.san}`);
-          rebuildPieces(chess, scene, pieces);
-          onMoveRef.current();
-          triggerRerender();
-        } else if (grabbed) {
-          const origPos = squareToPosition(fromSq);
-          releaseAnim = { piece: grabbed, from: grabbed.position.clone(), to: origPos, progress: 0 };
-        }
-      } else if (grabbed && fromSq) {
-        const origPos = squareToPosition(fromSq);
-        releaseAnim = { piece: grabbed, from: grabbed.position.clone(), to: origPos, progress: 0 };
-      }
-
-      pointerGrabbedSquare = null;
-      pointerGrabbedGroup = null;
-      setSelectedSquare(null);
-      setLegalSquares([]);
-      updateLegalDots([]);
-      selectionRing.visible = false;
-      destHighlight.visible = false;
     });
 
     canvas.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -1350,6 +1435,12 @@ export default function Simulation3D({
 
     function animate() {
       animRef.current = requestAnimationFrame(animate);
+
+      // Watchdog: if the robot is flagged busy but no animation object exists,
+      // the flag got stuck — clear it so gestures can never be blocked forever.
+      if (robotAnimatingRef.current && !robotAnim) {
+        robotAnimatingRef.current = false;
+      }
 
       // Smooth camera orbit interpolation & morph logic
       const orbit = camOrbit.current;
@@ -1485,25 +1576,9 @@ export default function Simulation3D({
         robotHandMat.emissiveIntensity = 0.15;
       }
 
-      // Smooth piece follow for pointer drag
-      if (isPointerDragging && pointerGrabbedGroup) {
-        pointerGrabbedGroup.position.lerp(pointerTarget, 0.3);
-      }
-
       // Smooth piece follow for fist grab (held just under the human hand)
-      if (!isPointerDragging && grabbedPieceGroup && grabbedPieceSquare) {
+      if (grabbedPieceGroup && grabbedPieceSquare) {
         grabbedPieceGroup.position.lerp(pieceFollowTarget, 0.25);
-      }
-
-      // Release animation (pointer)
-      if (releaseAnim) {
-        releaseAnim.progress += 0.04;
-        if (releaseAnim.progress >= 1) {
-          releaseAnim.piece.position.copy(releaseAnim.to);
-          releaseAnim = null;
-        } else {
-          releaseAnim.piece.position.lerpVectors(releaseAnim.from, releaseAnim.to, releaseAnim.progress);
-        }
       }
 
       // Gesture release animation
@@ -1540,32 +1615,27 @@ export default function Simulation3D({
   }, []);
 
   return (
-    <div className="flex h-screen w-screen bg-black">
+    <div className="flex h-screen w-screen bg-black light:bg-slate-200">
       <div ref={containerRef} className="flex-1 relative overflow-hidden">
         <div className="absolute top-4 left-4 z-20 flex gap-2 flex-wrap">
           <button
             type="button"
             onClick={onExit}
-            className="rounded bg-black/60 px-3 py-1.5 text-sm text-zinc-200 hover:bg-zinc-800 border border-zinc-700 backdrop-blur-sm"
+            className="rounded bg-black/60 px-3 py-1.5 text-sm text-zinc-200 hover:bg-zinc-800 border border-zinc-700 backdrop-blur-sm light:bg-white/80 light:text-slate-800 light:border-slate-300 light:hover:bg-slate-100"
           >
             ← Exit 3D
           </button>
-          <span className="rounded bg-black/40 px-3 py-1.5 text-sm text-zinc-300 border border-zinc-700/50 backdrop-blur-sm">
-            {selectedSquare ? `Holding ${selectedSquare}` : handActive ? gestureLabel || "Hand detected" : "Open palm to move · Fist to hold · 2 fingers to place · Right-click to orbit · Scroll to zoom"}
+          <span className="rounded bg-black/40 px-3 py-1.5 text-sm text-zinc-300 border border-zinc-700/50 backdrop-blur-sm light:bg-white/80 light:text-slate-700 light:border-slate-300">
+            {selectedSquare ? `Holding ${selectedSquare}` : handActive ? gestureLabel || "Hand detected" : "Palm to move · Fist to hold · Hold still over a green square for 4s to place · Palm to release"}
           </span>
           {gestureLabel === "Palm" && (
-            <span className="rounded bg-emerald-800/40 px-3 py-1.5 text-xs text-emerald-300 border border-emerald-700/30 backdrop-blur-sm">
+            <span className="rounded bg-emerald-800/40 px-3 py-1.5 text-xs text-emerald-300 border border-emerald-700/30 backdrop-blur-sm light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300">
               Open palm — move over the board (green square)
             </span>
           )}
           {gestureLabel === "Fist" && (
-            <span className="rounded bg-amber-800/40 px-3 py-1.5 text-xs text-amber-300 border border-amber-700/30 backdrop-blur-sm">
+            <span className="rounded bg-amber-800/40 px-3 py-1.5 text-xs text-amber-300 border border-amber-700/30 backdrop-blur-sm light:bg-amber-100 light:text-amber-700 light:border-amber-300">
               Fist — hold the piece
-            </span>
-          )}
-          {gestureLabel === "2 fingers" && (
-            <span className="rounded bg-sky-800/40 px-3 py-1.5 text-xs text-sky-300 border border-sky-700/30 backdrop-blur-sm">
-              2 fingers — place the piece on the green square
             </span>
           )}
           <button
@@ -1583,8 +1653,8 @@ export default function Simulation3D({
             }}
             className={`rounded px-3 py-1.5 text-sm border backdrop-blur-sm ${
               calibMode !== "off"
-                ? "bg-violet-800/60 text-violet-200 border-violet-600 hover:bg-violet-700/60"
-                : "bg-black/60 text-zinc-200 border-zinc-700 hover:bg-zinc-800"
+                ? "bg-violet-800/60 text-violet-200 border-violet-600 hover:bg-violet-700/60 light:bg-violet-100 light:text-violet-700 light:border-violet-300"
+                : "bg-black/60 text-zinc-200 border-zinc-700 hover:bg-zinc-800 light:bg-white/80 light:text-slate-800 light:border-slate-300 light:hover:bg-slate-100"
             }`}
           >
             {calibMode === "off" ? "Calibrate hand" : calibMode === "top" ? "Click: top row →" : "Click: bottom row →"}
@@ -1592,18 +1662,23 @@ export default function Simulation3D({
         </div>
         <div className="absolute top-20 left-4 z-20 w-96">
           {/* eslint-disable-next-line react-hooks/refs */}
-          <GameInfo fen={chessRef.current.fen()} />
+          <GameInfo moves={chessRef.current.history({ verbose: true })} />
         </div>
-        <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2 rounded-lg bg-black/50 px-3 py-2 border border-zinc-700/50 backdrop-blur-sm">
-          <span className={`h-2 w-2 rounded-full ${handActive ? "bg-emerald-400 animate-pulse" : "bg-zinc-600"}`} />
-          <span className="text-xs text-zinc-300">{handActive ? `Hand · ${gestureLabel || "tracking"}` : "No hand"}</span>
+        <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2 rounded-lg bg-black/50 px-3 py-2 border border-zinc-700/50 backdrop-blur-sm light:bg-white/80 light:border-slate-300">
+          <span className={`h-2 w-2 rounded-full ${handActive ? "bg-emerald-400 animate-pulse" : "bg-zinc-600 light:bg-slate-400"}`} />
+          <span className="text-xs text-zinc-300 light:text-slate-700">{handActive ? `Hand · ${gestureLabel || "tracking"}` : "No hand"}</span>
         </div>
-        <video
-          ref={videoRef}
-          muted
-          playsInline
-          className="hidden"
-        />
+        <div className="absolute top-4 right-4 z-20 w-40 rounded-lg border border-zinc-700/60 bg-black/50 p-1 backdrop-blur-sm shadow-xl light:bg-white/80 light:border-slate-300">
+          <video
+            ref={videoRef}
+            muted
+            playsInline
+            className="h-28 w-full scale-x-[-1] rounded-md object-cover"
+          />
+          <span className="block px-1 pt-1 text-[10px] uppercase tracking-wider text-zinc-400 font-mono light:text-slate-500">
+            Camera
+          </span>
+        </div>
       </div>
     </div>
   );

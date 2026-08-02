@@ -1,7 +1,7 @@
 "use client";
 
-import { Chess } from "chess.js";
 import { useMemo } from "react";
+import type { Move } from "chess.js";
 
 const PIECE_VALUES: Record<string, number> = { p: 1, n: 3, b: 3, r: 5, q: 9 };
 const PIECE_SYMBOLS: Record<string, Record<string, string>> = {
@@ -9,26 +9,12 @@ const PIECE_SYMBOLS: Record<string, Record<string, string>> = {
   b: { k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" },
 };
 
-function formatMoveList(moves: string[]): string {
-  const pairs: string[] = [];
-  for (let i = 0; i < moves.length; i += 2) {
-    const num = Math.floor(i / 2) + 1;
-    const w = moves[i];
-    const b = moves[i + 1] ?? "";
-    pairs.push(`${num}.${w}${b ? ` ${b}` : ""}`);
-  }
-  return pairs.join("  ");
-}
-
-export default function GameInfo({ fen }: { fen: string }) {
+export default function GameInfo({ moves }: { moves: Move[] }) {
   const info = useMemo(() => {
-    const c = new Chess(fen);
-    const verbose = c.history({ verbose: true });
-
     const whiteCaptures: string[] = [];
     const blackCaptures: string[] = [];
 
-    for (const move of verbose) {
+    for (const move of moves) {
       if (move.captured) {
         if (move.color === "w") {
           whiteCaptures.push(move.captured);
@@ -42,54 +28,73 @@ export default function GameInfo({ fen }: { fen: string }) {
     const blackMat = blackCaptures.reduce((s, p) => s + (PIECE_VALUES[p] ?? 0), 0);
     const advantage = whiteMat - blackMat;
 
-    return {
-      moves: c.history(),
-      whiteCaptures,
-      blackCaptures,
-      advantage,
-    };
-  }, [fen]);
+    const rows: { num: number; white: string; black: string }[] = [];
+    for (let i = 0; i < moves.length; i += 2) {
+      rows.push({
+        num: Math.floor(i / 2) + 1,
+        white: moves[i]?.san ?? "",
+        black: moves[i + 1]?.san ?? "",
+      });
+    }
 
-  const { moves, whiteCaptures, blackCaptures, advantage } = info;
+    return { rows, whiteCaptures, blackCaptures, advantage };
+  }, [moves]);
 
-  const whiteLostStr = blackCaptures.map((t) => PIECE_SYMBOLS.w[t]).join("");
-  const blackLostStr = whiteCaptures.map((t) => PIECE_SYMBOLS.b[t]).join("");
+  const { rows, whiteCaptures, blackCaptures, advantage } = info;
+  const whiteTookStr = whiteCaptures.map((t) => PIECE_SYMBOLS.b[t]).join(" ");
+  const blackTookStr = blackCaptures.map((t) => PIECE_SYMBOLS.w[t]).join(" ");
 
   return (
-    <div className="rounded-md border border-zinc-800 bg-zinc-900/80 p-3 text-xs">
-      <div className="max-h-10 overflow-y-auto text-zinc-400 font-mono leading-relaxed">
-        {moves.length > 0 ? (
-          formatMoveList(moves)
+    <div className="rounded-md border border-zinc-800 bg-zinc-900/80 p-3 text-xs light:border-slate-200 light:bg-white/80">
+      <div className="mb-1 flex items-center justify-between">
+        <span className="font-semibold text-zinc-300 light:text-slate-700">Moves</span>
+        <span className="text-zinc-600 light:text-slate-500">
+          {rows.length} {rows.length === 1 ? "move pair" : "move pairs"}
+        </span>
+      </div>
+      <div className="max-h-24 overflow-y-auto rounded bg-zinc-950/60 p-2 font-mono text-zinc-300 leading-relaxed light:bg-slate-100 light:text-slate-700">
+        {rows.length > 0 ? (
+          <table className="w-full">
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.num} className="border-b border-zinc-900 last:border-0 light:border-slate-200">
+                  <td className="pr-2 align-top text-zinc-600 light:text-slate-500">{r.num}.</td>
+                  <td className="pr-2 align-top">{r.white}</td>
+                  <td className="align-top">{r.black}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
-          <span className="text-zinc-600 italic">No moves yet</span>
+          <span className="italic text-zinc-600 light:text-slate-500">No moves yet</span>
         )}
       </div>
-      <div className="mt-1.5 flex items-center gap-3 text-zinc-500">
-        {blackLostStr && (
-          <span title="Black pieces captured by White">
-            <span className="text-zinc-600">Took </span>
-            <span className="text-zinc-300">{blackLostStr}</span>
-          </span>
-        )}
-        {advantage !== 0 && (
-          <span
-            className={`font-semibold ${
-              advantage > 0 ? "text-emerald-400" : "text-rose-400"
-            }`}
-          >
-            {advantage > 0 ? "+" : ""}
-            {advantage}
-          </span>
-        )}
-        {whiteLostStr && (
-          <span title="White pieces captured by Black">
-            <span className="text-zinc-600">Lost </span>
-            <span className="text-zinc-300">{whiteLostStr}</span>
-          </span>
-        )}
-        {!blackLostStr && !whiteLostStr && (
-          <span className="text-zinc-600 italic">No captures yet</span>
-        )}
+      <div className="mt-2 border-t border-zinc-800 pt-2 light:border-slate-200">
+        <span className="font-semibold text-zinc-300 light:text-slate-700">Captures</span>
+        <div className="mt-1 flex flex-col gap-0.5 text-zinc-400 light:text-slate-600">
+          <div>
+            <span className="text-zinc-600 light:text-slate-500">You took: </span>
+            {whiteCaptures.length > 0 ? (
+              <span className="text-lg text-zinc-200 light:text-slate-800">{whiteTookStr}</span>
+            ) : (
+              <span className="italic text-zinc-600 light:text-slate-500">none</span>
+            )}
+          </div>
+          <div>
+            <span className="text-zinc-600 light:text-slate-500">Bot took: </span>
+            {blackCaptures.length > 0 ? (
+              <span className="text-lg text-zinc-200 light:text-slate-800">{blackTookStr}</span>
+            ) : (
+              <span className="italic text-zinc-600 light:text-slate-500">none</span>
+            )}
+          </div>
+          {advantage !== 0 && (
+            <div className={advantage > 0 ? "text-emerald-400" : "text-rose-400"}>
+              Material {advantage > 0 ? "+" : ""}
+              {advantage}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
