@@ -1,0 +1,6 @@
+{
+  "name": "Sentio — Emotion-Adaptive Chess",
+  "description": "Play chess against Stockfish that adapts to your emotions",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0d0d11;
+  --foreground: #f4f4f5;
+  --sentio-accent: #f59e0b;
+  --sentio-accent-glow: rgba(245, 158, 11, 0.15);
+  --sentio-board-light: #ebecd0;
+  --sentio-board-dark: #779556;
+  --sentio-board-frame-from: #2a2b30;
+  --sentio-board-frame-to: #141518;
+}
+
+.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --sentio-accent: #d97706;
+  --sentio-accent-glow: rgba(217, 119, 6, 0.15);
+  --sentio-board-frame-from: #e2e8f0;
+  --sentio-board-frame-to: #cbd5e1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sentio-bg {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(245, 158, 11, 0.07), transparent),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(59, 130, 246, 0.05), transparent),
+    var(--background);
+}
+
+.light .sentio-bg {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(245, 158, 11, 0.12), transparent),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(59, 130, 246, 0.08), transparent),
+    var(--background);
+}
+
+.sentio-card {
+  background: rgba(24, 24, 27, 0.85);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+  backdrop-filter: blur(12px);
+}
+
+.light .sentio-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.sentio-board-frame {
+  background: linear-gradient(
+    145deg,
+    var(--sentio-board-frame-from),
+    var(--sentio-board-frame-to)
+  );
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.light .sentio-board-frame {
+  box-shadow:
+    0 20px 40px -10px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.chat-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(63, 63, 70, 0.6) transparent;
+}
+
+.light .chat-scroll {
+  scrollbar-color: rgba(203, 213, 225, 0.8) transparent;
+}
+
+.chat-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(63, 63, 70, 0.6);
+  border-radius: 999px;
+}
+
+.light .chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(203, 213, 225, 0.8);
+}
+
+.chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(161, 161, 170, 0.6);
+}
+
+.light .chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
+}

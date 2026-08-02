@@ -1,0 +1,191 @@
+================================================================================
+  SENTIO — EMOTION-ADAPTIVE CHESS AI
+  How the System Works
+================================================================================
+
+Sentio is a full-stack chess application where a human plays against Stockfish
+(the chess engine), and Stockfish's difficulty adjusts in real time based on
+the player's detected emotional state from their webcam. It also includes an
+LLM-powered chess coach for natural-language analysis and encouragement.
+
+The name "Sentio" is Latin for "I feel."
+
+
+1. EMOTION DETECTION (Browser — face-api.js)
+--------------------------------------------------------------------------------
+
+  Pipeline:
+    1. Webcam is accessed via navigator.mediaDevices.getUserMedia() on page load.
+    2. Every 2.2 seconds, TinyFaceDetector detects the face region from a frame.
+    3. FaceExpressionNet (DenseNet-style CNN) classifies 7 expressions:
+       happy, sad, angry, fearful, surprised, disgusted, neutral.
+    4. The highest-probability expression (threshold > 0.35) is selected.
+    5. Expressions are mapped to 6 game emotions:
+
+         happy     -> confident
+         neutral   -> neutral
+         sad       -> frustrated
+         angry     -> frustrated
+         fearful   -> stressed
+         surprised -> focused
+         disgusted -> stressed
+
+    6. Smoothing: Last 3 detections are buffered; majority emotion wins.
+       A separate history of 7 entries is kept for LLM coach context.
+
+  Models (in /public/models/):
+    - tiny_face_detector_model  — lightweight CNN (MobileNet-style)
+    - face_expression_model     — DenseNet-style CNN, 4 dense blocks + FC layer
+
+
+2. ADAPTIVE ENGINE DIFFICULTY (Python FastAPI -> Stockfish)
+--------------------------------------------------------------------------------
+
+  The detected emotion maps to a Stockfish profile:
+
+    Emotion      | Depth | Skill Level | ELO
+    -------------|-------|-------------|-----
+    Stressed     |   1   |      1      | 1320
+    Frustrated   |   2   |      3      | 1320
+    Calm         |   4   |      6      | 1600
+    Neutral      |   6   |     10      | 2000
+    Focused      |   8   |     15      | 2600
+    Confident    |  10   |     20      | 3190
+
+  Flow per move:
+    1. Frontend sends {fen, emotion} via POST /api/bot-move.
+    2. Next.js API route (app/api/bot-move/route.ts) proxies to Python backend.
+    3. Python FastAPI (backend/main.py) resolves emotion -> profile.
+    4. A fresh, isolated Stockfish instance is created per request with:
+       - depth           — search depth in plies
+       - Skill Level     — internal skill parameter (0-20), introduces blunders
+       - UCI_LimitStrength + UCI_Elo  — uses Stockfish's ELO-limiting mechanism
+       - Threads=2
+    5. FEN is validated and set on the engine.
+    6. Stockfish runs get_best_move() — negamax + alpha-beta pruning with
+       iterative deepening and transposition tables.
+    7. Returns best move in UCI format (e.g., "e2e4") + profile metadata.
+
+  Backend endpoint:    POST http://127.0.0.1:8000/api/bot-move
+  Technology:          Python, FastAPI, python-stockfish
+
+
+3. LLM COACH (Next.js -> LM Studio)
+--------------------------------------------------------------------------------
+
+  The coach has two operating modes:
+
+  FALLBACK MODE (always active, no LLM dependency):
+    - Parses FEN with chess.js to determine side-to-move, check status,
+      legal move count, and game-over state.
+    - Fetches Stockfish's best move from Python backend.
+    - Generates structured advice based on position type (forcing vs flexible,
+      check vs normal) and player emotion.
+    - Returns: message text, candidate move suggestions, best move with SAN/UCI.
+
+  LLM MODE (when COACH_LLM_ENABLED=true):
+    - Constructs a prompt with FEN, emotion, recentEmotions, side, legal move
+      count, candidate moves, and the user's question.
+    - Sends to LM Studio at http://192.168.1.6:1234/v1/chat/completions.
+    - Query classification: if the user's input has no chess keywords and is
+      not a chess move notation, the LLM ignores chess context and acts as a
+      general AI assistant.
+    - Temperature: 0.35 for chess queries, 0.7 for general chat.
+    - Model: configurable via COACH_LLM_MODEL (default: qwen/qwen3.5-9b).
+    - On failure -> graceful fallback to fallback reply with error note.
+    - Response may include a "Play [move]" button that executes Stockfish's
+      best move on the board.
+
+  Health check:       GET /api/coach (frontend polls every 10s)
+  Coach endpoint:     POST /api/coach {fen, emotion, recentEmotions, question}
+  Technology:         Next.js API Route, chess.js, LM Studio (OpenAI-compatible API)
+
+
+4. BOT TRASH TALK (Browser — Rule-based)
+--------------------------------------------------------------------------------
+
+  The bot generates taunts based on the player's detected emotion:
+    - 4+ canned remarks per emotion (e.g., confident: "Confidence looks good
+      on you. Shame it won't save your king.")
+    - Separate remark pools for check events and capture events.
+    - Random selection from the appropriate pool.
+
+  When the coach detects negative emotions (frustrated/stressed), it posts
+  encouraging auto-messages with a 25-second cooldown between messages.
+
+
+5. MANUAL OVERRIDE
+--------------------------------------------------------------------------------
+
+  The player can disable webcam emotion detection at any time and manually
+  select their emotion from a dropdown. This overrides the automatic pipeline
+  and directly sets the emotion sent to the backend for Stockfish profiling.
+
+
+6. PROLOG KNOWLEDGE BASE
+--------------------------------------------------------------------------------
+
+  The file prolog/ai_system.pl contains a formal model of the entire system
+  written in Prolog (the logic programming language). It encodes:
+
+    Facts:
+      - profile(Emotion, Depth, SkillLevel, Elo)        — the 6 strength profiles
+      - expression(Detected, Emotion)                    — face-api output mapping
+      - taunt(Emotion, EventType, Text)                  — trash-talk pools
+      - component(Name, Description)                     — architecture components
+      - connection(From, To, Via)                        — data flow edges
+
+    Rules:
+      - resolve(Emotion, depth(D), skill(S), elo(E))    — look up a profile
+      - express(Expr, Emotion)                           — map expression to emotion
+      - smooth(Detections, Emotion)                      — majority-vote smoothing
+      - engine_for_expression(Expr, D, S, E)             — full pipeline query
+      - pipeline(Expr, Report)                           — formatted pipeline trace
+
+  To run it interactively:
+
+      swipl -s prolog/ai_system.pl
+      ?- explain.
+      ?- engine_for_expression(sad, D, S, E).
+      ?- smooth([sad, angry, neutral_x], Emotion).
+      ?- pipeline(fearful, Report).
+
+  The Prolog model mirrors the real system: the browser's face-api.js detects
+  an expression, which is mapped to an emotion, which resolves to a Stockfish
+  configuration. The majority-vote smoothing rule replicates the frontend's
+  3-frame buffer logic. The component and connection facts form a declarative
+  architecture diagram that can be queried (e.g., "what connects the browser
+  to the engine?").
+
+
+7. ARCHITECTURE DIAGRAM
+--------------------------------------------------------------------------------
+
+  Browser (React + face-api.js)
+      |
+      | POST /api/bot-move {fen, emotion}
+      | POST /api/coach {fen, emotion, question}
+      |
+      v
+  Next.js API Routes (proxy + coach logic)
+      |
+      |--- /api/bot-move -------> Python FastAPI (:8000) ----> Stockfish binary
+      |                              |
+      |--- /api/coach ------------> [chess.js (fallback)]
+                                      [LM Studio (:1234) (LLM)]
+
+
+8. EMOTION-TO-DIFFICULTY RATIONALE
+--------------------------------------------------------------------------------
+
+  The core idea is to keep the player in a "flow state":
+    - If you're stressed or frustrated, the engine gets easier to prevent
+      frustration and keep the game enjoyable.
+    - If you're calm or neutral, the engine plays at a moderate, fair level.
+    - If you're focused or confident, the engine gets harder to provide a
+      worthy challenge and keep you engaged.
+
+  This creates a personalized, adaptive difficulty curve that responds to the
+  player's emotional state rather than requiring manual difficulty selection.
+
+================================================================================
