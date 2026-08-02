@@ -45,7 +45,7 @@ import Simulation3D from "@/components/Simulation3D";
 import GameInfo from "@/components/GameInfo";
 import { PIECE_DESIGNS, PieceDesignKey } from "@/components/pieces";
 import type { ChessboardOptions } from "react-chessboard";
-import { playMoveSound, playCaptureSound, playCheckSound, setSoundMuted, isSoundMuted } from "@/lib/audio";
+import { playMoveSound, playCaptureSound, playCheckSound, setSoundMuted } from "@/lib/audio";
 
 const BOT_MOVE_API_URL = "/api/bot-move";
 const COACH_API_URL = "/api/coach";
