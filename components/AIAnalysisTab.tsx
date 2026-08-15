@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Chess } from "chess.js";
-import { buildMinimaxTrace, MinimaxSearchNode } from "@/lib/minimax";
+import { buildMinimaxTrace, MinimaxSearchNode, MinimaxTrace } from "@/lib/minimax";
+import { buildMctsTrace, MctsSearchNode, MctsTrace } from "@/lib/mcts";
 import MinimaxGraph3D from "@/components/MinimaxGraph3D";
 
 type LastBotMove = {
@@ -29,6 +30,10 @@ function formatScore(score: number | null) {
   return `${pawns >= 0 ? "+" : ""}${pawns.toFixed(2)}`;
 }
 
+function isMctsNode(node: MinimaxSearchNode | MctsSearchNode): node is MctsSearchNode {
+  return "phase" in node && "visits" in node && "winRate" in node;
+}
+
 function nodeTone(node: MinimaxSearchNode, active: boolean) {
   if (active) return "border-cyan-400 bg-cyan-400/15 text-cyan-100 shadow-lg shadow-cyan-500/10";
   if (node.status === "principal") return "border-amber-400/70 bg-amber-400/10 text-amber-100";
@@ -44,6 +49,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
   const [depth, setDepth] = useState(3);
   const [activeNodeIndex, setActiveNodeIndex] = useState(0);
   const [viewMode, setViewMode] = useState<"board" | "graph">("board");
+  const [algorithm, setAlgorithm] = useState<"minimax" | "mcts">("minimax");
 
   const board = useMemo(() => {
     try {
@@ -53,16 +59,17 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
     }
   }, [fen]);
 
-  const trace = useMemo(() => {
+  const trace = useMemo<MinimaxTrace | MctsTrace | null>(() => {
     try {
       const current = new Chess(fen);
-      return current.turn() === "b"
-        ? buildMinimaxTrace(fen, { depth, branchLimit: 5, aiColor: "b" })
-        : null;
+      if (current.turn() !== "b") return null;
+      return algorithm === "mcts"
+        ? buildMctsTrace(fen, { iterations: Math.max(24, depth * 24), branchLimit: 5, rolloutDepth: depth, aiColor: "b" })
+        : buildMinimaxTrace(fen, { depth, branchLimit: 5, aiColor: "b" });
     } catch {
       return null;
     }
-  }, [fen, depth]);
+  }, [fen, depth, algorithm]);
 
   useEffect(() => {
     if (!trace || !isPlaying) return;
@@ -82,6 +89,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
   const highlightedTo = selectedNode?.to ?? lastBotMove?.uci.slice(2, 4) ?? null;
   const principal = trace?.principalVariation ?? [];
   const liveSearch = isBotThinking && trace?.sideToMove === "b";
+  const mctsTrace = trace && "iterations" in trace ? trace : null;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1 chat-scroll">
@@ -89,25 +97,31 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-cyan-100 light:text-cyan-900">Minimax Flight Recorder</span>
+              <span className="text-sm font-semibold text-cyan-100 light:text-cyan-900">{algorithm === "mcts" ? "MCTS Rollout Observatory" : "Minimax Flight Recorder"}</span>
               <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${liveSearch ? "border-cyan-300/50 bg-cyan-400/15 text-cyan-200 animate-pulse" : "border-zinc-700 bg-zinc-900 text-zinc-400 light:border-slate-300 light:bg-white light:text-slate-500"}`}>
                 {liveSearch ? "SEARCHING" : "REPLAY"}
               </span>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-zinc-400 light:text-slate-600">
-              Watch Sentio compare candidate moves, back up evaluations, and prune branches before choosing the principal variation.
+              {algorithm === "mcts" ? "Watch Sentio select promising branches, expand candidates, simulate continuations, and backpropagate win rates." : "Watch Sentio compare candidate moves, back up evaluations, and prune branches before choosing the principal variation."}
             </p>
           </div>
-          <div className="rounded-lg border border-zinc-700/70 bg-black/25 px-2 py-1 text-right text-[10px] light:border-slate-300 light:bg-white/60">
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex rounded-md border border-zinc-700/80 bg-black/20 p-0.5 light:border-slate-300 light:bg-white/60">
+              <button type="button" onClick={() => setAlgorithm("minimax")} className={`rounded px-2 py-1 text-[10px] font-semibold ${algorithm === "minimax" ? "bg-amber-400/15 text-amber-200" : "text-zinc-500"}`}>Minimax</button>
+              <button type="button" onClick={() => setAlgorithm("mcts")} className={`rounded px-2 py-1 text-[10px] font-semibold ${algorithm === "mcts" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}>MCTS</button>
+            </div>
+            <div className="rounded-lg border border-zinc-700/70 bg-black/25 px-2 py-1 text-right text-[10px] light:border-slate-300 light:bg-white/60">
             <div className="font-mono text-cyan-300 light:text-cyan-700">{emotion}</div>
             <div className="text-zinc-500 light:text-slate-500">engine mood</div>
+            </div>
           </div>
         </div>
 
         <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[10px]">
           <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2 light:border-slate-300 light:bg-white/70"><div className="font-mono text-lg text-cyan-200 light:text-cyan-800">{trace?.depth ?? depth}</div><div className="text-zinc-500">plies</div></div>
-          <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2 light:border-slate-300 light:bg-white/70"><div className="font-mono text-lg text-emerald-300 light:text-emerald-700">{trace?.evaluatedLeaves ?? 0}</div><div className="text-zinc-500">leaves</div></div>
-          <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2 light:border-slate-300 light:bg-white/70"><div className="font-mono text-lg text-rose-300 light:text-rose-700">{trace?.prunedBranches ?? 0}</div><div className="text-zinc-500">pruned</div></div>
+          <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2 light:border-slate-300 light:bg-white/70"><div className="font-mono text-lg text-emerald-300 light:text-emerald-700">{algorithm === "mcts" ? (mctsTrace?.iterations ?? 0) : (trace?.evaluatedLeaves ?? 0)}</div><div className="text-zinc-500">{algorithm === "mcts" ? "rollouts" : "leaves"}</div></div>
+          <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2 light:border-slate-300 light:bg-white/70"><div className="font-mono text-lg text-rose-300 light:text-rose-700">{algorithm === "mcts" ? (mctsTrace?.rootVisits ?? 0) : (trace?.prunedBranches ?? 0)}</div><div className="text-zinc-500">{algorithm === "mcts" ? "root visits" : "pruned"}</div></div>
         </div>
       </div>
 
@@ -125,6 +139,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
         {viewMode === "graph" ? (
           <MinimaxGraph3D
             trace={trace}
+            algorithm={algorithm}
             activeNodeIndex={safeActiveNodeIndex}
             selectedNodeId={selectedNodeId}
             onSelectNode={(nodeId) => { setSelectedNodeId(nodeId); const index = trace?.nodes.findIndex((node) => node.id === nodeId) ?? -1; if (index >= 0) setActiveNodeIndex(index); }}
@@ -151,7 +166,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
         </div>
         )}
         <div className="mt-2 flex items-center justify-between gap-2 text-[10px]">
-          <span className="text-zinc-500">{viewMode === "graph" ? "Drag to orbit · click a node for heuristic weights" : "Cyan: candidate origin · Amber: destination"}</span>
+          <span className="text-zinc-500">{viewMode === "graph" ? (algorithm === "mcts" ? "Drag to orbit · click a node for rollout stats and heuristics" : "Drag to orbit · click a node for heuristic weights") : "Cyan: candidate origin · Amber: destination"}</span>
           {lastBotMove ? <span className="font-mono text-amber-300 light:text-amber-700">Last AI: {lastBotMove.san}</span> : null}
         </div>
       </div>
@@ -177,7 +192,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
               <span className="min-w-0">
                 <span className="mr-2 font-mono text-[10px] text-zinc-500">d{node.depth}</span>
                 <span className="font-mono text-xs font-bold">{node.san ?? "root"}</span>
-                <span className="ml-2 truncate text-[10px] opacity-70">{node.status === "pruned" ? "alpha–beta cutoff" : node.explanation}</span>
+                <span className="ml-2 truncate text-[10px] opacity-70">{node.status === "pruned" ? "alpha–beta cutoff" : (isMctsNode(node) ? `${node.phase} · ${node.visits} visits` : node.explanation)}</span>
               </span>
               <span className="ml-2 shrink-0 font-mono text-[10px]">{formatScore(node.score)}</span>
             </button>
@@ -189,11 +204,12 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-amber-500/25 bg-amber-950/15 p-3 light:border-amber-300 light:bg-amber-50/70">
-          <div className="text-[10px] uppercase tracking-wider text-amber-300 light:text-amber-700">Principal variation</div>
+            <div className="text-[10px] uppercase tracking-wider text-amber-300 light:text-amber-700">{algorithm === "mcts" ? "Most visited line" : "Principal variation"}</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {principal.length > 0 ? principal.map((move, index) => <span key={`${move}-${index}`} className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-1 font-mono text-xs text-amber-100 light:text-amber-800">{index + 1}. {move}</span>) : <span className="text-xs text-zinc-500">Waiting for an AI turn.</span>}
           </div>
           <div className="mt-3 text-xs text-zinc-300 light:text-slate-700">
+            {algorithm === "mcts" && trace?.selectedMove && "visits" in trace.selectedMove ? <span className="mr-2 text-cyan-200">{trace.selectedMove.visits} visits · {(trace.selectedMove.winRate * 100).toFixed(0)}% win rate</span> : null}
             Selected: <strong className="font-mono text-amber-300 light:text-amber-700">{trace?.selectedMove?.san ?? lastBotMove?.san ?? "—"}</strong>
             {trace?.selectedMove ? <span className="ml-2 text-zinc-500">evaluation {formatScore(trace.selectedMove.score)}</span> : null}
           </div>
@@ -201,11 +217,11 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
         <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/50 p-3 light:border-slate-300 light:bg-white/70">
           <div className="mb-2 text-[10px] uppercase tracking-wider text-zinc-500">Playback depth</div>
           <div className="flex items-center gap-2">
-            <input aria-label="Minimax depth" type="range" min="1" max="4" value={depth} onChange={(event) => setDepth(Number(event.target.value))} className="w-full accent-cyan-400" />
+            <input aria-label={algorithm === "mcts" ? "MCTS rollout depth" : "Minimax depth"} type="range" min="1" max="4" value={depth} onChange={(event) => setDepth(Number(event.target.value))} className="w-full accent-cyan-400" />
             <span className="w-7 text-right font-mono text-xs text-cyan-300">{depth}</span>
           </div>
           <div className="mt-3 flex items-center gap-2">
-            <span className="text-[10px] text-zinc-500">Animation speed</span>
+            <span className="text-[10px] text-zinc-500">{algorithm === "mcts" ? "Rollout speed" : "Animation speed"}</span>
             {[0.5, 1, 2].map((value) => <button type="button" key={value} onClick={() => setSpeed(value)} className={`rounded-md border px-2 py-1 text-[10px] ${speed === value ? "border-cyan-300 bg-cyan-400/15 text-cyan-200" : "border-zinc-700 text-zinc-500"}`}>{value}×</button>)}
           </div>
         </div>

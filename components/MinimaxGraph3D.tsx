@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import type { MinimaxSearchNode, MinimaxTrace } from "@/lib/minimax";
+import type { MctsSearchNode, MctsTrace } from "@/lib/mcts";
 
 type MinimaxGraph3DProps = {
-  trace: MinimaxTrace | null;
+  trace: MinimaxTrace | MctsTrace | null;
+  algorithm?: "minimax" | "mcts";
   activeNodeIndex: number;
   selectedNodeId: string | null;
   onSelectNode: (nodeId: string) => void;
@@ -21,6 +23,10 @@ const COLORS = {
   exploring: 0xa78bfa,
   edge: 0x64748b,
 };
+
+function isMctsNode(node: MinimaxSearchNode | MctsSearchNode | null): node is MctsSearchNode {
+  return Boolean(node && "phase" in node && "visits" in node && "winRate" in node && "exploration" in node);
+}
 
 function nodeColor(node: MinimaxSearchNode) {
   if (node.status === "principal") return COLORS.principal;
@@ -54,7 +60,7 @@ function makeLayout(trace: MinimaxTrace): LayoutNode[] {
   return result;
 }
 
-export default function MinimaxGraph3D({ trace, activeNodeIndex, selectedNodeId, onSelectNode }: MinimaxGraph3DProps) {
+export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNodeIndex, selectedNodeId, onSelectNode }: MinimaxGraph3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -247,12 +253,13 @@ export default function MinimaxGraph3D({ trace, activeNodeIndex, selectedNodeId,
 
   const hoveredNode = trace?.nodes.find((node) => node.id === hoveredNodeId) ?? null;
   const selectedNode = trace?.nodes.find((node) => node.id === selectedNodeId) ?? hoveredNode;
+  const mctsNode = isMctsNode(selectedNode) ? selectedNode : null;
 
   return (
     <div className="relative h-[410px] overflow-hidden rounded-xl border border-cyan-500/25 bg-[#070b16] shadow-2xl">
       <div ref={containerRef} className="absolute inset-0" aria-label="3D minimax decision tree" />
       <div className="pointer-events-none absolute left-3 top-3 rounded-lg border border-zinc-700/70 bg-black/45 px-3 py-2 text-[10px] text-zinc-300 backdrop-blur-sm">
-        <div className="font-semibold text-cyan-200">3D decision graph</div>
+        <div className="font-semibold text-cyan-200">{algorithm === "mcts" ? "3D MCTS rollout graph" : "3D minimax decision graph"}</div>
         <div className="mt-1 text-zinc-500">Drag to orbit · wheel to zoom · click a node</div>
       </div>
       <div className="pointer-events-none absolute bottom-3 left-3 flex gap-2 text-[9px] text-zinc-400">
@@ -267,6 +274,7 @@ export default function MinimaxGraph3D({ trace, activeNodeIndex, selectedNodeId,
             <span className="font-mono text-amber-200 light:text-amber-700">{selectedNode.score === null ? "—" : (selectedNode.score / 100).toFixed(2)}</span>
           </div>
           <div className="mt-1 text-zinc-500">{selectedNode.explanation}</div>
+          {mctsNode ? <div className="mt-2 grid grid-cols-2 gap-1 border-y border-cyan-400/15 py-2 font-mono text-[9px]"><span className="text-zinc-500">phase</span><span className="text-right text-cyan-200">{mctsNode.phase}</span><span className="text-zinc-500">visits</span><span className="text-right text-cyan-200">{mctsNode.visits}</span><span className="text-zinc-500">win rate</span><span className="text-right text-emerald-200">{(mctsNode.winRate * 100).toFixed(0)}%</span><span className="text-zinc-500">UCT</span><span className="text-right text-amber-200">{Number.isFinite(mctsNode.exploration) ? mctsNode.exploration.toFixed(2) : "∞"}</span></div> : null}
           <div className="mt-3 border-t border-zinc-800 pt-2 light:border-slate-200">
             <div className="mb-1 uppercase tracking-wider text-zinc-500">Heuristic breakdown</div>
             <div className="space-y-1 font-mono">
