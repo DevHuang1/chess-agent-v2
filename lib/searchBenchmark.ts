@@ -64,7 +64,7 @@ export function runSearchBenchmarks(options: {
   now?: () => number;
 } = {}): SearchBenchmarkReport {
   const cases = options.cases ?? DEFAULT_BENCHMARK_CASES;
-  const depths = (options.depths ?? [1, 2, 3, 4]).map((depth) => Math.max(1, Math.min(4, depth)));
+  const depths = (options.depths ?? [1, 2, 3, 4, 5, 6]).map((depth) => Math.max(1, Math.min(6, depth)));
   const samples = Math.max(1, options.samples ?? 3);
   const warmups = Math.max(0, options.warmups ?? 1);
   const now = options.now ?? (() => performance.now());

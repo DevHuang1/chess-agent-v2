@@ -6,7 +6,7 @@ import { benchmarkReportToMarkdown, runSearchBenchmarks } from "../lib/searchBen
 describe("Minimax versus MCTS performance benchmark", () => {
   it("generates the depth comparison report", () => {
     const report = runSearchBenchmarks({
-      depths: [1, 2, 3, 4],
+      depths: [1, 2, 3, 4, 5, 6],
       samples: 5,
       warmups: 2,
     });
@@ -15,7 +15,7 @@ describe("Minimax versus MCTS performance benchmark", () => {
     writeFileSync(resolve(outputDirectory, "search-benchmark.json"), `${JSON.stringify(report, null, 2)}\n`);
     writeFileSync(resolve(outputDirectory, "search-benchmark.md"), benchmarkReportToMarkdown(report));
 
-    expect(report.rows).toHaveLength(3 * 4 * 2);
+    expect(report.rows).toHaveLength(3 * 6 * 2);
     expect(report.rows.every((row) => row.averageMs >= 0 && row.workUnits > 0)).toBe(true);
   }, 120_000);
 });

@@ -119,7 +119,7 @@ export function buildMinimaxTrace(
   fen: string,
   options: { depth?: number; branchLimit?: number; aiColor?: "w" | "b" } = {},
 ): MinimaxTrace {
-  const depth = Math.max(1, Math.min(4, options.depth ?? 3));
+  const depth = Math.max(1, Math.min(6, options.depth ?? 3));
   const branchLimit = Math.max(2, Math.min(8, options.branchLimit ?? 5));
   const rootChess = new Chess(fen);
   const aiColor = options.aiColor ?? rootChess.turn();
