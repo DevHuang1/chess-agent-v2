@@ -27,6 +27,8 @@ test("opens the connected AI minimax analysis tab", async ({ page }) => {
 
   await page.getByRole("button", { name: "3D Graph" }).click();
   await expect(page.getByLabel("3D minimax decision tree")).toBeVisible();
+  await expect(page.getByLabel("AI Lab graph overview navigator")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Reset view" })).toBeVisible();
   await expect(page.getByText("3D MCTS rollout graph", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Board" }).click();
   await expect(page.getByText("Position under analysis", { exact: true })).toBeVisible();
