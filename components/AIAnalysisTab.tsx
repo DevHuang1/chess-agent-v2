@@ -17,6 +17,7 @@ type AIAnalysisTabProps = {
   isBotThinking: boolean;
   lastBotMove: LastBotMove;
   emotion: string;
+  analysisEnabled: boolean;
 };
 
 const PIECES: Record<string, string> = {
@@ -42,7 +43,7 @@ function nodeTone(node: MinimaxSearchNode, active: boolean) {
   return "border-zinc-700 bg-zinc-950/60 text-zinc-300";
 }
 
-export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion }: AIAnalysisTabProps) {
+export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion, analysisEnabled }: AIAnalysisTabProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
@@ -61,6 +62,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
 
   const trace = useMemo<MinimaxTrace | MctsTrace | null>(() => {
     try {
+      if (!analysisEnabled) return null;
       const current = new Chess(fen);
       if (current.isGameOver()) return null;
       const searchColor = current.turn();
@@ -70,7 +72,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
     } catch {
       return null;
     }
-  }, [fen, depth, algorithm]);
+  }, [fen, depth, algorithm, analysisEnabled]);
 
   useEffect(() => {
     if (!trace || !isPlaying) return;
@@ -100,11 +102,11 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-cyan-100 light:text-cyan-900">{algorithm === "mcts" ? "MCTS Rollout Observatory" : "Minimax Flight Recorder"}</span>
               <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${liveSearch ? "border-cyan-300/50 bg-cyan-400/15 text-cyan-200 animate-pulse" : "border-zinc-700 bg-zinc-900 text-zinc-400 light:border-slate-300 light:bg-white light:text-slate-500"}`}>
-                {liveSearch ? "SEARCHING" : "REPLAY"}
+                {!analysisEnabled ? "WAITING FOR GAME" : liveSearch ? "SEARCHING" : "LIVE TRACE"}
               </span>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-zinc-400 light:text-slate-600">
-              {algorithm === "mcts" ? `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search select promising branches, expand candidates, simulate continuations, and backpropagate win rates.` : `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search compare candidate moves, back up evaluations, and prune branches before choosing the principal variation.`}
+              {!analysisEnabled ? "Make the first move to start live AI analysis. This workspace follows the current game only; use the separate Replay tab for completed games." : algorithm === "mcts" ? `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search select promising branches, expand candidates, simulate continuations, and backpropagate win rates.` : `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search compare candidate moves, back up evaluations, and prune branches before choosing the principal variation.`}
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">

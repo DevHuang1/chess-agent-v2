@@ -59,6 +59,7 @@ import { buildMctsTrace } from "@/lib/mcts";
 
 const BOT_MOVE_API_URL = "/api/bot-move";
 const COACH_API_URL = "/api/coach";
+const SIDEBAR_PREFERENCES_KEY = "sentio-sidebar-preferences-v1";
 
 type EmotionLabel =
   | "calm"
@@ -225,7 +226,24 @@ type EngineProfile = {
 type GameOutcome = "active" | "checkmate" | "stalemate" | "draw" | "gameover";
 type CoachLlmConnection = "checking" | "connected" | "disconnected" | "disabled";
 type SidebarTab = "coach" | "speech" | "ai" | "benchmarks" | "3d" | "replay";
+type SidebarPreferences = {
+  expanded?: boolean;
+  wide?: boolean;
+  split?: boolean;
+  splitTab?: SidebarTab;
+  detached?: boolean;
+};
 type LiveAiMode = "off" | "minimax" | "mcts";
+
+function readSidebarPreferences(): SidebarPreferences {
+  if (typeof window === "undefined") return {};
+  try {
+    const saved = window.localStorage.getItem(SIDEBAR_PREFERENCES_KEY);
+    return saved ? JSON.parse(saved) as SidebarPreferences : {};
+  } catch {
+    return {};
+  }
+}
 
 function serializeReplayMoves(chess: Chess): ReplayMove[] {
   return chess.history({ verbose: true }).map((move) => ({
@@ -386,13 +404,42 @@ export default function ChessPage() {
   const aiHandRef = useRef<HTMLDivElement | null>(null);
   const aiHandRafRef = useRef<number | null>(null);
 
+  const [workspaceTab, setWorkspaceTab] = useState<"board" | "aiLab">("board");
   const [activeTab, setActiveTab] = useState<SidebarTab>("coach");
   const [controllerExpanded, setControllerExpanded] = useState(true);
   const [controllerWide, setControllerWide] = useState(false);
+  const [controllerSplit, setControllerSplit] = useState(false);
+  const [splitTab, setSplitTab] = useState<SidebarTab>("benchmarks");
+  const [controllerDetached, setControllerDetached] = useState(false);
+  const [sidebarPreferencesReady, setSidebarPreferencesReady] = useState(false);
 
   const [pieceDesign, setPieceDesign] = useState<PieceDesignKey>("chesscom");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [soundMutedState, setSoundMutedState] = useState<boolean>(false);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const preferences = readSidebarPreferences();
+      if (typeof preferences.expanded === "boolean") setControllerExpanded(preferences.expanded);
+      if (typeof preferences.wide === "boolean") setControllerWide(preferences.wide);
+      if (typeof preferences.split === "boolean") setControllerSplit(preferences.split);
+      if (preferences.splitTab === "benchmarks") setSplitTab("benchmarks");
+      if (typeof preferences.detached === "boolean") setControllerDetached(preferences.detached);
+      setSidebarPreferencesReady(true);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!sidebarPreferencesReady) return;
+    window.localStorage.setItem(SIDEBAR_PREFERENCES_KEY, JSON.stringify({
+      expanded: controllerExpanded,
+      wide: controllerWide,
+      split: controllerSplit,
+      splitTab,
+      detached: controllerDetached,
+    }));
+  }, [sidebarPreferencesReady, controllerExpanded, controllerWide, controllerSplit, splitTab, controllerDetached]);
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
@@ -1178,6 +1225,8 @@ export default function ChessPage() {
   const replayGames = [currentReplayGame, ...savedReplayGames];
   const activeReplayGame = replayGames.find((game) => game.id === replayGameId) ?? replayGames[0];
   const replayActive = activeTab === "replay";
+  const hasGameActivity = gamePosition !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  const splitSecondaryTab: SidebarTab = "benchmarks";
 
   function setReplayBoard(game: ReplayGame, targetIndex: number, animateMove: boolean) {
     const board = new Chess();
@@ -1252,6 +1301,11 @@ export default function ChessPage() {
               Sentio
             </span>
           </div>
+
+          <nav className="workspace-nav z-50 flex shrink-0 items-center gap-1 rounded-lg border border-zinc-800/80 bg-zinc-900/70 p-1 light:border-slate-300 light:bg-slate-100" aria-label="Workspace navigation">
+            <button type="button" aria-current={workspaceTab === "board" ? "page" : undefined} onClick={() => setWorkspaceTab("board")} className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${workspaceTab === "board" ? "bg-amber-500/20 text-amber-300 light:bg-amber-100 light:text-amber-700" : "text-zinc-500 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-800"}`}>Board</button>
+            <button type="button" aria-current={workspaceTab === "aiLab" ? "page" : undefined} onClick={() => { setWorkspaceTab("aiLab"); setActiveTab("coach"); }} className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${workspaceTab === "aiLab" ? "bg-cyan-500/20 text-cyan-200 light:bg-cyan-100 light:text-cyan-700" : "text-zinc-500 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-800"}`}>AI Lab</button>
+          </nav>
 
           <div className="h-4 w-px bg-zinc-800/80 dark:bg-zinc-800 light:bg-slate-300" />
 
@@ -1375,8 +1429,32 @@ export default function ChessPage() {
               )}
             </button>
           </div>
+
         </header>
 
+        {workspaceTab === "aiLab" ? (
+          <section className="ai-lab-workspace flex min-h-0 flex-1 flex-col overflow-hidden p-6" aria-label="Full-width AI Lab workspace">
+            <div className="mb-4 flex items-end justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(103,232,249,0.8)]" />
+                  <h1 className="text-lg font-bold text-cyan-100 light:text-cyan-900">AI Lab · Live Game Analysis</h1>
+                </div>
+                <p className="mt-1 text-xs text-zinc-400 light:text-slate-600">A full-width view of the current user-versus-AI game. Analysis starts after the first real move and follows the live position only.</p>
+              </div>
+              <span className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-cyan-200 light:border-cyan-300 light:bg-cyan-50 light:text-cyan-700">{hasGameActivity && activeTab !== "replay" ? "tracking live game" : "waiting for first move"}</span>
+            </div>
+            <div className="ai-lab-workspace-panel min-h-0 flex-1 overflow-hidden rounded-2xl border border-cyan-500/25 bg-zinc-950/45 p-4 shadow-2xl light:border-cyan-300 light:bg-white/60">
+              <AIAnalysisTab
+                fen={gamePosition}
+                isBotThinking={isBotThinking}
+                lastBotMove={lastBotMove}
+                emotion={emotion}
+                analysisEnabled={hasGameActivity && activeTab !== "replay"}
+              />
+            </div>
+          </section>
+        ) : (
         <div className="flex flex-1 items-center justify-center gap-8 p-6 min-h-0">
           <div
             ref={boardWrapRef}
@@ -1436,9 +1514,11 @@ export default function ChessPage() {
             )}
           </div>
         </div>
+        )}
       </section>
 
-<aside className={`controller-panel ${controllerExpanded ? (controllerWide ? "controller-panel-wide" : "controller-panel-expanded w-[440px]") : "controller-panel-collapsed w-[72px] px-2"} flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90`} data-controller-expanded={controllerExpanded} data-controller-wide={controllerWide}>
+{workspaceTab === "board" ? (
+      <aside className={`controller-panel ${controllerDetached ? "controller-floating" : ""} ${controllerExpanded ? (controllerWide ? "controller-panel-wide" : "controller-panel-expanded w-[440px]") : "controller-panel-collapsed w-[72px] px-2"} flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90`} data-controller-expanded={controllerExpanded} data-controller-wide={controllerWide} data-controller-split={controllerSplit} data-controller-detached={controllerDetached}>
         <div className={`flex items-center ${controllerExpanded ? "justify-between" : "justify-center"} mb-2`}>
           {controllerExpanded ? (
             <div className="min-w-0">
@@ -1468,6 +1548,35 @@ export default function ChessPage() {
                 title={controllerWide ? "Use compact controller width" : "Expand controller for a larger view"}
               >
                 {controllerWide ? "Compact" : "Wide"}
+              </button>
+            ) : null}
+            {controllerExpanded ? (
+              <button
+                type="button"
+                aria-label={controllerSplit ? "Use single sidebar view" : "Split sidebar view"}
+                aria-pressed={controllerSplit}
+                onClick={() => {
+                  if (activeTab === "3d" || activeTab === "replay") return;
+                  setControllerSplit((split) => !split);
+                  setControllerWide(true);
+                }}
+                disabled={activeTab === "3d" || activeTab === "replay"}
+                className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-violet-400/50 hover:bg-zinc-800 hover:text-violet-200 disabled:cursor-not-allowed disabled:opacity-40 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-violet-700"
+                title={activeTab === "3d" || activeTab === "replay" ? "Split view is unavailable in full-screen 3D modes" : controllerSplit ? "Use one sidebar component" : "Compare two sidebar components"}
+              >
+                {controllerSplit ? "Single" : "Split"}
+              </button>
+            ) : null}
+            {controllerExpanded ? (
+              <button
+                type="button"
+                aria-label={controllerDetached ? "Dock sidebar" : "Float sidebar"}
+                aria-pressed={controllerDetached}
+                onClick={() => setControllerDetached((detached) => !detached)}
+                className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-emerald-400/50 hover:bg-zinc-800 hover:text-emerald-200 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-emerald-700"
+                title={controllerDetached ? "Dock sidebar back into the page" : "Float sidebar over the board"}
+              >
+                {controllerDetached ? "Dock" : "Float"}
               </button>
             ) : null}
             <button
@@ -1515,17 +1624,6 @@ export default function ChessPage() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab("ai")}
-            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
-              activeTab === "ai"
-                ? "bg-cyan-500/20 text-cyan-200 border border-cyan-500/30 shadow-sm light:bg-cyan-100 light:text-cyan-700"
-                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
-            }`}
-          >
-            AI Lab
-          </button>
-          <button
-            type="button"
             onClick={() => setActiveTab("benchmarks")}
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
               activeTab === "benchmarks"
@@ -1559,7 +1657,22 @@ export default function ChessPage() {
           </button>
         </div>
 
-        <div className="mt-3 flex min-h-0 flex-1 flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-slate-300 light:bg-white/70">
+        {controllerSplit ? (
+          <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-violet-400/20 bg-violet-950/20 px-2.5 py-2 text-[11px] light:border-violet-300 light:bg-violet-50">
+            <span className="font-semibold text-violet-200 light:text-violet-800">Compare with</span>
+            <select
+              aria-label="Split sidebar component"
+              value={splitSecondaryTab}
+              onChange={(event) => setSplitTab(event.target.value as SidebarTab)}
+              className="rounded-md border border-violet-400/30 bg-zinc-950 px-2 py-1 text-[11px] text-violet-100 outline-none light:border-violet-300 light:bg-white light:text-violet-800"
+            >
+              <option value="benchmarks">Benchmarks</option>
+            </select>
+          </div>
+        ) : null}
+
+        <div className={`controller-split-region mt-3 min-h-0 flex-1 ${controllerSplit ? "controller-split-grid" : ""}`}>
+          <div className="controller-primary-pane flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-slate-300 light:bg-white/70">
           {activeTab === "coach" ? (
             <>
               <div className="flex items-center justify-between mb-2.5">
@@ -1704,13 +1817,6 @@ export default function ChessPage() {
             />
           ) : activeTab === "benchmarks" ? (
             <BenchmarkTab report={benchmarkReport} />
-          ) : activeTab === "ai" ? (
-            <AIAnalysisTab
-              fen={gamePosition}
-              isBotThinking={isBotThinking}
-              lastBotMove={lastBotMove}
-              emotion={emotion}
-            />
           ) : (
             <div className="flex flex-1 flex-col justify-between p-1 space-y-4">
               <div className="space-y-3">
@@ -1784,6 +1890,16 @@ export default function ChessPage() {
               </button>
             </div>
           )}
+          </div>
+          {controllerSplit && activeTab !== "3d" && activeTab !== "replay" ? (
+            <div className="controller-secondary-pane flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-violet-400/25 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-violet-300 light:bg-white/70">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-violet-200 light:text-violet-800">Benchmarks</span>
+                <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[9px] font-semibold text-violet-200 light:text-violet-700">side-by-side</span>
+              </div>
+              <BenchmarkTab report={benchmarkReport} />
+            </div>
+          ) : null}
         </div>
           </div>
         ) : (
@@ -1793,6 +1909,7 @@ export default function ChessPage() {
           </div>
         )}
       </aside>
+      ) : null}
 
       {gameResultText && (
         <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/70 backdrop-blur-md light:bg-slate-900/60">
@@ -1814,7 +1931,7 @@ export default function ChessPage() {
         </div>
       )}
 
-      {(activeTab === "3d" || activeTab === "replay") && (
+      {workspaceTab === "board" && (activeTab === "3d" || activeTab === "replay") && (
         <div className="fixed inset-0 z-50">
           <Simulation3D
             chessRef={chessRef}
