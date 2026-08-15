@@ -17,6 +17,7 @@ describe("minimax analysis trace", () => {
     expect(trace.selectedMove).toBeNull();
     expect(trace.evaluatedLeaves).toBeGreaterThan(0);
     expect(trace.nodes.every((node) => node.children.every((childId) => trace.nodes.some((child) => child.id === childId)))).toBe(true);
+    expect(trace.nodes.every((node) => ["material", "positional", "kingSafety"].every((key) => key in node.heuristics))).toBe(true);
     expect(legalMoves.length).toBeGreaterThan(0);
   });
 

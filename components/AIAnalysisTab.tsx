@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Chess } from "chess.js";
 import { buildMinimaxTrace, MinimaxSearchNode } from "@/lib/minimax";
+import MinimaxGraph3D from "@/components/MinimaxGraph3D";
 
 type LastBotMove = {
   uci: string;
@@ -42,6 +43,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
   const [speed, setSpeed] = useState(1);
   const [depth, setDepth] = useState(3);
   const [activeNodeIndex, setActiveNodeIndex] = useState(0);
+  const [viewMode, setViewMode] = useState<"board" | "graph">("board");
 
   const board = useMemo(() => {
     try {
@@ -110,10 +112,24 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
       </div>
 
       <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/50 p-3 light:border-slate-300 light:bg-white/70">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-semibold text-zinc-200 light:text-slate-800">Position under analysis</span>
-          <span className="font-mono text-[10px] text-zinc-500">{fen.split(" ")[1] === "b" ? "AI to move" : "player to move"}</span>
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <div>
+            <span className="text-xs font-semibold text-zinc-200 light:text-slate-800">Position under analysis</span>
+            <span className="ml-2 font-mono text-[10px] text-zinc-500">{fen.split(" ")[1] === "b" ? "AI to move" : "player to move"}</span>
+          </div>
+          <div className="flex rounded-md border border-zinc-700/80 bg-black/20 p-0.5 light:border-slate-300 light:bg-white/60">
+            <button type="button" onClick={() => setViewMode("board")} className={`rounded px-2 py-1 text-[10px] font-semibold ${viewMode === "board" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}>Board</button>
+            <button type="button" onClick={() => setViewMode("graph")} className={`rounded px-2 py-1 text-[10px] font-semibold ${viewMode === "graph" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}>3D Graph</button>
+          </div>
         </div>
+        {viewMode === "graph" ? (
+          <MinimaxGraph3D
+            trace={trace}
+            activeNodeIndex={safeActiveNodeIndex}
+            selectedNodeId={selectedNodeId}
+            onSelectNode={(nodeId) => { setSelectedNodeId(nodeId); const index = trace?.nodes.findIndex((node) => node.id === nodeId) ?? -1; if (index >= 0) setActiveNodeIndex(index); }}
+          />
+        ) : (
         <div className="mx-auto grid aspect-square w-full max-w-[300px] grid-cols-8 overflow-hidden rounded-lg border border-zinc-700 shadow-2xl light:border-slate-300">
           {board.flatMap((row, rankIndex) => row.map((piece, fileIndex) => {
             const square = `${String.fromCharCode(97 + fileIndex)}${8 - rankIndex}`;
@@ -133,8 +149,9 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
             );
           }))}
         </div>
+        )}
         <div className="mt-2 flex items-center justify-between gap-2 text-[10px]">
-          <span className="text-zinc-500">Cyan: candidate origin · Amber: destination</span>
+          <span className="text-zinc-500">{viewMode === "graph" ? "Drag to orbit · click a node for heuristic weights" : "Cyan: candidate origin · Amber: destination"}</span>
           {lastBotMove ? <span className="font-mono text-amber-300 light:text-amber-700">Last AI: {lastBotMove.san}</span> : null}
         </div>
       </div>

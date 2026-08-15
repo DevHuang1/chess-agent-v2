@@ -16,6 +16,11 @@ export type MinimaxSearchNode = {
   status: SearchNodeStatus;
   children: string[];
   explanation: string;
+  heuristics: {
+    material: number;
+    positional: number;
+    kingSafety: number;
+  };
 };
 
 export type MinimaxTrace = {
@@ -43,16 +48,58 @@ function perspectiveValue(pieceColor: "w" | "b", aiColor: "w" | "b", value: numb
   return pieceColor === aiColor ? value : -value;
 }
 
-export function evaluateMaterial(chess: Chess, aiColor: "w" | "b"): number {
-  let score = 0;
-  for (const row of chess.board()) {
-    for (const piece of row) {
-      if (piece) score += perspectiveValue(piece.color, aiColor, MATERIAL[piece.type]);
+function kingShield(chess: Chess, color: "w" | "b"): number {
+  const board = chess.board();
+  let kingFile = -1;
+  let kingRank = -1;
+  for (let rank = 0; rank < 8; rank++) {
+    for (let file = 0; file < 8; file++) {
+      const piece = board[rank][file];
+      if (piece?.type === "k" && piece.color === color) {
+        kingFile = file;
+        kingRank = rank;
+      }
     }
   }
+  if (kingFile < 0 || kingRank < 0) return 0;
+  let shield = 0;
+  for (let rank = Math.max(0, kingRank - 1); rank <= Math.min(7, kingRank + 1); rank++) {
+    for (let file = Math.max(0, kingFile - 1); file <= Math.min(7, kingFile + 1); file++) {
+      if (rank === kingRank && file === kingFile) continue;
+      if (board[rank][file]?.color === color) shield++;
+    }
+  }
+  return shield;
+}
+
+export function evaluateHeuristics(chess: Chess, aiColor: "w" | "b") {
+  let material = 0;
+  let positional = 0;
+  for (let rank = 0; rank < 8; rank++) {
+    for (let file = 0; file < 8; file++) {
+      const piece = chess.board()[rank][file];
+      if (!piece) continue;
+      material += perspectiveValue(piece.color, aiColor, MATERIAL[piece.type]);
+      const centerDistance = Math.abs(file - 3.5) + Math.abs(rank - 3.5);
+      const centerBonus = Math.round((3.5 - centerDistance) * 8);
+      const advancement = piece.type === "p" ? (piece.color === "w" ? 7 - rank : rank) * 3 : 0;
+      positional += perspectiveValue(piece.color, aiColor, centerBonus + advancement);
+    }
+  }
+
+  const whiteShield = kingShield(chess, "w");
+  const blackShield = kingShield(chess, "b");
+  let kingSafety = (aiColor === "w" ? whiteShield - blackShield : blackShield - whiteShield) * 18;
+  if (chess.isCheck()) kingSafety += chess.turn() === aiColor ? -120 : 120;
+
+  return { material, positional, kingSafety };
+}
+
+export function evaluateMaterial(chess: Chess, aiColor: "w" | "b"): number {
+  const heuristics = evaluateHeuristics(chess, aiColor);
   if (chess.isCheckmate()) return chess.turn() === aiColor ? -100_000 : 100_000;
   if (chess.isDraw() || chess.isStalemate()) return 0;
-  return score;
+  return heuristics.material + heuristics.positional + heuristics.kingSafety;
 }
 
 function moveOrderingScore(move: Move) {
@@ -105,6 +152,7 @@ export function buildMinimaxTrace(
     status: "exploring",
     children: [],
     explanation: `Minimax starts from the ${aiColor === "b" ? "AI" : "player"} side to move.`,
+    heuristics: evaluateHeuristics(rootChess, aiColor),
   });
 
   function search(chess: Chess, remainingDepth: number, alpha: number, beta: number, parentId: string, path: string[]): { score: number; pv: string[] } {
@@ -117,7 +165,8 @@ export function buildMinimaxTrace(
         node.alpha = alpha;
         node.beta = beta;
         node.status = "evaluated";
-        node.explanation = chess.isGameOver() ? "Terminal position evaluated." : "Leaf position evaluated by material balance.";
+        node.heuristics = evaluateHeuristics(chess, aiColor);
+        node.explanation = chess.isGameOver() ? "Terminal position evaluated." : "Leaf position evaluated by weighted heuristics.";
       }
       return { score, pv: path };
     }
@@ -144,6 +193,7 @@ export function buildMinimaxTrace(
         status: "exploring",
         children: [],
         explanation: `${maximizing ? "Max" : "Min"} considers ${applied.san}.`,
+        heuristics: evaluateHeuristics(childChess, aiColor),
       });
       const result = search(childChess, remainingDepth - 1, alpha, beta, child.id, [...path, applied.san]);
       child.score = result.score;
@@ -175,6 +225,7 @@ export function buildMinimaxTrace(
             status: "pruned",
             children: [],
             explanation: `Alpha–beta prunes ${prunedMove.san}; it cannot improve the parent choice.`,
+            heuristics: evaluateHeuristics(chess, aiColor),
           });
         }
         break;
@@ -187,6 +238,7 @@ export function buildMinimaxTrace(
       parent.alpha = alpha;
       parent.beta = beta;
       parent.status = "evaluated";
+      parent.heuristics = evaluateHeuristics(chess, aiColor);
       parent.explanation = `${maximizing ? "Max" : "Min"} backs up the best child score.`;
     }
     return { score: Number.isFinite(bestScore) ? bestScore : 0, pv: bestPv };
