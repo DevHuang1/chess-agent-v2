@@ -22,6 +22,81 @@ import { validateDropTarget } from "@/lib/dropValidation";
 
 type HandLandmark = [number, number, number];
 type Gesture = "none" | "fist" | "palm";
+type LightingPresetName = "studio" | "warm" | "cool" | "dramatic";
+
+type LightingPreset = {
+  ambientColor: number;
+  ambientIntensity: number;
+  keyColor: number;
+  keyIntensity: number;
+  rimColor: number;
+  rimIntensity: number;
+  fillColor: number;
+  fillIntensity: number;
+  humanColor: number;
+  humanIntensity: number;
+  robotColor: number;
+  robotIntensity: number;
+};
+
+const LIGHTING_PRESETS: Record<LightingPresetName, LightingPreset> = {
+  studio: {
+    ambientColor: 0xffffff,
+    ambientIntensity: 0.7,
+    keyColor: 0xfff5e6,
+    keyIntensity: 2.4,
+    rimColor: 0x38bdf8,
+    rimIntensity: 0.85,
+    fillColor: 0xf59e0b,
+    fillIntensity: 0.28,
+    humanColor: 0xffb45b,
+    humanIntensity: 0.18,
+    robotColor: 0x22d3ee,
+    robotIntensity: 0.24,
+  },
+  warm: {
+    ambientColor: 0xffe7c2,
+    ambientIntensity: 0.78,
+    keyColor: 0xffc078,
+    keyIntensity: 2.7,
+    rimColor: 0xff8a4c,
+    rimIntensity: 0.52,
+    fillColor: 0xf59e0b,
+    fillIntensity: 0.42,
+    humanColor: 0xff9d5b,
+    humanIntensity: 0.3,
+    robotColor: 0xffb347,
+    robotIntensity: 0.12,
+  },
+  cool: {
+    ambientColor: 0xc9e7ff,
+    ambientIntensity: 0.82,
+    keyColor: 0xb9ddff,
+    keyIntensity: 2.15,
+    rimColor: 0x4f9cff,
+    rimIntensity: 1.15,
+    fillColor: 0x38bdf8,
+    fillIntensity: 0.32,
+    humanColor: 0x60a5fa,
+    humanIntensity: 0.16,
+    robotColor: 0x67e8f9,
+    robotIntensity: 0.34,
+  },
+  dramatic: {
+    ambientColor: 0x718096,
+    ambientIntensity: 0.42,
+    keyColor: 0xffe0ad,
+    keyIntensity: 3.05,
+    rimColor: 0x2563eb,
+    rimIntensity: 1.35,
+    fillColor: 0x7c3aed,
+    fillIntensity: 0.2,
+    humanColor: 0xf97316,
+    humanIntensity: 0.22,
+    robotColor: 0x06b6d4,
+    robotIntensity: 0.38,
+  },
+};
 
 const BOARD_SIZE = 8;
 const SQUARE_SIZE = 1;
@@ -894,8 +969,25 @@ export default function Simulation3D({
   const [calibMode, setCalibMode] = useState<"off" | "top" | "bottom">("off");
   const calibRef = useRef<{ topY: number | null; bottomY: number | null }>({ topY: null, bottomY: null });
   const lastHandPosRef = useRef<{ x: number; y: number } | null>(null);
+  const [lightingPreset, setLightingPreset] = useState<LightingPresetName>("studio");
+  const [lightingStrength, setLightingStrength] = useState(1);
+  const [shadowsEnabled, setShadowsEnabled] = useState(true);
+  const lightingSettingsRef = useRef({
+    preset: "studio" as LightingPresetName,
+    strength: 1,
+    shadows: true,
+  });
 
   const triggerRerender = useCallback(() => forceUpdate((n) => n + 1), []);
+
+  // Keep lighting controls in refs so the render loop can apply them without
+  // pushing per-frame values through React state.
+  // eslint-disable-next-line react-hooks/refs
+  lightingSettingsRef.current = {
+    preset: lightingPreset,
+    strength: lightingStrength,
+    shadows: shadowsEnabled,
+  };
 
   const rebuildPieces = useCallback((chess: Chess, scene: THREE.Scene, pieces: Map<string, THREE.Group>) => {
     for (const [, mesh] of pieces) scene.remove(mesh);
@@ -1043,6 +1135,21 @@ export default function Simulation3D({
     const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.85);
     rimLight.position.set(-6, 8, -8);
     scene.add(rimLight);
+
+    // Localized lights give the figures readable silhouettes and let active
+    // gestures create a soft, responsive pool of light near the board.
+    const fillLight = new THREE.PointLight(0xf59e0b, 0.28, 18, 2);
+    fillLight.position.set(0, 5.5, 2.5);
+    scene.add(fillLight);
+    const humanLight = new THREE.PointLight(0xffb45b, 0.18, 7, 2);
+    humanLight.position.set(0, 2.7, 5.2);
+    scene.add(humanLight);
+    const robotLight = new THREE.PointLight(0x22d3ee, 0.24, 7, 2);
+    robotLight.position.set(0, 3.2, -4.4);
+    scene.add(robotLight);
+    const interactionLight = new THREE.PointLight(0x7dd3fc, 0, 5.5, 2);
+    interactionLight.position.set(0, 1.7, 0);
+    scene.add(interactionLight);
 
     // Studio pedestal table surface
     const pedestal = new THREE.Mesh(
@@ -1229,9 +1336,35 @@ export default function Simulation3D({
     function setHandWorld(worldPos: THREE.Vector3) {
       robotHand.position.copy(worldPos).sub(robot.position);
     }
-    robotHand.position.set(0.6, 1.2, 0.6);
+    robotHand.position.set(0.6, 1.75, 0.6);
 
     let robotAnim: RobotAnim | null = null;
+    let appliedLightingSignature = "";
+
+    function applyLightingSettings() {
+      const settings = lightingSettingsRef.current;
+      const preset = LIGHTING_PRESETS[settings.preset];
+      const signature = `${settings.preset}:${settings.strength}:${settings.shadows}`;
+      if (signature === appliedLightingSignature) return;
+      appliedLightingSignature = signature;
+      const strength = settings.strength;
+      ambient.color.setHex(preset.ambientColor);
+      ambient.intensity = preset.ambientIntensity * strength;
+      keyLight.color.setHex(preset.keyColor);
+      keyLight.intensity = preset.keyIntensity * strength;
+      rimLight.color.setHex(preset.rimColor);
+      rimLight.intensity = preset.rimIntensity * strength;
+      fillLight.color.setHex(preset.fillColor);
+      fillLight.intensity = preset.fillIntensity * strength;
+      humanLight.color.setHex(preset.humanColor);
+      humanLight.intensity = preset.humanIntensity * strength;
+      robotLight.color.setHex(preset.robotColor);
+      robotLight.intensity = preset.robotIntensity * strength;
+      const shadows = settings.shadows && !isLowPowerDevice;
+      renderer.shadowMap.enabled = shadows;
+      keyLight.castShadow = shadows;
+      renderer.shadowMap.needsUpdate = true;
+    }
 
     function startRobotAnim(fromSq: string, toSq: string, flags: string, done: () => void) {
       robotAnimatingRef.current = true;
@@ -1391,6 +1524,7 @@ export default function Simulation3D({
                 processHand(lm, rawGesture);
               } else {
                 handActiveRef.current = false;
+                activeGesture = "none";
                 setHandActive(false);
                 setGestureLabel("");
                 destHighlight.visible = false;
@@ -1423,6 +1557,7 @@ export default function Simulation3D({
     }
 
     const handActiveRef = { current: false };
+    let activeGesture: Gesture = "none";
     let grabbedPieceSquare: string | null = null;
     let stableGesture: Gesture = "none";
     let stableCount = 0;
@@ -1664,6 +1799,7 @@ export default function Simulation3D({
         stableCount = 0;
       }
       const gesture: Gesture = stableCount >= GESTURE_CONFIRMATION_FRAMES ? stableGesture : "none";
+      activeGesture = gesture;
 
       // MediaPipe returns normalized [0..1] landmark coordinates.
       const handX = lm[9][0];
@@ -2052,12 +2188,18 @@ export default function Simulation3D({
     let robotGrip = 0.08;
     const humanHandTargetLocal = new THREE.Vector3();
     const humanHandTargetWorld = new THREE.Vector3();
+    const interactionTarget = new THREE.Vector3();
+    const humanFocusTarget = new THREE.Vector3();
+    const robotFocusTarget = new THREE.Vector3();
+    const interactionLightOrigin = new THREE.Vector3(0, 1.7, 0);
     setStatusMessage("Entering 3D Mode — Morphing 2D board to 3D arena...");
 
     function animate(now = performance.now()) {
       animRef.current = requestAnimationFrame(animate);
       const deltaSeconds = Math.min(0.05, Math.max(0.001, (now - previousFrameTime) / 1000));
       previousFrameTime = now;
+
+      applyLightingSettings();
 
       // Watchdog: if the robot is flagged busy but no animation object exists,
       // the flag got stuck — clear it so gestures can never be blocked forever.
@@ -2131,12 +2273,42 @@ export default function Simulation3D({
       // Small idle motions keep both figures alive without competing with the
       // hand and arm choreography. The motion is intentionally restrained so
       // the chessboard remains the visual focus.
+      const playerEngagement = grabbedPieceSquare
+        ? 1
+        : handActiveRef.current
+          ? activeGesture === "palm"
+            ? 0.7
+            : activeGesture === "fist"
+              ? 0.9
+              : 0.35
+          : 0;
+      const robotEngagement = robotAnim ? 1 : playerEngagement * 0.72;
+      interactionTarget.set(
+        finger3dRef.current?.x ?? 0,
+        1.65,
+        finger3dRef.current?.z ?? 0,
+      );
+      if (grabbedPieceSquare) {
+        interactionTarget.copy(squareToPosition(grabbedPieceSquare));
+        interactionTarget.y = 1.8;
+      }
+      humanFocusTarget.set(
+        THREE.MathUtils.clamp(interactionTarget.x * 0.038, -0.22, 0.22),
+        THREE.MathUtils.clamp(-interactionTarget.z * 0.018, -0.08, 0.08),
+        0,
+      );
+      robotFocusTarget.set(
+        THREE.MathUtils.clamp(-interactionTarget.x * 0.032, -0.18, 0.18),
+        THREE.MathUtils.clamp(-interactionTarget.z * 0.014, -0.06, 0.06),
+        0,
+      );
       const humanBreath = Math.sin(now * 0.00155);
       humanIdle.torso.rotation.z = humanBreath * 0.008;
       humanIdle.chest.position.y = 1.44 + humanBreath * 0.006;
-      humanIdle.head.rotation.y = humanBreath * 0.018;
+      humanIdle.head.rotation.y = humanBreath * 0.018 + humanFocusTarget.x * playerEngagement;
+      humanIdle.head.rotation.x = humanFocusTarget.y * playerEngagement;
       humanIdle.head.rotation.z = Math.sin(now * 0.0011) * 0.008;
-      humanIdle.jaw.rotation.z = Math.sin(now * 0.0013) * 0.004;
+      humanIdle.jaw.rotation.z = Math.sin(now * 0.0013) * 0.004 + playerEngagement * 0.012;
       humanIdle.hair.rotation.y = humanBreath * 0.012;
       const blinkPhase = Math.sin(now * 0.00118);
       const blink = Math.abs(blinkPhase) > 0.985 ? 0.12 : 1;
@@ -2145,13 +2317,22 @@ export default function Simulation3D({
 
       const robotBreath = Math.sin(now * 0.00125);
       robotIdle.torso.rotation.z = robotBreath * 0.006;
-      robotIdle.head.rotation.y = Math.sin(now * 0.0009) * 0.014;
+      robotIdle.head.rotation.y = Math.sin(now * 0.0009) * 0.014 + robotFocusTarget.x * robotEngagement;
+      robotIdle.head.rotation.x = robotFocusTarget.y * robotEngagement;
       robotIdle.head.rotation.z = robotBreath * 0.006;
       robotIdle.chestCore.scale.setScalar(1 + Math.sin(now * 0.004) * 0.08);
       robotIdle.chestCoreRing.rotation.z += deltaSeconds * 0.45;
       robotIdle.antennaBall.scale.setScalar(1 + Math.sin(now * 0.005) * 0.08);
       const robotVisorMaterial = (robotIdle.visor as THREE.Mesh).material as THREE.MeshStandardMaterial;
-      robotVisorMaterial.emissiveIntensity = 1.15 + Math.sin(now * 0.003) * 0.18;
+      robotVisorMaterial.emissiveIntensity = 1.15 + Math.sin(now * 0.003) * 0.18 + robotEngagement * 0.32;
+      interactionLight.position.lerpVectors(
+        interactionLightOrigin,
+        interactionTarget,
+        Math.min(1, deltaSeconds * 4),
+      );
+      interactionLight.intensity = robotEngagement * (0.38 + Math.sin(now * 0.006) * 0.08) * lightingSettingsRef.current.strength;
+      humanLight.intensity = (LIGHTING_PRESETS[lightingSettingsRef.current.preset].humanIntensity + playerEngagement * 0.18) * lightingSettingsRef.current.strength;
+      robotLight.intensity = (LIGHTING_PRESETS[lightingSettingsRef.current.preset].robotIntensity + robotEngagement * 0.2) * lightingSettingsRef.current.strength;
 
       // Robot arm follows the hand
       {
@@ -2176,8 +2357,13 @@ export default function Simulation3D({
       humanSetGrip(humanGrip);
       humanHand.rotation.z = THREE.MathUtils.lerp(
         humanHand.rotation.z,
-        grabbedPieceSquare ? -0.12 : 0.08,
+        grabbedPieceSquare ? -0.12 : activeGesture === "palm" ? 0.02 : 0.08,
         1 - Math.exp(-8 * deltaSeconds),
+      );
+      humanHand.rotation.x = THREE.MathUtils.lerp(
+        humanHand.rotation.x,
+        activeGesture === "palm" ? -0.12 : grabbedPieceSquare ? 0.16 : 0,
+        1 - Math.exp(-7 * deltaSeconds),
       );
       humanHandMat.emissiveIntensity = humanGrip * 0.8;
       {
@@ -2381,6 +2567,56 @@ export default function Simulation3D({
           <span className="block px-1 pt-1 text-[10px] uppercase tracking-wider text-zinc-400 font-mono light:text-slate-500">
             Camera
           </span>
+        </div>
+        <div className="absolute top-52 right-4 z-20 w-48 rounded-lg border border-zinc-700/60 bg-black/55 p-3 text-xs text-zinc-200 backdrop-blur-sm shadow-xl light:bg-white/85 light:border-slate-300 light:text-slate-700">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="font-semibold tracking-wide">Scene lighting</span>
+            <span className="text-[10px] uppercase tracking-wider text-cyan-300 light:text-cyan-700">Live</span>
+          </div>
+          <label className="mb-2 block">
+            <span className="mb-1 block text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500">Preset</span>
+            <select
+              id="lighting-preset"
+              value={lightingPreset}
+              onChange={(event) => {
+                const next = event.target.value as LightingPresetName;
+                setLightingPreset(next);
+                setStatusMessage(`Lighting preset: ${next}`);
+              }}
+              className="w-full rounded border border-zinc-600 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-100 outline-none light:border-slate-300 light:bg-white light:text-slate-800"
+            >
+              <option value="studio">Studio</option>
+              <option value="warm">Warm gallery</option>
+              <option value="cool">Cool rim</option>
+              <option value="dramatic">Dramatic</option>
+            </select>
+          </label>
+          <label className="mb-2 block">
+            <span className="mb-1 flex justify-between text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500">
+              <span>Intensity</span>
+              <span>{lightingStrength.toFixed(1)}×</span>
+            </span>
+            <input
+              id="lighting-intensity"
+              type="range"
+              min="0.55"
+              max="1.35"
+              step="0.05"
+              value={lightingStrength}
+              onChange={(event) => setLightingStrength(Number(event.target.value))}
+              className="w-full accent-cyan-400"
+            />
+          </label>
+          <label className="flex items-center justify-between text-[11px]">
+            <span>Contact shadows</span>
+            <input
+              id="lighting-shadows"
+              type="checkbox"
+              checked={shadowsEnabled}
+              onChange={(event) => setShadowsEnabled(event.target.checked)}
+              className="accent-cyan-400"
+            />
+          </label>
         </div>
       </div>
     </div>

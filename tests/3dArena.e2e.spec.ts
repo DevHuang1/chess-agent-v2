@@ -117,6 +117,27 @@ test.describe("3D arena", () => {
     expect(result.e4Position![2]).not.toBe(initial.e2Position![2]);
   });
 
+  test("controls live lighting intensity, presets, and shadows", async ({ page }) => {
+    await enter3DArena(page);
+
+    await expect(page.getByText("Scene lighting", { exact: true })).toBeVisible();
+    const preset = page.locator("#lighting-preset");
+    await expect(preset).toHaveValue("studio");
+    await preset.selectOption("dramatic");
+    await expect(preset).toHaveValue("dramatic");
+
+    const intensity = page.locator("#lighting-intensity");
+    await intensity.fill("1.25");
+    await expect(intensity).toHaveValue("1.25");
+
+    const shadows = page.locator("#lighting-shadows");
+    await expect(shadows).toBeChecked();
+    await shadows.uncheck();
+    await expect(shadows).not.toBeChecked();
+    await shadows.check();
+    await expect(shadows).toBeChecked();
+  });
+
   test("hides a captured piece during robot choreography and restores the final board", async ({ page }) => {
     await enter3DArena(page);
     await getDebug(page);
