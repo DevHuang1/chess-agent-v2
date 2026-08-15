@@ -674,6 +674,8 @@ export default function Simulation3D({
   const legalRef = useRef<string[]>([]);
   const hoveredRef = useRef<string | null>(null);
   const robotAnimatingRef = useRef(false);
+  const playerAnimatingRef = useRef(false);
+  const pendingGamePositionRef = useRef<string | null>(null);
   const firstRunRef = useRef(true);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   const [legalSquares, setLegalSquares] = useState<string[]>([]);
@@ -718,6 +720,11 @@ export default function Simulation3D({
   useEffect(() => {
     const s = sceneRef.current;
     if (!s) return;
+    if (playerAnimatingRef.current) {
+      pendingGamePositionRef.current = gamePosition;
+      return;
+    }
+    pendingGamePositionRef.current = null;
     if (robotAnimatingRef.current) {
       cancelAnimationsRef.current();
     }
@@ -1205,6 +1212,8 @@ export default function Simulation3D({
     function cancelActiveAnimations() {
       robotAnim = null;
       robotAnimatingRef.current = false;
+      playerAnimatingRef.current = false;
+      pendingGamePositionRef.current = null;
       if (gestureAnim && grabbedPieceSquare) {
         gestureAnim.piece.position.copy(squareToPosition(grabbedPieceSquare));
       }
@@ -1262,7 +1271,7 @@ export default function Simulation3D({
         setSelectedSquare(from);
         setLegalSquares(legalTargets);
         updateLegalDots(legalTargets);
-        dropPiece(to);
+        releaseHeldPiece(to);
         return true;
       };
 
@@ -1277,6 +1286,8 @@ export default function Simulation3D({
           robotSegment: robotAnim?.seg ?? -1,
           robotProgress: robotAnim?.t ?? 0,
           robotCaptureHidden: Boolean(robotAnim?.capturedPiece && !robotAnim.capturedPiece.visible),
+          e2Position: pieces.get("e2") ? pieces.get("e2")!.position.toArray() : null,
+          e4Position: pieces.get("e4") ? pieces.get("e4")!.position.toArray() : null,
           pieceCount: Array.from(pieces.values()).filter((piece) => piece.visible).length,
           sceneChildren: scene.children.length,
         }),
@@ -1295,6 +1306,8 @@ export default function Simulation3D({
           const move = chessRef.current.move({ from: fromSq as Square, to: toSq as Square, promotion: "q" });
           if (move) {
             const targetPos = squareToPosition(toSq);
+            playerAnimatingRef.current = true;
+            pendingGamePositionRef.current = chessRef.current.fen();
             gestureAnim = {
               piece: grabbed,
               from: grabbed.position.clone(),
@@ -1302,6 +1315,8 @@ export default function Simulation3D({
               progress: 0,
               arcHeight: 0.6,
               done: () => {
+                playerAnimatingRef.current = false;
+                pendingGamePositionRef.current = null;
                 setStatusMessage(`3D Move: ${move.san}`);
                 rebuildPieces(chessRef.current, scene, pieces);
                 onMoveRef.current();
@@ -1316,6 +1331,8 @@ export default function Simulation3D({
       }
 
       if (!moveSuccess) {
+        playerAnimatingRef.current = false;
+        pendingGamePositionRef.current = null;
         const origPos = squareToPosition(fromSq);
         gestureAnim = {
           piece: grabbed,
@@ -1345,6 +1362,11 @@ export default function Simulation3D({
       cursorRing.visible = false;
       humanHandFollowTarget.copy(HUMAN_HAND_REST);
       setHoveredSquare(null);
+    }
+
+    function releaseHeldPiece(cursorSq: string | null) {
+      const target = cursorSq && legalRef.current.includes(cursorSq) ? cursorSq : null;
+      dropPiece(target);
     }
 
     function processHand(lm: HandLandmark[], rawGesture: Gesture) {
@@ -1503,10 +1525,10 @@ export default function Simulation3D({
 
       if (gesture === "palm") {
         setGestureLabel("Palm");
-        // Open palm while holding releases the piece back to its square —
-        // the way to cancel a grab instead of placing it.
+        // Open palm releases onto a legal square. An open palm away from a
+        // legal target remains a deliberate cancellation.
         if (holding) {
-          dropPiece(null);
+          releaseHeldPiece(cursorSq);
         }
       } else if (gesture === "fist") {
         setGestureLabel("Fist");

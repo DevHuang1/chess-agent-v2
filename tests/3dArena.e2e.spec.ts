@@ -5,6 +5,8 @@ type SceneSnapshot = {
   playerAnimating: boolean;
   robotAnimating: boolean;
   robotCaptureHidden: boolean;
+  e2Position: [number, number, number] | null;
+  e4Position: [number, number, number] | null;
   pieceCount: number;
   sceneChildren: number;
 };
@@ -63,6 +65,7 @@ test.describe("3D arena", () => {
   test("animates a legal player move and commits it to the live chess state", async ({ page }) => {
     await enter3DArena(page);
     await getDebug(page);
+    const initial = await snapshot(page);
 
     const accepted = await page.evaluate(() => window.__sentio3dDebug!.selectAndMove("e2", "e4"));
     expect(accepted).toBe(true);
@@ -71,6 +74,9 @@ test.describe("3D arena", () => {
 
     const result = await snapshot(page);
     expect(result.fen).toContain("4P3");
+    expect(result.e2Position).toBeNull();
+    expect(result.e4Position).not.toBeNull();
+    expect(result.e4Position![2]).not.toBe(initial.e2Position![2]);
     expect(result.pieceCount).toBe(32);
   });
 
