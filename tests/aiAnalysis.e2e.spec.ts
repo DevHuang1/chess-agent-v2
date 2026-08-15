@@ -10,6 +10,10 @@ test("opens the connected AI minimax analysis tab", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Expand game controller" })).toBeVisible();
   await page.getByRole("button", { name: "Expand game controller" }).click();
   await expect(page.getByRole("button", { name: "Collapse game controller" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Expand game controller width" })).toBeVisible();
+  await page.getByRole("button", { name: "Expand game controller width" }).click();
+  await expect(page.getByRole("button", { name: "Use compact game controller" })).toBeVisible();
+  await page.getByRole("button", { name: "Use compact game controller" }).click();
 
   await page.getByRole("button", { name: "AI Lab" }).click();
   await expect(page.getByText("Minimax Flight Recorder", { exact: true })).toBeVisible();

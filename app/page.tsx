@@ -388,6 +388,7 @@ export default function ChessPage() {
 
   const [activeTab, setActiveTab] = useState<SidebarTab>("coach");
   const [controllerExpanded, setControllerExpanded] = useState(true);
+  const [controllerWide, setControllerWide] = useState(false);
 
   const [pieceDesign, setPieceDesign] = useState<PieceDesignKey>("chesscom");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -1437,7 +1438,7 @@ export default function ChessPage() {
         </div>
       </section>
 
-<aside className={`controller-panel ${controllerExpanded ? "controller-panel-expanded w-[440px]" : "controller-panel-collapsed w-[72px] px-2"} flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90`} data-controller-expanded={controllerExpanded}>
+<aside className={`controller-panel ${controllerExpanded ? (controllerWide ? "controller-panel-wide" : "controller-panel-expanded w-[440px]") : "controller-panel-collapsed w-[72px] px-2"} flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90`} data-controller-expanded={controllerExpanded} data-controller-wide={controllerWide}>
         <div className={`flex items-center ${controllerExpanded ? "justify-between" : "justify-center"} mb-2`}>
           {controllerExpanded ? (
             <div className="min-w-0">
@@ -1457,6 +1458,18 @@ export default function ChessPage() {
                 Reset Game
               </button>
             ) : null}
+            {controllerExpanded ? (
+              <button
+                type="button"
+                aria-label={controllerWide ? "Use compact game controller" : "Expand game controller width"}
+                aria-pressed={controllerWide}
+                onClick={() => setControllerWide((wide) => !wide)}
+                className="controller-wide-toggle rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-cyan-400/50 hover:bg-zinc-800 hover:text-cyan-200 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-cyan-700"
+                title={controllerWide ? "Use compact controller width" : "Expand controller for a larger view"}
+              >
+                {controllerWide ? "Compact" : "Wide"}
+              </button>
+            ) : null}
             <button
               type="button"
               aria-label={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
@@ -1471,7 +1484,7 @@ export default function ChessPage() {
         </div>
 
         {controllerExpanded ? (
-          <div className="controller-content min-h-0 flex-1">
+          <div className={`controller-content ${controllerWide ? "controller-wide-mode" : ""} min-h-0 flex-1`}>
         <div className="mt-2">
           {/* eslint-disable-next-line react-hooks/refs */}
           <GameInfo moves={chessRef.current.history({ verbose: true })} />
