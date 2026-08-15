@@ -1438,6 +1438,7 @@ export default function ChessPage() {
             theme={theme}
             onMoveExecuted={() => {
               const nextFen = chessRef.current.fen();
+              setGamePosition(nextFen);
               setSelectedSquare(null);
               setLegalMoveSquares([]);
               updateGameOutcome(chessRef.current);

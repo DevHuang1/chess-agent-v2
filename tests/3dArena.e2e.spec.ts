@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 type SceneSnapshot = {
   fen: string;
+  reactGamePosition: string;
   playerAnimating: boolean;
   robotAnimating: boolean;
   robotCaptureHidden: boolean;
@@ -77,6 +78,7 @@ test.describe("3D arena", () => {
 
     const result = await snapshot(page);
     expect(result.fen).toContain("4P3");
+    expect(result.reactGamePosition).toContain("4P3");
     expect(result.e2Position).toBeNull();
     expect(result.e4Position).not.toBeNull();
     expect(result.e4Position![2]).not.toBe(initial.e2Position![2]);
@@ -98,12 +100,18 @@ test.describe("3D arena", () => {
     await page.mouse.up();
 
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(true);
+    await page.waitForTimeout(120);
     const during = await snapshot(page);
     expect(during.fen).not.toContain("4P3");
+    expect(during.reactGamePosition).not.toContain("4P3");
+    expect(during.e2Position).not.toBeNull();
+    expect(during.e2Position![2]).not.toBe(initial.e2Position![2]);
+    expect(during.e4Position).toBeNull();
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(false, { timeout: 5_000 });
 
     const result = await snapshot(page);
     expect(result.fen).toContain("4P3");
+    expect(result.reactGamePosition).toContain("4P3");
     expect(result.e2Position).toBeNull();
     expect(result.e4Position).not.toBeNull();
     expect(result.e4Position![2]).not.toBe(initial.e2Position![2]);

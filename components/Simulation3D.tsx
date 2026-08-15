@@ -774,6 +774,7 @@ export default function Simulation3D({
   const robotAnimatingRef = useRef(false);
   const playerAnimatingRef = useRef(false);
   const pendingGamePositionRef = useRef<string | null>(null);
+  const gamePositionRef = useRef(gamePosition);
   const firstRunRef = useRef(true);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   const [legalSquares, setLegalSquares] = useState<string[]>([]);
@@ -860,6 +861,8 @@ export default function Simulation3D({
   useEffect(() => { onMoveRef.current = onMoveExecuted; }, [onMoveExecuted]);
 
   // Sync refs during render so the detect loop closure has up-to-date values
+  // eslint-disable-next-line react-hooks/refs
+  gamePositionRef.current = gamePosition;
   // eslint-disable-next-line react-hooks/refs
   selectedRef.current = selectedSquare;
   // eslint-disable-next-line react-hooks/refs
@@ -1393,6 +1396,7 @@ export default function Simulation3D({
         },
         getSnapshot: () => ({
           fen: chessRef.current.fen(),
+          reactGamePosition: gamePositionRef.current,
           playerAnimating: Boolean(gestureAnim),
           robotAnimating: Boolean(robotAnim),
           robotSegment: robotAnim?.seg ?? -1,
@@ -1454,8 +1458,13 @@ export default function Simulation3D({
                   return;
                 }
                 setStatusMessage(`3D Move: ${committedMove.san}`);
-                rebuildPieces(chessRef.current, scene, pieces);
+                // Publish while the transaction is still marked active. The
+                // parent updates React's FEN, and this component's effect will
+                // rebuild once from the committed chess state after the
+                // animation instead of racing a second imperative rebuild.
                 onMoveRef.current();
+                playerAnimatingRef.current = false;
+                pendingGamePositionRef.current = null;
                 triggerRerender();
               },
             };
