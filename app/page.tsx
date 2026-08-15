@@ -1350,7 +1350,7 @@ export default function ChessPage() {
         </div>
       </section>
 
-      <aside className={`flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md transition-[width,padding] duration-300 ease-out light:border-slate-300 light:bg-white/90 ${controllerExpanded ? "w-[440px]" : "w-[72px] px-2"}`}>
+      <aside className={`controller-panel ${controllerExpanded ? "controller-panel-expanded w-[440px]" : "controller-panel-collapsed w-[72px] px-2"} flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90`} data-controller-expanded={controllerExpanded}>
         <div className={`flex items-center ${controllerExpanded ? "justify-between" : "justify-center"} mb-2`}>
           {controllerExpanded ? (
             <div className="min-w-0">
@@ -1375,7 +1375,7 @@ export default function ChessPage() {
               aria-label={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
               aria-expanded={controllerExpanded}
               onClick={() => setControllerExpanded((expanded) => !expanded)}
-              className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-amber-500/50 hover:bg-zinc-800 hover:text-amber-300 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
+              className="controller-toggle rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-amber-500/50 hover:bg-zinc-800 hover:text-amber-300 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
               title={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
             >
               {controllerExpanded ? "›" : "‹"}
@@ -1384,7 +1384,7 @@ export default function ChessPage() {
         </div>
 
         {controllerExpanded ? (
-          <>
+          <div className="controller-content min-h-0 flex-1">
         <div className="mt-2">
           {/* eslint-disable-next-line react-hooks/refs */}
           <GameInfo moves={chessRef.current.history({ verbose: true })} />
@@ -1654,9 +1654,9 @@ export default function ChessPage() {
             </div>
           )}
         </div>
-          </>
+          </div>
         ) : (
-          <div className="mt-4 flex flex-1 flex-col items-center gap-3 text-center">
+          <div className="controller-rail mt-4 flex flex-1 flex-col items-center gap-3 text-center">
             <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500 [writing-mode:vertical-rl] light:text-slate-500">Controller</span>
             <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" title={statusMessage} />
           </div>
