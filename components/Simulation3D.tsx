@@ -459,142 +459,203 @@ function createRobot(): THREE.Group {
   const group = new THREE.Group();
 
   const bodyMat = new THREE.MeshStandardMaterial({
-    color: 0xc8d1dd,
-    roughness: 0.42,
-    metalness: 0.6,
+    color: 0xb8c5d1,
+    roughness: 0.28,
+    metalness: 0.82,
+  });
+  const edgeMat = new THREE.MeshStandardMaterial({
+    color: 0xe2e8f0,
+    roughness: 0.22,
+    metalness: 0.9,
   });
   const darkMat = new THREE.MeshStandardMaterial({
-    color: 0x243447,
-    roughness: 0.38,
-    metalness: 0.45,
+    color: 0x172234,
+    roughness: 0.3,
+    metalness: 0.62,
+  });
+  const rubberMat = new THREE.MeshStandardMaterial({
+    color: 0x070b12,
+    roughness: 0.82,
+    metalness: 0.05,
   });
   const accentMat = new THREE.MeshStandardMaterial({
-    color: 0x0f172a,
-    roughness: 0.5,
-    metalness: 0.25,
+    color: 0x0b1220,
+    roughness: 0.38,
+    metalness: 0.48,
   });
   const handMat = new THREE.MeshStandardMaterial({
-    color: 0x22d3ee,
-    emissive: 0x22d3ee,
-    emissiveIntensity: 0.3,
-    roughness: 0.25,
-    metalness: 0.6,
+    color: 0x38d9f3,
+    emissive: 0x0e7490,
+    emissiveIntensity: 0.28,
+    roughness: 0.2,
+    metalness: 0.74,
   });
   const glowMat = new THREE.MeshStandardMaterial({
-    color: 0x67e8f9,
+    color: 0x9ff5ff,
     emissive: 0x22d3ee,
-    emissiveIntensity: 1.5,
-    roughness: 0.3,
-    metalness: 0.1,
+    emissiveIntensity: 1.35,
+    roughness: 0.18,
+    metalness: 0.22,
   });
 
-  // Pedestal with a glowing rim ring and recessed hatch
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.92, 1.08, 0.28, 24), darkMat);
+  // Layered base gives the machine a believable weight and a visible service seam.
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.92, 1.08, 0.28, 32), rubberMat);
   base.position.y = 0.14;
-  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(1.0, 0.045, 10, 28), glowMat);
+  const baseDeck = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.9, 0.09, 32), darkMat);
+  baseDeck.position.y = 0.32;
+  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(0.92, 0.04, 10, 32), glowMat);
   baseRing.rotation.x = Math.PI / 2;
-  baseRing.position.y = 0.31;
-  const baseHatch = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 0.05, 18), accentMat);
-  baseHatch.position.y = 0.06;
+  baseRing.position.y = 0.36;
+  const baseHatch = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.52, 0.045, 24), accentMat);
+  baseHatch.position.set(0, 0.31, 0.04);
+  const baseHatchLine = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.012, 0.025), edgeMat);
+  baseHatchLine.position.set(0, 0.34, 0.04);
 
-  // Torso with glowing chest core, chest panel and waist band
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.54, 0.72, 1.4, 20), bodyMat);
-  torso.position.y = 1.02;
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.18, 14), darkMat);
-  neck.position.y = 1.78;
-  const shoulderBoltR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 10, 8), glowMat);
-  shoulderBoltR.position.set(0.66, 1.62, 0.18);
+  // Mechanical lower body: pelvis, thigh actuators, knee caps, shins and feet.
+  const pelvis = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.34, 0.58), darkMat);
+  pelvis.position.y = 0.56;
+  pelvis.rotation.y = Math.PI / 4;
+  const hipBand = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.035, 8, 24), edgeMat);
+  hipBand.rotation.x = Math.PI / 2;
+  hipBand.position.y = 0.68;
+  const thighL = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.34, 6, 12), bodyMat);
+  thighL.position.set(-0.26, 0.85, 0);
+  const thighR = thighL.clone();
+  thighR.position.x = 0.26;
+  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 12), darkMat);
+  kneeL.position.set(-0.26, 1.14, 0.08);
+  const kneeR = kneeL.clone();
+  kneeR.position.x = 0.26;
+  const shinL = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.42, 6, 12), edgeMat);
+  shinL.position.set(-0.26, 1.36, 0);
+  const shinR = shinL.clone();
+  shinR.position.x = 0.26;
+  const footL = new THREE.Mesh(new THREE.BoxGeometry(0.31, 0.18, 0.55), rubberMat);
+  footL.position.set(-0.26, 0.1, 0.14);
+  const footR = footL.clone();
+  footR.position.x = 0.26;
+  const footPlateL = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.025, 0.36), edgeMat);
+  footPlateL.position.set(-0.26, 0.2, 0.15);
+  const footPlateR = footPlateL.clone();
+  footPlateR.position.x = 0.26;
+
+  // Torso shell with a dark underframe, shoulder line and layered chest electronics.
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.54, 0.72, 1.12, 24), bodyMat);
+  torso.position.y = 1.86;
+  const torsoUnderframe = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.6, 1.18, 20), darkMat);
+  torsoUnderframe.position.set(0, 1.84, -0.035);
+  const chestArmor = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.72, 0.14), edgeMat);
+  chestArmor.position.set(0, 1.94, 0.5);
+  chestArmor.rotation.x = -0.08;
+  const chestPanel = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.24, 0.055), accentMat);
+  chestPanel.position.set(0, 2.08, 0.585);
+  const chestCore = new THREE.Mesh(new THREE.CircleGeometry(0.16, 28), glowMat);
+  chestCore.position.set(0, 1.82, 0.59);
+  const chestCoreRing = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.024, 8, 24), glowMat);
+  chestCoreRing.rotation.x = Math.PI / 2;
+  chestCoreRing.position.set(0, 1.82, 0.605);
+  const ventBarMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.4, metalness: 0.7 });
+  const ventBars: THREE.Mesh[] = [];
+  for (let i = -2; i <= 2; i++) {
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.015, 0.035), ventBarMat);
+    bar.position.set(i * 0.1, 1.64, 0.59);
+    ventBars.push(bar);
+  }
+  const waistRing = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.045, 8, 24), accentMat);
+  waistRing.rotation.x = Math.PI / 2;
+  waistRing.position.y = 1.34;
+
+  // Head assembly: helmet shell, recessed faceplate, visor, jaw plate, ear modules and sensor.
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.21, 0.2, 16), rubberMat);
+  neck.position.y = 2.55;
+  const neckRing = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.025, 8, 20), glowMat);
+  neckRing.rotation.x = Math.PI / 2;
+  neckRing.position.y = 2.48;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.37, 28, 22), bodyMat);
+  head.scale.set(1, 0.96, 1.08);
+  head.position.y = 2.84;
+  const helmetTop = new THREE.Mesh(new THREE.SphereGeometry(0.33, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2), edgeMat);
+  helmetTop.position.set(0, 2.92, 0.01);
+  const faceplate = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.5, 0.15), darkMat);
+  faceplate.position.set(0, 2.8, 0.36);
+  const jawPlate = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.13, 0.11), accentMat);
+  jawPlate.position.set(0, 2.6, 0.39);
+  const visor = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.13, 0.1), glowMat);
+  visor.position.set(0, 2.88, 0.45);
+  const visorInner = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.035, 0.018), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  visorInner.position.set(0, 2.9, 0.51);
+  const earR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.12, 12), darkMat);
+  earR.rotation.z = Math.PI / 2;
+  earR.position.set(0.39, 2.82, 0);
+  const earL = earR.clone();
+  earL.position.x = -0.39;
+  const earGlowR = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), glowMat);
+  earGlowR.position.set(0.47, 2.82, 0.02);
+  const earGlowL = earGlowR.clone();
+  earGlowL.position.x = -0.47;
+  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 0.28, 8), bodyMat);
+  antenna.position.y = 3.25;
+  const antennaBall = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), glowMat);
+  antennaBall.position.y = 3.41;
+
+  // Right arm is driven by the existing move choreography. The stretchable arm
+  // remains the authoritative animated segment, with a shoulder actuator and wrist cuff.
+  const shoulder = new THREE.Object3D();
+  shoulder.position.set(0.66, 2.38, 0);
+  const shoulderPadR = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 16), darkMat);
+  shoulderPadR.scale.set(0.84, 0.58, 1.18);
+  shoulderPadR.position.set(0.66, 2.38, 0);
+  const shoulderPadL = shoulderPadR.clone();
+  shoulderPadL.position.x = -0.66;
+  const shoulderBoltR = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10), glowMat);
+  shoulderBoltR.position.set(0.66, 2.38, 0.2);
   const shoulderBoltL = shoulderBoltR.clone();
   shoulderBoltL.position.x = -0.66;
-  const chestCore = new THREE.Mesh(new THREE.CircleGeometry(0.17, 24), glowMat);
-  chestCore.position.set(0, 1.12, 0.53);
-  const chestPanel = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.18, 0.06), accentMat);
-  chestPanel.position.set(0, 1.38, 0.53);
-  const waistRing = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.04, 8, 20), accentMat);
-  waistRing.rotation.x = Math.PI / 2;
-  waistRing.position.y = 0.42;
-
-  // Shoulder pads
-  const padR = new THREE.Mesh(new THREE.SphereGeometry(0.27, 18, 14), darkMat);
-  padR.scale.set(0.8, 0.55, 1.2);
-  padR.position.set(0.64, 1.62, 0);
-  const padL = padR.clone();
-  padL.position.x = -0.64;
-
-  // Head: rounded helmet with dark faceplate, glowing visor and side pods
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.36, 22, 18), bodyMat);
-  head.scale.set(1, 0.92, 1.08);
-  head.position.y = 2.06;
-  const faceplate = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.44, 0.14), darkMat);
-  faceplate.position.set(0, 2.04, 0.34);
-  const visor = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.13, 0.1), glowMat);
-  visor.position.set(0, 2.08, 0.42);
-  const earR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.1, 10), accentMat);
-  earR.rotation.z = Math.PI / 2;
-  earR.position.set(0.37, 2.06, 0);
-  const earL = earR.clone();
-  earL.position.x = -0.37;
-  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.3, 6), bodyMat);
-  antenna.position.y = 2.4;
-  const antennaBall = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), glowMat);
-  antennaBall.position.y = 2.56;
-
-  // Right arm (driven by the move mechanism): shoulder anchor, stretchable arm,
-  // static joint and glowing hand
-  const shoulder = new THREE.Object3D();
-  shoulder.position.set(0.66, 1.6, 0);
-
-  const armMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.075, 0.105, 1, 14),
-    bodyMat,
-  );
+  const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.11, 1, 16), bodyMat);
   armMesh.position.copy(shoulder.position);
-
-  const shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 12), darkMat);
+  const shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.15, 18, 14), darkMat);
   shoulderJoint.position.copy(shoulder.position);
+  const wristCuff = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.025, 8, 16), glowMat);
+  wristCuff.rotation.x = Math.PI / 2;
+  wristCuff.position.z = 0.15;
 
   const articulatedHand = createArticulatedHand(handMat, glowMat, true);
   const hand = articulatedHand.group;
-  hand.position.set(0.66, 1.2, 0.6);
+  hand.position.set(0.66, 2.0, 0.6);
+  hand.add(wristCuff);
 
-  // Static left arm resting at its side
-  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.105, 0.95, 14), bodyMat);
-  armL.rotation.z = 0.25;
-  armL.position.set(-0.68, 1.25, 0.05);
-  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 10), darkMat);
-  handL.position.set(-0.9, 0.75, 0.08);
+  // Static left arm is fully jointed rather than a single rigid cylinder.
+  const armLUpper = new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.38, 6, 12), bodyMat);
+  armLUpper.position.set(-0.72, 2.04, 0.05);
+  armLUpper.rotation.z = 0.22;
+  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 10), darkMat);
+  elbowL.position.set(-0.84, 1.7, 0.06);
+  const armLFore = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.3, 6, 12), edgeMat);
+  armLFore.position.set(-0.92, 1.42, 0.08);
+  armLFore.rotation.z = -0.18;
+  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 12), handMat);
+  handL.position.set(-0.96, 1.18, 0.1);
 
   group.add(
-    base,
-    baseRing,
-    baseHatch,
-    torso,
-    neck,
-    shoulderBoltR,
-    shoulderBoltL,
-    chestCore,
-    chestPanel,
-    waistRing,
-    padR,
-    padL,
-    head,
-    faceplate,
-    visor,
-    earR,
-    earL,
-    antenna,
-    antennaBall,
-    shoulder,
-    armMesh,
-    shoulderJoint,
-    hand,
-    armL,
-    handL,
+    base, baseDeck, baseRing, baseHatch, baseHatchLine,
+    pelvis, hipBand, thighL, thighR, kneeL, kneeR, shinL, shinR, footL, footR, footPlateL, footPlateR,
+    torsoUnderframe, torso, chestArmor, chestPanel, chestCore, chestCoreRing, ...ventBars, waistRing,
+    neck, neckRing, head, helmetTop, faceplate, jawPlate, visor, visorInner, earR, earL, earGlowR, earGlowL,
+    antenna, antennaBall, shoulderPadR, shoulderPadL, shoulderBoltR, shoulderBoltL, shoulder, armMesh,
+    shoulderJoint, hand, armLUpper, elbowL, armLFore, handL,
   );
-  group.userData = { shoulder, hand, armMesh, handMat, setGrip: articulatedHand.setGrip };
+  group.userData = {
+    shoulder,
+    hand,
+    armMesh,
+    handMat,
+    setGrip: articulatedHand.setGrip,
+    idle: { torso, head, chestCore, chestCoreRing, antennaBall, visor },
+  };
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
       obj.castShadow = true;
+      obj.receiveShadow = true;
     }
   });
   return group;
@@ -603,113 +664,159 @@ function createRobot(): THREE.Group {
 function createHuman(): THREE.Group {
   const group = new THREE.Group();
 
-  const skinMat = new THREE.MeshStandardMaterial({
-    color: 0xe8b68f,
-    roughness: 0.55,
-    metalness: 0,
-  });
-  const shirtMat = new THREE.MeshStandardMaterial({
-    color: 0x2563eb,
-    roughness: 0.65,
-    metalness: 0.08,
-  });
-  const pantMat = new THREE.MeshStandardMaterial({
-    color: 0x1e293b,
-    roughness: 0.75,
-    metalness: 0.02,
-  });
-  const shoeMat = new THREE.MeshStandardMaterial({
-    color: 0x111827,
-    roughness: 0.6,
-    metalness: 0.1,
-  });
-  const hairMat = new THREE.MeshStandardMaterial({
-    color: 0x3b2b1c,
-    roughness: 0.9,
-    metalness: 0,
-  });
-  const handMat = new THREE.MeshStandardMaterial({
-    color: 0xe8b68f,
-    emissive: 0xffa03a,
-    emissiveIntensity: 0,
-    roughness: 0.5,
-    metalness: 0,
-  });
-  const eyeMat = new THREE.MeshStandardMaterial({
-    color: 0xf8fafc,
-    emissive: 0xf59e0b,
-    emissiveIntensity: 0.22,
-    roughness: 0.2,
-    metalness: 0.05,
-  });
+  const skinMat = new THREE.MeshStandardMaterial({ color: 0xe3a77d, roughness: 0.58, metalness: 0 });
+  const skinLightMat = new THREE.MeshStandardMaterial({ color: 0xf0bd96, roughness: 0.52, metalness: 0 });
+  const shirtMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.72, metalness: 0.03 });
+  const shirtLightMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.78, metalness: 0.02 });
+  const pantMat = new THREE.MeshStandardMaterial({ color: 0x172033, roughness: 0.82, metalness: 0.01 });
+  const shoeMat = new THREE.MeshStandardMaterial({ color: 0x0b1220, roughness: 0.62, metalness: 0.08 });
+  const hairMat = new THREE.MeshStandardMaterial({ color: 0x24170f, roughness: 0.94, metalness: 0 });
+  const hairHighlightMat = new THREE.MeshStandardMaterial({ color: 0x4b2c1b, roughness: 0.88, metalness: 0 });
+  const handMat = new THREE.MeshStandardMaterial({ color: 0xe3a77d, emissive: 0xff8a2a, emissiveIntensity: 0, roughness: 0.54, metalness: 0 });
+  const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.28, metalness: 0 });
+  const irisMat = new THREE.MeshStandardMaterial({ color: 0x3b2418, roughness: 0.34, metalness: 0.02 });
+  const mouthMat = new THREE.MeshStandardMaterial({ color: 0x7f3340, roughness: 0.7, metalness: 0 });
+  const buttonMat = new THREE.MeshStandardMaterial({ color: 0xdbeafe, roughness: 0.3, metalness: 0.45 });
 
-  // Legs + shoes
-  const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.95, 12), pantMat);
-  legL.position.set(-0.27, 0.48, 0);
-  const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.95, 12), pantMat);
-  legR.position.set(0.27, 0.48, 0);
-  const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.42), shoeMat);
-  shoeL.position.set(-0.27, 0.06, -0.1);
-  const shoeR = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.42), shoeMat);
-  shoeR.position.set(0.27, 0.06, -0.1);
+  // Seated lower body: separate thighs, knees, shoes and a visible hip seam.
+  const pelvis = new THREE.Mesh(new THREE.CapsuleGeometry(0.31, 0.22, 6, 14), pantMat);
+  pelvis.position.y = 0.72;
+  pelvis.scale.z = 0.84;
+  const legL = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.48, 6, 12), pantMat);
+  legL.position.set(-0.27, 0.46, 0);
+  const legR = legL.clone();
+  legR.position.x = 0.27;
+  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 10), pantMat);
+  kneeL.position.set(-0.27, 0.73, -0.02);
+  const kneeR = kneeL.clone();
+  kneeR.position.x = 0.27;
+  const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.14, 0.44), shoeMat);
+  shoeL.position.set(-0.27, 0.08, -0.13);
+  shoeL.rotation.x = -0.08;
+  const shoeR = shoeL.clone();
+  shoeR.position.x = 0.27;
+  const soleL = new THREE.Mesh(new THREE.BoxGeometry(0.27, 0.025, 0.43), buttonMat);
+  soleL.position.set(-0.27, 0.01, -0.13);
+  const soleR = soleL.clone();
+  soleR.position.x = 0.27;
 
-  // Torso with a subtle collar
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.44, 1.0, 16), shirtMat);
-  torso.position.y = 1.4;
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.18, 12), skinMat);
-  neck.position.y = 1.86;
-  const belt = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.025, 8, 20), shoeMat);
+  // Clothing layers: fitted shirt, chest plane, collar, belt and buttons.
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.34, 0.58, 8, 16), shirtMat);
+  torso.position.y = 1.42;
+  torso.scale.z = 0.86;
+  const shirtFront = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.72, 0.035), shirtLightMat);
+  shirtFront.position.set(0, 1.44, -0.34);
+  shirtFront.scale.x = 0.82;
+  const belt = new THREE.Mesh(new THREE.TorusGeometry(0.37, 0.026, 8, 22), shoeMat);
   belt.rotation.x = Math.PI / 2;
-  belt.position.y = 0.98;
-  const shirtButton = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), eyeMat);
-  shirtButton.position.set(0, 1.45, -0.39);
+  belt.position.y = 1.0;
+  const beltBuckle = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.07, 0.025), buttonMat);
+  beltBuckle.position.set(0, 1.0, -0.39);
+  const shirtButton = new THREE.Mesh(new THREE.SphereGeometry(0.026, 10, 8), buttonMat);
+  shirtButton.position.set(0, 1.57, -0.37);
   const shirtButton2 = shirtButton.clone();
-  shirtButton2.position.y = 1.3;
-  const earL = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), skinMat);
-  earL.position.set(-0.25, 2.02, 0);
+  shirtButton2.position.y = 1.4;
+  const shirtButton3 = shirtButton.clone();
+  shirtButton3.position.y = 1.23;
+  const collarL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.06, 0.08), shirtLightMat);
+  collarL.position.set(-0.12, 1.82, -0.23);
+  collarL.rotation.z = -0.42;
+  const collarR = collarL.clone();
+  collarR.position.x = 0.12;
+  collarR.rotation.z = 0.42;
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.18, 14), skinMat);
+  neck.position.y = 1.88;
+
+  // Head with jaw, ears, textured-looking hair mass, brows, irises and lips.
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 24, 18), skinLightMat);
+  head.scale.set(0.96, 1.08, 0.9);
+  head.position.y = 2.12;
+  const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.2, 18, 14), skinMat);
+  jaw.scale.set(1.08, 0.62, 0.8);
+  jaw.position.set(0, 1.99, -0.015);
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.282, 24, 18, 0, Math.PI * 2, 0, Math.PI / 2.15), hairMat);
+  hair.position.y = 2.2;
+  const hairline = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24, Math.PI), hairHighlightMat);
+  hairline.rotation.x = Math.PI / 2;
+  hairline.position.set(0, 2.16, -0.13);
+  const sideHairL = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.16, 5, 8), hairMat);
+  sideHairL.position.set(-0.25, 2.08, -0.02);
+  const sideHairR = sideHairL.clone();
+  sideHairR.position.x = 0.25;
+  const earL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 10), skinMat);
+  earL.scale.set(0.75, 1, 0.5);
+  earL.position.set(-0.26, 2.1, 0);
   const earR = earL.clone();
-  earR.position.x = 0.25;
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 8, 16), shirtMat);
-  collar.rotation.x = -Math.PI / 2;
-  collar.position.y = 1.86;
-
-  // Head + hair + a small nose bump (facing the board / camera)
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 20, 16), skinMat);
-  head.position.y = 2.02;
-  const hair = new THREE.Mesh(
-    new THREE.SphereGeometry(0.256, 20, 14, 0, Math.PI * 2, 0, Math.PI / 2.3),
-    hairMat,
-  );
-  hair.position.y = 2.08;
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), skinMat);
-  nose.position.set(0, 2.0, -0.24);
-  const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.028, 10, 8), eyeMat);
-  eyeL.position.set(-0.09, 2.08, -0.235);
+  earR.position.x = 0.26;
+  const nose = new THREE.Mesh(new THREE.CapsuleGeometry(0.028, 0.07, 5, 8), skinMat);
+  nose.rotation.x = Math.PI / 2;
+  nose.position.set(0, 2.08, -0.245);
+  const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.04, 14, 10), eyeWhiteMat);
+  eyeL.scale.set(1.2, 0.68, 0.45);
+  eyeL.position.set(-0.095, 2.17, -0.23);
   const eyeR = eyeL.clone();
-  eyeR.position.x = 0.09;
+  eyeR.position.x = 0.095;
+  const irisL = new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 8), irisMat);
+  irisL.position.set(-0.095, 2.17, -0.255);
+  const irisR = irisL.clone();
+  irisR.position.x = 0.095;
+  const browL = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.025, 0.025), hairMat);
+  browL.position.set(-0.095, 2.245, -0.235);
+  browL.rotation.z = 0.08;
+  const browR = browL.clone();
+  browR.position.x = 0.095;
+  browR.rotation.z = -0.08;
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.018, 0.018), mouthMat);
+  mouth.position.set(0, 1.99, -0.19);
 
-  // Right arm (driven by the hand-tracking mechanism): shoulder anchor,
-  // stretchable arm and hand that reaches toward the board
+  // Right arm remains driven by hand tracking; the surrounding clothing and cuff
+  // make the stretched segment read as a sleeve rather than a floating rod.
   const shoulder = new THREE.Object3D();
-  shoulder.position.set(0.42, 1.62, 0);
-  const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.085, 1, 10), shirtMat);
+  shoulder.position.set(0.42, 1.66, 0);
+  const shoulderCap = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), shirtMat);
+  shoulderCap.scale.set(0.9, 0.65, 1.05);
+  shoulderCap.position.copy(shoulder.position);
+  const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 1, 12), shirtMat);
   armMesh.position.copy(shoulder.position);
-  const articulatedHand = createArticulatedHand(handMat, eyeMat, false);
+  const articulatedHand = createArticulatedHand(handMat, eyeWhiteMat, false);
   const hand = articulatedHand.group;
-  hand.position.set(0.5, 1.1, -1.0);
+  hand.position.set(0.5, 1.14, -1.0);
+  const wristBand = new THREE.Mesh(new THREE.TorusGeometry(0.105, 0.018, 8, 16), buttonMat);
+  wristBand.rotation.x = Math.PI / 2;
+  wristBand.position.z = 0.13;
+  hand.add(wristBand);
 
-  // Left arm (static, resting)
-  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.085, 0.95, 10), shirtMat);
-  armL.rotation.z = -0.28;
-  armL.position.set(-0.72, 1.25, 0.05);
-  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), skinMat);
-  handL.position.set(-0.98, 0.85, 0.08);
+  // Left arm rests naturally at the side with a sleeve, elbow and hand.
+  const armLUpper = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.34, 6, 10), shirtMat);
+  armLUpper.position.set(-0.66, 1.38, 0.05);
+  armLUpper.rotation.z = -0.25;
+  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), shirtMat);
+  elbowL.position.set(-0.76, 1.08, 0.06);
+  const armLFore = new THREE.Mesh(new THREE.CapsuleGeometry(0.055, 0.28, 6, 10), skinMat);
+  armLFore.position.set(-0.84, 0.86, 0.08);
+  armLFore.rotation.z = -0.14;
+  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 10), skinMat);
+  handL.position.set(-0.9, 0.65, 0.1);
 
-  group.add(legL, legR, shoeL, shoeR, torso, neck, belt, shirtButton, shirtButton2, earL, earR, collar, head, hair, nose, eyeL, eyeR, shoulder, armMesh, hand, armL, handL);
-  group.userData = { shoulder, hand, armMesh, handMat, setGrip: articulatedHand.setGrip };
+  group.add(
+    pelvis, legL, legR, kneeL, kneeR, shoeL, shoeR, soleL, soleR,
+    torso, shirtFront, belt, beltBuckle, shirtButton, shirtButton2, shirtButton3,
+    collarL, collarR, neck, head, jaw, hair, hairline, sideHairL, sideHairR, earL, earR,
+    nose, eyeL, eyeR, irisL, irisR, browL, browR, mouth,
+    shoulder, shoulderCap, armMesh, hand, armLUpper, elbowL, armLFore, handL,
+  );
+  group.userData = {
+    shoulder,
+    hand,
+    armMesh,
+    handMat,
+    setGrip: articulatedHand.setGrip,
+    idle: { torso, head, jaw, hair, chest: shirtFront, eyeL, eyeR },
+  };
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
       obj.castShadow = true;
+      obj.receiveShadow = true;
     }
   });
   return group;
@@ -1075,6 +1182,14 @@ export default function Simulation3D({
     const robotArm = robot.userData.armMesh as THREE.Mesh;
     const robotHandMat = robot.userData.handMat as THREE.MeshStandardMaterial;
     const robotSetGrip = robot.userData.setGrip as (amount: number) => void;
+    const robotIdle = robot.userData.idle as {
+      torso: THREE.Object3D;
+      head: THREE.Object3D;
+      chestCore: THREE.Object3D;
+      chestCoreRing: THREE.Object3D;
+      antennaBall: THREE.Object3D;
+      visor: THREE.Object3D;
+    };
 
     // Human figure on the player's (white) side whose hand follows the tracked hand
     const human = createHuman();
@@ -1085,6 +1200,15 @@ export default function Simulation3D({
     const humanArm = human.userData.armMesh as THREE.Mesh;
     const humanHandMat = human.userData.handMat as THREE.MeshStandardMaterial;
     const humanSetGrip = human.userData.setGrip as (amount: number) => void;
+    const humanIdle = human.userData.idle as {
+      torso: THREE.Object3D;
+      head: THREE.Object3D;
+      jaw: THREE.Object3D;
+      hair: THREE.Object3D;
+      chest: THREE.Object3D;
+      eyeL: THREE.Object3D;
+      eyeR: THREE.Object3D;
+    };
     const HUMAN_HAND_REST = new THREE.Vector3(0.5, 1.1, 6.0);
     const humanHandFollowTarget = HUMAN_HAND_REST.clone();
     const pieceFollowTarget = new THREE.Vector3();
@@ -2003,6 +2127,31 @@ export default function Simulation3D({
       } else {
         destHighlight.scale.setScalar(1);
       }
+
+      // Small idle motions keep both figures alive without competing with the
+      // hand and arm choreography. The motion is intentionally restrained so
+      // the chessboard remains the visual focus.
+      const humanBreath = Math.sin(now * 0.00155);
+      humanIdle.torso.rotation.z = humanBreath * 0.008;
+      humanIdle.chest.position.y = 1.44 + humanBreath * 0.006;
+      humanIdle.head.rotation.y = humanBreath * 0.018;
+      humanIdle.head.rotation.z = Math.sin(now * 0.0011) * 0.008;
+      humanIdle.jaw.rotation.z = Math.sin(now * 0.0013) * 0.004;
+      humanIdle.hair.rotation.y = humanBreath * 0.012;
+      const blinkPhase = Math.sin(now * 0.00118);
+      const blink = Math.abs(blinkPhase) > 0.985 ? 0.12 : 1;
+      humanIdle.eyeL.scale.y = 0.68 * blink;
+      humanIdle.eyeR.scale.y = 0.68 * blink;
+
+      const robotBreath = Math.sin(now * 0.00125);
+      robotIdle.torso.rotation.z = robotBreath * 0.006;
+      robotIdle.head.rotation.y = Math.sin(now * 0.0009) * 0.014;
+      robotIdle.head.rotation.z = robotBreath * 0.006;
+      robotIdle.chestCore.scale.setScalar(1 + Math.sin(now * 0.004) * 0.08);
+      robotIdle.chestCoreRing.rotation.z += deltaSeconds * 0.45;
+      robotIdle.antennaBall.scale.setScalar(1 + Math.sin(now * 0.005) * 0.08);
+      const robotVisorMaterial = (robotIdle.visor as THREE.Mesh).material as THREE.MeshStandardMaterial;
+      robotVisorMaterial.emissiveIntensity = 1.15 + Math.sin(now * 0.003) * 0.18;
 
       // Robot arm follows the hand
       {
