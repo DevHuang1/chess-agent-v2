@@ -96,7 +96,7 @@ test.describe("3D arena", () => {
     await page.mouse.up();
 
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(true);
-    await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(false, { timeout: 5_000 });
+    await expect.poll(async () => (await snapshot(page)).playerAnimating, { timeout: 5_000 }).toBe(false);
 
     const result = await snapshot(page);
     expect(result.fen).toContain("4P3");
