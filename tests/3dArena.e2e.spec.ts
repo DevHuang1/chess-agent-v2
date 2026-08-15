@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 type SceneSnapshot = {
   fen: string;
+  reactGamePosition: string;
   playerAnimating: boolean;
   robotAnimating: boolean;
   robotCaptureHidden: boolean;
@@ -71,10 +72,13 @@ test.describe("3D arena", () => {
     const accepted = await page.evaluate(() => window.__sentio3dDebug!.selectAndMove("e2", "e4"));
     expect(accepted).toBe(true);
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(true);
+    const during = await snapshot(page);
+    expect(during.fen).toBe(initial.fen);
     await expect.poll(async () => (await snapshot(page)).playerAnimating, { timeout: 5_000 }).toBe(false);
 
     const result = await snapshot(page);
     expect(result.fen).toContain("4P3");
+    expect(result.reactGamePosition).toContain("4P3");
     expect(result.e2Position).toBeNull();
     expect(result.e4Position).not.toBeNull();
     expect(result.e4Position![2]).not.toBe(initial.e2Position![2]);
@@ -96,13 +100,49 @@ test.describe("3D arena", () => {
     await page.mouse.up();
 
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(true);
+    await page.waitForTimeout(120);
+    const during = await snapshot(page);
+    expect(during.fen).not.toContain("4P3");
+    expect(during.reactGamePosition).not.toContain("4P3");
+    expect(during.e2Position).not.toBeNull();
+    expect(during.e2Position![2]).not.toBe(initial.e2Position![2]);
+    expect(during.e4Position).toBeNull();
     await expect.poll(async () => (await snapshot(page)).playerAnimating, { timeout: 5_000 }).toBe(false);
 
     const result = await snapshot(page);
     expect(result.fen).toContain("4P3");
+    expect(result.reactGamePosition).toContain("4P3");
     expect(result.e2Position).toBeNull();
     expect(result.e4Position).not.toBeNull();
     expect(result.e4Position![2]).not.toBe(initial.e2Position![2]);
+  });
+
+  test("controls live lighting intensity, presets, and shadows", async ({ page }) => {
+    await enter3DArena(page);
+
+    await expect(page.getByText("Scene lighting", { exact: true })).toBeVisible();
+    const preset = page.locator("#lighting-preset");
+    await expect(preset).toHaveValue("studio");
+    await preset.selectOption("dramatic");
+    await expect(preset).toHaveValue("dramatic");
+
+    const intensity = page.locator("#lighting-intensity");
+    await intensity.fill("1.25");
+    await expect(intensity).toHaveValue("1.25");
+
+    const shadows = page.locator("#lighting-shadows");
+    await expect(shadows).toBeChecked();
+    await shadows.uncheck();
+    await expect(shadows).not.toBeChecked();
+    await shadows.check();
+    await expect(shadows).toBeChecked();
+
+    const audio = page.locator("#mechanical-audio");
+    await expect(audio).toBeChecked();
+    await audio.uncheck();
+    await expect(audio).not.toBeChecked();
+    await audio.check();
+    await expect(audio).toBeChecked();
   });
 
   test("hides a captured piece during robot choreography and restores the final board", async ({ page }) => {

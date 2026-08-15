@@ -24,6 +24,81 @@ import { validateDropTarget } from "@/lib/dropValidation";
 
 type HandLandmark = [number, number, number];
 type Gesture = "none" | "fist" | "palm";
+type LightingPresetName = "studio" | "warm" | "cool" | "dramatic";
+
+type LightingPreset = {
+  ambientColor: number;
+  ambientIntensity: number;
+  keyColor: number;
+  keyIntensity: number;
+  rimColor: number;
+  rimIntensity: number;
+  fillColor: number;
+  fillIntensity: number;
+  humanColor: number;
+  humanIntensity: number;
+  robotColor: number;
+  robotIntensity: number;
+};
+
+const LIGHTING_PRESETS: Record<LightingPresetName, LightingPreset> = {
+  studio: {
+    ambientColor: 0xffffff,
+    ambientIntensity: 0.7,
+    keyColor: 0xfff5e6,
+    keyIntensity: 2.4,
+    rimColor: 0x38bdf8,
+    rimIntensity: 0.85,
+    fillColor: 0xf59e0b,
+    fillIntensity: 0.28,
+    humanColor: 0xffb45b,
+    humanIntensity: 0.18,
+    robotColor: 0x22d3ee,
+    robotIntensity: 0.24,
+  },
+  warm: {
+    ambientColor: 0xffe7c2,
+    ambientIntensity: 0.78,
+    keyColor: 0xffc078,
+    keyIntensity: 2.7,
+    rimColor: 0xff8a4c,
+    rimIntensity: 0.52,
+    fillColor: 0xf59e0b,
+    fillIntensity: 0.42,
+    humanColor: 0xff9d5b,
+    humanIntensity: 0.3,
+    robotColor: 0xffb347,
+    robotIntensity: 0.12,
+  },
+  cool: {
+    ambientColor: 0xc9e7ff,
+    ambientIntensity: 0.82,
+    keyColor: 0xb9ddff,
+    keyIntensity: 2.15,
+    rimColor: 0x4f9cff,
+    rimIntensity: 1.15,
+    fillColor: 0x38bdf8,
+    fillIntensity: 0.32,
+    humanColor: 0x60a5fa,
+    humanIntensity: 0.16,
+    robotColor: 0x67e8f9,
+    robotIntensity: 0.34,
+  },
+  dramatic: {
+    ambientColor: 0x718096,
+    ambientIntensity: 0.42,
+    keyColor: 0xffe0ad,
+    keyIntensity: 3.05,
+    rimColor: 0x2563eb,
+    rimIntensity: 1.35,
+    fillColor: 0x7c3aed,
+    fillIntensity: 0.2,
+    humanColor: 0xf97316,
+    humanIntensity: 0.22,
+    robotColor: 0x06b6d4,
+    robotIntensity: 0.38,
+  },
+};
 
 const BOARD_SIZE = 8;
 const SQUARE_SIZE = 1;
@@ -134,6 +209,136 @@ function boardNdcBounds(cam: THREE.PerspectiveCamera): { top: number; bottom: nu
     if (v.y < bottom) bottom = v.y;
   }
   return { top, bottom };
+}
+
+type Particle = {
+  life: number;
+  maxLife: number;
+  x: number;
+  y: number;
+  z: number;
+  vx: number;
+  vy: number;
+  vz: number;
+  gravity: number;
+  r: number;
+  g: number;
+  b: number;
+};
+
+type ParticleField = {
+  points: THREE.Points;
+  emit: (origin: THREE.Vector3, colorHex: number, count?: number, spread?: number, speed?: number, life?: number, gravity?: number) => void;
+  burst: (origin: THREE.Vector3, colorHex: number, count?: number) => void;
+  update: (deltaSeconds: number) => void;
+};
+
+function createParticleField(scene: THREE.Scene, capacity = 240): ParticleField {
+  const positions = new Float32Array(capacity * 3);
+  const colors = new Float32Array(capacity * 3);
+  const particles: Particle[] = Array.from({ length: capacity }, () => ({
+    life: 0,
+    maxLife: 1,
+    x: 0,
+    y: 0,
+    z: 0,
+    vx: 0,
+    vy: 0,
+    vz: 0,
+    gravity: -0.3,
+    r: 1,
+    g: 1,
+    b: 1,
+  }));
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  const material = new THREE.PointsMaterial({
+    size: 0.08,
+    sizeAttenuation: true,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.9,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+  const points = new THREE.Points(geometry, material);
+  points.frustumCulled = false;
+  scene.add(points);
+  let cursor = 0;
+  const colorScratch = new THREE.Color();
+
+  function emit(
+    origin: THREE.Vector3,
+    colorHex: number,
+    count = 1,
+    spread = 0.12,
+    speed = 0.45,
+    life = 0.7,
+    gravity = -0.25,
+  ) {
+    colorScratch.setHex(colorHex);
+    for (let i = 0; i < count; i++) {
+      const index = cursor;
+      cursor = (cursor + 1) % capacity;
+      const particle = particles[index];
+      particle.life = life * (0.72 + Math.random() * 0.56);
+      particle.maxLife = particle.life;
+      particle.x = origin.x + (Math.random() - 0.5) * spread;
+      particle.y = origin.y + (Math.random() - 0.5) * spread;
+      particle.z = origin.z + (Math.random() - 0.5) * spread;
+      particle.vx = (Math.random() - 0.5) * speed;
+      particle.vy = (Math.random() - 0.25) * speed;
+      particle.vz = (Math.random() - 0.5) * speed;
+      particle.gravity = gravity;
+      particle.r = colorScratch.r;
+      particle.g = colorScratch.g;
+      particle.b = colorScratch.b;
+      positions[index * 3] = particle.x;
+      positions[index * 3 + 1] = particle.y;
+      positions[index * 3 + 2] = particle.z;
+      colors[index * 3] = particle.r;
+      colors[index * 3 + 1] = particle.g;
+      colors[index * 3 + 2] = particle.b;
+    }
+    geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.color.needsUpdate = true;
+  }
+
+  return {
+    points,
+    emit,
+    burst: (origin, colorHex, count = 18) => emit(origin, colorHex, count, 0.34, 1.15, 0.82, -0.72),
+    update: (deltaSeconds) => {
+      let active = false;
+      for (let index = 0; index < capacity; index++) {
+        const particle = particles[index];
+        if (particle.life <= 0) {
+          colors[index * 3] = 0;
+          colors[index * 3 + 1] = 0;
+          colors[index * 3 + 2] = 0;
+          continue;
+        }
+        active = true;
+        particle.life = Math.max(0, particle.life - deltaSeconds);
+        particle.vy += particle.gravity * deltaSeconds;
+        particle.x += particle.vx * deltaSeconds;
+        particle.y += particle.vy * deltaSeconds;
+        particle.z += particle.vz * deltaSeconds;
+        const fade = particle.life / particle.maxLife;
+        positions[index * 3] = particle.x;
+        positions[index * 3 + 1] = particle.y;
+        positions[index * 3 + 2] = particle.z;
+        colors[index * 3] = particle.r * fade;
+        colors[index * 3 + 1] = particle.g * fade;
+        colors[index * 3 + 2] = particle.b * fade;
+      }
+      if (active) {
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.color.needsUpdate = true;
+      }
+    },
+  };
 }
 
 function createPieceGeometry(type: string, color: string): THREE.Group {
@@ -520,142 +725,203 @@ function createRobot(): THREE.Group {
   const group = new THREE.Group();
 
   const bodyMat = new THREE.MeshStandardMaterial({
-    color: 0xc8d1dd,
-    roughness: 0.42,
-    metalness: 0.6,
+    color: 0xb8c5d1,
+    roughness: 0.28,
+    metalness: 0.82,
+  });
+  const edgeMat = new THREE.MeshStandardMaterial({
+    color: 0xe2e8f0,
+    roughness: 0.22,
+    metalness: 0.9,
   });
   const darkMat = new THREE.MeshStandardMaterial({
-    color: 0x243447,
-    roughness: 0.38,
-    metalness: 0.45,
+    color: 0x172234,
+    roughness: 0.3,
+    metalness: 0.62,
+  });
+  const rubberMat = new THREE.MeshStandardMaterial({
+    color: 0x070b12,
+    roughness: 0.82,
+    metalness: 0.05,
   });
   const accentMat = new THREE.MeshStandardMaterial({
-    color: 0x0f172a,
-    roughness: 0.5,
-    metalness: 0.25,
+    color: 0x0b1220,
+    roughness: 0.38,
+    metalness: 0.48,
   });
   const handMat = new THREE.MeshStandardMaterial({
-    color: 0x22d3ee,
-    emissive: 0x22d3ee,
-    emissiveIntensity: 0.3,
-    roughness: 0.25,
-    metalness: 0.6,
+    color: 0x38d9f3,
+    emissive: 0x0e7490,
+    emissiveIntensity: 0.28,
+    roughness: 0.2,
+    metalness: 0.74,
   });
   const glowMat = new THREE.MeshStandardMaterial({
-    color: 0x67e8f9,
+    color: 0x9ff5ff,
     emissive: 0x22d3ee,
-    emissiveIntensity: 1.5,
-    roughness: 0.3,
-    metalness: 0.1,
+    emissiveIntensity: 1.35,
+    roughness: 0.18,
+    metalness: 0.22,
   });
 
-  // Pedestal with a glowing rim ring and recessed hatch
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.92, 1.08, 0.28, 24), darkMat);
+  // Layered base gives the machine a believable weight and a visible service seam.
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.92, 1.08, 0.28, 32), rubberMat);
   base.position.y = 0.14;
-  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(1.0, 0.045, 10, 28), glowMat);
+  const baseDeck = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.9, 0.09, 32), darkMat);
+  baseDeck.position.y = 0.32;
+  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(0.92, 0.04, 10, 32), glowMat);
   baseRing.rotation.x = Math.PI / 2;
-  baseRing.position.y = 0.31;
-  const baseHatch = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 0.05, 18), accentMat);
-  baseHatch.position.y = 0.06;
+  baseRing.position.y = 0.36;
+  const baseHatch = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.52, 0.045, 24), accentMat);
+  baseHatch.position.set(0, 0.31, 0.04);
+  const baseHatchLine = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.012, 0.025), edgeMat);
+  baseHatchLine.position.set(0, 0.34, 0.04);
 
-  // Torso with glowing chest core, chest panel and waist band
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.54, 0.72, 1.4, 20), bodyMat);
-  torso.position.y = 1.02;
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.18, 14), darkMat);
-  neck.position.y = 1.78;
-  const shoulderBoltR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 10, 8), glowMat);
-  shoulderBoltR.position.set(0.66, 1.62, 0.18);
+  // Mechanical lower body: pelvis, thigh actuators, knee caps, shins and feet.
+  const pelvis = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.34, 0.58), darkMat);
+  pelvis.position.y = 0.56;
+  pelvis.rotation.y = Math.PI / 4;
+  const hipBand = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.035, 8, 24), edgeMat);
+  hipBand.rotation.x = Math.PI / 2;
+  hipBand.position.y = 0.68;
+  const thighL = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.34, 6, 12), bodyMat);
+  thighL.position.set(-0.26, 0.85, 0);
+  const thighR = thighL.clone();
+  thighR.position.x = 0.26;
+  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 12), darkMat);
+  kneeL.position.set(-0.26, 1.14, 0.08);
+  const kneeR = kneeL.clone();
+  kneeR.position.x = 0.26;
+  const shinL = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.42, 6, 12), edgeMat);
+  shinL.position.set(-0.26, 1.36, 0);
+  const shinR = shinL.clone();
+  shinR.position.x = 0.26;
+  const footL = new THREE.Mesh(new THREE.BoxGeometry(0.31, 0.18, 0.55), rubberMat);
+  footL.position.set(-0.26, 0.1, 0.14);
+  const footR = footL.clone();
+  footR.position.x = 0.26;
+  const footPlateL = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.025, 0.36), edgeMat);
+  footPlateL.position.set(-0.26, 0.2, 0.15);
+  const footPlateR = footPlateL.clone();
+  footPlateR.position.x = 0.26;
+
+  // Torso shell with a dark underframe, shoulder line and layered chest electronics.
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.54, 0.72, 1.12, 24), bodyMat);
+  torso.position.y = 1.86;
+  const torsoUnderframe = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.6, 1.18, 20), darkMat);
+  torsoUnderframe.position.set(0, 1.84, -0.035);
+  const chestArmor = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.72, 0.14), edgeMat);
+  chestArmor.position.set(0, 1.94, 0.5);
+  chestArmor.rotation.x = -0.08;
+  const chestPanel = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.24, 0.055), accentMat);
+  chestPanel.position.set(0, 2.08, 0.585);
+  const chestCore = new THREE.Mesh(new THREE.CircleGeometry(0.16, 28), glowMat);
+  chestCore.position.set(0, 1.82, 0.59);
+  const chestCoreRing = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.024, 8, 24), glowMat);
+  chestCoreRing.rotation.x = Math.PI / 2;
+  chestCoreRing.position.set(0, 1.82, 0.605);
+  const ventBarMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.4, metalness: 0.7 });
+  const ventBars: THREE.Mesh[] = [];
+  for (let i = -2; i <= 2; i++) {
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.015, 0.035), ventBarMat);
+    bar.position.set(i * 0.1, 1.64, 0.59);
+    ventBars.push(bar);
+  }
+  const waistRing = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.045, 8, 24), accentMat);
+  waistRing.rotation.x = Math.PI / 2;
+  waistRing.position.y = 1.34;
+
+  // Head assembly: helmet shell, recessed faceplate, visor, jaw plate, ear modules and sensor.
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.21, 0.2, 16), rubberMat);
+  neck.position.y = 2.55;
+  const neckRing = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.025, 8, 20), glowMat);
+  neckRing.rotation.x = Math.PI / 2;
+  neckRing.position.y = 2.48;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.37, 28, 22), bodyMat);
+  head.scale.set(1, 0.96, 1.08);
+  head.position.y = 2.84;
+  const helmetTop = new THREE.Mesh(new THREE.SphereGeometry(0.33, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2), edgeMat);
+  helmetTop.position.set(0, 2.92, 0.01);
+  const faceplate = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.5, 0.15), darkMat);
+  faceplate.position.set(0, 2.8, 0.36);
+  const jawPlate = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.13, 0.11), accentMat);
+  jawPlate.position.set(0, 2.6, 0.39);
+  const visor = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.13, 0.1), glowMat);
+  visor.position.set(0, 2.88, 0.45);
+  const visorInner = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.035, 0.018), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  visorInner.position.set(0, 2.9, 0.51);
+  const earR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.12, 12), darkMat);
+  earR.rotation.z = Math.PI / 2;
+  earR.position.set(0.39, 2.82, 0);
+  const earL = earR.clone();
+  earL.position.x = -0.39;
+  const earGlowR = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), glowMat);
+  earGlowR.position.set(0.47, 2.82, 0.02);
+  const earGlowL = earGlowR.clone();
+  earGlowL.position.x = -0.47;
+  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 0.28, 8), bodyMat);
+  antenna.position.y = 3.25;
+  const antennaBall = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), glowMat);
+  antennaBall.position.y = 3.41;
+
+  // Right arm is driven by the existing move choreography. The stretchable arm
+  // remains the authoritative animated segment, with a shoulder actuator and wrist cuff.
+  const shoulder = new THREE.Object3D();
+  shoulder.position.set(0.66, 2.38, 0);
+  const shoulderPadR = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 16), darkMat);
+  shoulderPadR.scale.set(0.84, 0.58, 1.18);
+  shoulderPadR.position.set(0.66, 2.38, 0);
+  const shoulderPadL = shoulderPadR.clone();
+  shoulderPadL.position.x = -0.66;
+  const shoulderBoltR = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10), glowMat);
+  shoulderBoltR.position.set(0.66, 2.38, 0.2);
   const shoulderBoltL = shoulderBoltR.clone();
   shoulderBoltL.position.x = -0.66;
-  const chestCore = new THREE.Mesh(new THREE.CircleGeometry(0.17, 24), glowMat);
-  chestCore.position.set(0, 1.12, 0.53);
-  const chestPanel = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.18, 0.06), accentMat);
-  chestPanel.position.set(0, 1.38, 0.53);
-  const waistRing = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.04, 8, 20), accentMat);
-  waistRing.rotation.x = Math.PI / 2;
-  waistRing.position.y = 0.42;
-
-  // Shoulder pads
-  const padR = new THREE.Mesh(new THREE.SphereGeometry(0.27, 18, 14), darkMat);
-  padR.scale.set(0.8, 0.55, 1.2);
-  padR.position.set(0.64, 1.62, 0);
-  const padL = padR.clone();
-  padL.position.x = -0.64;
-
-  // Head: rounded helmet with dark faceplate, glowing visor and side pods
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.36, 22, 18), bodyMat);
-  head.scale.set(1, 0.92, 1.08);
-  head.position.y = 2.06;
-  const faceplate = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.44, 0.14), darkMat);
-  faceplate.position.set(0, 2.04, 0.34);
-  const visor = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.13, 0.1), glowMat);
-  visor.position.set(0, 2.08, 0.42);
-  const earR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.1, 10), accentMat);
-  earR.rotation.z = Math.PI / 2;
-  earR.position.set(0.37, 2.06, 0);
-  const earL = earR.clone();
-  earL.position.x = -0.37;
-  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.3, 6), bodyMat);
-  antenna.position.y = 2.4;
-  const antennaBall = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), glowMat);
-  antennaBall.position.y = 2.56;
-
-  // Right arm (driven by the move mechanism): shoulder anchor, stretchable arm,
-  // static joint and glowing hand
-  const shoulder = new THREE.Object3D();
-  shoulder.position.set(0.66, 1.6, 0);
-
-  const armMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.075, 0.105, 1, 14),
-    bodyMat,
-  );
+  const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.11, 1, 16), bodyMat);
   armMesh.position.copy(shoulder.position);
-
-  const shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 12), darkMat);
+  const shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.15, 18, 14), darkMat);
   shoulderJoint.position.copy(shoulder.position);
+  const wristCuff = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.025, 8, 16), glowMat);
+  wristCuff.rotation.x = Math.PI / 2;
+  wristCuff.position.z = 0.15;
 
   const articulatedHand = createArticulatedHand(handMat, glowMat, true);
   const hand = articulatedHand.group;
-  hand.position.set(0.66, 1.2, 0.6);
+  hand.position.set(0.66, 2.0, 0.6);
+  hand.add(wristCuff);
 
-  // Static left arm resting at its side
-  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.105, 0.95, 14), bodyMat);
-  armL.rotation.z = 0.25;
-  armL.position.set(-0.68, 1.25, 0.05);
-  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 10), darkMat);
-  handL.position.set(-0.9, 0.75, 0.08);
+  // Static left arm is fully jointed rather than a single rigid cylinder.
+  const armLUpper = new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.38, 6, 12), bodyMat);
+  armLUpper.position.set(-0.72, 2.04, 0.05);
+  armLUpper.rotation.z = 0.22;
+  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 10), darkMat);
+  elbowL.position.set(-0.84, 1.7, 0.06);
+  const armLFore = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.3, 6, 12), edgeMat);
+  armLFore.position.set(-0.92, 1.42, 0.08);
+  armLFore.rotation.z = -0.18;
+  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 12), handMat);
+  handL.position.set(-0.96, 1.18, 0.1);
 
   group.add(
-    base,
-    baseRing,
-    baseHatch,
-    torso,
-    neck,
-    shoulderBoltR,
-    shoulderBoltL,
-    chestCore,
-    chestPanel,
-    waistRing,
-    padR,
-    padL,
-    head,
-    faceplate,
-    visor,
-    earR,
-    earL,
-    antenna,
-    antennaBall,
-    shoulder,
-    armMesh,
-    shoulderJoint,
-    hand,
-    armL,
-    handL,
+    base, baseDeck, baseRing, baseHatch, baseHatchLine,
+    pelvis, hipBand, thighL, thighR, kneeL, kneeR, shinL, shinR, footL, footR, footPlateL, footPlateR,
+    torsoUnderframe, torso, chestArmor, chestPanel, chestCore, chestCoreRing, ...ventBars, waistRing,
+    neck, neckRing, head, helmetTop, faceplate, jawPlate, visor, visorInner, earR, earL, earGlowR, earGlowL,
+    antenna, antennaBall, shoulderPadR, shoulderPadL, shoulderBoltR, shoulderBoltL, shoulder, armMesh,
+    shoulderJoint, hand, armLUpper, elbowL, armLFore, handL,
   );
-  group.userData = { shoulder, hand, armMesh, handMat, setGrip: articulatedHand.setGrip };
+  group.userData = {
+    shoulder,
+    hand,
+    armMesh,
+    handMat,
+    setGrip: articulatedHand.setGrip,
+    idle: { torso, head, chestCore, chestCoreRing, antennaBall, visor },
+  };
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
       obj.castShadow = true;
+      obj.receiveShadow = true;
     }
   });
   return group;
@@ -664,113 +930,159 @@ function createRobot(): THREE.Group {
 function createHuman(): THREE.Group {
   const group = new THREE.Group();
 
-  const skinMat = new THREE.MeshStandardMaterial({
-    color: 0xe8b68f,
-    roughness: 0.55,
-    metalness: 0,
-  });
-  const shirtMat = new THREE.MeshStandardMaterial({
-    color: 0x2563eb,
-    roughness: 0.65,
-    metalness: 0.08,
-  });
-  const pantMat = new THREE.MeshStandardMaterial({
-    color: 0x1e293b,
-    roughness: 0.75,
-    metalness: 0.02,
-  });
-  const shoeMat = new THREE.MeshStandardMaterial({
-    color: 0x111827,
-    roughness: 0.6,
-    metalness: 0.1,
-  });
-  const hairMat = new THREE.MeshStandardMaterial({
-    color: 0x3b2b1c,
-    roughness: 0.9,
-    metalness: 0,
-  });
-  const handMat = new THREE.MeshStandardMaterial({
-    color: 0xe8b68f,
-    emissive: 0xffa03a,
-    emissiveIntensity: 0,
-    roughness: 0.5,
-    metalness: 0,
-  });
-  const eyeMat = new THREE.MeshStandardMaterial({
-    color: 0xf8fafc,
-    emissive: 0xf59e0b,
-    emissiveIntensity: 0.22,
-    roughness: 0.2,
-    metalness: 0.05,
-  });
+  const skinMat = new THREE.MeshStandardMaterial({ color: 0xe3a77d, roughness: 0.58, metalness: 0 });
+  const skinLightMat = new THREE.MeshStandardMaterial({ color: 0xf0bd96, roughness: 0.52, metalness: 0 });
+  const shirtMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.72, metalness: 0.03 });
+  const shirtLightMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.78, metalness: 0.02 });
+  const pantMat = new THREE.MeshStandardMaterial({ color: 0x172033, roughness: 0.82, metalness: 0.01 });
+  const shoeMat = new THREE.MeshStandardMaterial({ color: 0x0b1220, roughness: 0.62, metalness: 0.08 });
+  const hairMat = new THREE.MeshStandardMaterial({ color: 0x24170f, roughness: 0.94, metalness: 0 });
+  const hairHighlightMat = new THREE.MeshStandardMaterial({ color: 0x4b2c1b, roughness: 0.88, metalness: 0 });
+  const handMat = new THREE.MeshStandardMaterial({ color: 0xe3a77d, emissive: 0xff8a2a, emissiveIntensity: 0, roughness: 0.54, metalness: 0 });
+  const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.28, metalness: 0 });
+  const irisMat = new THREE.MeshStandardMaterial({ color: 0x3b2418, roughness: 0.34, metalness: 0.02 });
+  const mouthMat = new THREE.MeshStandardMaterial({ color: 0x7f3340, roughness: 0.7, metalness: 0 });
+  const buttonMat = new THREE.MeshStandardMaterial({ color: 0xdbeafe, roughness: 0.3, metalness: 0.45 });
 
-  // Legs + shoes
-  const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.95, 12), pantMat);
-  legL.position.set(-0.27, 0.48, 0);
-  const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.95, 12), pantMat);
-  legR.position.set(0.27, 0.48, 0);
-  const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.42), shoeMat);
-  shoeL.position.set(-0.27, 0.06, -0.1);
-  const shoeR = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.42), shoeMat);
-  shoeR.position.set(0.27, 0.06, -0.1);
+  // Seated lower body: separate thighs, knees, shoes and a visible hip seam.
+  const pelvis = new THREE.Mesh(new THREE.CapsuleGeometry(0.31, 0.22, 6, 14), pantMat);
+  pelvis.position.y = 0.72;
+  pelvis.scale.z = 0.84;
+  const legL = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.48, 6, 12), pantMat);
+  legL.position.set(-0.27, 0.46, 0);
+  const legR = legL.clone();
+  legR.position.x = 0.27;
+  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 10), pantMat);
+  kneeL.position.set(-0.27, 0.73, -0.02);
+  const kneeR = kneeL.clone();
+  kneeR.position.x = 0.27;
+  const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.14, 0.44), shoeMat);
+  shoeL.position.set(-0.27, 0.08, -0.13);
+  shoeL.rotation.x = -0.08;
+  const shoeR = shoeL.clone();
+  shoeR.position.x = 0.27;
+  const soleL = new THREE.Mesh(new THREE.BoxGeometry(0.27, 0.025, 0.43), buttonMat);
+  soleL.position.set(-0.27, 0.01, -0.13);
+  const soleR = soleL.clone();
+  soleR.position.x = 0.27;
 
-  // Torso with a subtle collar
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.44, 1.0, 16), shirtMat);
-  torso.position.y = 1.4;
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.18, 12), skinMat);
-  neck.position.y = 1.86;
-  const belt = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.025, 8, 20), shoeMat);
+  // Clothing layers: fitted shirt, chest plane, collar, belt and buttons.
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.34, 0.58, 8, 16), shirtMat);
+  torso.position.y = 1.42;
+  torso.scale.z = 0.86;
+  const shirtFront = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.72, 0.035), shirtLightMat);
+  shirtFront.position.set(0, 1.44, -0.34);
+  shirtFront.scale.x = 0.82;
+  const belt = new THREE.Mesh(new THREE.TorusGeometry(0.37, 0.026, 8, 22), shoeMat);
   belt.rotation.x = Math.PI / 2;
-  belt.position.y = 0.98;
-  const shirtButton = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), eyeMat);
-  shirtButton.position.set(0, 1.45, -0.39);
+  belt.position.y = 1.0;
+  const beltBuckle = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.07, 0.025), buttonMat);
+  beltBuckle.position.set(0, 1.0, -0.39);
+  const shirtButton = new THREE.Mesh(new THREE.SphereGeometry(0.026, 10, 8), buttonMat);
+  shirtButton.position.set(0, 1.57, -0.37);
   const shirtButton2 = shirtButton.clone();
-  shirtButton2.position.y = 1.3;
-  const earL = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), skinMat);
-  earL.position.set(-0.25, 2.02, 0);
+  shirtButton2.position.y = 1.4;
+  const shirtButton3 = shirtButton.clone();
+  shirtButton3.position.y = 1.23;
+  const collarL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.06, 0.08), shirtLightMat);
+  collarL.position.set(-0.12, 1.82, -0.23);
+  collarL.rotation.z = -0.42;
+  const collarR = collarL.clone();
+  collarR.position.x = 0.12;
+  collarR.rotation.z = 0.42;
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.18, 14), skinMat);
+  neck.position.y = 1.88;
+
+  // Head with jaw, ears, textured-looking hair mass, brows, irises and lips.
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 24, 18), skinLightMat);
+  head.scale.set(0.96, 1.08, 0.9);
+  head.position.y = 2.12;
+  const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.2, 18, 14), skinMat);
+  jaw.scale.set(1.08, 0.62, 0.8);
+  jaw.position.set(0, 1.99, -0.015);
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.282, 24, 18, 0, Math.PI * 2, 0, Math.PI / 2.15), hairMat);
+  hair.position.y = 2.2;
+  const hairline = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24, Math.PI), hairHighlightMat);
+  hairline.rotation.x = Math.PI / 2;
+  hairline.position.set(0, 2.16, -0.13);
+  const sideHairL = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.16, 5, 8), hairMat);
+  sideHairL.position.set(-0.25, 2.08, -0.02);
+  const sideHairR = sideHairL.clone();
+  sideHairR.position.x = 0.25;
+  const earL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 10), skinMat);
+  earL.scale.set(0.75, 1, 0.5);
+  earL.position.set(-0.26, 2.1, 0);
   const earR = earL.clone();
-  earR.position.x = 0.25;
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 8, 16), shirtMat);
-  collar.rotation.x = -Math.PI / 2;
-  collar.position.y = 1.86;
-
-  // Head + hair + a small nose bump (facing the board / camera)
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 20, 16), skinMat);
-  head.position.y = 2.02;
-  const hair = new THREE.Mesh(
-    new THREE.SphereGeometry(0.256, 20, 14, 0, Math.PI * 2, 0, Math.PI / 2.3),
-    hairMat,
-  );
-  hair.position.y = 2.08;
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), skinMat);
-  nose.position.set(0, 2.0, -0.24);
-  const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.028, 10, 8), eyeMat);
-  eyeL.position.set(-0.09, 2.08, -0.235);
+  earR.position.x = 0.26;
+  const nose = new THREE.Mesh(new THREE.CapsuleGeometry(0.028, 0.07, 5, 8), skinMat);
+  nose.rotation.x = Math.PI / 2;
+  nose.position.set(0, 2.08, -0.245);
+  const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.04, 14, 10), eyeWhiteMat);
+  eyeL.scale.set(1.2, 0.68, 0.45);
+  eyeL.position.set(-0.095, 2.17, -0.23);
   const eyeR = eyeL.clone();
-  eyeR.position.x = 0.09;
+  eyeR.position.x = 0.095;
+  const irisL = new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 8), irisMat);
+  irisL.position.set(-0.095, 2.17, -0.255);
+  const irisR = irisL.clone();
+  irisR.position.x = 0.095;
+  const browL = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.025, 0.025), hairMat);
+  browL.position.set(-0.095, 2.245, -0.235);
+  browL.rotation.z = 0.08;
+  const browR = browL.clone();
+  browR.position.x = 0.095;
+  browR.rotation.z = -0.08;
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.018, 0.018), mouthMat);
+  mouth.position.set(0, 1.99, -0.19);
 
-  // Right arm (driven by the hand-tracking mechanism): shoulder anchor,
-  // stretchable arm and hand that reaches toward the board
+  // Right arm remains driven by hand tracking; the surrounding clothing and cuff
+  // make the stretched segment read as a sleeve rather than a floating rod.
   const shoulder = new THREE.Object3D();
-  shoulder.position.set(0.42, 1.62, 0);
-  const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.085, 1, 10), shirtMat);
+  shoulder.position.set(0.42, 1.66, 0);
+  const shoulderCap = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), shirtMat);
+  shoulderCap.scale.set(0.9, 0.65, 1.05);
+  shoulderCap.position.copy(shoulder.position);
+  const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 1, 12), shirtMat);
   armMesh.position.copy(shoulder.position);
-  const articulatedHand = createArticulatedHand(handMat, eyeMat, false);
+  const articulatedHand = createArticulatedHand(handMat, eyeWhiteMat, false);
   const hand = articulatedHand.group;
-  hand.position.set(0.5, 1.1, -1.0);
+  hand.position.set(0.5, 1.14, -1.0);
+  const wristBand = new THREE.Mesh(new THREE.TorusGeometry(0.105, 0.018, 8, 16), buttonMat);
+  wristBand.rotation.x = Math.PI / 2;
+  wristBand.position.z = 0.13;
+  hand.add(wristBand);
 
-  // Left arm (static, resting)
-  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.085, 0.95, 10), shirtMat);
-  armL.rotation.z = -0.28;
-  armL.position.set(-0.72, 1.25, 0.05);
-  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), skinMat);
-  handL.position.set(-0.98, 0.85, 0.08);
+  // Left arm rests naturally at the side with a sleeve, elbow and hand.
+  const armLUpper = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.34, 6, 10), shirtMat);
+  armLUpper.position.set(-0.66, 1.38, 0.05);
+  armLUpper.rotation.z = -0.25;
+  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), shirtMat);
+  elbowL.position.set(-0.76, 1.08, 0.06);
+  const armLFore = new THREE.Mesh(new THREE.CapsuleGeometry(0.055, 0.28, 6, 10), skinMat);
+  armLFore.position.set(-0.84, 0.86, 0.08);
+  armLFore.rotation.z = -0.14;
+  const handL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 10), skinMat);
+  handL.position.set(-0.9, 0.65, 0.1);
 
-  group.add(legL, legR, shoeL, shoeR, torso, neck, belt, shirtButton, shirtButton2, earL, earR, collar, head, hair, nose, eyeL, eyeR, shoulder, armMesh, hand, armL, handL);
-  group.userData = { shoulder, hand, armMesh, handMat, setGrip: articulatedHand.setGrip };
+  group.add(
+    pelvis, legL, legR, kneeL, kneeR, shoeL, shoeR, soleL, soleR,
+    torso, shirtFront, belt, beltBuckle, shirtButton, shirtButton2, shirtButton3,
+    collarL, collarR, neck, head, jaw, hair, hairline, sideHairL, sideHairR, earL, earR,
+    nose, eyeL, eyeR, irisL, irisR, browL, browR, mouth,
+    shoulder, shoulderCap, armMesh, hand, armLUpper, elbowL, armLFore, handL,
+  );
+  group.userData = {
+    shoulder,
+    hand,
+    armMesh,
+    handMat,
+    setGrip: articulatedHand.setGrip,
+    idle: { torso, head, jaw, hair, chest: shirtFront, eyeL, eyeR },
+  };
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
       obj.castShadow = true;
+      obj.receiveShadow = true;
     }
   });
   return group;
@@ -835,6 +1147,7 @@ export default function Simulation3D({
   const robotAnimatingRef = useRef(false);
   const playerAnimatingRef = useRef(false);
   const pendingGamePositionRef = useRef<string | null>(null);
+  const gamePositionRef = useRef(gamePosition);
   const firstRunRef = useRef(true);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   const [legalSquares, setLegalSquares] = useState<string[]>([]);
@@ -847,8 +1160,30 @@ export default function Simulation3D({
   const [calibMode, setCalibMode] = useState<"off" | "top" | "bottom">("off");
   const calibRef = useRef<{ topY: number | null; bottomY: number | null }>({ topY: null, bottomY: null });
   const lastHandPosRef = useRef<{ x: number; y: number } | null>(null);
+  const [lightingPreset, setLightingPreset] = useState<LightingPresetName>("studio");
+  const [lightingStrength, setLightingStrength] = useState(1);
+  const [shadowsEnabled, setShadowsEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const soundEnabledRef = useRef(true);
+  const audioUnlockRef = useRef<() => void>(() => {});
+  const lightingSettingsRef = useRef({
+    preset: "studio" as LightingPresetName,
+    strength: 1,
+    shadows: true,
+  });
 
   const triggerRerender = useCallback(() => forceUpdate((n) => n + 1), []);
+
+  // Keep lighting controls in refs so the render loop can apply them without
+  // pushing per-frame values through React state.
+  // eslint-disable-next-line react-hooks/refs
+  lightingSettingsRef.current = {
+    preset: lightingPreset,
+    strength: lightingStrength,
+    shadows: shadowsEnabled,
+  };
+  // eslint-disable-next-line react-hooks/refs
+  soundEnabledRef.current = soundEnabled;
 
   const rebuildPieces = useCallback((chess: Chess, scene: THREE.Scene, pieces: Map<string, THREE.Group>) => {
     for (const [, mesh] of pieces) scene.remove(mesh);
@@ -921,6 +1256,8 @@ export default function Simulation3D({
   useEffect(() => { onMoveRef.current = onMoveExecuted; }, [onMoveExecuted]);
 
   // Sync refs during render so the detect loop closure has up-to-date values
+  // eslint-disable-next-line react-hooks/refs
+  gamePositionRef.current = gamePosition;
   // eslint-disable-next-line react-hooks/refs
   selectedRef.current = selectedSquare;
   // eslint-disable-next-line react-hooks/refs
@@ -1032,6 +1369,21 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
     rimLight.position.set(-2, 9, -9);
     scene.add(rimLight);
 
+    // Localized lights give the figures readable silhouettes and let active
+    // gestures create a soft, responsive pool of light near the board.
+    const fillLight = new THREE.PointLight(0xf59e0b, 0.28, 18, 2);
+    fillLight.position.set(0, 5.5, 2.5);
+    scene.add(fillLight);
+    const humanLight = new THREE.PointLight(0xffb45b, 0.18, 7, 2);
+    humanLight.position.set(0, 2.7, 5.2);
+    scene.add(humanLight);
+    const robotLight = new THREE.PointLight(0x22d3ee, 0.24, 7, 2);
+    robotLight.position.set(0, 3.2, -4.4);
+    scene.add(robotLight);
+    const interactionLight = new THREE.PointLight(0x7dd3fc, 0, 5.5, 2);
+    interactionLight.position.set(0, 1.7, 0);
+    scene.add(interactionLight);
+
     // Studio pedestal table surface
     const pedestal = new THREE.Mesh(
       new THREE.CylinderGeometry(14, 15, 0.5, 64),
@@ -1126,6 +1478,12 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
     const tileMeshes: THREE.Mesh[] = [mergedLightTiles, mergedDarkTiles];
 
     const pieces = new Map<string, THREE.Group>();
+    const particleField = createParticleField(scene, isLowPowerDevice ? 150 : 300);
+    particleField.points.visible = !isE2ETest;
+    const particleOrigin = new THREE.Vector3();
+    const coreParticleOrigin = new THREE.Vector3();
+    let lastCoreParticleAt = 0;
+    let lastActivePieceParticleAt = 0;
     rebuildPieces(chessRef.current, scene, pieces);
 
     const selectionRing = new THREE.Mesh(
@@ -1189,6 +1547,14 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
     const robotArm = robot.userData.armMesh as THREE.Mesh;
     const robotHandMat = robot.userData.handMat as THREE.MeshStandardMaterial;
     const robotSetGrip = robot.userData.setGrip as (amount: number) => void;
+    const robotIdle = robot.userData.idle as {
+      torso: THREE.Object3D;
+      head: THREE.Object3D;
+      chestCore: THREE.Object3D;
+      chestCoreRing: THREE.Object3D;
+      antennaBall: THREE.Object3D;
+      visor: THREE.Object3D;
+    };
 
     // Human figure on the player's (white) side whose hand follows the tracked hand
     const human = createHuman();
@@ -1199,6 +1565,15 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
     const humanArm = human.userData.armMesh as THREE.Mesh;
     const humanHandMat = human.userData.handMat as THREE.MeshStandardMaterial;
     const humanSetGrip = human.userData.setGrip as (amount: number) => void;
+    const humanIdle = human.userData.idle as {
+      torso: THREE.Object3D;
+      head: THREE.Object3D;
+      jaw: THREE.Object3D;
+      hair: THREE.Object3D;
+      chest: THREE.Object3D;
+      eyeL: THREE.Object3D;
+      eyeR: THREE.Object3D;
+    };
     const HUMAN_HAND_REST = new THREE.Vector3(0.5, 1.1, 6.0);
     const humanHandFollowTarget = HUMAN_HAND_REST.clone();
     const pieceFollowTarget = new THREE.Vector3();
@@ -1220,12 +1595,105 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
       _v.copy(worldPos).sub(robot.position);
       robotHand.position.copy(_v);
     }
-    robotHand.position.set(0.6, 1.2, 0.6);
+    robotHand.position.set(0.6, 1.75, 0.6);
 
     let robotAnim: RobotAnim | null = null;
+    let appliedLightingSignature = "";
+
+    function applyLightingSettings() {
+      const settings = lightingSettingsRef.current;
+      const preset = LIGHTING_PRESETS[settings.preset];
+      const signature = `${settings.preset}:${settings.strength}:${settings.shadows}`;
+      if (signature === appliedLightingSignature) return;
+      appliedLightingSignature = signature;
+      const strength = settings.strength;
+      ambient.color.setHex(preset.ambientColor);
+      ambient.intensity = preset.ambientIntensity * strength;
+      keyLight.color.setHex(preset.keyColor);
+      keyLight.intensity = preset.keyIntensity * strength;
+      rimLight.color.setHex(preset.rimColor);
+      rimLight.intensity = preset.rimIntensity * strength;
+      fillLight.color.setHex(preset.fillColor);
+      fillLight.intensity = preset.fillIntensity * strength;
+      humanLight.color.setHex(preset.humanColor);
+      humanLight.intensity = preset.humanIntensity * strength;
+      robotLight.color.setHex(preset.robotColor);
+      robotLight.intensity = preset.robotIntensity * strength;
+      const shadows = settings.shadows && !isLowPowerDevice;
+      renderer.shadowMap.enabled = shadows;
+      keyLight.castShadow = shadows;
+      renderer.shadowMap.needsUpdate = true;
+    }
+
+    let audioContext: AudioContext | null = null;
+    let audioMasterGain: GainNode | null = null;
+
+    function unlockAudio() {
+      if (typeof window === "undefined") return;
+      try {
+        if (!audioContext) {
+          const AudioContextConstructor = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+          if (!AudioContextConstructor) return;
+          audioContext = new AudioContextConstructor();
+          audioMasterGain = audioContext.createGain();
+          audioMasterGain.gain.value = 0.18;
+          audioMasterGain.connect(audioContext.destination);
+        }
+        if (audioContext.state === "suspended") void audioContext.resume();
+      } catch {
+        audioContext = null;
+        audioMasterGain = null;
+      }
+    }
+
+    audioUnlockRef.current = unlockAudio;
+
+    function playTone(
+      frequency: number,
+      duration: number,
+      volume: number,
+      type: OscillatorType = "sine",
+      endFrequency = frequency,
+    ) {
+      if (!soundEnabledRef.current) return;
+      unlockAudio();
+      if (!audioContext || !audioMasterGain || audioContext.state !== "running") return;
+      const start = audioContext.currentTime;
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, start);
+      oscillator.frequency.exponentialRampToValueAtTime(Math.max(30, endFrequency), start + duration);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume), start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      oscillator.connect(gain);
+      gain.connect(audioMasterGain);
+      oscillator.start(start);
+      oscillator.stop(start + duration + 0.02);
+    }
+
+    function playServoSound(intensity = 1) {
+      playTone(150 + intensity * 35, 0.18, 0.035 * intensity, "sawtooth", 82 + intensity * 18);
+      playTone(420 + intensity * 50, 0.12, 0.018 * intensity, "square", 230);
+    }
+
+    function playPickupSound() {
+      playTone(520, 0.09, 0.045, "triangle", 780);
+    }
+
+    function playPlacementSound(capture = false) {
+      playTone(capture ? 110 : 260, capture ? 0.24 : 0.16, capture ? 0.07 : 0.05, "sine", capture ? 62 : 420);
+      playTone(capture ? 190 : 520, 0.11, 0.025, "triangle", capture ? 90 : 680);
+    }
+
+    function playCancelSound() {
+      playTone(180, 0.13, 0.028, "sine", 100);
+    }
 
     function startRobotAnim(fromSq: string, toSq: string, flags: string, done: () => void) {
       robotAnimatingRef.current = true;
+      playServoSound(0.85);
       const piece = pieces.get(fromSq) ?? null;
       const fromPos = squareToPosition(fromSq);
       const toPos = squareToPosition(toSq);
@@ -1241,6 +1709,10 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
       if (captured && captured !== piece && captured !== secondaryPiece) {
         captured.visible = false;
         captured.scale.setScalar(0.78);
+        particleOrigin.copy(toPos);
+        particleOrigin.y = 0.48;
+        particleField.burst(particleOrigin, 0xfbbf24, 26);
+        playPlacementSound(true);
       }
 
       const rest = new THREE.Vector3(0.3, 1.7, -4.6);
@@ -1382,6 +1854,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
                 processHand(lm, rawGesture);
               } else {
                 handActiveRef.current = false;
+                activeGesture = "none";
                 setHandActive(false);
                 setGestureLabel("");
                 destHighlight.visible = false;
@@ -1414,6 +1887,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
     }
 
     const handActiveRef = { current: false };
+    let activeGesture: Gesture = "none";
     let grabbedPieceSquare: string | null = null;
     let stableGesture: Gesture = "none";
     let stableCount = 0;
@@ -1434,8 +1908,10 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
       robotAnimatingRef.current = false;
       playerAnimatingRef.current = false;
       pendingGamePositionRef.current = null;
-      if (gestureAnim && grabbedPieceSquare) {
-        gestureAnim.piece.position.copy(squareToPosition(grabbedPieceSquare));
+      if (gestureAnim) {
+        gestureAnim.piece.position.copy(gestureAnim.from);
+      } else if (grabbedPieceGroup && grabbedPieceSquare) {
+        grabbedPieceGroup.position.copy(squareToPosition(grabbedPieceSquare));
       }
       gestureAnim = null;
       grabbedPieceGroup = null;
@@ -1509,6 +1985,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
         },
         getSnapshot: () => ({
           fen: chessRef.current.fen(),
+          reactGamePosition: gamePositionRef.current,
           playerAnimating: Boolean(gestureAnim),
           robotAnimating: Boolean(robotAnim),
           robotSegment: robotAnim?.seg ?? -1,
@@ -1532,11 +2009,21 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
       const validation = validateDropTarget(fromSq, toSq, legalRef.current);
       if (validation.accepted && validation.target) {
         try {
-          const move = chessRef.current.move({ from: fromSq as Square, to: validation.target as Square, promotion: "q" });
-          if (move) {
+          const startFen = chessRef.current.fen();
+          const previewChess = new Chess(startFen);
+          const previewMove = previewChess.move({
+            from: fromSq as Square,
+            to: validation.target as Square,
+            promotion: "q",
+          });
+          if (previewMove) {
             const targetPos = squareToPosition(validation.target);
+            particleOrigin.copy(targetPos);
+            particleOrigin.y = 0.28;
+            particleField.emit(particleOrigin, previewMove.captured ? 0xfbbf24 : 0x34d399, 8, 0.14, 0.32, 0.45, -0.16);
+            playServoSound(0.42);
             playerAnimatingRef.current = true;
-            pendingGamePositionRef.current = chessRef.current.fen();
+            pendingGamePositionRef.current = startFen;
             gestureAnim = {
               piece: grabbed,
               from: grabbed.position.clone(),
@@ -1544,11 +2031,37 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
               progress: 0,
               arcHeight: 0.6,
               done: () => {
+                if (chessRef.current.fen() !== startFen) {
+                  playerAnimatingRef.current = false;
+                  pendingGamePositionRef.current = null;
+                  rebuildPieces(chessRef.current, scene, pieces);
+                  triggerRerender();
+                  return;
+                }
+                const committedMove = chessRef.current.move({
+                  from: fromSq as Square,
+                  to: validation.target as Square,
+                  promotion: "q",
+                });
                 playerAnimatingRef.current = false;
                 pendingGamePositionRef.current = null;
-                setStatusMessage(`3D Move: ${move.san}`);
-                rebuildPieces(chessRef.current, scene, pieces);
+                if (!committedMove) {
+                  rebuildPieces(chessRef.current, scene, pieces);
+                  triggerRerender();
+                  return;
+                }
+                particleOrigin.copy(targetPos);
+                particleOrigin.y = 0.28;
+                particleField.burst(particleOrigin, committedMove.captured ? 0xfbbf24 : 0x34d399, committedMove.captured ? 24 : 16);
+                playPlacementSound(Boolean(committedMove.captured));
+                setStatusMessage(`3D Move: ${committedMove.san}`);
+                // Publish while the transaction is still marked active. The
+                // parent updates React's FEN, and this component's effect will
+                // rebuild once from the committed chess state after the
+                // animation instead of racing a second imperative rebuild.
                 onMoveRef.current();
+                playerAnimatingRef.current = false;
+                pendingGamePositionRef.current = null;
                 triggerRerender();
               },
             };
@@ -1560,6 +2073,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
       }
 
       if (!moveSuccess) {
+        playCancelSound();
         playerAnimatingRef.current = false;
         pendingGamePositionRef.current = null;
         const origPos = squareToPosition(fromSq);
@@ -1624,6 +2138,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
         stableCount = 0;
       }
       const gesture: Gesture = stableCount >= GESTURE_CONFIRMATION_FRAMES ? stableGesture : "none";
+      activeGesture = gesture;
 
       // MediaPipe returns normalized [0..1] landmark coordinates.
       const handX = lm[9][0];
@@ -1806,6 +2321,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
               const piece = chess.get(grabSq as Square);
               if (piece && piece.color === "w") {
                 grabbedPieceSquare = grabSq;
+                playPickupSound();
                 setSelectedSquare(grabSq);
                 const moves = chess.moves({ square: grabSq as Square, verbose: true });
                 setLegalSquares(moves.map((m) => m.to));
@@ -1850,6 +2366,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
     }
 
     canvas.addEventListener("pointerdown", (e) => {
+      audioUnlockRef.current();
       if (robotAnimatingRef.current) return;
       if (e.button === 2) {
         isOrbiting = true;
@@ -1879,6 +2396,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
               : [];
             if (moves.length > 0) {
               grabbedPieceSquare = square;
+              playPickupSound();
               grabbedPieceGroup = pieces.get(square) ?? null;
               pointerDragStart = { x: e.clientX, y: e.clientY };
               pointerDragging = false;
@@ -2012,12 +2530,18 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
     let robotGrip = 0.08;
     const humanHandTargetLocal = new THREE.Vector3();
     const humanHandTargetWorld = new THREE.Vector3();
+    const interactionTarget = new THREE.Vector3();
+    const humanFocusTarget = new THREE.Vector3();
+    const robotFocusTarget = new THREE.Vector3();
+    const interactionLightOrigin = new THREE.Vector3(0, 1.7, 0);
     setStatusMessage("Entering 3D Mode — Morphing 2D board to 3D arena...");
 
     function animate(now = performance.now()) {
       animRef.current = requestAnimationFrame(animate);
       const deltaSeconds = Math.min(0.05, Math.max(0.001, (now - previousFrameTime) / 1000));
       previousFrameTime = now;
+
+      applyLightingSettings();
 
       // Watchdog: if the robot is flagged busy but no animation object exists,
       // the flag got stuck — clear it so gestures can never be blocked forever.
@@ -2088,6 +2612,94 @@ targetCamPos.set(cx, cy, cz);
         destHighlight.scale.setScalar(1);
       }
 
+      // Small idle motions keep both figures alive without competing with the
+      // hand and arm choreography. The motion is intentionally restrained so
+      // the chessboard remains the visual focus.
+      const playerEngagement = grabbedPieceSquare
+        ? 1
+        : handActiveRef.current
+          ? activeGesture === "palm"
+            ? 0.7
+            : activeGesture === "fist"
+              ? 0.9
+              : 0.35
+          : 0;
+      const robotEngagement = robotAnim ? 1 : playerEngagement * 0.72;
+      interactionTarget.set(
+        finger3dRef.current?.x ?? 0,
+        1.65,
+        finger3dRef.current?.z ?? 0,
+      );
+      if (grabbedPieceSquare) {
+        interactionTarget.copy(squareToPosition(grabbedPieceSquare));
+        interactionTarget.y = 1.8;
+      }
+      humanFocusTarget.set(
+        THREE.MathUtils.clamp(interactionTarget.x * 0.038, -0.22, 0.22),
+        THREE.MathUtils.clamp(-interactionTarget.z * 0.018, -0.08, 0.08),
+        0,
+      );
+      robotFocusTarget.set(
+        THREE.MathUtils.clamp(-interactionTarget.x * 0.032, -0.18, 0.18),
+        THREE.MathUtils.clamp(-interactionTarget.z * 0.014, -0.06, 0.06),
+        0,
+      );
+      const humanBreath = Math.sin(now * 0.00155);
+      humanIdle.torso.rotation.z = humanBreath * 0.008;
+      humanIdle.chest.position.y = 1.44 + humanBreath * 0.006;
+      humanIdle.head.rotation.y = humanBreath * 0.018 + humanFocusTarget.x * playerEngagement;
+      humanIdle.head.rotation.x = humanFocusTarget.y * playerEngagement;
+      humanIdle.head.rotation.z = Math.sin(now * 0.0011) * 0.008;
+      humanIdle.jaw.rotation.z = Math.sin(now * 0.0013) * 0.004 + playerEngagement * 0.012;
+      humanIdle.hair.rotation.y = humanBreath * 0.012;
+      const blinkPhase = Math.sin(now * 0.00118);
+      const blink = Math.abs(blinkPhase) > 0.985 ? 0.12 : 1;
+      humanIdle.eyeL.scale.y = 0.68 * blink;
+      humanIdle.eyeR.scale.y = 0.68 * blink;
+
+      const robotBreath = Math.sin(now * 0.00125);
+      robotIdle.torso.rotation.z = robotBreath * 0.006;
+      robotIdle.head.rotation.y = Math.sin(now * 0.0009) * 0.014 + robotFocusTarget.x * robotEngagement;
+      robotIdle.head.rotation.x = robotFocusTarget.y * robotEngagement;
+      robotIdle.head.rotation.z = robotBreath * 0.006;
+      robotIdle.chestCore.scale.setScalar(1 + Math.sin(now * 0.004) * 0.08);
+      robotIdle.chestCoreRing.rotation.z += deltaSeconds * 0.45;
+      robotIdle.antennaBall.scale.setScalar(1 + Math.sin(now * 0.005) * 0.08);
+      const robotVisorMaterial = (robotIdle.visor as THREE.Mesh).material as THREE.MeshStandardMaterial;
+      robotVisorMaterial.emissiveIntensity = 1.15 + Math.sin(now * 0.003) * 0.18 + robotEngagement * 0.32;
+      interactionLight.position.lerpVectors(
+        interactionLightOrigin,
+        interactionTarget,
+        Math.min(1, deltaSeconds * 4),
+      );
+      interactionLight.intensity = robotEngagement * (0.38 + Math.sin(now * 0.006) * 0.08) * lightingSettingsRef.current.strength;
+      humanLight.intensity = (LIGHTING_PRESETS[lightingSettingsRef.current.preset].humanIntensity + playerEngagement * 0.18) * lightingSettingsRef.current.strength;
+      robotLight.intensity = (LIGHTING_PRESETS[lightingSettingsRef.current.preset].robotIntensity + robotEngagement * 0.2) * lightingSettingsRef.current.strength;
+
+      // Machine core energy and active-piece trails use the same pooled field.
+      if (now - lastCoreParticleAt > 72) {
+        lastCoreParticleAt = now;
+        coreParticleOrigin.set(0, 1.82, 0.59);
+        robot.localToWorld(coreParticleOrigin);
+        particleField.emit(coreParticleOrigin, 0x67e8f9, 2, 0.12, 0.28, 0.55, 0.05);
+      }
+      if (now - lastActivePieceParticleAt > 58) {
+        lastActivePieceParticleAt = now;
+        if (robotAnim?.piece && robotAnim.attached) {
+          particleOrigin.copy(robotAnim.piece.position);
+          particleOrigin.y += 0.22;
+          particleField.emit(particleOrigin, 0x22d3ee, 1, 0.08, 0.18, 0.35, -0.05);
+        } else if (gestureAnim) {
+          particleOrigin.copy(gestureAnim.piece.position);
+          particleOrigin.y += 0.22;
+          particleField.emit(particleOrigin, 0x34d399, 1, 0.08, 0.18, 0.35, -0.08);
+        } else if (grabbedPieceGroup && grabbedPieceSquare) {
+          particleOrigin.copy(grabbedPieceGroup.position);
+          particleOrigin.y += 0.24;
+          particleField.emit(particleOrigin, 0xfbbf24, 1, 0.08, 0.15, 0.3, -0.08);
+        }
+      }
+
       // Robot arm follows the hand
       {
 robotDir.subVectors(robotHand.position, robotShoulder.position);
@@ -2111,8 +2723,13 @@ humanHandTargetWorld.copy(humanHandFollowTarget);
       humanSetGrip(humanGrip);
       humanHand.rotation.z = THREE.MathUtils.lerp(
         humanHand.rotation.z,
-        grabbedPieceSquare ? -0.12 : 0.08,
+        grabbedPieceSquare ? -0.12 : activeGesture === "palm" ? 0.02 : 0.08,
         1 - Math.exp(-8 * deltaSeconds),
+      );
+      humanHand.rotation.x = THREE.MathUtils.lerp(
+        humanHand.rotation.x,
+        activeGesture === "palm" ? -0.12 : grabbedPieceSquare ? 0.16 : 0,
+        1 - Math.exp(-7 * deltaSeconds),
       );
       humanHandMat.emissiveIntensity = humanGrip * 0.8;
       {
@@ -2141,6 +2758,7 @@ humanHandTargetWorld.copy(humanHandFollowTarget);
           }
           const done = a.done;
           robotAnim = null;
+          playServoSound(0.42);
           setStatusMessage("Robot move completed.");
           done();
         } else {
@@ -2162,13 +2780,21 @@ humanHandTargetWorld.copy(humanHandFollowTarget);
 framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
         setHandWorld(framePos);
 
-        if (cp1.carry && !a.attached && a.piece) {
-          a.attached = true;
-        }
-        if (!cp1.carry && a.attached && a.piece) {
-          a.piece.position.copy(a.dropPos);
-          a.attached = false;
-        }
+          if (cp1.carry && !a.attached && a.piece) {
+            a.attached = true;
+            playServoSound(0.62);
+            particleOrigin.set(framePos.x, 0.95, framePos.z);
+            particleField.emit(particleOrigin, 0x67e8f9, 8, 0.18, 0.55, 0.42, -0.18);
+          }
+          if (!cp1.carry && a.attached && a.piece) {
+            a.piece.position.copy(a.dropPos);
+            a.attached = false;
+            playServoSound(0.72);
+            particleOrigin.copy(a.dropPos);
+            particleOrigin.y = 0.28;
+            particleField.burst(particleOrigin, 0x22d3ee, 22);
+            playPlacementSound(false);
+          }
         if (cp1.carry && a.attached && a.piece) {
           a.piece.position.set(framePos.x, cp1.pieceY, framePos.z);
           if (a.secondaryPiece && a.secondaryFrom && a.secondaryTo) {
@@ -2213,6 +2839,7 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
         }
       }
 
+      particleField.update(deltaSeconds);
       renderer.render(scene, camera);
     }
     animate();
@@ -2236,6 +2863,10 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
         cleanupVid.srcObject = null;
       }
       if (videoStream) videoStream.getTracks().forEach((t) => t.stop());
+      audioUnlockRef.current = () => {};
+      if (audioContext) void audioContext.close();
+      audioContext = null;
+      audioMasterGain = null;
       const debugWindow = window as unknown as { __sentio3dDebug?: Record<string, unknown> };
       if (debugApi && debugWindow.__sentio3dDebug === debugApi) {
         delete debugWindow.__sentio3dDebug;
@@ -2316,6 +2947,70 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
           <span className="block px-1 pt-1 text-[10px] uppercase tracking-wider text-zinc-400 font-mono light:text-slate-500">
             Camera
           </span>
+        </div>
+        <div className="absolute top-52 right-4 z-20 w-48 rounded-lg border border-zinc-700/60 bg-black/55 p-3 text-xs text-zinc-200 backdrop-blur-sm shadow-xl light:bg-white/85 light:border-slate-300 light:text-slate-700">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="font-semibold tracking-wide">Scene lighting</span>
+            <span className="text-[10px] uppercase tracking-wider text-cyan-300 light:text-cyan-700">Live</span>
+          </div>
+          <label className="mb-2 block">
+            <span className="mb-1 block text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500">Preset</span>
+            <select
+              id="lighting-preset"
+              value={lightingPreset}
+              onChange={(event) => {
+                const next = event.target.value as LightingPresetName;
+                setLightingPreset(next);
+                setStatusMessage(`Lighting preset: ${next}`);
+              }}
+              className="w-full rounded border border-zinc-600 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-100 outline-none light:border-slate-300 light:bg-white light:text-slate-800"
+            >
+              <option value="studio">Studio</option>
+              <option value="warm">Warm gallery</option>
+              <option value="cool">Cool rim</option>
+              <option value="dramatic">Dramatic</option>
+            </select>
+          </label>
+          <label className="mb-2 block">
+            <span className="mb-1 flex justify-between text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500">
+              <span>Intensity</span>
+              <span>{lightingStrength.toFixed(1)}×</span>
+            </span>
+            <input
+              id="lighting-intensity"
+              type="range"
+              min="0.55"
+              max="1.35"
+              step="0.05"
+              value={lightingStrength}
+              onChange={(event) => setLightingStrength(Number(event.target.value))}
+              className="w-full accent-cyan-400"
+            />
+          </label>
+          <label className="flex items-center justify-between text-[11px]">
+            <span>Contact shadows</span>
+            <input
+              id="lighting-shadows"
+              type="checkbox"
+              checked={shadowsEnabled}
+              onChange={(event) => setShadowsEnabled(event.target.checked)}
+              className="accent-cyan-400"
+            />
+          </label>
+          <label className="mt-2 flex items-center justify-between text-[11px]">
+            <span>Mechanical audio</span>
+            <input
+              id="mechanical-audio"
+              type="checkbox"
+              checked={soundEnabled}
+              onChange={(event) => {
+                const enabled = event.target.checked;
+                setSoundEnabled(enabled);
+                if (enabled) audioUnlockRef.current();
+              }}
+              className="accent-cyan-400"
+            />
+          </label>
         </div>
       </div>
     </div>
