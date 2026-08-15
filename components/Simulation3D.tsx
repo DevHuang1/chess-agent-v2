@@ -1371,9 +1371,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
 
     // Localized lights give the figures readable silhouettes and let active
     // gestures create a soft, responsive pool of light near the board.
-    const fillLight = new THREE.PointLight(0xf59e0b, 0.28, 18, 2);
-    fillLight.position.set(0, 5.5, 2.5);
-    scene.add(fillLight);
+    const gestureLight = new THREE.PointLight(0xf59e0b, 0.28, 18, 2);
+    gestureLight.position.set(0, 5.5, 2.5);
+    scene.add(gestureLight);
     const humanLight = new THREE.PointLight(0xffb45b, 0.18, 7, 2);
     humanLight.position.set(0, 2.7, 5.2);
     scene.add(humanLight);
