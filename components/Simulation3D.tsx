@@ -148,6 +148,136 @@ function boardNdcBounds(cam: THREE.PerspectiveCamera): { top: number; bottom: nu
   return { top, bottom };
 }
 
+type Particle = {
+  life: number;
+  maxLife: number;
+  x: number;
+  y: number;
+  z: number;
+  vx: number;
+  vy: number;
+  vz: number;
+  gravity: number;
+  r: number;
+  g: number;
+  b: number;
+};
+
+type ParticleField = {
+  points: THREE.Points;
+  emit: (origin: THREE.Vector3, colorHex: number, count?: number, spread?: number, speed?: number, life?: number, gravity?: number) => void;
+  burst: (origin: THREE.Vector3, colorHex: number, count?: number) => void;
+  update: (deltaSeconds: number) => void;
+};
+
+function createParticleField(scene: THREE.Scene, capacity = 240): ParticleField {
+  const positions = new Float32Array(capacity * 3);
+  const colors = new Float32Array(capacity * 3);
+  const particles: Particle[] = Array.from({ length: capacity }, () => ({
+    life: 0,
+    maxLife: 1,
+    x: 0,
+    y: 0,
+    z: 0,
+    vx: 0,
+    vy: 0,
+    vz: 0,
+    gravity: -0.3,
+    r: 1,
+    g: 1,
+    b: 1,
+  }));
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  const material = new THREE.PointsMaterial({
+    size: 0.08,
+    sizeAttenuation: true,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.9,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+  const points = new THREE.Points(geometry, material);
+  points.frustumCulled = false;
+  scene.add(points);
+  let cursor = 0;
+  const colorScratch = new THREE.Color();
+
+  function emit(
+    origin: THREE.Vector3,
+    colorHex: number,
+    count = 1,
+    spread = 0.12,
+    speed = 0.45,
+    life = 0.7,
+    gravity = -0.25,
+  ) {
+    colorScratch.setHex(colorHex);
+    for (let i = 0; i < count; i++) {
+      const index = cursor;
+      cursor = (cursor + 1) % capacity;
+      const particle = particles[index];
+      particle.life = life * (0.72 + Math.random() * 0.56);
+      particle.maxLife = particle.life;
+      particle.x = origin.x + (Math.random() - 0.5) * spread;
+      particle.y = origin.y + (Math.random() - 0.5) * spread;
+      particle.z = origin.z + (Math.random() - 0.5) * spread;
+      particle.vx = (Math.random() - 0.5) * speed;
+      particle.vy = (Math.random() - 0.25) * speed;
+      particle.vz = (Math.random() - 0.5) * speed;
+      particle.gravity = gravity;
+      particle.r = colorScratch.r;
+      particle.g = colorScratch.g;
+      particle.b = colorScratch.b;
+      positions[index * 3] = particle.x;
+      positions[index * 3 + 1] = particle.y;
+      positions[index * 3 + 2] = particle.z;
+      colors[index * 3] = particle.r;
+      colors[index * 3 + 1] = particle.g;
+      colors[index * 3 + 2] = particle.b;
+    }
+    geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.color.needsUpdate = true;
+  }
+
+  return {
+    points,
+    emit,
+    burst: (origin, colorHex, count = 18) => emit(origin, colorHex, count, 0.34, 1.15, 0.82, -0.72),
+    update: (deltaSeconds) => {
+      let active = false;
+      for (let index = 0; index < capacity; index++) {
+        const particle = particles[index];
+        if (particle.life <= 0) {
+          colors[index * 3] = 0;
+          colors[index * 3 + 1] = 0;
+          colors[index * 3 + 2] = 0;
+          continue;
+        }
+        active = true;
+        particle.life = Math.max(0, particle.life - deltaSeconds);
+        particle.vy += particle.gravity * deltaSeconds;
+        particle.x += particle.vx * deltaSeconds;
+        particle.y += particle.vy * deltaSeconds;
+        particle.z += particle.vz * deltaSeconds;
+        const fade = particle.life / particle.maxLife;
+        positions[index * 3] = particle.x;
+        positions[index * 3 + 1] = particle.y;
+        positions[index * 3 + 2] = particle.z;
+        colors[index * 3] = particle.r * fade;
+        colors[index * 3 + 1] = particle.g * fade;
+        colors[index * 3 + 2] = particle.b * fade;
+      }
+      if (active) {
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.color.needsUpdate = true;
+      }
+    },
+  };
+}
+
 function createPieceGeometry(type: string, color: string): THREE.Group {
   const group = new THREE.Group();
 
@@ -972,6 +1102,9 @@ export default function Simulation3D({
   const [lightingPreset, setLightingPreset] = useState<LightingPresetName>("studio");
   const [lightingStrength, setLightingStrength] = useState(1);
   const [shadowsEnabled, setShadowsEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const soundEnabledRef = useRef(true);
+  const audioUnlockRef = useRef<() => void>(() => {});
   const lightingSettingsRef = useRef({
     preset: "studio" as LightingPresetName,
     strength: 1,
@@ -988,6 +1121,8 @@ export default function Simulation3D({
     strength: lightingStrength,
     shadows: shadowsEnabled,
   };
+  // eslint-disable-next-line react-hooks/refs
+  soundEnabledRef.current = soundEnabled;
 
   const rebuildPieces = useCallback((chess: Chess, scene: THREE.Scene, pieces: Map<string, THREE.Group>) => {
     for (const [, mesh] of pieces) scene.remove(mesh);
@@ -1226,6 +1361,12 @@ export default function Simulation3D({
     }
 
     const pieces = new Map<string, THREE.Group>();
+    const particleField = createParticleField(scene, isLowPowerDevice ? 150 : 300);
+    particleField.points.visible = !isE2ETest;
+    const particleOrigin = new THREE.Vector3();
+    const coreParticleOrigin = new THREE.Vector3();
+    let lastCoreParticleAt = 0;
+    let lastActivePieceParticleAt = 0;
     rebuildPieces(chessRef.current, scene, pieces);
 
     const selectionRing = new THREE.Mesh(
@@ -1366,8 +1507,75 @@ export default function Simulation3D({
       renderer.shadowMap.needsUpdate = true;
     }
 
+    let audioContext: AudioContext | null = null;
+    let audioMasterGain: GainNode | null = null;
+
+    function unlockAudio() {
+      if (typeof window === "undefined") return;
+      try {
+        if (!audioContext) {
+          const AudioContextConstructor = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+          if (!AudioContextConstructor) return;
+          audioContext = new AudioContextConstructor();
+          audioMasterGain = audioContext.createGain();
+          audioMasterGain.gain.value = 0.18;
+          audioMasterGain.connect(audioContext.destination);
+        }
+        if (audioContext.state === "suspended") void audioContext.resume();
+      } catch {
+        audioContext = null;
+        audioMasterGain = null;
+      }
+    }
+
+    audioUnlockRef.current = unlockAudio;
+
+    function playTone(
+      frequency: number,
+      duration: number,
+      volume: number,
+      type: OscillatorType = "sine",
+      endFrequency = frequency,
+    ) {
+      if (!soundEnabledRef.current) return;
+      unlockAudio();
+      if (!audioContext || !audioMasterGain || audioContext.state !== "running") return;
+      const start = audioContext.currentTime;
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, start);
+      oscillator.frequency.exponentialRampToValueAtTime(Math.max(30, endFrequency), start + duration);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume), start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      oscillator.connect(gain);
+      gain.connect(audioMasterGain);
+      oscillator.start(start);
+      oscillator.stop(start + duration + 0.02);
+    }
+
+    function playServoSound(intensity = 1) {
+      playTone(150 + intensity * 35, 0.18, 0.035 * intensity, "sawtooth", 82 + intensity * 18);
+      playTone(420 + intensity * 50, 0.12, 0.018 * intensity, "square", 230);
+    }
+
+    function playPickupSound() {
+      playTone(520, 0.09, 0.045, "triangle", 780);
+    }
+
+    function playPlacementSound(capture = false) {
+      playTone(capture ? 110 : 260, capture ? 0.24 : 0.16, capture ? 0.07 : 0.05, "sine", capture ? 62 : 420);
+      playTone(capture ? 190 : 520, 0.11, 0.025, "triangle", capture ? 90 : 680);
+    }
+
+    function playCancelSound() {
+      playTone(180, 0.13, 0.028, "sine", 100);
+    }
+
     function startRobotAnim(fromSq: string, toSq: string, flags: string, done: () => void) {
       robotAnimatingRef.current = true;
+      playServoSound(0.85);
       const piece = pieces.get(fromSq) ?? null;
       const fromPos = squareToPosition(fromSq);
       const toPos = squareToPosition(toSq);
@@ -1383,6 +1591,10 @@ export default function Simulation3D({
       if (captured && captured !== piece && captured !== secondaryPiece) {
         captured.visible = false;
         captured.scale.setScalar(0.78);
+        particleOrigin.copy(toPos);
+        particleOrigin.y = 0.48;
+        particleField.burst(particleOrigin, 0xfbbf24, 26);
+        playPlacementSound(true);
       }
 
       const rest = new THREE.Vector3(0.3, 1.7, -4.6);
@@ -1688,6 +1900,10 @@ export default function Simulation3D({
           });
           if (previewMove) {
             const targetPos = squareToPosition(validation.target);
+            particleOrigin.copy(targetPos);
+            particleOrigin.y = 0.28;
+            particleField.emit(particleOrigin, previewMove.captured ? 0xfbbf24 : 0x34d399, 8, 0.14, 0.32, 0.45, -0.16);
+            playServoSound(0.42);
             playerAnimatingRef.current = true;
             pendingGamePositionRef.current = startFen;
             gestureAnim = {
@@ -1716,6 +1932,10 @@ export default function Simulation3D({
                   triggerRerender();
                   return;
                 }
+                particleOrigin.copy(targetPos);
+                particleOrigin.y = 0.28;
+                particleField.burst(particleOrigin, committedMove.captured ? 0xfbbf24 : 0x34d399, committedMove.captured ? 24 : 16);
+                playPlacementSound(Boolean(committedMove.captured));
                 setStatusMessage(`3D Move: ${committedMove.san}`);
                 // Publish while the transaction is still marked active. The
                 // parent updates React's FEN, and this component's effect will
@@ -1735,6 +1955,7 @@ export default function Simulation3D({
       }
 
       if (!moveSuccess) {
+        playCancelSound();
         playerAnimatingRef.current = false;
         pendingGamePositionRef.current = null;
         const origPos = squareToPosition(fromSq);
@@ -1982,6 +2203,7 @@ export default function Simulation3D({
               const piece = chess.get(grabSq as Square);
               if (piece && piece.color === "w") {
                 grabbedPieceSquare = grabSq;
+                playPickupSound();
                 setSelectedSquare(grabSq);
                 const moves = chess.moves({ square: grabSq as Square, verbose: true });
                 setLegalSquares(moves.map((m) => m.to));
@@ -2026,6 +2248,7 @@ export default function Simulation3D({
     }
 
     canvas.addEventListener("pointerdown", (e) => {
+      audioUnlockRef.current();
       if (robotAnimatingRef.current) return;
       if (e.button === 2) {
         isOrbiting = true;
@@ -2055,6 +2278,7 @@ export default function Simulation3D({
               : [];
             if (moves.length > 0) {
               grabbedPieceSquare = square;
+              playPickupSound();
               grabbedPieceGroup = pieces.get(square) ?? null;
               pointerDragStart = { x: e.clientX, y: e.clientY };
               pointerDragging = false;
@@ -2334,6 +2558,30 @@ export default function Simulation3D({
       humanLight.intensity = (LIGHTING_PRESETS[lightingSettingsRef.current.preset].humanIntensity + playerEngagement * 0.18) * lightingSettingsRef.current.strength;
       robotLight.intensity = (LIGHTING_PRESETS[lightingSettingsRef.current.preset].robotIntensity + robotEngagement * 0.2) * lightingSettingsRef.current.strength;
 
+      // Machine core energy and active-piece trails use the same pooled field.
+      if (now - lastCoreParticleAt > 72) {
+        lastCoreParticleAt = now;
+        coreParticleOrigin.set(0, 1.82, 0.59);
+        robot.localToWorld(coreParticleOrigin);
+        particleField.emit(coreParticleOrigin, 0x67e8f9, 2, 0.12, 0.28, 0.55, 0.05);
+      }
+      if (now - lastActivePieceParticleAt > 58) {
+        lastActivePieceParticleAt = now;
+        if (robotAnim?.piece && robotAnim.attached) {
+          particleOrigin.copy(robotAnim.piece.position);
+          particleOrigin.y += 0.22;
+          particleField.emit(particleOrigin, 0x22d3ee, 1, 0.08, 0.18, 0.35, -0.05);
+        } else if (gestureAnim) {
+          particleOrigin.copy(gestureAnim.piece.position);
+          particleOrigin.y += 0.22;
+          particleField.emit(particleOrigin, 0x34d399, 1, 0.08, 0.18, 0.35, -0.08);
+        } else if (grabbedPieceGroup && grabbedPieceSquare) {
+          particleOrigin.copy(grabbedPieceGroup.position);
+          particleOrigin.y += 0.24;
+          particleField.emit(particleOrigin, 0xfbbf24, 1, 0.08, 0.15, 0.3, -0.08);
+        }
+      }
+
       // Robot arm follows the hand
       {
         robotDir.subVectors(robotHand.position, robotShoulder.position);
@@ -2392,6 +2640,7 @@ export default function Simulation3D({
           }
           const done = a.done;
           robotAnim = null;
+          playServoSound(0.42);
           setStatusMessage("Robot move completed.");
           done();
         } else {
@@ -2413,13 +2662,21 @@ export default function Simulation3D({
         framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
         setHandWorld(framePos);
 
-        if (cp1.carry && !a.attached && a.piece) {
-          a.attached = true;
-        }
-        if (!cp1.carry && a.attached && a.piece) {
-          a.piece.position.copy(a.dropPos);
-          a.attached = false;
-        }
+          if (cp1.carry && !a.attached && a.piece) {
+            a.attached = true;
+            playServoSound(0.62);
+            particleOrigin.set(framePos.x, 0.95, framePos.z);
+            particleField.emit(particleOrigin, 0x67e8f9, 8, 0.18, 0.55, 0.42, -0.18);
+          }
+          if (!cp1.carry && a.attached && a.piece) {
+            a.piece.position.copy(a.dropPos);
+            a.attached = false;
+            playServoSound(0.72);
+            particleOrigin.copy(a.dropPos);
+            particleOrigin.y = 0.28;
+            particleField.burst(particleOrigin, 0x22d3ee, 22);
+            playPlacementSound(false);
+          }
         if (cp1.carry && a.attached && a.piece) {
           a.piece.position.set(framePos.x, cp1.pieceY, framePos.z);
           if (a.secondaryPiece && a.secondaryFrom && a.secondaryTo) {
@@ -2464,6 +2721,7 @@ export default function Simulation3D({
         }
       }
 
+      particleField.update(deltaSeconds);
       renderer.render(scene, camera);
     }
     animate();
@@ -2487,6 +2745,10 @@ export default function Simulation3D({
         cleanupVid.srcObject = null;
       }
       if (videoStream) videoStream.getTracks().forEach((t) => t.stop());
+      audioUnlockRef.current = () => {};
+      if (audioContext) void audioContext.close();
+      audioContext = null;
+      audioMasterGain = null;
       const debugWindow = window as unknown as { __sentio3dDebug?: Record<string, unknown> };
       if (debugApi && debugWindow.__sentio3dDebug === debugApi) {
         delete debugWindow.__sentio3dDebug;
@@ -2614,6 +2876,20 @@ export default function Simulation3D({
               type="checkbox"
               checked={shadowsEnabled}
               onChange={(event) => setShadowsEnabled(event.target.checked)}
+              className="accent-cyan-400"
+            />
+          </label>
+          <label className="mt-2 flex items-center justify-between text-[11px]">
+            <span>Mechanical audio</span>
+            <input
+              id="mechanical-audio"
+              type="checkbox"
+              checked={soundEnabled}
+              onChange={(event) => {
+                const enabled = event.target.checked;
+                setSoundEnabled(enabled);
+                if (enabled) audioUnlockRef.current();
+              }}
               className="accent-cyan-400"
             />
           </label>

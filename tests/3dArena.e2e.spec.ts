@@ -136,6 +136,13 @@ test.describe("3D arena", () => {
     await expect(shadows).not.toBeChecked();
     await shadows.check();
     await expect(shadows).toBeChecked();
+
+    const audio = page.locator("#mechanical-audio");
+    await expect(audio).toBeChecked();
+    await audio.uncheck();
+    await expect(audio).not.toBeChecked();
+    await audio.check();
+    await expect(audio).toBeChecked();
   });
 
   test("hides a captured piece during robot choreography and restores the final board", async ({ page }) => {
