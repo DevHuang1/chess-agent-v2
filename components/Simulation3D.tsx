@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import GameInfo from "@/components/GameInfo";
 import { FilesetResolver, GestureRecognizer } from "@mediapipe/tasks-vision";
+import { validateDropTarget } from "@/lib/dropValidation";
 
 // MediaPipe's wasm writes its internal logs (e.g. "INFO: Created TensorFlow
 // Lite XNNPACK delegate for CPU.") to stderr, which emscripten routes through
@@ -1074,6 +1075,8 @@ export default function Simulation3D({
     let isOrbiting = false;
     let prevPointerX = 0;
     let prevPointerY = 0;
+    let pointerDragStart: { x: number; y: number } | null = null;
+    let pointerDragging = false;
 
     // Smooth tracking targets (interpolated in animate loop)
     const fingerFollowTarget = new THREE.Vector3();
@@ -1279,6 +1282,14 @@ export default function Simulation3D({
         setPosition: debugSetPosition,
         selectAndMove: debugSelectAndMove,
         startRobotMove: debugStartRobotMove,
+        getSquareScreenCenter: (square: string) => {
+          const rect = renderer.domElement.getBoundingClientRect();
+          const projected = squareToPosition(square).project(camera);
+          return {
+            x: rect.left + (projected.x + 1) * rect.width / 2,
+            y: rect.top + (1 - projected.y) * rect.height / 2,
+          };
+        },
         getSnapshot: () => ({
           fen: chessRef.current.fen(),
           playerAnimating: Boolean(gestureAnim),
@@ -1301,11 +1312,12 @@ export default function Simulation3D({
       if (!grabbed || !fromSq) return;
 
       let moveSuccess = false;
-      if (toSq && legalRef.current.includes(toSq)) {
+      const validation = validateDropTarget(fromSq, toSq, legalRef.current);
+      if (validation.accepted && validation.target) {
         try {
-          const move = chessRef.current.move({ from: fromSq as Square, to: toSq as Square, promotion: "q" });
+          const move = chessRef.current.move({ from: fromSq as Square, to: validation.target as Square, promotion: "q" });
           if (move) {
-            const targetPos = squareToPosition(toSq);
+            const targetPos = squareToPosition(validation.target);
             playerAnimatingRef.current = true;
             pendingGamePositionRef.current = chessRef.current.fen();
             gestureAnim = {
@@ -1343,7 +1355,7 @@ export default function Simulation3D({
           done: () => {},
         };
         setStatusMessage(
-          toSq
+          validation.reason === "illegal"
             ? `Illegal move ${fromSq}→${toSq} — piece returned, still your turn`
             : "Move cancelled — piece returned to its square",
         );
@@ -1361,12 +1373,14 @@ export default function Simulation3D({
       destHighlight.visible = false;
       cursorRing.visible = false;
       humanHandFollowTarget.copy(HUMAN_HAND_REST);
+      pointerDragStart = null;
+      pointerDragging = false;
       setHoveredSquare(null);
     }
 
     function releaseHeldPiece(cursorSq: string | null) {
-      const target = cursorSq && legalRef.current.includes(cursorSq) ? cursorSq : null;
-      dropPiece(target);
+      const validation = validateDropTarget(grabbedPieceSquare, cursorSq, legalRef.current);
+      dropPiece(validation.accepted ? validation.target : null);
     }
 
     function processHand(lm: HandLandmark[], rawGesture: Gesture) {
@@ -1649,6 +1663,13 @@ export default function Simulation3D({
             if (moves.length > 0) {
               grabbedPieceSquare = square;
               grabbedPieceGroup = pieces.get(square) ?? null;
+              pointerDragStart = { x: e.clientX, y: e.clientY };
+              pointerDragging = false;
+              try {
+                canvas.setPointerCapture(e.pointerId);
+              } catch {
+                // Pointer capture is not available in all test/browser surfaces.
+              }
               setSelectedSquare(square);
               setLegalSquares(moves.map((move) => move.to));
               updateLegalDots(moves.map((move) => move.to));
@@ -1685,6 +1706,23 @@ export default function Simulation3D({
     });
 
     canvas.addEventListener("pointermove", (e) => {
+      if (pointerDragStart && grabbedPieceSquare && !isOrbiting) {
+        const distance = Math.hypot(e.clientX - pointerDragStart.x, e.clientY - pointerDragStart.y);
+        if (distance > 6) pointerDragging = true;
+        if (pointerDragging) {
+          const square = squareAtPointer(e.clientX, e.clientY);
+          if (square) {
+            const pos = squareToPosition(square);
+            destHighlight.position.set(pos.x, 0.03, pos.z);
+            destHighlight.visible = true;
+            (destHighlight.material as THREE.MeshBasicMaterial).color.setHex(
+              legalRef.current.includes(square) ? 0x00ff88 : 0xff4444,
+            );
+          } else {
+            destHighlight.visible = false;
+          }
+        }
+      }
       if (isOrbiting) {
         const deltaX = (e.clientX - prevPointerX) / container.clientWidth;
         const deltaY = (e.clientY - prevPointerY) / container.clientHeight;
@@ -1709,6 +1747,14 @@ export default function Simulation3D({
     canvas.addEventListener("pointerup", (e) => {
       if (e.button === 2) {
         isOrbiting = false;
+        return;
+      }
+      if (e.button === 0 && pointerDragging && grabbedPieceSquare) {
+        const releaseSquare = squareAtPointer(e.clientX, e.clientY);
+        releaseHeldPiece(releaseSquare);
+      } else if (e.button === 0) {
+        pointerDragStart = null;
+        pointerDragging = false;
       }
     });
 

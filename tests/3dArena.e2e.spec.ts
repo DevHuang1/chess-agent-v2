@@ -15,6 +15,7 @@ type Sentio3DDebug = {
   setPosition: (fen: string) => boolean;
   selectAndMove: (from: string, to: string) => boolean;
   startRobotMove: (from: string, to: string) => boolean;
+  getSquareScreenCenter: (square: string) => { x: number; y: number };
   getSnapshot: () => SceneSnapshot;
 };
 
@@ -78,6 +79,30 @@ test.describe("3D arena", () => {
     expect(result.e4Position).not.toBeNull();
     expect(result.e4Position![2]).not.toBe(initial.e2Position![2]);
     expect(result.pieceCount).toBe(32);
+  });
+
+  test("moves a piece through the real pointer drag-and-drop release path", async ({ page }) => {
+    await enter3DArena(page);
+    await getDebug(page);
+    const initial = await snapshot(page);
+    const points = await page.evaluate(() => ({
+      from: window.__sentio3dDebug!.getSquareScreenCenter("e2"),
+      to: window.__sentio3dDebug!.getSquareScreenCenter("e4"),
+    }));
+
+    await page.mouse.move(points.from.x, points.from.y);
+    await page.mouse.down();
+    await page.mouse.move(points.to.x, points.to.y, { steps: 12 });
+    await page.mouse.up();
+
+    await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(true);
+    await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(false, { timeout: 5_000 });
+
+    const result = await snapshot(page);
+    expect(result.fen).toContain("4P3");
+    expect(result.e2Position).toBeNull();
+    expect(result.e4Position).not.toBeNull();
+    expect(result.e4Position![2]).not.toBe(initial.e2Position![2]);
   });
 
   test("hides a captured piece during robot choreography and restores the final board", async ({ page }) => {
