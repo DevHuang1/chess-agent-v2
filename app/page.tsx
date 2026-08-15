@@ -362,6 +362,7 @@ export default function ChessPage() {
   const aiHandRafRef = useRef<number | null>(null);
 
   const [activeTab, setActiveTab] = useState<SidebarTab>("coach");
+  const [controllerExpanded, setControllerExpanded] = useState(true);
 
   const [pieceDesign, setPieceDesign] = useState<PieceDesignKey>("chesscom");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -1349,21 +1350,41 @@ export default function ChessPage() {
         </div>
       </section>
 
-      <aside className="flex w-[440px] shrink-0 flex-col border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90">
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">Game Controller</h1>
-            <p className="text-xs text-zinc-400 light:text-slate-600">{statusMessage}</p>
+      <aside className={`flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md transition-[width,padding] duration-300 ease-out light:border-slate-300 light:bg-white/90 ${controllerExpanded ? "w-[440px]" : "w-[72px] px-2"}`}>
+        <div className={`flex items-center ${controllerExpanded ? "justify-between" : "justify-center"} mb-2`}>
+          {controllerExpanded ? (
+            <div className="min-w-0">
+              <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">Game Controller</h1>
+              <p className="truncate text-xs text-zinc-400 light:text-slate-600">{statusMessage}</p>
+            </div>
+          ) : (
+            <span className="font-mono text-lg font-bold text-amber-400 light:text-amber-700" aria-hidden="true">S</span>
+          )}
+          <div className={`flex items-center ${controllerExpanded ? "gap-2" : "flex-col gap-2"}`}>
+            {controllerExpanded ? (
+              <button
+                type="button"
+                onClick={resetGame}
+                className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-amber-300 transition-colors light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
+              >
+                Reset Game
+              </button>
+            ) : null}
+            <button
+              type="button"
+              aria-label={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
+              aria-expanded={controllerExpanded}
+              onClick={() => setControllerExpanded((expanded) => !expanded)}
+              className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-amber-500/50 hover:bg-zinc-800 hover:text-amber-300 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
+              title={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
+            >
+              {controllerExpanded ? "›" : "‹"}
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={resetGame}
-            className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-amber-300 transition-colors light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
-          >
-            Reset Game
-          </button>
         </div>
 
+        {controllerExpanded ? (
+          <>
         <div className="mt-2">
           {/* eslint-disable-next-line react-hooks/refs */}
           <GameInfo moves={chessRef.current.history({ verbose: true })} />
@@ -1633,6 +1654,13 @@ export default function ChessPage() {
             </div>
           )}
         </div>
+          </>
+        ) : (
+          <div className="mt-4 flex flex-1 flex-col items-center gap-3 text-center">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500 [writing-mode:vertical-rl] light:text-slate-500">Controller</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" title={statusMessage} />
+          </div>
+        )}
       </aside>
 
       {gameResultText && (

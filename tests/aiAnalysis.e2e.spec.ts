@@ -5,6 +5,12 @@ test("opens the connected AI minimax analysis tab", async ({ page }) => {
   await page.waitForLoadState("domcontentloaded");
   await page.waitForTimeout(1200);
 
+  await expect(page.getByRole("button", { name: "Collapse game controller" })).toBeVisible();
+  await page.getByRole("button", { name: "Collapse game controller" }).click();
+  await expect(page.getByRole("button", { name: "Expand game controller" })).toBeVisible();
+  await page.getByRole("button", { name: "Expand game controller" }).click();
+  await expect(page.getByRole("button", { name: "Collapse game controller" })).toBeVisible();
+
   await page.getByRole("button", { name: "AI Lab" }).click();
   await expect(page.getByText("Minimax Flight Recorder", { exact: true })).toBeVisible();
   await expect(page.getByText("Position under analysis", { exact: true })).toBeVisible();

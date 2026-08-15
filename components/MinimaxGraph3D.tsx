@@ -35,25 +35,54 @@ function nodeColor(node: MinimaxSearchNode) {
   return node.depth === 0 ? COLORS.root : COLORS.exploring;
 }
 
-function makeLayout(trace: MinimaxTrace): LayoutNode[] {
-  const visible = trace.nodes.slice(0, 80);
+function makeLayout(trace: MinimaxTrace, focusIndex: number): LayoutNode[] {
+  const active = trace.nodes[focusIndex] ?? trace.nodes[0];
+  const byId = new Map(trace.nodes.map((node) => [node.id, node]));
+  const focusIds = new Set<string>();
+  let cursor: MinimaxSearchNode | undefined = active;
+  while (cursor) {
+    focusIds.add(cursor.id);
+    cursor = cursor.parentId ? byId.get(cursor.parentId) : undefined;
+  }
+
+  const nearby = trace.nodes.slice(Math.max(0, focusIndex - 18), focusIndex + 19);
+  const principal = trace.nodes.filter((node) => node.status === "principal").slice(0, 12);
+  const candidates = [...focusIds, ...nearby.map((node) => node.id), ...principal.map((node) => node.id)]
+    .map((id) => byId.get(id))
+    .filter((node): node is MinimaxSearchNode => Boolean(node));
+  const selected = new Map<string, MinimaxSearchNode>();
+  for (const node of candidates) selected.set(node.id, node);
+  for (const node of trace.nodes) {
+    if (selected.size >= 64) break;
+    if (!selected.has(node.id)) selected.set(node.id, node);
+  }
+  if (active && !selected.has(active.id)) selected.set(active.id, active);
+
   const layers = new Map<number, MinimaxSearchNode[]>();
-  for (const node of visible) {
+  for (const node of selected.values()) {
     const layer = layers.get(node.depth) ?? [];
     layer.push(node);
     layers.set(node.depth, layer);
   }
   const result: LayoutNode[] = [];
   for (const [depth, layer] of layers) {
-    const width = Math.max(1, layer.length - 1);
-    layer.forEach((node, index) => {
-      const row = index % Math.max(1, Math.ceil(layer.length / 3));
-      const column = Math.floor(index / Math.max(1, Math.ceil(layer.length / 3)));
+    layer.sort((a, b) => {
+      if (a.id === active?.id) return -1;
+      if (b.id === active?.id) return 1;
+      if (a.status === "principal") return -1;
+      if (b.status === "principal") return 1;
+      return a.id.localeCompare(b.id);
+    });
+    const activeFirst = layer.filter((node) => node.id === active?.id || node.status === "principal");
+    const remaining = layer.filter((node) => node.id !== active?.id && node.status !== "principal");
+    const compactLayer = [...activeFirst, ...remaining].slice(0, 12);
+    const spacing = compactLayer.length > 8 ? 1.18 : 1.42;
+    compactLayer.forEach((node, index) => {
       result.push({
         ...node,
-        graphX: ((row / Math.max(1, Math.ceil(layer.length / 3) - 1)) - 0.5) * Math.min(10, Math.max(4, layer.length * 0.42)),
-        graphY: 3.5 - depth * 1.35,
-        graphZ: (column - Math.max(0, Math.floor(width / 3))) * 1.35,
+        graphX: (index - (compactLayer.length - 1) / 2) * spacing,
+        graphY: 2.7 - depth * 1.02,
+        graphZ: (depth % 2 === 0 ? 0.35 : -0.35) + ((index % 3) - 1) * 0.22,
       });
     });
   }
@@ -86,8 +115,8 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x070b16);
     scene.fog = new THREE.Fog(0x070b16, 13, 30);
-    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(0, 1.5, 14);
+    const camera = new THREE.PerspectiveCamera(44, 1, 0.1, 100);
+    camera.position.set(0, 0.4, 18);
     camera.lookAt(0, 1.2, 0);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
@@ -117,7 +146,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     let lastY = 0;
     let theta = 0;
     let phi = 0.08;
-    let radius = 14;
+    let radius = 18;
     const onPointerDown = (event: PointerEvent) => {
       isDragging = true;
       lastX = event.clientX;
@@ -151,7 +180,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       if (nodeId) onSelectNodeRef.current(nodeId);
     };
     const onWheel = (event: WheelEvent) => {
-      radius = THREE.MathUtils.clamp(radius + event.deltaY * 0.012, 7, 24);
+      radius = THREE.MathUtils.clamp(radius + event.deltaY * 0.012, 10, 28);
     };
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
     renderer.domElement.addEventListener("pointermove", onPointerMove);
@@ -169,15 +198,19 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
         1.5 + Math.sin(phi) * radius * 0.38,
         Math.cos(theta) * Math.cos(phi) * radius,
       );
-      camera.lookAt(0, 0.4, 0);
+      camera.lookAt(0, -0.35, 0);
       graphGroup.rotation.y += delta * 0.035;
       for (const [nodeId, mesh] of nodeMeshesRef.current) {
         const isActive = layoutRef.current[activeNodeIndexRef.current]?.id === nodeId;
         const isSelected = selectedNodeIdRef.current === nodeId;
         const pulse = isActive || isSelected ? 1 + Math.sin(now * 0.006) * 0.15 : 1;
-        mesh.scale.lerp(new THREE.Vector3(pulse, pulse, pulse), Math.min(1, delta * 9));
+        const targetScale = isSelected ? 1.5 * pulse : isActive ? 1.35 * pulse : 1;
+        mesh.scale.x += (targetScale - mesh.scale.x) * Math.min(1, delta * 9);
+        mesh.scale.y = mesh.scale.x;
+        mesh.scale.z = mesh.scale.x;
         const material = mesh.material as THREE.MeshStandardMaterial;
-        material.emissiveIntensity = isSelected ? 1.05 : isActive ? 0.72 : 0.28;
+        material.emissiveIntensity = isSelected ? 1.45 : isActive ? 1.15 : 0.42;
+        material.opacity = isSelected || isActive ? 1 : (mesh.userData.baseOpacity as number ?? 0.94);
       }
       renderer.render(scene, camera);
     };
@@ -221,13 +254,20 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
   useEffect(() => {
     const group = graphGroupRef.current;
     if (!group) return;
+    group.traverse((object) => {
+      if (!(object instanceof THREE.Mesh || object instanceof THREE.Line)) return;
+      object.geometry.dispose();
+      const material = object.material;
+      if (Array.isArray(material)) material.forEach((entry) => entry.dispose());
+      else material.dispose();
+    });
     group.clear();
     nodeMeshesRef.current.clear();
     if (!trace) {
       layoutRef.current = [];
       return;
     }
-    const layout = makeLayout(trace);
+    const layout = makeLayout(trace, activeNodeIndex);
     layoutRef.current = layout;
     const byId = new Map(layout.map((node) => [node.id, node]));
     const edgeMaterial = new THREE.LineBasicMaterial({ color: COLORS.edge, transparent: true, opacity: 0.42 });
@@ -242,25 +282,35 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       }
     }
     for (const node of layout) {
-      const material = new THREE.MeshStandardMaterial({ color: nodeColor(node), emissive: nodeColor(node), emissiveIntensity: 0.28, metalness: 0.25, roughness: 0.32, transparent: true, opacity: node.status === "pruned" ? 0.58 : 0.94 });
-      const mesh = new THREE.Mesh(new THREE.SphereGeometry(node.depth === 0 ? 0.25 : 0.16, 18, 14), material);
+      const baseOpacity = node.status === "pruned" ? 0.58 : 0.94;
+      const material = new THREE.MeshStandardMaterial({ color: nodeColor(node), emissive: nodeColor(node), emissiveIntensity: 0.42, metalness: 0.25, roughness: 0.32, transparent: true, opacity: baseOpacity });
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(node.depth === 0 ? 0.34 : 0.22, 20, 16), material);
       mesh.position.set(node.graphX, node.graphY, node.graphZ);
       mesh.userData.nodeId = node.id;
+      mesh.userData.baseOpacity = baseOpacity;
       nodeMeshesRef.current.set(node.id, mesh);
       group.add(mesh);
     }
-  }, [trace]);
+  }, [trace, activeNodeIndex]);
 
   const hoveredNode = trace?.nodes.find((node) => node.id === hoveredNodeId) ?? null;
-  const selectedNode = trace?.nodes.find((node) => node.id === selectedNodeId) ?? hoveredNode;
+  const activeNode = trace?.nodes[activeNodeIndex] ?? null;
+  const selectedNode = trace?.nodes.find((node) => node.id === selectedNodeId) ?? hoveredNode ?? activeNode;
   const mctsNode = isMctsNode(selectedNode) ? selectedNode : null;
 
   return (
     <div className="relative h-[410px] overflow-hidden rounded-xl border border-cyan-500/25 bg-[#070b16] shadow-2xl">
       <div ref={containerRef} className="absolute inset-0" aria-label="3D minimax decision tree" />
+      {activeNode ? (
+        <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-cyan-300/40 bg-cyan-950/75 px-2.5 py-2 text-[10px] shadow-lg backdrop-blur-sm">
+          <div className="font-semibold uppercase tracking-wider text-cyan-200">Active search node</div>
+          <div className="mt-0.5 font-mono text-sm text-white">{activeNode.san ?? "root"}</div>
+          <div className="text-[9px] text-cyan-100/70">depth {activeNode.depth} · {activeNode.status}</div>
+        </div>
+      ) : null}
       <div className="pointer-events-none absolute left-3 top-3 rounded-lg border border-zinc-700/70 bg-black/45 px-3 py-2 text-[10px] text-zinc-300 backdrop-blur-sm">
         <div className="font-semibold text-cyan-200">{algorithm === "mcts" ? "3D MCTS rollout graph" : "3D minimax decision graph"}</div>
-        <div className="mt-1 text-zinc-500">Drag to orbit · wheel to zoom · click a node</div>
+        <div className="mt-1 text-zinc-500">Active branch is enlarged and centered · drag to orbit · wheel to zoom</div>
       </div>
       <div className="pointer-events-none absolute bottom-3 left-3 flex gap-2 text-[9px] text-zinc-400">
         <span className="rounded border border-amber-300/40 bg-amber-400/15 px-1.5 py-1 text-amber-200">PV</span>
