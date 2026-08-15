@@ -525,7 +525,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
   const mctsNode = isMctsNode(selectedNode) ? selectedNode : null;
 
   return (
-    <div className="relative h-[410px] overflow-hidden rounded-xl border border-cyan-500/25 bg-[#070b16] shadow-2xl">
+    <div className="ai-graph-shell relative h-[410px] overflow-hidden rounded-xl border border-cyan-500/25 bg-[#070b16] shadow-2xl">
       <div ref={containerRef} className="absolute inset-0" aria-label="3D minimax decision tree" />
       {activeNode ? (
         <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-cyan-300/40 bg-cyan-950/75 px-2.5 py-2 text-[10px] shadow-lg backdrop-blur-sm">
