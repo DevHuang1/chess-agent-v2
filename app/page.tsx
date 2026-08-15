@@ -44,6 +44,8 @@ import SpeechTab from "@/components/SpeechTab";
 import Simulation3D from "@/components/Simulation3D";
 import GameInfo from "@/components/GameInfo";
 import AIAnalysisTab from "@/components/AIAnalysisTab";
+import BenchmarkTab from "@/components/BenchmarkTab";
+import benchmarkReport from "@/benchmarks/search-benchmark.json";
 import { PIECE_DESIGNS, PieceDesignKey } from "@/components/pieces";
 import type { ChessboardOptions } from "react-chessboard";
 import { playMoveSound, playCaptureSound, playCheckSound, setSoundMuted } from "@/lib/audio";
@@ -209,7 +211,7 @@ type EngineProfile = {
 
 type GameOutcome = "active" | "checkmate" | "stalemate" | "draw" | "gameover";
 type CoachLlmConnection = "checking" | "connected" | "disconnected" | "disabled";
-type SidebarTab = "coach" | "speech" | "ai" | "3d";
+type SidebarTab = "coach" | "speech" | "ai" | "benchmarks" | "3d";
 
 const EMOTION_PROFILES: Record<EmotionLabel, { depth: number; skillLevel: number; elo: number }> = {
   stressed: { depth: 1, skillLevel: 1, elo: 1320 },
@@ -1243,6 +1245,17 @@ export default function ChessPage() {
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab("benchmarks")}
+            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+              activeTab === "benchmarks"
+                ? "bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 shadow-sm light:bg-emerald-100 light:text-emerald-700"
+                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+            }`}
+          >
+            Benchmarks
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("3d")}
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
               activeTab === "3d"
@@ -1392,6 +1405,8 @@ export default function ChessPage() {
               }}
               setStatusMessage={setStatusMessage}
             />
+          ) : activeTab === "benchmarks" ? (
+            <BenchmarkTab report={benchmarkReport} />
           ) : activeTab === "ai" ? (
             <AIAnalysisTab
               fen={gamePosition}

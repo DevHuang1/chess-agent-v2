@@ -24,4 +24,12 @@ test("opens the connected AI minimax analysis tab", async ({ page }) => {
   await expect(page.getByText("3D MCTS rollout graph", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Board" }).click();
   await expect(page.getByText("Position under analysis", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Benchmarks" }).click();
+  await expect(page.getByText("Search Benchmarks", { exact: true })).toBeVisible();
+  await expect(page.getByText("Depth scaling", { exact: true })).toBeVisible();
+  await expect(page.getByText("Minimax avg", { exact: true })).toBeVisible();
+  await expect(page.getByText("MCTS avg", { exact: true })).toBeVisible();
+  await page.getByLabel("Metric").selectOption("workUnitsPerSecond");
+  await expect(page.getByLabel("Metric")).toHaveValue("workUnitsPerSecond");
 });
