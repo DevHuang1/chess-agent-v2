@@ -71,6 +71,8 @@ test.describe("3D arena", () => {
     const accepted = await page.evaluate(() => window.__sentio3dDebug!.selectAndMove("e2", "e4"));
     expect(accepted).toBe(true);
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(true);
+    const during = await snapshot(page);
+    expect(during.fen).toBe(initial.fen);
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(false, { timeout: 5_000 });
 
     const result = await snapshot(page);
@@ -96,6 +98,8 @@ test.describe("3D arena", () => {
     await page.mouse.up();
 
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(true);
+    const during = await snapshot(page);
+    expect(during.fen).not.toContain("4P3");
     await expect.poll(async () => (await snapshot(page)).playerAnimating).toBe(false, { timeout: 5_000 });
 
     const result = await snapshot(page);

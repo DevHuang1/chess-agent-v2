@@ -1316,8 +1316,10 @@ export default function Simulation3D({
       robotAnimatingRef.current = false;
       playerAnimatingRef.current = false;
       pendingGamePositionRef.current = null;
-      if (gestureAnim && grabbedPieceSquare) {
-        gestureAnim.piece.position.copy(squareToPosition(grabbedPieceSquare));
+      if (gestureAnim) {
+        gestureAnim.piece.position.copy(gestureAnim.from);
+      } else if (grabbedPieceGroup && grabbedPieceSquare) {
+        grabbedPieceGroup.position.copy(squareToPosition(grabbedPieceSquare));
       }
       gestureAnim = null;
       grabbedPieceGroup = null;
@@ -1414,11 +1416,17 @@ export default function Simulation3D({
       const validation = validateDropTarget(fromSq, toSq, legalRef.current);
       if (validation.accepted && validation.target) {
         try {
-          const move = chessRef.current.move({ from: fromSq as Square, to: validation.target as Square, promotion: "q" });
-          if (move) {
+          const startFen = chessRef.current.fen();
+          const previewChess = new Chess(startFen);
+          const previewMove = previewChess.move({
+            from: fromSq as Square,
+            to: validation.target as Square,
+            promotion: "q",
+          });
+          if (previewMove) {
             const targetPos = squareToPosition(validation.target);
             playerAnimatingRef.current = true;
-            pendingGamePositionRef.current = chessRef.current.fen();
+            pendingGamePositionRef.current = startFen;
             gestureAnim = {
               piece: grabbed,
               from: grabbed.position.clone(),
@@ -1426,9 +1434,26 @@ export default function Simulation3D({
               progress: 0,
               arcHeight: 0.6,
               done: () => {
+                if (chessRef.current.fen() !== startFen) {
+                  playerAnimatingRef.current = false;
+                  pendingGamePositionRef.current = null;
+                  rebuildPieces(chessRef.current, scene, pieces);
+                  triggerRerender();
+                  return;
+                }
+                const committedMove = chessRef.current.move({
+                  from: fromSq as Square,
+                  to: validation.target as Square,
+                  promotion: "q",
+                });
                 playerAnimatingRef.current = false;
                 pendingGamePositionRef.current = null;
-                setStatusMessage(`3D Move: ${move.san}`);
+                if (!committedMove) {
+                  rebuildPieces(chessRef.current, scene, pieces);
+                  triggerRerender();
+                  return;
+                }
+                setStatusMessage(`3D Move: ${committedMove.san}`);
                 rebuildPieces(chessRef.current, scene, pieces);
                 onMoveRef.current();
                 triggerRerender();
