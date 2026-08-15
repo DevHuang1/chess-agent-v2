@@ -22,6 +22,9 @@ export type SearchBenchmarkRow = {
   evaluated: number;
   workUnits: number;
   workUnitsPerSecond: number;
+  prunedBranches: number;
+  cutoffs: number;
+  transpositionHits: number;
 };
 
 export type SearchBenchmarkReport = {
@@ -76,7 +79,7 @@ export function runSearchBenchmarks(options: {
         const run = () => {
           if (algorithm === "minimax") {
             const trace = buildMinimaxTrace(benchmarkCase.fen, { depth, branchLimit: 5, aiColor: benchmarkCase.aiColor });
-            return { nodes: trace.nodes.length, evaluated: trace.evaluatedLeaves, workUnits: trace.evaluatedLeaves };
+            return { nodes: trace.nodes.length, evaluated: trace.evaluatedLeaves, workUnits: trace.evaluatedLeaves, prunedBranches: trace.prunedBranches, cutoffs: trace.cutoffs, transpositionHits: trace.transpositionHits };
           }
           const trace = buildMctsTrace(benchmarkCase.fen, {
             iterations: Math.max(24, depth * 24),
@@ -84,13 +87,13 @@ export function runSearchBenchmarks(options: {
             rolloutDepth: depth,
             aiColor: benchmarkCase.aiColor,
           });
-          return { nodes: trace.nodes.length, evaluated: trace.evaluatedLeaves, workUnits: trace.iterations };
+          return { nodes: trace.nodes.length, evaluated: trace.evaluatedLeaves, workUnits: trace.iterations, prunedBranches: 0, cutoffs: 0, transpositionHits: 0 };
         };
 
         for (let warmup = 0; warmup < warmups; warmup++) run();
 
         const durations: number[] = [];
-        let last = { nodes: 0, evaluated: 0, workUnits: 0 };
+        let last = { nodes: 0, evaluated: 0, workUnits: 0, prunedBranches: 0, cutoffs: 0, transpositionHits: 0 };
         for (let sample = 0; sample < samples; sample++) {
           const startedAt = now();
           last = run();
@@ -112,6 +115,9 @@ export function runSearchBenchmarks(options: {
           evaluated: last.evaluated,
           workUnits: last.workUnits,
           workUnitsPerSecond: round(last.workUnits / Math.max(averageMs, 0.001) * 1000),
+          prunedBranches: last.prunedBranches,
+          cutoffs: last.cutoffs,
+          transpositionHits: last.transpositionHits,
         });
       }
     }
@@ -137,11 +143,11 @@ export function benchmarkReportToMarkdown(report: SearchBenchmarkReport) {
     "",
     "Timing is wall-clock generation time for the local trace builders. Lower average milliseconds is faster; work-units/sec uses evaluated leaves for Minimax and rollout iterations for MCTS.",
     "",
-    "| Position | Algorithm | Depth | Avg ms | Min ms | Max ms | Nodes | Evaluated / rollouts | Work units/s |",
-    "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+    "| Position | Algorithm | Depth | Avg ms | Min ms | Max ms | Nodes | Evaluated / rollouts | Work units/s | Cutoffs | TT hits |",
+    "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
   ];
   for (const row of report.rows) {
-    lines.push(`| ${row.position} | ${row.algorithm} | ${row.depth} | ${row.averageMs.toFixed(3)} | ${row.minMs.toFixed(3)} | ${row.maxMs.toFixed(3)} | ${row.nodes} | ${row.evaluated} | ${row.workUnitsPerSecond.toFixed(0)} |`);
+    lines.push(`| ${row.position} | ${row.algorithm} | ${row.depth} | ${row.averageMs.toFixed(3)} | ${row.minMs.toFixed(3)} | ${row.maxMs.toFixed(3)} | ${row.nodes} | ${row.evaluated} | ${row.workUnitsPerSecond.toFixed(0)} | ${row.cutoffs} | ${row.transpositionHits} |`);
   }
   return `${lines.join("\n")}\n`;
 }

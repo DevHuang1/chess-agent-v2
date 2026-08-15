@@ -41,7 +41,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chess, Square } from "chess.js";
 import dynamic from "next/dynamic";
 import SpeechTab from "@/components/SpeechTab";
-import Simulation3D from "@/components/Simulation3D";
+import Simulation3D, { ReplayGame, ReplayMove } from "@/components/Simulation3D";
 import GameInfo from "@/components/GameInfo";
 import AIAnalysisTab from "@/components/AIAnalysisTab";
 import BenchmarkTab from "@/components/BenchmarkTab";
@@ -213,8 +213,19 @@ type EngineProfile = {
 
 type GameOutcome = "active" | "checkmate" | "stalemate" | "draw" | "gameover";
 type CoachLlmConnection = "checking" | "connected" | "disconnected" | "disabled";
-type SidebarTab = "coach" | "speech" | "ai" | "benchmarks" | "3d";
+type SidebarTab = "coach" | "speech" | "ai" | "benchmarks" | "3d" | "replay";
 type LiveAiMode = "off" | "minimax" | "mcts";
+
+function serializeReplayMoves(chess: Chess): ReplayMove[] {
+  return chess.history({ verbose: true }).map((move) => ({
+    from: move.from,
+    to: move.to,
+    san: move.san,
+    color: move.color,
+    flags: move.flags,
+    promotion: move.promotion,
+  }));
+}
 
 const EMOTION_PROFILES: Record<EmotionLabel, { depth: number; skillLevel: number; elo: number }> = {
   stressed: { depth: 1, skillLevel: 1, elo: 1320 },
@@ -328,6 +339,14 @@ export default function ChessPage() {
   const [liveAiDepth, setLiveAiDepth] = useState(3);
   const [liveAiAnimating, setLiveAiAnimating] = useState(false);
   const liveAiTurnInFlightRef = useRef(false);
+  const [savedReplayGames, setSavedReplayGames] = useState<ReplayGame[]>([]);
+  const [replayGameId, setReplayGameId] = useState("current");
+  const [replayMoveIndex, setReplayMoveIndex] = useState(-1);
+  const [replayPlaying, setReplayPlaying] = useState(false);
+  const [replayBusy, setReplayBusy] = useState(false);
+  const [replayAnimate, setReplayAnimate] = useState(true);
+  const replayCounterRef = useRef(1);
+  const [currentReplayGame, setCurrentReplayGame] = useState<ReplayGame>({ id: "current", label: "Current game", moves: [] });
   const [coachLlmConnection, setCoachLlmConnection] =
     useState<CoachLlmConnection>("checking");
   const [coachLlmDetail, setCoachLlmDetail] = useState("Checking LLM health...");
@@ -1062,6 +1081,11 @@ export default function ChessPage() {
           : null;
 
   function resetGame() {
+    const completedMoves = serializeReplayMoves(chessRef.current);
+    if (completedMoves.length > 0) {
+      const id = `game-${replayCounterRef.current++}`;
+      setSavedReplayGames((previous) => [{ id, label: `Game ${replayCounterRef.current - 1} · ${completedMoves.length} plies`, moves: completedMoves }, ...previous].slice(0, 8));
+    }
     liveAiTurnInFlightRef.current = false;
     setLiveAiAnimating(false);
     const newChess = new Chess();
@@ -1071,8 +1095,83 @@ export default function ChessPage() {
     setLastBotMove(null);
     setSelectedSquare(null);
     setLegalMoveSquares([]);
+        setReplayGameId("current");
+    setReplayMoveIndex(-1);
+    setReplayPlaying(false);
+    setReplayBusy(false);
     setStatusMessage("New game started.");
   }
+
+  useEffect(() => {
+    if (replayGameId === "current") {
+      setCurrentReplayGame({ id: "current", label: "Current game", moves: serializeReplayMoves(chessRef.current) });
+    }
+  }, [gamePosition, replayGameId, activeTab]);
+
+  const replayGames = [currentReplayGame, ...savedReplayGames];
+  const activeReplayGame = replayGames.find((game) => game.id === replayGameId) ?? replayGames[0];
+  const replayActive = activeTab === "replay";
+
+  function setReplayBoard(game: ReplayGame, targetIndex: number, animateMove: boolean) {
+    const board = new Chess();
+    const boundedIndex = Math.max(-1, Math.min(targetIndex, game.moves.length - 1));
+    const movesToApply = game.moves.slice(0, boundedIndex + 1);
+    for (const move of movesToApply) {
+      board.move({ from: move.from as Square, to: move.to as Square, promotion: move.promotion as "q" | "r" | "b" | "n" | undefined });
+    }
+    if (!animateMove) {
+      chessRef.current = board;
+      setGamePosition(board.fen());
+      setReplayMoveIndex(boundedIndex);
+      setReplayBusy(false);
+      setReplayAnimate(false);
+      return;
+    }
+    const move = game.moves[boundedIndex];
+    if (!move) return;
+    const before = new Chess();
+    for (const previous of game.moves.slice(0, boundedIndex)) {
+      before.move({ from: previous.from as Square, to: previous.to as Square, promotion: previous.promotion as "q" | "r" | "b" | "n" | undefined });
+    }
+    const animatedBoard = new Chess(before.fen());
+    const applied = animatedBoard.move({ from: move.from as Square, to: move.to as Square, promotion: move.promotion as "q" | "r" | "b" | "n" | undefined });
+    if (!applied) return;
+    chessRef.current = animatedBoard;
+    setReplayMoveIndex(boundedIndex);
+    setReplayBusy(true);
+    setReplayAnimate(true);
+    setGamePosition(animatedBoard.fen());
+    setStatusMessage(`Replay: ${applied.san}`);
+  }
+
+  function selectReplayGame(gameId: string) {
+    const game = replayGames.find((candidate) => candidate.id === gameId);
+    if (!game) return;
+    setReplayGameId(gameId);
+    setReplayPlaying(false);
+    setReplayBusy(false);
+    setReplayAnimate(false);
+    setReplayBoard(game, -1, false);
+  }
+
+  function stepReplay(direction: -1 | 1) {
+    if (!activeReplayGame || replayBusy) return;
+    const nextIndex = replayMoveIndex + direction;
+    if (direction === 1 && nextIndex >= activeReplayGame.moves.length) {
+      setReplayPlaying(false);
+      return;
+    }
+    if (direction === 1) setReplayBoard(activeReplayGame, nextIndex, true);
+    else setReplayBoard(activeReplayGame, nextIndex, false);
+  }
+
+  useEffect(() => {
+    if (!replayActive || !replayPlaying || replayBusy || !activeReplayGame || replayMoveIndex >= activeReplayGame.moves.length - 1) {
+      return;
+    }
+    const timer = window.setTimeout(() => stepReplay(1), 980);
+    return () => window.clearTimeout(timer);
+  }, [replayActive, replayPlaying, replayBusy, activeReplayGame, replayMoveIndex]);
 
   return (
     <main className={`flex h-screen w-screen overflow-hidden sentio-bg transition-colors duration-300 ${theme === "light" ? "light text-zinc-900" : "text-zinc-100"}`}>
@@ -1317,6 +1416,17 @@ export default function ChessPage() {
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab("replay")}
+            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+              activeTab === "replay"
+                ? "bg-violet-500/20 text-violet-200 border border-violet-500/30 shadow-sm light:bg-violet-100 light:text-violet-700"
+                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+            }`}
+          >
+            Replay
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("3d")}
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
               activeTab === "3d"
@@ -1541,7 +1651,7 @@ export default function ChessPage() {
         </div>
       )}
 
-      {activeTab === "3d" && (
+      {(activeTab === "3d" || activeTab === "replay") && (
         <div className="fixed inset-0 z-50">
           <Simulation3D
             chessRef={chessRef}
@@ -1566,14 +1676,28 @@ export default function ChessPage() {
               if (mode === "off") setLiveAiAnimating(false);
             }}
             onLiveAiDepthChange={setLiveAiDepth}
+            replayActive={replayActive}
+            replayGames={replayGames}
+            replayGameId={replayGameId}
+            replayMoveIndex={replayMoveIndex}
+            replayPlaying={replayPlaying}
+            replayBusy={replayBusy}
+            replayAnimate={replayAnimate}
+            onReplaySelect={selectReplayGame}
+            onReplayStep={stepReplay}
+            onReplayPlayingChange={setReplayPlaying}
             onAnimationStateChange={(animating) => {
               liveAiTurnInFlightRef.current = animating;
               setLiveAiAnimating(animating);
+              if (replayActive) setReplayBusy(animating);
             }}
             onExit={() => {
               liveAiTurnInFlightRef.current = false;
               setLiveAiMode("off");
               setLiveAiAnimating(false);
+              setReplayPlaying(false);
+              setReplayBusy(false);
+              setReplayGameId("current");
               setActiveTab("coach");
             }}
           />

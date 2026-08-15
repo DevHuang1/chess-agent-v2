@@ -13,7 +13,7 @@ test("opens the connected AI minimax analysis tab", async ({ page }) => {
   await expect(page.getByLabel("Minimax depth")).toHaveValue("3");
 
   await page.getByRole("button", { name: "Pause" }).click();
-  await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "MCTS" }).click();
   await expect(page.getByText("MCTS Rollout Observatory", { exact: true })).toBeVisible();
@@ -32,4 +32,10 @@ test("opens the connected AI minimax analysis tab", async ({ page }) => {
   await expect(page.getByText("MCTS avg", { exact: true })).toBeVisible();
   await page.getByLabel("Metric").selectOption("workUnitsPerSecond");
   await expect(page.getByLabel("Metric")).toHaveValue("workUnitsPerSecond");
+
+  await page.getByRole("button", { name: "Replay" }).click();
+  await expect(page.getByText("3D Arena Active", { exact: false })).toBeVisible();
+  await expect(page.locator("#replay-game-select")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Replay previous move" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Replay next move" })).toBeVisible();
 });

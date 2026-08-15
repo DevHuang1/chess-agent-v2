@@ -211,6 +211,8 @@ export function buildMctsTrace(
     principalVariation,
     evaluatedLeaves,
     prunedBranches: 0,
+    transpositionHits: 0,
+    cutoffs: 0,
     generatedAt: Date.now(),
     iterations,
     rootVisits: root.visits,
