@@ -82,22 +82,30 @@ async function transcribeWithLocalBackend(audioFile: Blob): Promise<string | nul
   const backendForm = new FormData();
   backendForm.append("file", audioFile);
   backendForm.append("language", "my");
-  const response = await fetch(BACKEND_TRANSCRIBE_URL, {
-    method: "POST",
-    body: backendForm,
-    signal: AbortSignal.timeout(30000),
-  });
-  if (!response.ok) {
+  try {
+    const response = await fetch(BACKEND_TRANSCRIBE_URL, {
+      method: "POST",
+      body: backendForm,
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!response.ok) {
+      console.error(
+        "Local transcription failed:",
+        response.status,
+        await response.text(),
+      );
+      return null;
+    }
+    const data = (await response.json()) as { text?: string };
+    const text = (data.text ?? "").trim();
+    return text || null;
+  } catch (error) {
     console.error(
-      "Local transcription failed:",
-      response.status,
-      await response.text(),
+      "Local transcription backend unavailable:",
+      error instanceof Error ? error.message : error,
     );
     return null;
   }
-  const data = (await response.json()) as { text?: string };
-  const text = (data.text ?? "").trim();
-  return text || null;
 }
 
 async function transcribeWithGemini(audioFile: Blob): Promise<string | null> {

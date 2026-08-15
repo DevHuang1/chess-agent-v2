@@ -323,6 +323,25 @@ function createPieceGeometry(type: string, color: string): THREE.Group {
   return group;
 }
 
+function disposeThreeResources(roots: THREE.Object3D[]) {
+  const geometries = new Set<THREE.BufferGeometry>();
+  const materials = new Set<THREE.Material>();
+
+  for (const root of roots) {
+    root.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      geometries.add(object.geometry);
+      const objectMaterials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+      for (const material of objectMaterials) materials.add(material);
+    });
+  }
+
+  for (const geometry of geometries) geometry.dispose();
+  for (const material of materials) material.dispose();
+}
+
 function createRobot(): THREE.Group {
   const group = new THREE.Group();
 
@@ -577,6 +596,7 @@ export default function Simulation3D({
 }: Simulation3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const pieceAssetsRef = useRef(new Map<string, THREE.Group>());
   const sceneRef = useRef<{
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
@@ -621,8 +641,13 @@ export default function Simulation3D({
         if (!piece) continue;
         const sq = `${FILES[f]}${8 - r}` as Square;
         const pos = squareToPosition(sq);
-        const color = piece.color;
-        const group = createPieceGeometry(piece.type, color);
+        const key = `${piece.color}${piece.type}`;
+        let asset = pieceAssetsRef.current.get(key);
+        if (!asset) {
+          asset = createPieceGeometry(piece.type, piece.color);
+          pieceAssetsRef.current.set(key, asset);
+        }
+        const group = asset.clone(true);
         group.position.copy(pos);
         group.userData = { square: sq, type: piece.type, color: piece.color };
         scene.add(group);
@@ -715,9 +740,11 @@ export default function Simulation3D({
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+    const isLowPowerDevice = (navigator.hardwareConcurrency ?? 8) <= 4;
+    const pixelRatioCap = isLowPowerDevice ? 1.25 : 1.5;
     renderer.setSize(w, h);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
+    renderer.shadowMap.enabled = !isLowPowerDevice;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
@@ -729,8 +756,8 @@ export default function Simulation3D({
     // Warm key light focusing on board
     const keyLight = new THREE.DirectionalLight(0xfff5e6, 2.4);
     keyLight.position.set(6, 15, 8);
-    keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.castShadow = !isLowPowerDevice;
+    keyLight.shadow.mapSize.set(isLowPowerDevice ? 512 : 1024, isLowPowerDevice ? 512 : 1024);
     keyLight.shadow.bias = -0.0001;
     scene.add(keyLight);
 
@@ -766,17 +793,19 @@ export default function Simulation3D({
     scene.add(frameMesh);
 
     const tileMeshes: THREE.Mesh[] = [];
+    const tileGeometry = new THREE.BoxGeometry(
+      SQUARE_SIZE * 0.94,
+      0.05,
+      SQUARE_SIZE * 0.94,
+    );
+    const tileMaterials = [
+      new THREE.MeshStandardMaterial({ color: 0xeedec5, roughness: 0.35, metalness: 0.05 }),
+      new THREE.MeshStandardMaterial({ color: 0x75563b, roughness: 0.45, metalness: 0.05 }),
+    ];
     for (let r = 0; r < BOARD_SIZE; r++) {
       for (let f = 0; f < BOARD_SIZE; f++) {
         const isLight = (r + f) % 2 === 0;
-        const tile = new THREE.Mesh(
-          new THREE.BoxGeometry(SQUARE_SIZE * 0.94, 0.05, SQUARE_SIZE * 0.94),
-          new THREE.MeshStandardMaterial({
-            color: isLight ? 0xeedec5 : 0x75563b,
-            roughness: isLight ? 0.35 : 0.45,
-            metalness: 0.05,
-          }),
-        );
+        const tile = new THREE.Mesh(tileGeometry, tileMaterials[isLight ? 0 : 1]);
         tile.position.set(f - BOARD_OFFSET, -0.015, r - BOARD_OFFSET);
         tile.receiveShadow = true;
         tile.userData = { square: `${FILES[f]}${8 - r}`, rank: r, file: f };
@@ -817,19 +846,26 @@ export default function Simulation3D({
     scene.add(cursorRing);
 
     const legalDots: THREE.Mesh[] = [];
+    const legalDotGeometry = new THREE.CircleGeometry(0.1, 12);
+    const legalDotMaterial = new THREE.MeshBasicMaterial({
+      color: 0x34d399,
+      transparent: true,
+      opacity: 0.6,
+      side: THREE.DoubleSide,
+    });
     function updateLegalDots(squares: string[]) {
-      for (const d of legalDots) scene.remove(d);
-      legalDots.length = 0;
-      for (const sq of squares) {
+      for (const dot of legalDots) dot.visible = false;
+      for (const [index, sq] of squares.entries()) {
+        let dot = legalDots[index];
+        if (!dot) {
+          dot = new THREE.Mesh(legalDotGeometry, legalDotMaterial);
+          dot.rotation.x = -Math.PI / 2;
+          scene.add(dot);
+          legalDots.push(dot);
+        }
         const pos = squareToPosition(sq);
-        const dot = new THREE.Mesh(
-          new THREE.CircleGeometry(0.1, 16),
-          new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.6, side: THREE.DoubleSide }),
-        );
-        dot.rotation.x = -Math.PI / 2;
         dot.position.set(pos.x, 0.04, pos.z);
-        scene.add(dot);
-        legalDots.push(dot);
+        dot.visible = true;
       }
     }
 
@@ -961,7 +997,7 @@ export default function Simulation3D({
               "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
             delegate: "CPU",
           },
-          runningMode: "IMAGE",
+          runningMode: "VIDEO",
           numHands: 1,
           minHandDetectionConfidence: 0.6,
           minHandPresenceConfidence: 0.6,
@@ -969,30 +1005,25 @@ export default function Simulation3D({
           cannedGesturesClassifierOptions: { scoreThreshold: 0.5 },
         });
 
-        // Draw the video frame onto a DOM canvas and pass the resulting ImageData
-        // to recognize(). MediaPipe's internal path draws the video onto an
-        // OffscreenCanvas, which throws on Safari/WebKit (video → OffscreenCanvas
-        // drawImage is unsupported) — the ImageData path works everywhere.
-        // IMAGE mode uses a synthetic timestamp that is always monotonic, so it
-        // avoids recognizeForVideo's timestamp-bound graph errors entirely.
-        const frameCanvas = document.createElement("canvas");
-        const frameCtx = frameCanvas.getContext("2d", { willReadFrequently: true });
-
         let lastDetectError = 0;
-        async function detect() {
-          if (!gestureRecognizer || !frameCtx) return;
-          if (video.readyState >= 2 && video.videoWidth > 0 && video.currentTime > 0) {
+        let lastVideoTime = -1;
+        let lastDetectAt = 0;
+        const DETECT_INTERVAL_MS = 100;
+        function detect() {
+          if (!gestureRecognizer) return;
+          const now = performance.now();
+          const hasNewFrame = video.currentTime !== lastVideoTime;
+          if (
+            hasNewFrame &&
+            now - lastDetectAt >= DETECT_INTERVAL_MS &&
+            video.readyState >= 2 &&
+            video.videoWidth > 0 &&
+            video.currentTime > 0
+          ) {
             try {
-              const inW = video.videoWidth;
-              const inH = video.videoHeight;
-              const outW = 480;
-              const outH = Math.round((inH / inW) * outW);
-              if (frameCanvas.width !== outW) frameCanvas.width = outW;
-              if (frameCanvas.height !== outH) frameCanvas.height = outH;
-              frameCtx.drawImage(video, 0, 0, outW, outH);
-              const frame = frameCtx.getImageData(0, 0, outW, outH);
-
-              const result = gestureRecognizer.recognize(frame);
+              const result = gestureRecognizer.recognizeForVideo(video, now);
+              lastVideoTime = video.currentTime;
+              lastDetectAt = now;
               const cat0 = result.gestures?.[0]?.[0];
               const lm0 = result.landmarks?.[0];
 
@@ -1424,11 +1455,14 @@ export default function Simulation3D({
     const handleResize = () => {
       const cw = container.clientWidth;
       const ch = container.clientHeight;
+      if (!cw || !ch) return;
       camera.aspect = cw / ch;
       camera.updateProjectionMatrix();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
       renderer.setSize(cw, ch);
     };
-    window.addEventListener("resize", handleResize);
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(container);
 
     let morphT = 0;
     setStatusMessage("Entering 3D Mode — Morphing 2D board to 3D arena...");
@@ -1598,13 +1632,20 @@ export default function Simulation3D({
     }
     animate();
 
+    const pieceAssets = pieceAssetsRef.current;
     const cleanupVid = videoRef.current;
     return () => {
       cancelAnimationFrame(animRef.current);
       cancelAnimationFrame(detectRaf);
       gestureRecognizer?.close();
-      window.removeEventListener("resize", handleResize);
+      resizeObserver.disconnect();
+      disposeThreeResources([scene, ...pieceAssets.values()]);
+      bgTex.dispose();
+      legalDotGeometry.dispose();
+      legalDotMaterial.dispose();
+      scene.clear();
       renderer.dispose();
+      renderer.domElement.remove();
       if (cleanupVid) {
         cleanupVid.pause();
         cleanupVid.srcObject = null;

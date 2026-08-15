@@ -361,6 +361,11 @@ export default function ChessPage() {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    if (activeTab === "3d") {
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
     lastMoveTimestampRef.current = Date.now();
     let mediaStream: MediaStream | null = null;
 
@@ -402,10 +407,10 @@ export default function ChessPage() {
         mediaStream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, []);
+  }, [activeTab]);
 
   useEffect(() => {
-    if (emotionMode !== "auto" || !faceapiRef.current || !modelsLoaded) return;
+    if (activeTab === "3d" || emotionMode !== "auto" || !faceapiRef.current || !modelsLoaded) return;
 
     const intervalId = window.setInterval(async () => {
       const api = faceapiRef.current;
@@ -431,7 +436,7 @@ export default function ChessPage() {
       emotionBuffer.length = 0;
       emotionHistoryRef.current = [];
     };
-  }, [emotionMode, modelsLoaded]);
+  }, [activeTab, emotionMode, modelsLoaded]);
 
   useEffect(() => {
     if (emotionMode === "auto") {

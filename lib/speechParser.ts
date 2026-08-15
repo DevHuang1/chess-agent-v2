@@ -20,6 +20,7 @@ const PIECE_MAP: Record<string, Record<string, string>> = {
     "မြင့်": "N",
     "မြေး": "N",
     "နိုင်": "",
+  nai: "",
     "စစ်သား": "",
   },
 };
@@ -29,6 +30,7 @@ const PHONETIC_PIECE_HOMOPHONES: Record<string, string> = {
   night: "knight",
   nite: "knight",
   nigh: "knight",
+  mie: "knight",
   kint: "knight",
   knit: "knight",
   horse: "knight",
@@ -106,6 +108,7 @@ const FILE_HOMOPHONES: Record<string, string> = {
   delta: "d",
   dee: "d",
   echo: "e",
+  y: "e",
   ee: "e",
   he: "e",
   foxtrot: "f",
@@ -131,6 +134,7 @@ const NUMBER_HOMOPHONES: Record<string, string> = {
   tree: "3",
   free: "3",
   four: "4",
+  le: "4",
   for: "4",
   fore: "4",
   five: "5",
@@ -218,6 +222,7 @@ const FILLER_WORDS = [
   "os",
   "as",
   "ကနေ",
+  "gu",
   "ကို",
   "မှာ",
   "သို့",
@@ -283,7 +288,7 @@ function detectCastle(text: string, chess?: Chess): string | null {
   const queensidePattern =
     /o-o-o|queenside|queen['’]?s?\s*side|long\s*castle|castle\s+queenside|grand['’]?s?\s*roqu?|queen[’']?s?\s*castle/i;
   const kingsidePattern =
-    /o-o\b|kingside|king['’]?s?\s*side|short\s*castle|small\s*castle|castle\s+kingside|petit\s*roqu?|king[’']?s?\s*castle/i;
+    /o[\s-]*o\b|kingside|king['’]?s?\s*side|short\s*castle|small\s*castle|castle\s+kingside|petit\s*roqu?|king['’]?s?\s*castle/i;
   const bareCastlePattern =
     /(^|\s)(castles?|castling|cassel|castel|enroques?|enrocamiento)(\s|$)/i;
 
@@ -344,10 +349,16 @@ function levenshtein(a: string, b: string): number {
 }
 
 function extractPiece(text: string, lang: string): string | null {
-  const map = PIECE_MAP[lang] ?? PIECE_MAP.en;
+  const maps = lang === "en" ? [PIECE_MAP.en] : [PIECE_MAP[lang] ?? PIECE_MAP.en, PIECE_MAP.en];
+  const pieceEntries = Array.from(
+    new Map(
+      maps.flatMap((pieceMap) => Object.entries(pieceMap)),
+    ).entries(),
+  )
+    .filter(([name]) => name.length > 0)
+    .sort(([left], [right]) => right.length - left.length);
 
-  for (const [name, letter] of Object.entries(map)) {
-    if (!name) continue;
+  for (const [name, letter] of pieceEntries) {
     // Non-Latin script (e.g. Burmese) has no ASCII word boundaries — use substring match.
     const isLatin = /^[a-zà-ÿ]+$/i.test(name);
     if (isLatin ? new RegExp(`\\b${name}\\b`, "i").test(text) : text.includes(name)) {
@@ -362,8 +373,7 @@ function extractPiece(text: string, lang: string): string | null {
   let best: { dist: number; letter: string } | null = null;
   for (const word of text.split(/\s+/)) {
     if (word.length < 3) continue;
-    for (const [name, letter] of Object.entries(map)) {
-      if (!name) continue;
+    for (const [name, letter] of pieceEntries) {
       const dist = levenshtein(word.toLowerCase(), name.toLowerCase());
       const threshold = Math.max(1, Math.floor(name.length / 2));
       if (dist <= threshold && (!best || dist < best.dist)) {
