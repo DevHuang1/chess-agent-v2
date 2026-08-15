@@ -382,6 +382,79 @@ function disposeThreeResources(roots: THREE.Object3D[]) {
   for (const material of materials) material.dispose();
 }
 
+type ArticulatedHand = {
+  group: THREE.Group;
+  setGrip: (amount: number) => void;
+};
+
+function createArticulatedHand(
+  skinMaterial: THREE.MeshStandardMaterial,
+  accentMaterial: THREE.MeshStandardMaterial,
+  isRobot: boolean,
+): ArticulatedHand {
+  const group = new THREE.Group();
+  const palm = new THREE.Mesh(new THREE.SphereGeometry(0.17, 18, 14), skinMaterial);
+  palm.scale.set(0.88, 0.7, 1.08);
+  group.add(palm);
+
+  const fingerJoints: THREE.Object3D[] = [];
+  const fingerX = [-0.105, -0.035, 0.035, 0.105];
+  for (const [index, x] of fingerX.entries()) {
+    const finger = new THREE.Object3D();
+    finger.position.set(x, -0.015, -0.115);
+    const proximal = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.035, 0.11, 5, 8),
+      skinMaterial,
+    );
+    proximal.rotation.x = Math.PI / 2;
+    proximal.position.z = -0.045;
+    const distal = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.032, 0.09, 5, 8),
+      skinMaterial,
+    );
+    distal.rotation.x = Math.PI / 2;
+    distal.position.set(0, 0.005, -0.13);
+    finger.add(proximal, distal);
+    fingerJoints.push(finger);
+    group.add(finger);
+    if (index === 3) {
+      const knuckle = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), accentMaterial);
+      knuckle.position.set(x, 0.015, 0.01);
+      group.add(knuckle);
+    }
+  }
+
+  const thumb = new THREE.Object3D();
+  thumb.position.set(isRobot ? -0.14 : 0.14, -0.015, -0.005);
+  const thumbMesh = new THREE.Mesh(
+    new THREE.CapsuleGeometry(0.04, 0.12, 5, 8),
+    skinMaterial,
+  );
+  thumbMesh.rotation.z = isRobot ? -0.65 : 0.65;
+  thumbMesh.position.set(isRobot ? -0.045 : 0.045, 0, -0.09);
+  thumb.add(thumbMesh);
+  group.add(thumb);
+
+  const setGrip = (amount: number) => {
+    const grip = THREE.MathUtils.clamp(amount, 0, 1);
+    for (const [index, finger] of fingerJoints.entries()) {
+      const spread = (index - 1.5) * 0.035;
+      finger.rotation.x = grip * 0.78;
+      finger.rotation.z = spread * (1 - grip * 0.7);
+    }
+    thumb.rotation.x = grip * 0.42;
+    thumb.rotation.z = (isRobot ? -0.65 : 0.65) + (isRobot ? 1 : -1) * grip * 0.38;
+    palm.scale.y = 0.7 + grip * 0.06;
+  };
+
+  setGrip(0.08);
+  group.userData = { palm, fingerJoints, thumb, setGrip };
+  group.traverse((object) => {
+    if (object instanceof THREE.Mesh) object.castShadow = true;
+  });
+  return { group, setGrip };
+}
+
 function createRobot(): THREE.Group {
   const group = new THREE.Group();
 
@@ -427,6 +500,12 @@ function createRobot(): THREE.Group {
   // Torso with glowing chest core, chest panel and waist band
   const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.54, 0.72, 1.4, 20), bodyMat);
   torso.position.y = 1.02;
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.18, 14), darkMat);
+  neck.position.y = 1.78;
+  const shoulderBoltR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 10, 8), glowMat);
+  shoulderBoltR.position.set(0.66, 1.62, 0.18);
+  const shoulderBoltL = shoulderBoltR.clone();
+  shoulderBoltL.position.x = -0.66;
   const chestCore = new THREE.Mesh(new THREE.CircleGeometry(0.17, 24), glowMat);
   chestCore.position.set(0, 1.12, 0.53);
   const chestPanel = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.18, 0.06), accentMat);
@@ -474,7 +553,8 @@ function createRobot(): THREE.Group {
   const shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 12), darkMat);
   shoulderJoint.position.copy(shoulder.position);
 
-  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 14), handMat);
+  const articulatedHand = createArticulatedHand(handMat, glowMat, true);
+  const hand = articulatedHand.group;
   hand.position.set(0.66, 1.2, 0.6);
 
   // Static left arm resting at its side
@@ -489,6 +569,9 @@ function createRobot(): THREE.Group {
     baseRing,
     baseHatch,
     torso,
+    neck,
+    shoulderBoltR,
+    shoulderBoltL,
     chestCore,
     chestPanel,
     waistRing,
@@ -508,7 +591,7 @@ function createRobot(): THREE.Group {
     armL,
     handL,
   );
-  group.userData = { shoulder, hand, armMesh, handMat };
+  group.userData = { shoulder, hand, armMesh, handMat, setGrip: articulatedHand.setGrip };
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
       obj.castShadow = true;
@@ -573,6 +656,19 @@ function createHuman(): THREE.Group {
   // Torso with a subtle collar
   const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.44, 1.0, 16), shirtMat);
   torso.position.y = 1.4;
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.18, 12), skinMat);
+  neck.position.y = 1.86;
+  const belt = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.025, 8, 20), shoeMat);
+  belt.rotation.x = Math.PI / 2;
+  belt.position.y = 0.98;
+  const shirtButton = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), eyeMat);
+  shirtButton.position.set(0, 1.45, -0.39);
+  const shirtButton2 = shirtButton.clone();
+  shirtButton2.position.y = 1.3;
+  const earL = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), skinMat);
+  earL.position.set(-0.25, 2.02, 0);
+  const earR = earL.clone();
+  earR.position.x = 0.25;
   const collar = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 8, 16), shirtMat);
   collar.rotation.x = -Math.PI / 2;
   collar.position.y = 1.86;
@@ -598,7 +694,8 @@ function createHuman(): THREE.Group {
   shoulder.position.set(0.42, 1.62, 0);
   const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.085, 1, 10), shirtMat);
   armMesh.position.copy(shoulder.position);
-  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.13, 14, 12), handMat);
+  const articulatedHand = createArticulatedHand(handMat, eyeMat, false);
+  const hand = articulatedHand.group;
   hand.position.set(0.5, 1.1, -1.0);
 
   // Left arm (static, resting)
@@ -608,8 +705,8 @@ function createHuman(): THREE.Group {
   const handL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), skinMat);
   handL.position.set(-0.98, 0.85, 0.08);
 
-  group.add(legL, legR, shoeL, shoeR, torso, collar, head, hair, nose, eyeL, eyeR, shoulder, armMesh, hand, armL, handL);
-  group.userData = { shoulder, hand, armMesh, handMat };
+  group.add(legL, legR, shoeL, shoeR, torso, neck, belt, shirtButton, shirtButton2, earL, earR, collar, head, hair, nose, eyeL, eyeR, shoulder, armMesh, hand, armL, handL);
+  group.userData = { shoulder, hand, armMesh, handMat, setGrip: articulatedHand.setGrip };
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
       obj.castShadow = true;
@@ -971,18 +1068,20 @@ export default function Simulation3D({
     robot.position.set(0, 0, -5.6);
     scene.add(robot);
     const robotShoulder = robot.userData.shoulder as THREE.Object3D;
-    const robotHand = robot.userData.hand as THREE.Mesh;
+    const robotHand = robot.userData.hand as THREE.Group;
     const robotArm = robot.userData.armMesh as THREE.Mesh;
     const robotHandMat = robot.userData.handMat as THREE.MeshStandardMaterial;
+    const robotSetGrip = robot.userData.setGrip as (amount: number) => void;
 
     // Human figure on the player's (white) side whose hand follows the tracked hand
     const human = createHuman();
     human.position.set(0, 0, 7.0);
     scene.add(human);
     const humanShoulder = human.userData.shoulder as THREE.Object3D;
-    const humanHand = human.userData.hand as THREE.Mesh;
+    const humanHand = human.userData.hand as THREE.Group;
     const humanArm = human.userData.armMesh as THREE.Mesh;
     const humanHandMat = human.userData.handMat as THREE.MeshStandardMaterial;
+    const humanSetGrip = human.userData.setGrip as (amount: number) => void;
     const HUMAN_HAND_REST = new THREE.Vector3(0.5, 1.1, 6.0);
     const humanHandFollowTarget = HUMAN_HAND_REST.clone();
     const pieceFollowTarget = new THREE.Vector3();
@@ -1791,6 +1890,8 @@ export default function Simulation3D({
     const robotDir = new THREE.Vector3();
     const humanDir = new THREE.Vector3();
     const robotUp = new THREE.Vector3(0, 1, 0);
+    let humanGrip = 0.08;
+    let robotGrip = 0.08;
     const humanHandTargetLocal = new THREE.Vector3();
     const humanHandTargetWorld = new THREE.Vector3();
     setStatusMessage("Entering 3D Mode — Morphing 2D board to 3D arena...");
@@ -1887,8 +1988,15 @@ export default function Simulation3D({
         humanHandTargetLocal,
         1 - Math.exp(-11 * deltaSeconds),
       );
-      humanHandMat.emissiveIntensity =
-        grabbedPieceSquare && grabbedPieceGroup ? 0.8 : 0;
+      const humanGripTarget = grabbedPieceSquare && grabbedPieceGroup ? 0.96 : 0.08;
+      humanGrip += (humanGripTarget - humanGrip) * (1 - Math.exp(-13 * deltaSeconds));
+      humanSetGrip(humanGrip);
+      humanHand.rotation.z = THREE.MathUtils.lerp(
+        humanHand.rotation.z,
+        grabbedPieceSquare ? -0.12 : 0.08,
+        1 - Math.exp(-8 * deltaSeconds),
+      );
+      humanHandMat.emissiveIntensity = humanGrip * 0.8;
       {
         humanDir.subVectors(humanHand.position, humanShoulder.position);
         const len = humanDir.length();
@@ -1951,9 +2059,19 @@ export default function Simulation3D({
           }
         }
 
-        robotHandMat.emissiveIntensity = a.attached ? 0.7 : 0.15;
+        const robotGripTarget = a.attached ? 0.96 : 0.12;
+        robotGrip += (robotGripTarget - robotGrip) * (1 - Math.exp(-12 * deltaSeconds));
+        robotSetGrip(robotGrip);
+        robotHand.rotation.z = THREE.MathUtils.lerp(
+          robotHand.rotation.z,
+          a.attached ? 0.16 : -0.08,
+          1 - Math.exp(-8 * deltaSeconds),
+        );
+        robotHandMat.emissiveIntensity = 0.15 + robotGrip * 0.55;
       } else {
-        robotHandMat.emissiveIntensity = 0.15;
+        robotGrip += (0.08 - robotGrip) * (1 - Math.exp(-10 * deltaSeconds));
+        robotSetGrip(robotGrip);
+        robotHandMat.emissiveIntensity = 0.15 + robotGrip * 0.55;
       }
 
       // Smooth piece follow for fist grab (held just under the human hand)
