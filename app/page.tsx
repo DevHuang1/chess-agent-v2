@@ -41,7 +41,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chess, Square } from "chess.js";
 import dynamic from "next/dynamic";
 import SpeechTab from "@/components/SpeechTab";
-import Simulation3D from "@/components/Simulation3D";
+import Simulation3D, { ReplayGame, ReplayMove } from "@/components/Simulation3D";
 import GameInfo from "@/components/GameInfo";
 import AIAnalysisTab from "@/components/AIAnalysisTab";
 import BenchmarkTab from "@/components/BenchmarkTab";
@@ -224,13 +224,21 @@ type EngineProfile = {
 
 type GameOutcome = "active" | "checkmate" | "stalemate" | "draw" | "gameover";
 type CoachLlmConnection = "checking" | "connected" | "disconnected" | "disabled";
-type SidebarTab = "coach" | "speech" | "ai" | "benchmarks" | "3d";
+type SidebarTab = "coach" | "speech" | "ai" | "benchmarks" | "3d" | "replay";
 type LiveAiMode = "off" | "minimax" | "mcts";
 
-const EMOTION_PROFILES: Record<
-  EmotionLabel,
-  { depth: number; skillLevel: number; elo: number }
-> = {
+function serializeReplayMoves(chess: Chess): ReplayMove[] {
+  return chess.history({ verbose: true }).map((move) => ({
+    from: move.from,
+    to: move.to,
+    san: move.san,
+    color: move.color,
+    flags: move.flags,
+    promotion: move.promotion,
+  }));
+}
+
+const EMOTION_PROFILES: Record<EmotionLabel, { depth: number; skillLevel: number; elo: number }> = {
   stressed: { depth: 1, skillLevel: 1, elo: 1320 },
   frustrated: { depth: 2, skillLevel: 3, elo: 1320 },
   calm: { depth: 4, skillLevel: 6, elo: 1600 },
@@ -354,6 +362,14 @@ export default function ChessPage() {
   const [liveAiDepth, setLiveAiDepth] = useState(3);
   const [liveAiAnimating, setLiveAiAnimating] = useState(false);
   const liveAiTurnInFlightRef = useRef(false);
+  const [savedReplayGames, setSavedReplayGames] = useState<ReplayGame[]>([]);
+  const [replayGameId, setReplayGameId] = useState("current");
+  const [replayMoveIndex, setReplayMoveIndex] = useState(-1);
+  const [replayPlaying, setReplayPlaying] = useState(false);
+  const [replayBusy, setReplayBusy] = useState(false);
+  const [replayAnimate, setReplayAnimate] = useState(true);
+  const replayCounterRef = useRef(1);
+  const [currentReplayGame, setCurrentReplayGame] = useState<ReplayGame>({ id: "current", label: "Current game", moves: [] });
   const [coachLlmConnection, setCoachLlmConnection] =
     useState<CoachLlmConnection>("checking");
   const [coachLlmDetail, setCoachLlmDetail] = useState(
@@ -371,6 +387,7 @@ export default function ChessPage() {
   const aiHandRafRef = useRef<number | null>(null);
 
   const [activeTab, setActiveTab] = useState<SidebarTab>("coach");
+  const [controllerExpanded, setControllerExpanded] = useState(true);
 
   const [pieceDesign, setPieceDesign] = useState<PieceDesignKey>("chesscom");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -1130,6 +1147,11 @@ export default function ChessPage() {
           : null;
 
   function resetGame() {
+    const completedMoves = serializeReplayMoves(chessRef.current);
+    if (completedMoves.length > 0) {
+      const id = `game-${replayCounterRef.current++}`;
+      setSavedReplayGames((previous) => [{ id, label: `Game ${replayCounterRef.current - 1} · ${completedMoves.length} plies`, moves: completedMoves }, ...previous].slice(0, 8));
+    }
     liveAiTurnInFlightRef.current = false;
     setLiveAiAnimating(false);
     const newChess = new Chess();
@@ -1139,8 +1161,83 @@ export default function ChessPage() {
     setLastBotMove(null);
     setSelectedSquare(null);
     setLegalMoveSquares([]);
+        setReplayGameId("current");
+    setReplayMoveIndex(-1);
+    setReplayPlaying(false);
+    setReplayBusy(false);
     setStatusMessage("New game started.");
   }
+
+  useEffect(() => {
+    if (replayGameId === "current") {
+      setCurrentReplayGame({ id: "current", label: "Current game", moves: serializeReplayMoves(chessRef.current) });
+    }
+  }, [gamePosition, replayGameId, activeTab]);
+
+  const replayGames = [currentReplayGame, ...savedReplayGames];
+  const activeReplayGame = replayGames.find((game) => game.id === replayGameId) ?? replayGames[0];
+  const replayActive = activeTab === "replay";
+
+  function setReplayBoard(game: ReplayGame, targetIndex: number, animateMove: boolean) {
+    const board = new Chess();
+    const boundedIndex = Math.max(-1, Math.min(targetIndex, game.moves.length - 1));
+    const movesToApply = game.moves.slice(0, boundedIndex + 1);
+    for (const move of movesToApply) {
+      board.move({ from: move.from as Square, to: move.to as Square, promotion: move.promotion as "q" | "r" | "b" | "n" | undefined });
+    }
+    if (!animateMove) {
+      chessRef.current = board;
+      setGamePosition(board.fen());
+      setReplayMoveIndex(boundedIndex);
+      setReplayBusy(false);
+      setReplayAnimate(false);
+      return;
+    }
+    const move = game.moves[boundedIndex];
+    if (!move) return;
+    const before = new Chess();
+    for (const previous of game.moves.slice(0, boundedIndex)) {
+      before.move({ from: previous.from as Square, to: previous.to as Square, promotion: previous.promotion as "q" | "r" | "b" | "n" | undefined });
+    }
+    const animatedBoard = new Chess(before.fen());
+    const applied = animatedBoard.move({ from: move.from as Square, to: move.to as Square, promotion: move.promotion as "q" | "r" | "b" | "n" | undefined });
+    if (!applied) return;
+    chessRef.current = animatedBoard;
+    setReplayMoveIndex(boundedIndex);
+    setReplayBusy(true);
+    setReplayAnimate(true);
+    setGamePosition(animatedBoard.fen());
+    setStatusMessage(`Replay: ${applied.san}`);
+  }
+
+  function selectReplayGame(gameId: string) {
+    const game = replayGames.find((candidate) => candidate.id === gameId);
+    if (!game) return;
+    setReplayGameId(gameId);
+    setReplayPlaying(false);
+    setReplayBusy(false);
+    setReplayAnimate(false);
+    setReplayBoard(game, -1, false);
+  }
+
+  function stepReplay(direction: -1 | 1) {
+    if (!activeReplayGame || replayBusy) return;
+    const nextIndex = replayMoveIndex + direction;
+    if (direction === 1 && nextIndex >= activeReplayGame.moves.length) {
+      setReplayPlaying(false);
+      return;
+    }
+    if (direction === 1) setReplayBoard(activeReplayGame, nextIndex, true);
+    else setReplayBoard(activeReplayGame, nextIndex, false);
+  }
+
+  useEffect(() => {
+    if (!replayActive || !replayPlaying || replayBusy || !activeReplayGame || replayMoveIndex >= activeReplayGame.moves.length - 1) {
+      return;
+    }
+    const timer = window.setTimeout(() => stepReplay(1), 980);
+    return () => window.clearTimeout(timer);
+  }, [replayActive, replayPlaying, replayBusy, activeReplayGame, replayMoveIndex]);
 
   return (
     <main
@@ -1340,25 +1437,41 @@ export default function ChessPage() {
         </div>
       </section>
 
-      <aside className="flex w-[440px] shrink-0 flex-col border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90">
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">
-              Game Controller
-            </h1>
-            <p className="text-xs text-zinc-400 light:text-slate-600">
-              {statusMessage}
-            </p>
+<aside className={`controller-panel ${controllerExpanded ? "controller-panel-expanded w-[440px]" : "controller-panel-collapsed w-[72px] px-2"} flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90`} data-controller-expanded={controllerExpanded}>
+        <div className={`flex items-center ${controllerExpanded ? "justify-between" : "justify-center"} mb-2`}>
+          {controllerExpanded ? (
+            <div className="min-w-0">
+              <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">Game Controller</h1>
+              <p className="truncate text-xs text-zinc-400 light:text-slate-600">{statusMessage}</p>
+            </div>
+          ) : (
+            <span className="font-mono text-lg font-bold text-amber-400 light:text-amber-700" aria-hidden="true">S</span>
+          )}
+          <div className={`flex items-center ${controllerExpanded ? "gap-2" : "flex-col gap-2"}`}>
+            {controllerExpanded ? (
+              <button
+                type="button"
+                onClick={resetGame}
+                className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-amber-300 transition-colors light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
+              >
+                Reset Game
+              </button>
+            ) : null}
+            <button
+              type="button"
+              aria-label={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
+              aria-expanded={controllerExpanded}
+              onClick={() => setControllerExpanded((expanded) => !expanded)}
+              className="controller-toggle rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-amber-500/50 hover:bg-zinc-800 hover:text-amber-300 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
+              title={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
+            >
+              {controllerExpanded ? "›" : "‹"}
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={resetGame}
-            className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-amber-300 transition-colors light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
-          >
-            Reset Game
-          </button>
         </div>
 
+        {controllerExpanded ? (
+          <div className="controller-content min-h-0 flex-1">
         <div className="mt-2">
           {/* eslint-disable-next-line react-hooks/refs */}
           <GameInfo moves={chessRef.current.history({ verbose: true })} />
@@ -1408,6 +1521,17 @@ export default function ChessPage() {
             }`}
           >
             Benchmarks
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("replay")}
+            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+              activeTab === "replay"
+                ? "bg-violet-500/20 text-violet-200 border border-violet-500/30 shadow-sm light:bg-violet-100 light:text-violet-700"
+                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+            }`}
+          >
+            Replay
           </button>
           <button
             type="button"
@@ -1648,6 +1772,13 @@ export default function ChessPage() {
             </div>
           )}
         </div>
+          </div>
+        ) : (
+          <div className="controller-rail mt-4 flex flex-1 flex-col items-center gap-3 text-center">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500 [writing-mode:vertical-rl] light:text-slate-500">Controller</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" title={statusMessage} />
+          </div>
+        )}
       </aside>
 
       {gameResultText && (
@@ -1670,7 +1801,7 @@ export default function ChessPage() {
         </div>
       )}
 
-      {activeTab === "3d" && (
+      {(activeTab === "3d" || activeTab === "replay") && (
         <div className="fixed inset-0 z-50">
           <Simulation3D
             chessRef={chessRef}
@@ -1698,14 +1829,28 @@ export default function ChessPage() {
               if (mode === "off") setLiveAiAnimating(false);
             }}
             onLiveAiDepthChange={setLiveAiDepth}
+            replayActive={replayActive}
+            replayGames={replayGames}
+            replayGameId={replayGameId}
+            replayMoveIndex={replayMoveIndex}
+            replayPlaying={replayPlaying}
+            replayBusy={replayBusy}
+            replayAnimate={replayAnimate}
+            onReplaySelect={selectReplayGame}
+            onReplayStep={stepReplay}
+            onReplayPlayingChange={setReplayPlaying}
             onAnimationStateChange={(animating) => {
               liveAiTurnInFlightRef.current = animating;
               setLiveAiAnimating(animating);
+              if (replayActive) setReplayBusy(animating);
             }}
             onExit={() => {
               liveAiTurnInFlightRef.current = false;
               setLiveAiMode("off");
               setLiveAiAnimating(false);
+              setReplayPlaying(false);
+              setReplayBusy(false);
+              setReplayGameId("current");
               setActiveTab("coach");
             }}
           />

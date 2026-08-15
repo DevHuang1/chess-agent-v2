@@ -21,6 +21,16 @@ describe("minimax analysis trace", () => {
     expect(legalMoves.length).toBeGreaterThan(0);
   });
 
+  it("reports pruning instrumentation at depth 6", () => {
+    const chess = new Chess();
+    chess.move("e4");
+    const trace = buildMinimaxTrace(chess.fen(), { depth: 6, branchLimit: 4, aiColor: "b" });
+    expect(trace.depth).toBe(6);
+    expect(trace.cutoffs).toBeGreaterThanOrEqual(0);
+    expect(trace.transpositionHits).toBeGreaterThanOrEqual(0);
+    expect(trace.prunedBranches).toBeGreaterThanOrEqual(trace.cutoffs);
+  });
+
   it("selects a legal black move when black is to move", () => {
     const chess = new Chess();
     chess.move("e4");

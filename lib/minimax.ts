@@ -32,6 +32,8 @@ export type MinimaxTrace = {
   principalVariation: string[];
   evaluatedLeaves: number;
   prunedBranches: number;
+  transpositionHits: number;
+  cutoffs: number;
   generatedAt: number;
 };
 
@@ -109,9 +111,15 @@ function moveOrderingScore(move: Move) {
     + (move.san.includes("#") ? 500 : 0);
 }
 
-function orderedMoves(chess: Chess, limit: number): Move[] {
+function orderedMoves(chess: Chess, limit: number, preferredMove: string | null, killers: string[], historyScores: Map<string, number>): Move[] {
   return chess.moves({ verbose: true })
-    .sort((a, b) => moveOrderingScore(b) - moveOrderingScore(a) || a.san.localeCompare(b.san))
+    .sort((a, b) => {
+      const keyA = `${a.from}${a.to}${a.promotion ?? ""}`;
+      const keyB = `${b.from}${b.to}${b.promotion ?? ""}`;
+      const priorityA = (keyA === preferredMove ? 1_000_000 : 0) + (killers.includes(keyA) ? 12_000 : 0) + (historyScores.get(keyA) ?? 0) + moveOrderingScore(a);
+      const priorityB = (keyB === preferredMove ? 1_000_000 : 0) + (killers.includes(keyB) ? 12_000 : 0) + (historyScores.get(keyB) ?? 0) + moveOrderingScore(b);
+      return priorityB - priorityA || a.san.localeCompare(b.san);
+    })
     .slice(0, limit);
 }
 
@@ -126,7 +134,12 @@ export function buildMinimaxTrace(
   const nodes: MinimaxSearchNode[] = [];
   let evaluatedLeaves = 0;
   let prunedBranches = 0;
+  let transpositionHits = 0;
+  let cutoffs = 0;
   let sequence = 0;
+  const transpositionTable = new Map<string, { depth: number; score: number; pv: string[]; flag: "exact" | "lower" | "upper" }>();
+  const killerMoves = new Map<number, string[]>();
+  const historyScores = new Map<string, number>();
 
   const addNode = (node: Omit<MinimaxSearchNode, "id">) => {
     const id = `node-${sequence++}`;
@@ -156,6 +169,19 @@ export function buildMinimaxTrace(
   });
 
   function search(chess: Chess, remainingDepth: number, alpha: number, beta: number, parentId: string, path: string[]): { score: number; pv: string[] } {
+    const originalAlpha = alpha;
+    const originalBeta = beta;
+    const cacheKey = `${chess.fen()}|${remainingDepth}|${aiColor}`;
+    const cached = transpositionTable.get(cacheKey);
+    if (cached && cached.depth >= remainingDepth) {
+      transpositionHits++;
+      if (cached.flag === "exact" || (cached.flag === "lower" && cached.score >= beta) || (cached.flag === "upper" && cached.score <= alpha)) {
+        return { score: cached.score, pv: [...path, ...cached.pv] };
+      }
+      if (cached.flag === "lower") alpha = Math.max(alpha, cached.score);
+      if (cached.flag === "upper") beta = Math.min(beta, cached.score);
+      if (beta <= alpha) return { score: cached.score, pv: [...path, ...cached.pv] };
+    }
     if (remainingDepth === 0 || chess.isGameOver()) {
       evaluatedLeaves++;
       const score = evaluateMaterial(chess, aiColor);
@@ -172,7 +198,8 @@ export function buildMinimaxTrace(
     }
 
     const maximizing = chess.turn() === aiColor;
-    const moves = orderedMoves(chess, branchLimit);
+    const preferredMove = cached?.pv[0] ? cached.pv[0] : null;
+    const moves = orderedMoves(chess, branchLimit, preferredMove, killerMoves.get(remainingDepth) ?? [], historyScores);
     let bestScore = maximizing ? -Infinity : Infinity;
     let bestPv: string[] = path;
 
@@ -209,6 +236,11 @@ export function buildMinimaxTrace(
       else beta = Math.min(beta, bestScore);
 
       if (beta <= alpha) {
+        cutoffs++;
+        const moveKey = `${move.from}${move.to}${move.promotion ?? ""}`;
+        const killersForDepth = killerMoves.get(remainingDepth) ?? [];
+        if (!killersForDepth.includes(moveKey)) killerMoves.set(remainingDepth, [moveKey, ...killersForDepth].slice(0, 2));
+        historyScores.set(moveKey, (historyScores.get(moveKey) ?? 0) + remainingDepth * remainingDepth);
         const remainingMoves = moves.slice(moves.indexOf(move) + 1);
         prunedBranches += remainingMoves.length;
         for (const prunedMove of remainingMoves) {
@@ -232,6 +264,8 @@ export function buildMinimaxTrace(
       }
     }
 
+    const cacheFlag = bestScore <= originalAlpha ? "upper" : bestScore >= originalBeta ? "lower" : "exact";
+    transpositionTable.set(cacheKey, { depth: remainingDepth, score: Number.isFinite(bestScore) ? bestScore : 0, pv: bestPv.slice(path.length), flag: cacheFlag });
     const parent = nodes.find((candidate) => candidate.id === parentId);
     if (parent) {
       parent.score = Number.isFinite(bestScore) ? bestScore : evaluateMaterial(chess, aiColor);
@@ -279,6 +313,8 @@ export function buildMinimaxTrace(
     principalVariation: result.pv,
     evaluatedLeaves,
     prunedBranches,
+    transpositionHits,
+    cutoffs,
     generatedAt: Date.now(),
   };
 }

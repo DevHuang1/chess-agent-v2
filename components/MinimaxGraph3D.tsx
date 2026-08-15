@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { MinimaxSearchNode, MinimaxTrace } from "@/lib/minimax";
 import type { MctsSearchNode, MctsTrace } from "@/lib/mcts";
@@ -35,29 +35,167 @@ function nodeColor(node: MinimaxSearchNode) {
   return node.depth === 0 ? COLORS.root : COLORS.exploring;
 }
 
-function makeLayout(trace: MinimaxTrace): LayoutNode[] {
-  const visible = trace.nodes.slice(0, 80);
+function makeLayout(trace: MinimaxTrace, focusIndex: number): LayoutNode[] {
+  const active = trace.nodes[focusIndex] ?? trace.nodes[0];
+  const byId = new Map(trace.nodes.map((node) => [node.id, node]));
+  const focusIds = new Set<string>();
+  let cursor: MinimaxSearchNode | undefined = active;
+  while (cursor) {
+    focusIds.add(cursor.id);
+    cursor = cursor.parentId ? byId.get(cursor.parentId) : undefined;
+  }
+
+  const nearby = trace.nodes.slice(Math.max(0, focusIndex - 18), focusIndex + 19);
+  const principal = trace.nodes.filter((node) => node.status === "principal").slice(0, 12);
+  const candidates = [...focusIds, ...nearby.map((node) => node.id), ...principal.map((node) => node.id)]
+    .map((id) => byId.get(id))
+    .filter((node): node is MinimaxSearchNode => Boolean(node));
+  const selected = new Map<string, MinimaxSearchNode>();
+  for (const node of candidates) selected.set(node.id, node);
+  for (const node of trace.nodes) {
+    if (selected.size >= 64) break;
+    if (!selected.has(node.id)) selected.set(node.id, node);
+  }
+  if (active && !selected.has(active.id)) selected.set(active.id, active);
+
   const layers = new Map<number, MinimaxSearchNode[]>();
-  for (const node of visible) {
+  for (const node of selected.values()) {
     const layer = layers.get(node.depth) ?? [];
     layer.push(node);
     layers.set(node.depth, layer);
   }
   const result: LayoutNode[] = [];
   for (const [depth, layer] of layers) {
-    const width = Math.max(1, layer.length - 1);
-    layer.forEach((node, index) => {
-      const row = index % Math.max(1, Math.ceil(layer.length / 3));
-      const column = Math.floor(index / Math.max(1, Math.ceil(layer.length / 3)));
+    layer.sort((a, b) => {
+      if (a.id === active?.id) return -1;
+      if (b.id === active?.id) return 1;
+      if (a.status === "principal") return -1;
+      if (b.status === "principal") return 1;
+      return a.id.localeCompare(b.id);
+    });
+    const activeFirst = layer.filter((node) => node.id === active?.id || node.status === "principal");
+    const remaining = layer.filter((node) => node.id !== active?.id && node.status !== "principal");
+    const compactLayer = [...activeFirst, ...remaining].slice(0, 12);
+    const spacing = compactLayer.length > 8 ? 1.18 : 1.42;
+    compactLayer.forEach((node, index) => {
       result.push({
         ...node,
-        graphX: ((row / Math.max(1, Math.ceil(layer.length / 3) - 1)) - 0.5) * Math.min(10, Math.max(4, layer.length * 0.42)),
-        graphY: 3.5 - depth * 1.35,
-        graphZ: (column - Math.max(0, Math.floor(width / 3))) * 1.35,
+        graphX: (index - (compactLayer.length - 1) / 2) * spacing,
+        graphY: 2.7 - depth * 1.02,
+        graphZ: (depth % 2 === 0 ? 0.35 : -0.35) + ((index % 3) - 1) * 0.22,
       });
     });
   }
-  return result;
+  return relaxLayout(result);
+}
+
+function relaxLayout(nodes: LayoutNode[]): LayoutNode[] {
+  const positions = new Map(nodes.map((node) => [node.id, new THREE.Vector3(node.graphX, node.graphY, node.graphZ)]));
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const iterations = 8;
+  const collisionRadius = 0.62;
+  const maxX = 7.1;
+  const maxZ = 2.1;
+
+  for (let iteration = 0; iteration < iterations; iteration++) {
+    const forces = new Map(nodes.map((node) => [node.id, new THREE.Vector3()]));
+    for (let index = 0; index < nodes.length; index++) {
+      const node = nodes[index];
+      const position = positions.get(node.id);
+      const force = forces.get(node.id);
+      if (!position || !force) continue;
+      for (let otherIndex = index + 1; otherIndex < nodes.length; otherIndex++) {
+        const other = nodes[otherIndex];
+        if (other.depth !== node.depth) continue;
+        const otherPosition = positions.get(other.id);
+        const otherForce = forces.get(other.id);
+        if (!otherPosition || !otherForce) continue;
+        const delta = position.clone().sub(otherPosition);
+        delta.y = 0;
+        const distance = Math.max(0.001, delta.length());
+        if (distance >= collisionRadius) continue;
+        const push = delta.normalize().multiplyScalar((collisionRadius - distance) * 0.42);
+        force.add(push);
+        otherForce.sub(push);
+      }
+    }
+
+    for (const node of nodes) {
+      const position = positions.get(node.id);
+      const force = forces.get(node.id);
+      if (!position || !force) continue;
+      if (node.parentId) {
+        const parent = byId.get(node.parentId);
+        const parentPosition = parent ? positions.get(parent.id) : undefined;
+        if (parentPosition) {
+          const horizontal = new THREE.Vector3(parentPosition.x - position.x, 0, parentPosition.z - position.z);
+          force.add(horizontal.multiplyScalar(0.025));
+        }
+      }
+      const targetZ = node.depth % 2 === 0 ? 0.35 : -0.35;
+      force.z += (targetZ - position.z) * 0.035;
+      position.add(force.multiplyScalar(0.78));
+      position.x = THREE.MathUtils.clamp(position.x, -maxX, maxX);
+      position.z = THREE.MathUtils.clamp(position.z, -maxZ, maxZ);
+    }
+  }
+
+  return nodes.map((node) => {
+    const position = positions.get(node.id)!;
+    return { ...node, graphX: position.x, graphY: position.y, graphZ: position.z };
+  });
+}
+
+type OverviewNode = {
+  node: MinimaxSearchNode;
+  x: number;
+  y: number;
+};
+
+type OverviewEdge = {
+  from: OverviewNode;
+  to: OverviewNode;
+};
+
+function makeOverview(trace: MinimaxTrace | MctsTrace, activeIndex: number): { nodes: OverviewNode[]; edges: OverviewEdge[] } {
+  const active = trace.nodes[activeIndex] ?? trace.nodes[0];
+  const source = trace.nodes.slice(0, 128);
+  if (active && !source.some((node) => node.id === active.id)) source.push(active);
+  const layers = new Map<number, MinimaxSearchNode[]>();
+  for (const node of source) {
+    const layer = layers.get(node.depth) ?? [];
+    layer.push(node);
+    layers.set(node.depth, layer);
+  }
+  const nodes: OverviewNode[] = [];
+  const byId = new Map<string, OverviewNode>();
+  const layerCount = Math.max(1, layers.size - 1);
+  for (const [depth, layer] of layers) {
+    const maxLayer = Math.max(1, layer.length - 1);
+    layer.forEach((node, index) => {
+      const overviewNode = {
+        node,
+        x: 10 + (index / maxLayer) * 164,
+        y: 12 + (depth / layerCount) * 64,
+      };
+      nodes.push(overviewNode);
+      byId.set(node.id, overviewNode);
+    });
+  }
+  const edges: OverviewEdge[] = [];
+  for (const overviewNode of nodes) {
+    for (const childId of overviewNode.node.children) {
+      const child = byId.get(childId);
+      if (child) edges.push({ from: overviewNode, to: child });
+    }
+  }
+  if (active && !byId.has(active.id)) {
+    const fallback = nodes[0];
+    if (fallback) {
+      byId.set(active.id, fallback);
+    }
+  }
+  return { nodes, edges };
 }
 
 export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNodeIndex, selectedNodeId, onSelectNode }: MinimaxGraph3DProps) {
@@ -72,7 +210,9 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
   const onSelectNodeRef = useRef(onSelectNode);
   const activeNodeIndexRef = useRef(activeNodeIndex);
   const selectedNodeIdRef = useRef(selectedNodeId);
+  const cameraResetRef = useRef<(() => void) | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const [zoomRadius, setZoomRadius] = useState(18);
 
   useEffect(() => {
     onSelectNodeRef.current = onSelectNode;
@@ -86,8 +226,8 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x070b16);
     scene.fog = new THREE.Fog(0x070b16, 13, 30);
-    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(0, 1.5, 14);
+    const camera = new THREE.PerspectiveCamera(44, 1, 0.1, 100);
+    camera.position.set(0, 0.4, 18);
     camera.lookAt(0, 1.2, 0);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
@@ -117,7 +257,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     let lastY = 0;
     let theta = 0;
     let phi = 0.08;
-    let radius = 14;
+    let radius = 18;
     const onPointerDown = (event: PointerEvent) => {
       isDragging = true;
       lastX = event.clientX;
@@ -151,7 +291,14 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       if (nodeId) onSelectNodeRef.current(nodeId);
     };
     const onWheel = (event: WheelEvent) => {
-      radius = THREE.MathUtils.clamp(radius + event.deltaY * 0.012, 7, 24);
+      radius = THREE.MathUtils.clamp(radius + event.deltaY * 0.012, 10, 28);
+      setZoomRadius(radius);
+    };
+    cameraResetRef.current = () => {
+      theta = 0;
+      phi = 0.08;
+      radius = 18;
+      setZoomRadius(18);
     };
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
     renderer.domElement.addEventListener("pointermove", onPointerMove);
@@ -169,15 +316,19 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
         1.5 + Math.sin(phi) * radius * 0.38,
         Math.cos(theta) * Math.cos(phi) * radius,
       );
-      camera.lookAt(0, 0.4, 0);
+      camera.lookAt(0, -0.35, 0);
       graphGroup.rotation.y += delta * 0.035;
       for (const [nodeId, mesh] of nodeMeshesRef.current) {
         const isActive = layoutRef.current[activeNodeIndexRef.current]?.id === nodeId;
         const isSelected = selectedNodeIdRef.current === nodeId;
         const pulse = isActive || isSelected ? 1 + Math.sin(now * 0.006) * 0.15 : 1;
-        mesh.scale.lerp(new THREE.Vector3(pulse, pulse, pulse), Math.min(1, delta * 9));
+        const targetScale = isSelected ? 1.5 * pulse : isActive ? 1.35 * pulse : 1;
+        mesh.scale.x += (targetScale - mesh.scale.x) * Math.min(1, delta * 9);
+        mesh.scale.y = mesh.scale.x;
+        mesh.scale.z = mesh.scale.x;
         const material = mesh.material as THREE.MeshStandardMaterial;
-        material.emissiveIntensity = isSelected ? 1.05 : isActive ? 0.72 : 0.28;
+        material.emissiveIntensity = isSelected ? 1.45 : isActive ? 1.15 : 0.42;
+        material.opacity = isSelected || isActive ? 1 : (mesh.userData.baseOpacity as number ?? 0.94);
       }
       renderer.render(scene, camera);
     };
@@ -202,6 +353,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       renderer.domElement.removeEventListener("pointermove", onPointerMove);
       renderer.domElement.removeEventListener("pointerup", onPointerUp);
       renderer.domElement.removeEventListener("wheel", onWheel);
+      cameraResetRef.current = null;
       graphGroup.traverse((object) => {
         if (!(object instanceof THREE.Mesh)) return;
         object.geometry.dispose();
@@ -221,13 +373,20 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
   useEffect(() => {
     const group = graphGroupRef.current;
     if (!group) return;
+    group.traverse((object) => {
+      if (!(object instanceof THREE.Mesh || object instanceof THREE.Line)) return;
+      object.geometry.dispose();
+      const material = object.material;
+      if (Array.isArray(material)) material.forEach((entry) => entry.dispose());
+      else material.dispose();
+    });
     group.clear();
     nodeMeshesRef.current.clear();
     if (!trace) {
       layoutRef.current = [];
       return;
     }
-    const layout = makeLayout(trace);
+    const layout = makeLayout(trace, activeNodeIndex);
     layoutRef.current = layout;
     const byId = new Map(layout.map((node) => [node.id, node]));
     const edgeMaterial = new THREE.LineBasicMaterial({ color: COLORS.edge, transparent: true, opacity: 0.42 });
@@ -242,30 +401,74 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       }
     }
     for (const node of layout) {
-      const material = new THREE.MeshStandardMaterial({ color: nodeColor(node), emissive: nodeColor(node), emissiveIntensity: 0.28, metalness: 0.25, roughness: 0.32, transparent: true, opacity: node.status === "pruned" ? 0.58 : 0.94 });
-      const mesh = new THREE.Mesh(new THREE.SphereGeometry(node.depth === 0 ? 0.25 : 0.16, 18, 14), material);
+      const baseOpacity = node.status === "pruned" ? 0.58 : 0.94;
+      const material = new THREE.MeshStandardMaterial({ color: nodeColor(node), emissive: nodeColor(node), emissiveIntensity: 0.42, metalness: 0.25, roughness: 0.32, transparent: true, opacity: baseOpacity });
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(node.depth === 0 ? 0.34 : 0.22, 20, 16), material);
       mesh.position.set(node.graphX, node.graphY, node.graphZ);
       mesh.userData.nodeId = node.id;
+      mesh.userData.baseOpacity = baseOpacity;
       nodeMeshesRef.current.set(node.id, mesh);
       group.add(mesh);
     }
-  }, [trace]);
+  }, [trace, activeNodeIndex]);
 
+  const overview = useMemo(() => (trace ? makeOverview(trace, activeNodeIndex) : { nodes: [], edges: [] }), [trace, activeNodeIndex]);
   const hoveredNode = trace?.nodes.find((node) => node.id === hoveredNodeId) ?? null;
-  const selectedNode = trace?.nodes.find((node) => node.id === selectedNodeId) ?? hoveredNode;
+  const activeNode = trace?.nodes[activeNodeIndex] ?? null;
+  const selectedNode = trace?.nodes.find((node) => node.id === selectedNodeId) ?? hoveredNode ?? activeNode;
   const mctsNode = isMctsNode(selectedNode) ? selectedNode : null;
 
   return (
     <div className="relative h-[410px] overflow-hidden rounded-xl border border-cyan-500/25 bg-[#070b16] shadow-2xl">
       <div ref={containerRef} className="absolute inset-0" aria-label="3D minimax decision tree" />
+      {activeNode ? (
+        <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-cyan-300/40 bg-cyan-950/75 px-2.5 py-2 text-[10px] shadow-lg backdrop-blur-sm">
+          <div className="font-semibold uppercase tracking-wider text-cyan-200">Active search node</div>
+          <div className="mt-0.5 font-mono text-sm text-white">{activeNode.san ?? "root"}</div>
+          <div className="text-[9px] text-cyan-100/70">depth {activeNode.depth} · {activeNode.status}</div>
+        </div>
+      ) : null}
       <div className="pointer-events-none absolute left-3 top-3 rounded-lg border border-zinc-700/70 bg-black/45 px-3 py-2 text-[10px] text-zinc-300 backdrop-blur-sm">
         <div className="font-semibold text-cyan-200">{algorithm === "mcts" ? "3D MCTS rollout graph" : "3D minimax decision graph"}</div>
-        <div className="mt-1 text-zinc-500">Drag to orbit · wheel to zoom · click a node</div>
+        <div className="mt-1 text-zinc-500">Active branch is enlarged and centered · drag to orbit · wheel to zoom</div>
       </div>
       <div className="pointer-events-none absolute bottom-3 left-3 flex gap-2 text-[9px] text-zinc-400">
         <span className="rounded border border-amber-300/40 bg-amber-400/15 px-1.5 py-1 text-amber-200">PV</span>
         <span className="rounded border border-emerald-300/40 bg-emerald-400/15 px-1.5 py-1 text-emerald-200">evaluated</span>
         <span className="rounded border border-rose-300/40 bg-rose-400/15 px-1.5 py-1 text-rose-200">pruned</span>
+      </div>
+      <div className="absolute bottom-3 right-3 w-[188px] rounded-lg border border-cyan-400/25 bg-zinc-950/85 p-2 shadow-xl backdrop-blur-md" aria-label="AI Lab graph overview navigator">
+        <div className="mb-1.5 flex items-center justify-between gap-2 text-[9px]">
+          <span className="font-semibold uppercase tracking-wider text-cyan-200">Overview</span>
+          <span className="font-mono text-zinc-500">zoom {zoomRadius.toFixed(1)}×</span>
+        </div>
+        <svg viewBox="0 0 184 88" className="h-[88px] w-full rounded border border-cyan-400/10 bg-[#0a1120]" role="img" aria-label="Search tree overview">
+          {overview.edges.map((edge) => (
+            <line key={`${edge.from.node.id}-${edge.to.node.id}`} x1={edge.from.x} y1={edge.from.y} x2={edge.to.x} y2={edge.to.y} stroke="#334155" strokeWidth="0.7" opacity="0.72" />
+          ))}
+          {overview.nodes.map((overviewNode) => {
+            const isActive = overviewNode.node.id === activeNode?.id;
+            const isSelected = overviewNode.node.id === selectedNodeId;
+            const fill = isActive ? "#67e8f9" : overviewNode.node.status === "principal" ? "#fbbf24" : overviewNode.node.status === "pruned" ? "#fb7185" : overviewNode.node.status === "evaluated" ? "#34d399" : "#a78bfa";
+            return (
+              <circle
+                key={overviewNode.node.id}
+                cx={overviewNode.x}
+                cy={overviewNode.y}
+                r={isSelected ? 2.6 : isActive ? 2.3 : 1.35}
+                fill={fill}
+                stroke={isSelected ? "#ffffff" : isActive ? "#cffafe" : "none"}
+                strokeWidth={isSelected ? 1 : 0}
+                opacity={isActive || isSelected ? 1 : 0.78}
+              />
+            );
+          })}
+          <rect x={92 - Math.max(16, Math.min(42, 30 * zoomRadius / 18))} y="7" width={Math.max(32, Math.min(84, 60 * zoomRadius / 18))} height="74" rx="4" fill="none" stroke="#67e8f9" strokeWidth="0.8" strokeDasharray="3 2" opacity="0.75" />
+        </svg>
+        <div className="mt-1.5 flex items-center justify-between gap-2">
+          <span className="text-[9px] text-zinc-500">active branch highlighted</span>
+          <button type="button" onClick={() => cameraResetRef.current?.()} className="rounded border border-cyan-400/25 px-1.5 py-1 text-[9px] font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/10">Reset view</button>
+        </div>
       </div>
       {selectedNode ? (
         <div className="absolute right-3 top-3 w-56 rounded-lg border border-cyan-400/30 bg-zinc-950/90 p-3 text-[10px] text-zinc-300 shadow-xl backdrop-blur-md light:bg-white/90 light:text-slate-700">

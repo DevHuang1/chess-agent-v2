@@ -62,10 +62,11 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
   const trace = useMemo<MinimaxTrace | MctsTrace | null>(() => {
     try {
       const current = new Chess(fen);
-      if (current.turn() !== "b") return null;
+      if (current.isGameOver()) return null;
+      const searchColor = current.turn();
       return algorithm === "mcts"
-        ? buildMctsTrace(fen, { iterations: Math.max(24, depth * 24), branchLimit: 5, rolloutDepth: depth, aiColor: "b" })
-        : buildMinimaxTrace(fen, { depth, branchLimit: 5, aiColor: "b" });
+        ? buildMctsTrace(fen, { iterations: Math.max(24, depth * 24), branchLimit: 5, rolloutDepth: depth, aiColor: searchColor })
+        : buildMinimaxTrace(fen, { depth, branchLimit: 5, aiColor: searchColor });
     } catch {
       return null;
     }
@@ -103,7 +104,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
               </span>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-zinc-400 light:text-slate-600">
-              {algorithm === "mcts" ? "Watch Sentio select promising branches, expand candidates, simulate continuations, and backpropagate win rates." : "Watch Sentio compare candidate moves, back up evaluations, and prune branches before choosing the principal variation."}
+              {algorithm === "mcts" ? `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search select promising branches, expand candidates, simulate continuations, and backpropagate win rates.` : `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search compare candidate moves, back up evaluations, and prune branches before choosing the principal variation.`}
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
@@ -166,7 +167,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
         </div>
         )}
         <div className="mt-2 flex items-center justify-between gap-2 text-[10px]">
-          <span className="text-zinc-500">{viewMode === "graph" ? (algorithm === "mcts" ? "Drag to orbit · click a node for rollout stats and heuristics" : "Drag to orbit · click a node for heuristic weights") : "Cyan: candidate origin · Amber: destination"}</span>
+              <span className="text-zinc-500">{viewMode === "graph" ? (algorithm === "mcts" ? "Active rollout is enlarged · drag to orbit · click a node for stats" : "Active branch is enlarged · drag to orbit · click a node for heuristic weights") : "Cyan: candidate origin · Amber: destination"}</span>
           {lastBotMove ? <span className="font-mono text-amber-300 light:text-amber-700">Last AI: {lastBotMove.san}</span> : null}
         </div>
       </div>

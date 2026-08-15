@@ -1105,6 +1105,21 @@ type RobotAnim = {
   done: () => void;
 };
 
+export type ReplayMove = {
+  from: string;
+  to: string;
+  san: string;
+  color: "w" | "b";
+  flags: string;
+  promotion?: string;
+};
+
+export type ReplayGame = {
+  id: string;
+  label: string;
+  moves: ReplayMove[];
+};
+
 type Simulation3DProps = {
   chessRef: React.MutableRefObject<Chess>;
   gamePosition: string;
@@ -1114,6 +1129,16 @@ type Simulation3DProps = {
   onLiveAiModeChange?: (mode: "off" | "minimax" | "mcts") => void;
   onLiveAiDepthChange?: (depth: number) => void;
   onAnimationStateChange?: (animating: boolean) => void;
+  replayActive?: boolean;
+  replayGames?: ReplayGame[];
+  replayGameId?: string;
+  replayMoveIndex?: number;
+  replayPlaying?: boolean;
+  replayBusy?: boolean;
+  replayAnimate?: boolean;
+  onReplaySelect?: (gameId: string) => void;
+  onReplayStep?: (direction: -1 | 1) => void;
+  onReplayPlayingChange?: (playing: boolean) => void;
   setStatusMessage: (msg: string) => void;
   onExit: () => void;
   theme?: "dark" | "light";
@@ -1128,6 +1153,16 @@ export default function Simulation3D({
   onLiveAiModeChange,
   onLiveAiDepthChange,
   onAnimationStateChange,
+  replayActive = false,
+  replayGames = [],
+  replayGameId = "current",
+  replayMoveIndex = -1,
+  replayPlaying = false,
+  replayBusy = false,
+  replayAnimate = false,
+  onReplaySelect,
+  onReplayStep,
+  onReplayPlayingChange,
   setStatusMessage,
   onExit,
   theme = "dark",
@@ -1159,6 +1194,8 @@ export default function Simulation3D({
   const pendingGamePositionRef = useRef<string | null>(null);
   const liveAiModeRef = useRef(liveAiMode);
   const onAnimationStateChangeRef = useRef(onAnimationStateChange);
+  const replayActiveRef = useRef(replayActive);
+  const replayAnimateRef = useRef(replayAnimate);
   const gamePositionRef = useRef(gamePosition);
   const firstRunRef = useRef(true);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
@@ -1225,7 +1262,9 @@ export default function Simulation3D({
   useEffect(() => {
     liveAiModeRef.current = liveAiMode;
     onAnimationStateChangeRef.current = onAnimationStateChange;
-  }, [liveAiMode, onAnimationStateChange]);
+    replayActiveRef.current = replayActive;
+    replayAnimateRef.current = replayAnimate;
+  }, [liveAiMode, onAnimationStateChange, replayActive, replayAnimate]);
 
   // Rebuild 3D pieces when the board FEN changes (user move, bot move, or reset)
   useEffect(() => {
@@ -1250,7 +1289,7 @@ export default function Simulation3D({
 
     if (
       last &&
-      (last.color === "b" || liveAiModeRef.current !== "off") &&
+      (last.color === "b" || liveAiModeRef.current !== "off" || (replayActiveRef.current && replayAnimateRef.current)) &&
       s.startRobotAnim &&
       !robotAnimatingRef.current
     ) {
@@ -2133,13 +2172,13 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
     }
 
     function releaseHeldPiece(cursorSq: string | null) {
-      if (liveAiModeRef.current !== "off") return;
+      if (liveAiModeRef.current !== "off" || replayActiveRef.current) return;
       const validation = validateDropTarget(grabbedPieceSquare, cursorSq, legalRef.current);
       dropPiece(validation.accepted ? validation.target : null);
     }
 
     function processHand(lm: HandLandmark[], rawGesture: Gesture) {
-      if (robotAnimatingRef.current || liveAiModeRef.current !== "off") return;
+      if (robotAnimatingRef.current || liveAiModeRef.current !== "off" || replayActiveRef.current) return;
       handActiveRef.current = true;
       setHandActive(true);
 
@@ -2995,6 +3034,18 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
             <input id="live-ai-depth" type="range" min="1" max="6" value={liveAiDepth} onChange={(event) => onLiveAiDepthChange?.(Number(event.target.value))} className="w-full accent-cyan-400" />
           </label>
           <div className="mb-3 border-t border-zinc-700/60 pt-2 text-[10px] text-zinc-500 light:border-slate-200">{liveAiMode === "off" ? "Use pointer or hand gestures to play." : `Both sides will alternate ${liveAiMode} decisions.`}</div>
+          {replayActive ? <div className="mb-3 rounded border border-violet-400/25 bg-violet-400/10 p-2">
+            <div className="mb-2 flex items-center justify-between"><span className="font-semibold text-violet-200 light:text-violet-800">Replay studio</span><span className="font-mono text-[10px] text-violet-300">{Math.max(0, replayMoveIndex + 1)}/{replayGames.find((game) => game.id === replayGameId)?.moves.length ?? 0}</span></div>
+            <select id="replay-game-select" value={replayGameId} onChange={(event) => onReplaySelect?.(event.target.value)} className="mb-2 w-full rounded border border-zinc-600 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-100 outline-none light:border-slate-300 light:bg-white light:text-slate-800">
+              {replayGames.map((game) => <option key={game.id} value={game.id}>{game.label}{game.moves.length === 0 ? " · no moves" : ""}</option>)}
+            </select>
+            <div className="flex gap-1.5">
+              <button type="button" aria-label="Replay previous move" disabled={replayBusy} onClick={() => onReplayStep?.(-1)} className="flex-1 rounded border border-zinc-600 px-2 py-1 text-[10px] text-zinc-300 disabled:opacity-40 light:border-slate-300 light:text-slate-700">Prev</button>
+              <button type="button" aria-label={replayPlaying ? "Pause replay" : "Play replay"} onClick={() => onReplayPlayingChange?.(!replayPlaying)} className="flex-1 rounded border border-violet-400/40 bg-violet-400/15 px-2 py-1 text-[10px] text-violet-200 light:text-violet-800">{replayPlaying ? "Pause" : "Play"}</button>
+              <button type="button" aria-label="Replay next move" disabled={replayBusy} onClick={() => onReplayStep?.(1)} className="flex-1 rounded border border-zinc-600 px-2 py-1 text-[10px] text-zinc-300 disabled:opacity-40 light:border-slate-300 light:text-slate-700">Next</button>
+            </div>
+            <div className="mt-2 text-[10px] text-zinc-500">{replayBusy ? "Robot animating move..." : "Review each move on the 3D board."}</div>
+          </div> : null}
           <div className="mb-2 flex items-center justify-between">
             <span className="font-semibold tracking-wide">Scene lighting</span>
             <span className="text-[10px] uppercase tracking-wider text-cyan-300 light:text-cyan-700">Live</span>
