@@ -10,6 +10,8 @@ type MinimaxGraph3DProps = {
   algorithm?: "minimax" | "mcts";
   activeNodeIndex: number;
   selectedNodeId: string | null;
+  highlightedNodeIds?: ReadonlySet<string>;
+  highlightFilterActive?: boolean;
   onSelectNode: (nodeId: string) => void;
 };
 
@@ -68,7 +70,7 @@ function createParticleField(node: LayoutNode): THREE.Points {
   return particles;
 }
 
-function makeLayout(trace: MinimaxTrace, focusIndex: number): LayoutNode[] {
+function makeLayout(trace: MinimaxTrace, focusIndex: number, highlightedNodeIds?: ReadonlySet<string>): LayoutNode[] {
   const active = trace.nodes[focusIndex] ?? trace.nodes[0];
   const byId = new Map(trace.nodes.map((node) => [node.id, node]));
   const focusIds = new Set<string>();
@@ -80,7 +82,8 @@ function makeLayout(trace: MinimaxTrace, focusIndex: number): LayoutNode[] {
 
   const nearby = trace.nodes.slice(Math.max(0, focusIndex - 18), focusIndex + 19);
   const principal = trace.nodes.filter((node) => node.status === "principal").slice(0, 12);
-  const candidates = [...focusIds, ...nearby.map((node) => node.id), ...principal.map((node) => node.id)]
+  const highlighted = highlightedNodeIds ? trace.nodes.filter((node) => highlightedNodeIds.has(node.id)).slice(0, 24) : [];
+  const candidates = [...focusIds, ...nearby.map((node) => node.id), ...principal.map((node) => node.id), ...highlighted.map((node) => node.id)]
     .map((id) => byId.get(id))
     .filter((node): node is MinimaxSearchNode => Boolean(node));
   const selected = new Map<string, MinimaxSearchNode>();
@@ -236,7 +239,7 @@ function makeOverview(trace: MinimaxTrace | MctsTrace, activeIndex: number): { n
   return { nodes, edges };
 }
 
-export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNodeIndex, selectedNodeId, onSelectNode }: MinimaxGraph3DProps) {
+export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNodeIndex, selectedNodeId, highlightedNodeIds, highlightFilterActive = false, onSelectNode }: MinimaxGraph3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -251,6 +254,10 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
   const activeNodeIndexRef = useRef(activeNodeIndex);
   const selectedNodeIdRef = useRef(selectedNodeId);
   const cameraResetRef = useRef<(() => void) | null>(null);
+  const cameraZoomRef = useRef<((delta: number) => void) | null>(null);
+  const cameraPanRef = useRef<((x: number, y: number) => void) | null>(null);
+  const highlightedNodeIdsRef = useRef<ReadonlySet<string>>(new Set());
+  const highlightFilterActiveRef = useRef(false);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [zoomRadius, setZoomRadius] = useState(18);
 
@@ -258,7 +265,9 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     onSelectNodeRef.current = onSelectNode;
     activeNodeIndexRef.current = activeNodeIndex;
     selectedNodeIdRef.current = selectedNodeId;
-  }, [onSelectNode, activeNodeIndex, selectedNodeId]);
+    highlightedNodeIdsRef.current = highlightedNodeIds ?? new Set();
+    highlightFilterActiveRef.current = highlightFilterActive;
+  }, [onSelectNode, activeNodeIndex, selectedNodeId, highlightedNodeIds, highlightFilterActive]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -298,6 +307,8 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     let theta = 0;
     let phi = 0.08;
     let radius = 18;
+    let panX = 0;
+    let panY = 0;
     const onPointerDown = (event: PointerEvent) => {
       isDragging = true;
       lastX = event.clientX;
@@ -331,14 +342,23 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       if (nodeId) onSelectNodeRef.current(nodeId);
     };
     const onWheel = (event: WheelEvent) => {
-      radius = THREE.MathUtils.clamp(radius + event.deltaY * 0.012, 10, 28);
+      setRadius(radius + event.deltaY * 0.012);
+    };
+    const setRadius = (nextRadius: number) => {
+      radius = THREE.MathUtils.clamp(nextRadius, 10, 28);
       setZoomRadius(radius);
+    };
+    cameraZoomRef.current = (delta) => setRadius(radius + delta);
+    cameraPanRef.current = (x, y) => {
+      panX = THREE.MathUtils.clamp(panX + x, -4.5, 4.5);
+      panY = THREE.MathUtils.clamp(panY + y, -3.2, 3.2);
     };
     cameraResetRef.current = () => {
       theta = 0;
       phi = 0.08;
-      radius = 18;
-      setZoomRadius(18);
+      panX = 0;
+      panY = 0;
+      setRadius(18);
     };
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
     renderer.domElement.addEventListener("pointermove", onPointerMove);
@@ -352,23 +372,25 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       const delta = Math.min(0.05, Math.max(0.001, (now - previous) / 1000));
       previous = now;
       camera.position.set(
-        Math.sin(theta) * Math.cos(phi) * radius,
-        1.5 + Math.sin(phi) * radius * 0.38,
+        panX + Math.sin(theta) * Math.cos(phi) * radius,
+        panY + 1.5 + Math.sin(phi) * radius * 0.38,
         Math.cos(theta) * Math.cos(phi) * radius,
       );
-      camera.lookAt(0, -0.35, 0);
+      camera.lookAt(panX, panY - 0.35, 0);
       graphGroup.rotation.y += delta * 0.035;
       for (const [nodeId, mesh] of nodeMeshesRef.current) {
         const isActive = layoutRef.current[activeNodeIndexRef.current]?.id === nodeId;
         const isSelected = selectedNodeIdRef.current === nodeId;
-        const pulse = isActive || isSelected ? 1 + Math.sin(now * 0.006) * 0.15 : 1;
-        const targetScale = isSelected ? 1.5 * pulse : isActive ? 1.35 * pulse : 1;
+        const isMatch = highlightedNodeIdsRef.current.has(nodeId);
+        const isDimmedByFilter = highlightFilterActiveRef.current && !isMatch && !isActive && !isSelected;
+        const pulse = isActive || isSelected || isMatch ? 1 + Math.sin(now * 0.006) * 0.15 : 1;
+        const targetScale = isSelected ? 1.5 * pulse : isActive ? 1.35 * pulse : isMatch ? 1.12 * pulse : 1;
         mesh.scale.x += (targetScale - mesh.scale.x) * Math.min(1, delta * 9);
         mesh.scale.y = mesh.scale.x;
         mesh.scale.z = mesh.scale.x;
         const material = mesh.material as THREE.MeshStandardMaterial;
-        material.emissiveIntensity = isSelected ? 1.8 : isActive ? 1.35 : 0.42;
-        material.opacity = isSelected || isActive ? 1 : (mesh.userData.baseOpacity as number ?? 0.94);
+        material.emissiveIntensity = isSelected ? 1.8 : isActive ? 1.35 : isMatch ? 0.95 : 0.42;
+        material.opacity = isSelected || isActive ? 1 : isDimmedByFilter ? 0.12 : (mesh.userData.baseOpacity as number ?? 0.94);
 
         const particles = particleSystemsRef.current.get(nodeId);
         if (particles) {
@@ -429,6 +451,8 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       renderer.domElement.removeEventListener("pointerup", onPointerUp);
       renderer.domElement.removeEventListener("wheel", onWheel);
       cameraResetRef.current = null;
+      cameraZoomRef.current = null;
+      cameraPanRef.current = null;
       graphGroup.traverse((object) => {
         if (!(object instanceof THREE.Mesh || object instanceof THREE.Points)) return;
         object.geometry.dispose();
@@ -465,7 +489,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       layoutRef.current = [];
       return;
     }
-    const layout = makeLayout(trace, activeNodeIndex);
+    const layout = makeLayout(trace, activeNodeIndex, highlightedNodeIdsRef.current);
     layoutRef.current = layout;
     const byId = new Map(layout.map((node) => [node.id, node]));
     const activeNodeId = trace.nodes[activeNodeIndex]?.id;
@@ -521,7 +545,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       glowRingsRef.current.set(node.id, glowRing);
       group.add(glowRing);
     }
-  }, [trace, activeNodeIndex, selectedNodeId]);
+  }, [trace, activeNodeIndex, selectedNodeId, highlightedNodeIds, highlightFilterActive]);
 
   const overview = useMemo(() => (trace ? makeOverview(trace, activeNodeIndex) : { nodes: [], edges: [] }), [trace, activeNodeIndex]);
   const hoveredNode = trace?.nodes.find((node) => node.id === hoveredNodeId) ?? null;
@@ -542,6 +566,17 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       <div className="pointer-events-none absolute left-3 top-3 rounded-lg border border-zinc-700/70 bg-black/45 px-3 py-2 text-[10px] text-zinc-300 backdrop-blur-sm">
         <div className="font-semibold text-cyan-200">{algorithm === "mcts" ? "3D MCTS rollout graph" : "3D minimax decision graph"}</div>
         <div className="mt-1 text-zinc-500">Active branch is enlarged and centered · drag to orbit · wheel to zoom</div>
+      </div>
+      <div className="absolute left-1/2 top-3 flex -translate-x-1/2 items-center gap-1 rounded-lg border border-cyan-400/25 bg-zinc-950/85 p-1.5 shadow-xl backdrop-blur-md" aria-label="3D graph navigation controls">
+        <button type="button" aria-label="Zoom out graph" onClick={() => cameraZoomRef.current?.(2)} className="rounded border border-cyan-400/25 px-2 py-1 text-xs font-bold text-cyan-200 transition-colors hover:bg-cyan-400/10">−</button>
+        <span className="min-w-14 text-center font-mono text-[10px] text-cyan-200" aria-live="polite">{zoomRadius.toFixed(1)}×</span>
+        <button type="button" aria-label="Zoom in graph" onClick={() => cameraZoomRef.current?.(-2)} className="rounded border border-cyan-400/25 px-2 py-1 text-xs font-bold text-cyan-200 transition-colors hover:bg-cyan-400/10">+</button>
+        <span className="mx-0.5 h-4 w-px bg-zinc-700" />
+        <button type="button" aria-label="Pan graph left" onClick={() => cameraPanRef.current?.(-0.65, 0)} className="rounded border border-zinc-700 px-1.5 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-800">←</button>
+        <button type="button" aria-label="Pan graph up" onClick={() => cameraPanRef.current?.(0, 0.5)} className="rounded border border-zinc-700 px-1.5 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-800">↑</button>
+        <button type="button" aria-label="Pan graph down" onClick={() => cameraPanRef.current?.(0, -0.5)} className="rounded border border-zinc-700 px-1.5 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-800">↓</button>
+        <button type="button" aria-label="Pan graph right" onClick={() => cameraPanRef.current?.(0.65, 0)} className="rounded border border-zinc-700 px-1.5 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-800">→</button>
+        <button type="button" aria-label="Reset graph camera" onClick={() => cameraResetRef.current?.()} className="ml-0.5 rounded border border-amber-400/25 px-2 py-1 text-[10px] font-semibold text-amber-200 transition-colors hover:bg-amber-400/10">Reset</button>
       </div>
       <div className="pointer-events-none absolute bottom-3 left-3 flex gap-2 text-[9px] text-zinc-400">
         <span className="rounded border border-amber-300/40 bg-amber-400/15 px-1.5 py-1 text-amber-200">PV</span>

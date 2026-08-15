@@ -51,6 +51,15 @@ test("opens the full-width live AI Lab workspace", async ({ page }) => {
   await expect(page.getByText("Minimax Flight Recorder", { exact: true })).toBeVisible();
   await expect(page.getByText("Position under analysis", { exact: true })).toBeVisible();
   await expect(page.getByText("Search tree", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Search graph nodes")).toBeVisible();
+  await expect(page.getByLabel("Graph node status")).toBeVisible();
+  await expect(page.getByLabel("Graph node depth")).toBeVisible();
+  await page.getByLabel("Search graph nodes").fill("e4");
+  await expect(page.getByText(/matching nodes/)).toBeVisible();
+  await page.getByLabel("Graph node status").selectOption("principal");
+  await expect(page.getByText(/matching nodes/)).toBeVisible();
+  await page.getByRole("button", { name: "Clear filters" }).click();
+  await expect(page.getByLabel("Search graph nodes")).toHaveValue("");
   await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
   await expect(page.getByLabel("Minimax depth")).toHaveValue("3");
 
@@ -64,6 +73,13 @@ test("opens the full-width live AI Lab workspace", async ({ page }) => {
   await page.getByRole("button", { name: "3D Graph" }).click();
   await expect(page.getByLabel("3D minimax decision tree")).toBeVisible();
   await expect(page.getByLabel("AI Lab graph overview navigator")).toBeVisible();
+  await expect(page.getByLabel("3D graph navigation controls")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Zoom in graph" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Pan graph left" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Reset graph camera" })).toBeVisible();
+  await page.getByRole("button", { name: "Zoom in graph" }).click();
+  await page.getByRole("button", { name: "Pan graph right" }).click();
+  await page.getByRole("button", { name: "Reset graph camera" }).click();
   await expect(page.getByRole("button", { name: "Reset view" })).toBeVisible();
   const graphShell = await page.locator(".ai-graph-shell").boundingBox();
   const graphCard = await page.locator(".ai-lab-workspace-panel").boundingBox();

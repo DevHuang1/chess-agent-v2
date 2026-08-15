@@ -51,6 +51,9 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
   const [activeNodeIndex, setActiveNodeIndex] = useState(0);
   const [viewMode, setViewMode] = useState<"board" | "graph">("board");
   const [algorithm, setAlgorithm] = useState<"minimax" | "mcts">("minimax");
+  const [nodeQuery, setNodeQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "principal" | "evaluated" | "pruned" | "exploring">("all");
+  const [depthFilter, setDepthFilter] = useState<"all" | `${number}`>("all");
 
   const board = useMemo(() => {
     try {
@@ -93,6 +96,19 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
   const principal = trace?.principalVariation ?? [];
   const liveSearch = isBotThinking && trace?.sideToMove === "b";
   const mctsTrace = trace && "iterations" in trace ? trace : null;
+  const availableDepths = useMemo(() => Array.from(new Set(trace?.nodes.map((node) => node.depth) ?? [])).sort((a, b) => a - b), [trace]);
+  const filteredNodes = useMemo(() => {
+    if (!trace) return [];
+    const query = nodeQuery.trim().toLowerCase();
+    return trace.nodes.filter((node) => {
+      const matchesQuery = !query || [node.id, node.san ?? "root", node.explanation, node.from ?? "", node.to ?? ""].some((value) => value.toLowerCase().includes(query));
+      const matchesStatus = statusFilter === "all" || node.status === statusFilter;
+      const matchesDepth = depthFilter === "all" || String(node.depth) === depthFilter;
+      return matchesQuery && matchesStatus && matchesDepth;
+    });
+  }, [trace, nodeQuery, statusFilter, depthFilter]);
+  const highlightedNodeIds = useMemo(() => new Set(filteredNodes.map((node) => node.id)), [filteredNodes]);
+  const filterActive = nodeQuery.trim().length > 0 || statusFilter !== "all" || depthFilter !== "all";
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1 chat-scroll">
@@ -146,6 +162,8 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
               algorithm={algorithm}
               activeNodeIndex={safeActiveNodeIndex}
               selectedNodeId={selectedNodeId}
+              highlightedNodeIds={highlightedNodeIds}
+              highlightFilterActive={filterActive}
               onSelectNode={(nodeId) => { setSelectedNodeId(nodeId); const index = trace?.nodes.findIndex((node) => node.id === nodeId) ?? -1; if (index >= 0) setActiveNodeIndex(index); }}
             />
           </div>
@@ -186,12 +204,30 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
             {isPlaying ? "Pause" : "Play"}
           </button>
         </div>
+        <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+          <input aria-label="Search graph nodes" value={nodeQuery} onChange={(event) => setNodeQuery(event.target.value)} placeholder="Search SAN, node ID, or explanation" className="min-w-0 rounded-lg border border-zinc-700/80 bg-zinc-950 px-3 py-2 text-[11px] text-zinc-100 outline-none transition-colors focus:border-cyan-400/60 light:border-slate-300 light:bg-white light:text-slate-800" />
+          <select aria-label="Graph node status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)} className="rounded-lg border border-zinc-700/80 bg-zinc-950 px-2 py-2 text-[11px] text-zinc-200 outline-none light:border-slate-300 light:bg-white light:text-slate-800">
+            <option value="all">All statuses</option>
+            <option value="principal">Principal</option>
+            <option value="evaluated">Evaluated</option>
+            <option value="pruned">Pruned</option>
+            <option value="exploring">Exploring</option>
+          </select>
+          <select aria-label="Graph node depth" value={depthFilter} onChange={(event) => setDepthFilter(event.target.value as typeof depthFilter)} className="rounded-lg border border-zinc-700/80 bg-zinc-950 px-2 py-2 text-[11px] text-zinc-200 outline-none light:border-slate-300 light:bg-white light:text-slate-800">
+            <option value="all">All depths</option>
+            {availableDepths.map((value) => <option key={value} value={value}>Depth {value}</option>)}
+          </select>
+        </div>
+        <div className="mb-2 flex items-center justify-between text-[10px] text-zinc-500">
+          <span>{filterActive ? `${filteredNodes.length} matching nodes` : `${trace?.nodes.length ?? 0} nodes in trace`}</span>
+          {filterActive ? <button type="button" onClick={() => { setNodeQuery(""); setStatusFilter("all"); setDepthFilter("all"); }} className="text-cyan-300 hover:text-cyan-100">Clear filters</button> : null}
+        </div>
         <div className="grid grid-cols-1 gap-2">
-          {trace ? trace.nodes.slice(0, 36).map((node, index) => (
+          {trace && filteredNodes.length > 0 ? filteredNodes.slice(0, 36).map((node) => (
             <button
               type="button"
               key={node.id}
-              onClick={() => { setSelectedNodeId(node.id); setActiveNodeIndex(index); }}
+              onClick={() => { setSelectedNodeId(node.id); const index = trace?.nodes.findIndex((candidate) => candidate.id === node.id) ?? -1; if (index >= 0) setActiveNodeIndex(index); }}
               className={`flex items-center justify-between rounded-lg border px-2.5 py-2 text-left transition-all ${nodeTone(node, node.id === selectedNode?.id)} ${node.depth === 0 ? "border-cyan-500/30" : "ml-2"}`}
             >
               <span className="min-w-0">
@@ -202,7 +238,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
               <span className="ml-2 shrink-0 font-mono text-[10px]">{formatScore(node.score)}</span>
             </button>
           )) : (
-            <div className="rounded-lg border border-dashed border-zinc-700 p-4 text-center text-xs text-zinc-500 light:border-slate-300">Make a move to give Sentio a position to search.</div>
+            <div className="rounded-lg border border-dashed border-zinc-700 p-4 text-center text-xs text-zinc-500 light:border-slate-300">{trace ? "No nodes match the current search or filters." : "Make a move to give Sentio a position to search."}</div>
           )}
         </div>
       </div>
