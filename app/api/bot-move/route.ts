@@ -13,6 +13,7 @@ type Profile = {
   depth: number;
   skillLevel: number;
   elo: number;
+  moveQuality?: string;
 };
 
 const EMOTION_STRENGTH_PROFILES: Record<string, Profile> = {
@@ -41,7 +42,8 @@ function evaluateBoard(chess: Chess): number {
       const piece = board[r][c];
       if (!piece) continue;
       const val = PIECE_VALUES[piece.type] || 0;
-      const centerBonus = (3.5 - Math.abs(r - 3.5)) * 5 + (3.5 - Math.abs(c - 3.5)) * 5;
+      const centerBonus =
+        (3.5 - Math.abs(r - 3.5)) * 5 + (3.5 - Math.abs(c - 3.5)) * 5;
       const totalVal = val + centerBonus;
       score += piece.color === "w" ? totalVal : -totalVal;
     }
@@ -54,7 +56,7 @@ function minimax(
   depth: number,
   alpha: number,
   beta: number,
-  isMaximizing: boolean
+  isMaximizing: boolean,
 ): number {
   if (depth === 0 || chess.isGameOver()) {
     return evaluateBoard(chess);
@@ -86,10 +88,47 @@ function minimax(
   }
 }
 
-function calculateJsBotMove(fen: string, emotion: string): { botMove: string | null; engineProfile: Profile & { emotion: string }; status?: string } {
-  const normEmotion = EMOTION_STRENGTH_PROFILES[emotion.toLowerCase()] ? emotion.toLowerCase() : "neutral";
+function classifyMoveQuality(
+  currentScore: number,
+  newScore: number,
+  isBlack: boolean,
+): string {
+  const scoreDelta = newScore - currentScore;
+
+  // For black (minimizing), positive delta means worsening position
+  // For white (maximizing), negative delta means worsening position
+
+  let quality: string;
+  if (isBlack) {
+    // Black wants lower scores
+    if (scoreDelta <= -20) quality = "Blunder";
+    else if (scoreDelta <= -10) quality = "Mistake";
+    else if (scoreDelta <= 0) quality = "Good";
+    else quality = "Excellent";
+  } else {
+    // White wants higher scores
+    if (scoreDelta >= 20) quality = "Excellent";
+    else if (scoreDelta >= 10) quality = "Good";
+    else if (scoreDelta >= 0) quality = "Mistake";
+    else quality = "Blunder";
+  }
+
+  return quality;
+}
+
+function calculateJsBotMove(
+  fen: string,
+  emotion: string,
+): {
+  botMove: string | null;
+  engineProfile: Profile & { emotion: string };
+  status?: string;
+} {
+  const normEmotion = EMOTION_STRENGTH_PROFILES[emotion.toLowerCase()]
+    ? emotion.toLowerCase()
+    : "neutral";
   const profile = EMOTION_STRENGTH_PROFILES[normEmotion];
-  
+
   const chess = new Chess(fen);
   if (chess.isGameOver()) {
     return {
@@ -110,8 +149,8 @@ function calculateJsBotMove(fen: string, emotion: string): { botMove: string | n
 
   const isBlack = chess.turn() === "b";
   const searchDepth = Math.min(3, Math.max(1, Math.floor(profile.depth / 2)));
-  
-  const blunderProbability = ((20 - profile.skillLevel) / 20) * 0.45; 
+
+  const blunderProbability = ((20 - profile.skillLevel) / 20) * 0.45;
   if (Math.random() < blunderProbability) {
     const randomMove = moves[Math.floor(Math.random() * moves.length)];
     const uci = randomMove.from + randomMove.to + (randomMove.promotion || "");
@@ -121,24 +160,46 @@ function calculateJsBotMove(fen: string, emotion: string): { botMove: string | n
     };
   }
 
+  // Evaluate the current position before making any move
+  const currentScore = evaluateBoard(chess);
+
   let bestMove = moves[0];
   let bestScore = isBlack ? Infinity : -Infinity;
+  let bestMoveQuality = "Good"; // Default quality
 
   for (const move of moves) {
     chess.move(move);
-    const score = minimax(chess, searchDepth - 1, -Infinity, Infinity, !isBlack);
+    const score = minimax(
+      chess,
+      searchDepth - 1,
+      -Infinity,
+      Infinity,
+      !isBlack,
+    );
     chess.undo();
 
+    // Calculate the delta (score change) for this move
+    const scoreDelta = score - currentScore;
+
+    // Classify move quality based on score delta
+    const moveQuality = classifyMoveQuality(currentScore, score, isBlack);
+
+    // Track the best move and its quality
     if (isBlack ? score < bestScore : score > bestScore) {
       bestScore = score;
       bestMove = move;
+      bestMoveQuality = moveQuality;
     }
   }
 
   const uciMove = bestMove.from + bestMove.to + (bestMove.promotion || "");
   return {
     botMove: uciMove,
-    engineProfile: { emotion: normEmotion, ...profile },
+    engineProfile: {
+      emotion: normEmotion,
+      ...profile,
+      moveQuality: bestMoveQuality,
+    },
   };
 }
 
@@ -190,4 +251,28 @@ export async function POST(request: Request) {
 
   const result = calculateJsBotMove(payload.fen, emotion);
   return NextResponse.json(result, { status: 200 });
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const fen = searchParams.get("fen");
+
+  if (!fen || typeof fen !== "string") {
+    return NextResponse.json(
+      { detail: "Query parameter 'fen' is required." },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const chess = new Chess(fen);
+    const score = evaluateBoard(chess);
+    const isBlack = chess.turn() === "b";
+    return NextResponse.json({ evaluation: score, isBlack }, { status: 200 });
+  } catch {
+    return NextResponse.json(
+      { detail: "Invalid FEN position." },
+      { status: 400 },
+    );
+  }
 }

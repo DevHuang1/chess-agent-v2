@@ -45,7 +45,12 @@ import Simulation3D from "@/components/Simulation3D";
 import GameInfo from "@/components/GameInfo";
 import { PIECE_DESIGNS, PieceDesignKey } from "@/components/pieces";
 import type { ChessboardOptions } from "react-chessboard";
-import { playMoveSound, playCaptureSound, playCheckSound, setSoundMuted } from "@/lib/audio";
+import {
+  playMoveSound,
+  playCaptureSound,
+  playCheckSound,
+  setSoundMuted,
+} from "@/lib/audio";
 
 const BOT_MOVE_API_URL = "/api/bot-move";
 const COACH_API_URL = "/api/coach";
@@ -146,9 +151,9 @@ const CAPTURE_REMARKS = [
   "Oops. Did you need that?",
 ];
 
-function pieceColorAtSquare(square: string, fen: string): 'w' | 'b' | null {
-  const board = fen.split(' ')[0];
-  const rows = board.split('/');
+function pieceColorAtSquare(square: string, fen: string): "w" | "b" | null {
+  const board = fen.split(" ")[0];
+  const rows = board.split("/");
   const file = square.charCodeAt(0) - 97;
   const rank = 8 - parseInt(square[1]);
   const row = rows[rank];
@@ -157,10 +162,10 @@ function pieceColorAtSquare(square: string, fen: string): 'w' | 'b' | null {
   for (const ch of row) {
     if (col > file) break;
     if (col === file) {
-      if (ch >= '1' && ch <= '8') return null;
-      return ch === ch.toUpperCase() ? 'w' : 'b';
+      if (ch >= "1" && ch <= "8") return null;
+      return ch === ch.toUpperCase() ? "w" : "b";
     }
-    if (ch >= '1' && ch <= '8') {
+    if (ch >= "1" && ch <= "8") {
       col += parseInt(ch);
     } else {
       col++;
@@ -169,13 +174,18 @@ function pieceColorAtSquare(square: string, fen: string): 'w' | 'b' | null {
   return null;
 }
 
-function generateRemark(em: EmotionLabel, isCheck: boolean, isCapture: boolean): string {
+function generateRemark(
+  em: EmotionLabel,
+  isCheck: boolean,
+  isCapture: boolean,
+): string {
   const pool = BOT_REMARKS[em] ?? BOT_REMARKS.neutral;
   let remark = pool[Math.floor(Math.random() * pool.length)];
   if (isCheck) {
     remark = CHECK_REMARKS[Math.floor(Math.random() * CHECK_REMARKS.length)];
   } else if (isCapture) {
-    remark = CAPTURE_REMARKS[Math.floor(Math.random() * CAPTURE_REMARKS.length)];
+    remark =
+      CAPTURE_REMARKS[Math.floor(Math.random() * CAPTURE_REMARKS.length)];
   }
   return remark;
 }
@@ -204,13 +214,21 @@ type EngineProfile = {
   depth: number;
   skillLevel: number;
   elo: number;
+  moveQuality?: string;
 };
 
 type GameOutcome = "active" | "checkmate" | "stalemate" | "draw" | "gameover";
-type CoachLlmConnection = "checking" | "connected" | "disconnected" | "disabled";
+type CoachLlmConnection =
+  | "checking"
+  | "connected"
+  | "disconnected"
+  | "disabled";
 type SidebarTab = "coach" | "speech" | "3d";
 
-const EMOTION_PROFILES: Record<EmotionLabel, { depth: number; skillLevel: number; elo: number }> = {
+const EMOTION_PROFILES: Record<
+  EmotionLabel,
+  { depth: number; skillLevel: number; elo: number }
+> = {
   stressed: { depth: 1, skillLevel: 1, elo: 1320 },
   frustrated: { depth: 2, skillLevel: 3, elo: 1320 },
   calm: { depth: 4, skillLevel: 6, elo: 1600 },
@@ -255,7 +273,9 @@ function mostFrequentInBuffer(): EmotionLabel | null {
   for (const e of emotionBuffer) {
     counts[e] = (counts[e] ?? 0) + 1;
   }
-  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0] as EmotionLabel;
+  return Object.entries(counts).sort(
+    (a, b) => b[1] - a[1],
+  )[0][0] as EmotionLabel;
 }
 
 async function detectEmotionFromVideo(
@@ -312,14 +332,26 @@ export default function ChessPage() {
   const [emotion, setEmotion] = useState<EmotionLabel>("neutral");
   const [emotionMode, setEmotionMode] = useState<"auto" | "manual">("auto");
   const [modelsLoaded, setModelsLoaded] = useState(false);
-  const [backendEngineProfile, setBackendEngineProfile] = useState<EngineProfile | null>(null);
-  const engineProfile = backendEngineProfile ?? { emotion, ...(EMOTION_PROFILES[emotion] ?? EMOTION_PROFILES.neutral) };
+  const [backendEngineProfile, setBackendEngineProfile] =
+    useState<EngineProfile | null>(null);
+  const engineProfile = backendEngineProfile ?? {
+    emotion,
+    ...(EMOTION_PROFILES[emotion] ?? EMOTION_PROFILES.neutral),
+  };
   const [gameOutcome, setGameOutcome] = useState<GameOutcome>("active");
+  const [moveQualities, setMoveQualities] = useState<Record<number, string>>(
+    {},
+  );
+  const [lastPositionScore, setLastPositionScore] = useState<number | null>(
+    null,
+  );
   const [statusMessage, setStatusMessage] = useState("Sentio online.");
   const [isBotThinking, setIsBotThinking] = useState(false);
   const [coachLlmConnection, setCoachLlmConnection] =
     useState<CoachLlmConnection>("checking");
-  const [coachLlmDetail, setCoachLlmDetail] = useState("Checking LLM health...");
+  const [coachLlmDetail, setCoachLlmDetail] = useState(
+    "Checking LLM health...",
+  );
   const [botRemark, setBotRemark] = useState("");
   const [chatInput, setChatInput] = useState("");
   const [isCoachThinking, setIsCoachThinking] = useState(false);
@@ -350,13 +382,17 @@ export default function ChessPage() {
     const now = Date.now();
     if (now - lastCoachAutoMessageRef.current < 25000) return;
     lastCoachAutoMessageRef.current = now;
-    const pool = COACH_AUTO_ENCOURAGEMENT[em] ?? COACH_AUTO_ENCOURAGEMENT.neutral;
+    const pool =
+      COACH_AUTO_ENCOURAGEMENT[em] ?? COACH_AUTO_ENCOURAGEMENT.neutral;
     const text = pool[Math.floor(Math.random() * pool.length)];
-    setChatMessages((prev) => [...prev, {
-      id: `coach-auto-${now}`,
-      role: "assistant",
-      content: text,
-    }]);
+    setChatMessages((prev) => [
+      ...prev,
+      {
+        id: `coach-auto-${now}`,
+        role: "assistant",
+        content: text,
+      },
+    ]);
   });
 
   useEffect(() => {
@@ -379,7 +415,9 @@ export default function ChessPage() {
       })
       .catch((err) => {
         console.error("Webcam video source offline:", err);
-        setStatusMessage("Webcam unavailable. Emotion fallback set to neutral.");
+        setStatusMessage(
+          "Webcam unavailable. Emotion fallback set to neutral.",
+        );
       });
 
     import("@vladmandic/face-api")
@@ -416,7 +454,10 @@ export default function ChessPage() {
       const api = faceapiRef.current;
       if (!api) return;
 
-      const estimatedEmotion = await detectEmotionFromVideo(api, videoRef.current);
+      const estimatedEmotion = await detectEmotionFromVideo(
+        api,
+        videoRef.current,
+      );
       emotionBuffer.push(estimatedEmotion);
       if (emotionBuffer.length > EMOTION_BUFFER_SIZE) {
         emotionBuffer.shift();
@@ -481,7 +522,7 @@ export default function ChessPage() {
         setGroqDetail(
           data.groq?.available
             ? `Groq: ${data.groq.model}`
-            : data.groq?.detail ?? "Groq unavailable.",
+            : (data.groq?.detail ?? "Groq unavailable."),
         );
 
         if (!data.enabled) {
@@ -546,7 +587,9 @@ export default function ChessPage() {
     // Local fallback bot: if the engine backend is unreachable, slow, or
     // returns an illegal move, pick a random legal move in the browser so the
     // game never freezes on the bot's turn.
-    const localBotMove = (chess: Chess): { from: Square; to: Square } | null => {
+    const localBotMove = (
+      chess: Chess,
+    ): { from: Square; to: Square } | null => {
       const moves = chess.moves({ verbose: true });
       if (moves.length === 0) return null;
       const m = moves[Math.floor(Math.random() * moves.length)];
@@ -572,9 +615,9 @@ export default function ChessPage() {
       clearTimeout(timer);
 
       if (!response.ok) {
-        const data = (await response.json().catch(() => null)) as
-          | { detail?: string }
-          | null;
+        const data = (await response.json().catch(() => null)) as {
+          detail?: string;
+        } | null;
         throw new Error(data?.detail ?? "Backend response error");
       }
 
@@ -619,7 +662,10 @@ export default function ChessPage() {
         chess.move({
           from: from as Square,
           to: to as Square,
-          promotion: lower.length === 5 ? (lower[4] as "q" | "r" | "b" | "n") : undefined,
+          promotion:
+            lower.length === 5
+              ? (lower[4] as "q" | "r" | "b" | "n")
+              : undefined,
         });
       } catch {
         // The engine's suggested move is illegal on the current position —
@@ -648,7 +694,11 @@ export default function ChessPage() {
         const isCheck = chess.inCheck();
         setBotRemark(generateRemark(emotion, isCheck, isCapture));
       } else {
-        setBotRemark(chess.isCheckmate() ? "Checkmate. Better luck next time." : "Game over. I won.");
+        setBotRemark(
+          chess.isCheckmate()
+            ? "Checkmate. Better luck next time."
+            : "Game over. I won.",
+        );
       }
     } else {
       setStatusMessage(fallbackUsed ? fallbackReason : "No move available.");
@@ -738,7 +788,8 @@ export default function ChessPage() {
       const move = chess.move({
         from: uci.substring(0, 2) as Square,
         to: uci.substring(2, 4) as Square,
-        promotion: uci.length === 5 ? (uci[4] as "q" | "r" | "b" | "n") : undefined,
+        promotion:
+          uci.length === 5 ? (uci[4] as "q" | "r" | "b" | "n") : undefined,
       });
       if (!move) return;
       if (move.captured) {
@@ -771,7 +822,8 @@ export default function ChessPage() {
       const legal = test.move({
         from: from as Square,
         to: to as Square,
-        promotion: uci.length === 5 ? (uci[4] as "q" | "r" | "b" | "n") : undefined,
+        promotion:
+          uci.length === 5 ? (uci[4] as "q" | "r" | "b" | "n") : undefined,
       });
       if (!legal) return;
     } catch {
@@ -788,7 +840,9 @@ export default function ChessPage() {
     const squareCenter = (sq: string): { x: number; y: number } | null => {
       const board = wrap.querySelector("#sentio-engine-board-board");
       if (!board) return null;
-      for (const squareEl of Array.from(board.querySelectorAll("[data-square]"))) {
+      for (const squareEl of Array.from(
+        board.querySelectorAll("[data-square]"),
+      )) {
         if (squareEl.getAttribute("data-square") === sq) {
           const wrapRect = wrap.getBoundingClientRect();
           const rect = squareEl.getBoundingClientRect();
@@ -865,9 +919,9 @@ export default function ChessPage() {
       });
 
       if (!response.ok) {
-        const data = (await response.json().catch(() => null)) as
-          | { detail?: string }
-          | null;
+        const data = (await response.json().catch(() => null)) as {
+          detail?: string;
+        } | null;
         throw new Error(data?.detail ?? "Coach service unavailable.");
       }
 
@@ -882,9 +936,7 @@ export default function ChessPage() {
         role: "assistant",
         bestMove: data.bestMove ?? undefined,
         content: `${data.message}${
-          data.suggestions?.length
-            ? `\n${data.suggestions.join("\n")}`
-            : ""
+          data.suggestions?.length ? `\n${data.suggestions.join("\n")}` : ""
         }`,
       };
       if (
@@ -921,9 +973,21 @@ export default function ChessPage() {
           legalMoveSquares.map((sq) => {
             const color = pieceColorAtSquare(sq, gamePosition);
             if (color && color !== "w") {
-              return [sq, { boxShadow: "inset 0 0 0 4px rgba(239,68,68,0.5)", borderRadius: "0" }];
+              return [
+                sq,
+                {
+                  boxShadow: "inset 0 0 0 4px rgba(239,68,68,0.5)",
+                  borderRadius: "0",
+                },
+              ];
             }
-            return [sq, { background: "radial-gradient(circle, rgba(34,197,94,0.5) 25%, transparent 25%)" }];
+            return [
+              sq,
+              {
+                background:
+                  "radial-gradient(circle, rgba(34,197,94,0.5) 25%, transparent 25%)",
+              },
+            ];
           }),
         ),
       }
@@ -955,8 +1019,16 @@ export default function ChessPage() {
     showNotation: true,
     darkSquareStyle: { backgroundColor: "var(--sentio-board-dark)" },
     lightSquareStyle: { backgroundColor: "var(--sentio-board-light)" },
-    darkSquareNotationStyle: { color: "#ebecd0", fontSize: "11px", opacity: 0.65 },
-    lightSquareNotationStyle: { color: "#4a6741", fontSize: "11px", opacity: 0.65 },
+    darkSquareNotationStyle: {
+      color: "#ebecd0",
+      fontSize: "11px",
+      opacity: 0.65,
+    },
+    lightSquareNotationStyle: {
+      color: "#4a6741",
+      fontSize: "11px",
+      opacity: 0.65,
+    },
     boardStyle: {
       touchAction: "none",
       borderRadius: "6px",
@@ -973,7 +1045,7 @@ export default function ChessPage() {
 
   const gameResultText =
     gameOutcome === "checkmate"
-      ? gamePosition.split(' ')[1] === "b"
+      ? gamePosition.split(" ")[1] === "b"
         ? "You Win!"
         : "You Lose"
       : gameOutcome === "stalemate"
@@ -993,18 +1065,24 @@ export default function ChessPage() {
   }
 
   return (
-    <main className={`flex h-screen w-screen overflow-hidden sentio-bg transition-colors duration-300 ${theme === "light" ? "light text-zinc-900" : "text-zinc-100"}`}>
+    <main
+      className={`flex h-screen w-screen overflow-hidden sentio-bg transition-colors duration-300 ${theme === "light" ? "light text-zinc-900" : "text-zinc-100"}`}
+    >
       <section className="flex flex-1 flex-col min-w-0">
         <header className="flex items-center gap-3 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-5 py-2 shadow-sm dark:bg-zinc-950/80 light:bg-white/90 light:border-slate-200">
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.6)] animate-pulse" />
-            <span className="font-mono text-base font-bold tracking-tight text-amber-500 dark:text-amber-400">Sentio</span>
+            <span className="font-mono text-base font-bold tracking-tight text-amber-500 dark:text-amber-400">
+              Sentio
+            </span>
           </div>
 
           <div className="h-4 w-px bg-zinc-800/80 dark:bg-zinc-800 light:bg-slate-300" />
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-medium text-zinc-500 dark:text-zinc-400 light:text-slate-600">Emotion:</span>
+            <span className="font-medium text-zinc-500 dark:text-zinc-400 light:text-slate-600">
+              Emotion:
+            </span>
             <select
               className="rounded-md border border-zinc-800 bg-zinc-900/90 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200 light:bg-slate-100 light:border-slate-300 light:text-slate-800 px-2.5 py-1 text-xs outline-none focus:border-amber-500/50"
               value={emotionMode}
@@ -1019,7 +1097,9 @@ export default function ChessPage() {
               className="rounded-md border border-zinc-800 bg-zinc-900/90 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200 light:bg-slate-100 light:border-slate-300 light:text-slate-800 px-2.5 py-1 text-xs outline-none focus:border-amber-500/50 disabled:opacity-40"
               value={emotion}
               disabled={emotionMode === "auto"}
-              onChange={(event) => setEmotion(event.target.value as EmotionLabel)}
+              onChange={(event) =>
+                setEmotion(event.target.value as EmotionLabel)
+              }
             >
               <option value="calm">Calm</option>
               <option value="focused">Focused</option>
@@ -1033,19 +1113,31 @@ export default function ChessPage() {
           <div className="h-4 w-px bg-zinc-800/80 dark:bg-zinc-800 light:bg-slate-300" />
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-medium text-zinc-500 dark:text-zinc-400 light:text-slate-600">Bot Profile:</span>
-            <span className="rounded bg-amber-500/10 px-2 py-0.5 font-medium text-amber-500 dark:text-amber-300 capitalize">{engineProfile.emotion}</span>
-            <span className="rounded bg-zinc-800/80 dark:bg-zinc-800 dark:text-zinc-200 light:bg-slate-200 light:text-slate-800 px-2 py-0.5 font-mono font-semibold">{engineProfile.elo} ELO</span>
-            <span className="text-zinc-500 dark:text-zinc-400 light:text-slate-500">d:{engineProfile.depth}</span>
+            <span className="font-medium text-zinc-500 dark:text-zinc-400 light:text-slate-600">
+              Bot Profile:
+            </span>
+            <span className="rounded bg-amber-500/10 px-2 py-0.5 font-medium text-amber-500 dark:text-amber-300 capitalize">
+              {engineProfile.emotion}
+            </span>
+            <span className="rounded bg-zinc-800/80 dark:bg-zinc-800 dark:text-zinc-200 light:bg-slate-200 light:text-slate-800 px-2 py-0.5 font-mono font-semibold">
+              {engineProfile.elo} ELO
+            </span>
+            <span className="text-zinc-500 dark:text-zinc-400 light:text-slate-500">
+              d:{engineProfile.depth}
+            </span>
             {isBotThinking && (
-              <span className="text-amber-500 dark:text-amber-400 animate-pulse font-medium">Thinking...</span>
+              <span className="text-amber-500 dark:text-amber-400 animate-pulse font-medium">
+                Thinking...
+              </span>
             )}
           </div>
 
           <div className="h-4 w-px bg-zinc-800/80 dark:bg-zinc-800 light:bg-slate-300" />
 
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="mr-1 text-zinc-500 dark:text-zinc-400 light:text-slate-600 font-medium">Pieces:</span>
+            <span className="mr-1 text-zinc-500 dark:text-zinc-400 light:text-slate-600 font-medium">
+              Pieces:
+            </span>
             {Object.entries(PIECE_DESIGNS).map(([key, d]) => (
               <button
                 key={key}
@@ -1160,7 +1252,9 @@ export default function ChessPage() {
 
             {botRemark && (
               <div className="w-64 rounded-xl border border-amber-500/20 bg-amber-950/20 p-3 text-xs text-zinc-300 backdrop-blur-md light:border-amber-300 light:bg-amber-100 light:text-slate-700">
-                <span className="text-amber-400 font-bold block mb-0.5 light:text-amber-700">Sentio Engine:</span>
+                <span className="text-amber-400 font-bold block mb-0.5 light:text-amber-700">
+                  Sentio Engine:
+                </span>
                 <span className="italic">{botRemark}</span>
               </div>
             )}
@@ -1171,8 +1265,12 @@ export default function ChessPage() {
       <aside className="flex w-[440px] shrink-0 flex-col border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">Game Controller</h1>
-            <p className="text-xs text-zinc-400 light:text-slate-600">{statusMessage}</p>
+            <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">
+              Game Controller
+            </h1>
+            <p className="text-xs text-zinc-400 light:text-slate-600">
+              {statusMessage}
+            </p>
           </div>
           <button
             type="button"
@@ -1228,7 +1326,9 @@ export default function ChessPage() {
           {activeTab === "coach" ? (
             <>
               <div className="flex items-center justify-between mb-2.5">
-                <p className="text-sm text-zinc-200 font-semibold light:text-slate-800">Coach Assistant</p>
+                <p className="text-sm text-zinc-200 font-semibold light:text-slate-800">
+                  Coach Assistant
+                </p>
                 {coachMode === "groq" ? (
                   <span
                     title={groqDetail}
@@ -1355,7 +1455,10 @@ export default function ChessPage() {
                 setSelectedSquare(null);
                 setLegalMoveSquares([]);
                 updateGameOutcome(chessRef.current);
-                if (chessRef.current.turn() === "b" && !chessRef.current.isGameOver()) {
+                if (
+                  chessRef.current.turn() === "b" &&
+                  !chessRef.current.isGameOver()
+                ) {
                   void triggerBotTurn(nextFen);
                 }
               }}
@@ -1365,33 +1468,61 @@ export default function ChessPage() {
             <div className="flex flex-1 flex-col justify-between p-1 space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2.5 light:border-slate-300">
-                  <span className="text-xs font-bold text-amber-400 light:text-amber-700">3D Interactive Arena</span>
+                  <span className="text-xs font-bold text-amber-400 light:text-amber-700">
+                    3D Interactive Arena
+                  </span>
                   <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-300 light:bg-amber-100 light:border-amber-300 light:text-amber-700">
                     3D Active
                   </span>
                 </div>
                 <p className="text-xs text-zinc-400 leading-relaxed light:text-slate-600">
-                  The board has morphed into a full 3D studio where you and Sentio AI sit face-to-face.
+                  The board has morphed into a full 3D studio where you and
+                  Sentio AI sit face-to-face.
                 </p>
 
                 <div className="rounded-xl bg-zinc-950/80 border border-zinc-800/80 p-3 space-y-2.5 text-xs light:bg-white light:border-slate-300">
-                  <span className="font-semibold text-zinc-300 block light:text-slate-700">Controls:</span>
+                  <span className="font-semibold text-zinc-300 block light:text-slate-700">
+                    Controls:
+                  </span>
                   <ul className="space-y-2 text-zinc-400 text-[11px] light:text-slate-600">
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200 light:text-slate-800">Move Piece:</strong> Fist over a white piece to grab it, then hold still over a green square for 4s</span>
+                      <span>
+                        <strong className="text-zinc-200 light:text-slate-800">
+                          Move Piece:
+                        </strong>{" "}
+                        Fist over a white piece to grab it, then hold still over
+                        a green square for 4s
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200 light:text-slate-800">Orbit View:</strong> Right-click & drag canvas to tilt and rotate camera angle</span>
+                      <span>
+                        <strong className="text-zinc-200 light:text-slate-800">
+                          Orbit View:
+                        </strong>{" "}
+                        Right-click & drag canvas to tilt and rotate camera
+                        angle
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200 light:text-slate-800">Zoom:</strong> Scroll wheel or pinch trackpad</span>
+                      <span>
+                        <strong className="text-zinc-200 light:text-slate-800">
+                          Zoom:
+                        </strong>{" "}
+                        Scroll wheel or pinch trackpad
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-purple-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200 light:text-slate-800">Webcam Gestures:</strong> Palm to aim · Fist to grab · Hold still over a green square for 4s to place · Palm to release</span>
+                      <span>
+                        <strong className="text-zinc-200 light:text-slate-800">
+                          Webcam Gestures:
+                        </strong>{" "}
+                        Palm to aim · Fist to grab · Hold still over a green
+                        square for 4s to place · Palm to release
+                      </span>
                     </li>
                   </ul>
                 </div>
@@ -1412,8 +1543,12 @@ export default function ChessPage() {
       {gameResultText && (
         <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/70 backdrop-blur-md light:bg-slate-900/60">
           <div className="rounded-2xl border border-zinc-700 bg-zinc-900/90 p-8 text-center shadow-2xl max-w-sm w-full mx-4 light:border-slate-300 light:bg-white">
-            <p className="text-3xl font-extrabold text-amber-400 mb-2 light:text-amber-700">{gameResultText}</p>
-            <p className="text-xs text-zinc-400 mb-6 light:text-slate-600">Game finished. Would you like to play another round?</p>
+            <p className="text-3xl font-extrabold text-amber-400 mb-2 light:text-amber-700">
+              {gameResultText}
+            </p>
+            <p className="text-xs text-zinc-400 mb-6 light:text-slate-600">
+              Game finished. Would you like to play another round?
+            </p>
             <button
               type="button"
               onClick={resetGame}
@@ -1436,7 +1571,10 @@ export default function ChessPage() {
               setSelectedSquare(null);
               setLegalMoveSquares([]);
               updateGameOutcome(chessRef.current);
-              if (chessRef.current.turn() === "b" && !chessRef.current.isGameOver()) {
+              if (
+                chessRef.current.turn() === "b" &&
+                !chessRef.current.isGameOver()
+              ) {
                 void triggerBotTurn(nextFen);
               }
             }}
