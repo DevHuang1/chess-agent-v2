@@ -361,7 +361,8 @@ export default function ChessPage() {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    if (activeTab === "3d") {
+    const isE2ETest = process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("e2e");
+    if (isE2ETest || activeTab === "3d") {
       return () => {
         document.body.style.overflow = "";
       };
@@ -410,7 +411,8 @@ export default function ChessPage() {
   }, [activeTab]);
 
   useEffect(() => {
-    if (activeTab === "3d" || emotionMode !== "auto" || !faceapiRef.current || !modelsLoaded) return;
+    const isE2ETest = process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("e2e");
+    if (isE2ETest || activeTab === "3d" || emotionMode !== "auto" || !faceapiRef.current || !modelsLoaded) return;
 
     const intervalId = window.setInterval(async () => {
       const api = faceapiRef.current;
@@ -1352,6 +1354,7 @@ export default function ChessPage() {
               isBotThinking={isBotThinking}
               onMoveExecuted={() => {
                 const nextFen = chessRef.current.fen();
+                setGamePosition(nextFen);
                 setSelectedSquare(null);
                 setLegalMoveSquares([]);
                 updateGameOutcome(chessRef.current);
@@ -1379,7 +1382,8 @@ export default function ChessPage() {
                   <ul className="space-y-2 text-zinc-400 text-[11px] light:text-slate-600">
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200 light:text-slate-800">Move Piece:</strong> Fist over a white piece to grab it, then hold still over a green square for 4s</span>
+                      <span><strong className="text-zinc-200 light:text-slate-800">Move Piece:</strong> Click a piece and a green square, or use fist + hold for 2s
+</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-1 shrink-0" />
@@ -1391,7 +1395,8 @@ export default function ChessPage() {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-purple-400 mt-1 shrink-0" />
-                      <span><strong className="text-zinc-200 light:text-slate-800">Webcam Gestures:</strong> Palm to aim · Fist to grab · Hold still over a green square for 4s to place · Palm to release</span>
+                      <span><strong className="text-zinc-200 light:text-slate-800">Webcam Gestures:</strong> Palm to aim · Fist to grab · Hold still over a green square for 2s to place · Palm to release
+</span>
                     </li>
                   </ul>
                 </div>
