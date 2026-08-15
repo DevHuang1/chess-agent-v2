@@ -217,7 +217,7 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
         <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/50 p-3 light:border-slate-300 light:bg-white/70">
           <div className="mb-2 text-[10px] uppercase tracking-wider text-zinc-500">Playback depth</div>
           <div className="flex items-center gap-2">
-            <input aria-label={algorithm === "mcts" ? "MCTS rollout depth" : "Minimax depth"} type="range" min="1" max="4" value={depth} onChange={(event) => setDepth(Number(event.target.value))} className="w-full accent-cyan-400" />
+            <input aria-label={algorithm === "mcts" ? "MCTS rollout depth" : "Minimax depth"} type="range" min="1" max="6" value={depth} onChange={(event) => setDepth(Number(event.target.value))} className="w-full accent-cyan-400" />
             <span className="w-7 text-right font-mono text-xs text-cyan-300">{depth}</span>
           </div>
           <div className="mt-3 flex items-center gap-2">

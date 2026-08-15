@@ -1,11 +1,13 @@
 {
-  "generatedAt": "2026-08-15T11:33:04.337Z",
+  "generatedAt": "2026-08-15T12:01:33.536Z",
   "runtime": "v22.13.0 linux/x64",
   "depths": [
     1,
     2,
     3,
-    4
+    4,
+    5,
+    6
   ],
   "samples": 5,
   "warmups": 2,
@@ -16,13 +18,13 @@
       "depth": 1,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 2.955,
-      "minMs": 2.021,
-      "maxMs": 4.292,
+      "averageMs": 2.68,
+      "minMs": 1.787,
+      "maxMs": 3.997,
       "nodes": 6,
       "evaluated": 5,
       "workUnits": 5,
-      "workUnitsPerSecond": 1692.159
+      "workUnitsPerSecond": 1865.649
     },
     {
       "position": "opening response",
@@ -30,13 +32,13 @@
       "depth": 1,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 25.243,
-      "minMs": 24.473,
-      "maxMs": 26.091,
+      "averageMs": 24.841,
+      "minMs": 24.332,
+      "maxMs": 25.255,
       "nodes": 25,
       "evaluated": 24,
       "workUnits": 24,
-      "workUnitsPerSecond": 950.744
+      "workUnitsPerSecond": 966.148
     },
     {
       "position": "opening response",
@@ -44,13 +46,13 @@
       "depth": 2,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 8.118,
-      "minMs": 7.659,
-      "maxMs": 8.822,
+      "averageMs": 7.609,
+      "minMs": 7.341,
+      "maxMs": 8.214,
       "nodes": 31,
       "evaluated": 10,
       "workUnits": 10,
-      "workUnitsPerSecond": 1231.875
+      "workUnitsPerSecond": 1314.234
     },
     {
       "position": "opening response",
@@ -58,13 +60,13 @@
       "depth": 2,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 90.41,
-      "minMs": 86.891,
-      "maxMs": 101.041,
+      "averageMs": 90.826,
+      "minMs": 86.909,
+      "maxMs": 93.91,
       "nodes": 49,
       "evaluated": 48,
       "workUnits": 48,
-      "workUnitsPerSecond": 530.917
+      "workUnitsPerSecond": 528.481
     },
     {
       "position": "opening response",
@@ -72,13 +74,13 @@
       "depth": 3,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 21.187,
-      "minMs": 20.886,
-      "maxMs": 21.503,
+      "averageMs": 22.549,
+      "minMs": 19.886,
+      "maxMs": 25.016,
       "nodes": 86,
       "evaluated": 44,
       "workUnits": 44,
-      "workUnitsPerSecond": 2076.748
+      "workUnitsPerSecond": 1951.335
     },
     {
       "position": "opening response",
@@ -86,13 +88,13 @@
       "depth": 3,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 173.411,
-      "minMs": 171.127,
-      "maxMs": 176.326,
+      "averageMs": 176.609,
+      "minMs": 168.292,
+      "maxMs": 197.399,
       "nodes": 73,
       "evaluated": 72,
       "workUnits": 72,
-      "workUnitsPerSecond": 415.199
+      "workUnitsPerSecond": 407.68
     },
     {
       "position": "opening response",
@@ -100,13 +102,13 @@
       "depth": 4,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 78.389,
-      "minMs": 77.416,
-      "maxMs": 79.98,
+      "averageMs": 82.385,
+      "minMs": 75.423,
+      "maxMs": 90.267,
       "nodes": 311,
       "evaluated": 109,
       "workUnits": 109,
-      "workUnitsPerSecond": 1390.508
+      "workUnitsPerSecond": 1323.056
     },
     {
       "position": "opening response",
@@ -114,13 +116,69 @@
       "depth": 4,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 287.273,
-      "minMs": 282.827,
-      "maxMs": 292.362,
+      "averageMs": 276.12,
+      "minMs": 270.327,
+      "maxMs": 289.02,
       "nodes": 97,
       "evaluated": 96,
       "workUnits": 96,
-      "workUnitsPerSecond": 334.177
+      "workUnitsPerSecond": 347.675
+    },
+    {
+      "position": "opening response",
+      "algorithm": "minimax",
+      "depth": 5,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 295.584,
+      "minMs": 285.756,
+      "maxMs": 307.797,
+      "nodes": 1281,
+      "evaluated": 517,
+      "workUnits": 517,
+      "workUnitsPerSecond": 1749.078
+    },
+    {
+      "position": "opening response",
+      "algorithm": "mcts",
+      "depth": 5,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 435.257,
+      "minMs": 426.831,
+      "maxMs": 450,
+      "nodes": 121,
+      "evaluated": 120,
+      "workUnits": 120,
+      "workUnitsPerSecond": 275.699
+    },
+    {
+      "position": "opening response",
+      "algorithm": "minimax",
+      "depth": 6,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 1424.299,
+      "minMs": 1406.484,
+      "maxMs": 1444.956,
+      "nodes": 5496,
+      "evaluated": 1946,
+      "workUnits": 1946,
+      "workUnitsPerSecond": 1366.286
+    },
+    {
+      "position": "opening response",
+      "algorithm": "mcts",
+      "depth": 6,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 588.31,
+      "minMs": 585.922,
+      "maxMs": 591.362,
+      "nodes": 145,
+      "evaluated": 144,
+      "workUnits": 144,
+      "workUnitsPerSecond": 244.769
     },
     {
       "position": "developed middlegame",
@@ -128,13 +186,13 @@
       "depth": 1,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 2.492,
-      "minMs": 2.239,
-      "maxMs": 3.075,
+      "averageMs": 2.7,
+      "minMs": 2.179,
+      "maxMs": 3.876,
       "nodes": 6,
       "evaluated": 5,
       "workUnits": 5,
-      "workUnitsPerSecond": 2006.105
+      "workUnitsPerSecond": 1851.993
     },
     {
       "position": "developed middlegame",
@@ -142,13 +200,13 @@
       "depth": 1,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 39.276,
-      "minMs": 38.654,
-      "maxMs": 39.982,
+      "averageMs": 37.699,
+      "minMs": 37.339,
+      "maxMs": 38.691,
       "nodes": 25,
       "evaluated": 24,
       "workUnits": 24,
-      "workUnitsPerSecond": 611.057
+      "workUnitsPerSecond": 636.629
     },
     {
       "position": "developed middlegame",
@@ -156,13 +214,13 @@
       "depth": 2,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 9.459,
-      "minMs": 9.346,
-      "maxMs": 9.559,
+      "averageMs": 9.294,
+      "minMs": 9.192,
+      "maxMs": 9.351,
       "nodes": 31,
       "evaluated": 18,
       "workUnits": 18,
-      "workUnitsPerSecond": 1903.046
+      "workUnitsPerSecond": 1936.709
     },
     {
       "position": "developed middlegame",
@@ -170,13 +228,13 @@
       "depth": 2,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 139.217,
-      "minMs": 135.889,
-      "maxMs": 141.93,
+      "averageMs": 131.967,
+      "minMs": 131.52,
+      "maxMs": 132.804,
       "nodes": 49,
       "evaluated": 48,
       "workUnits": 48,
-      "workUnitsPerSecond": 344.787
+      "workUnitsPerSecond": 363.726
     },
     {
       "position": "developed middlegame",
@@ -184,13 +242,13 @@
       "depth": 3,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 39.949,
-      "minMs": 38.712,
-      "maxMs": 40.878,
+      "averageMs": 37.455,
+      "minMs": 37.108,
+      "maxMs": 37.819,
       "nodes": 106,
       "evaluated": 63,
       "workUnits": 63,
-      "workUnitsPerSecond": 1577.022
+      "workUnitsPerSecond": 1682.032
     },
     {
       "position": "developed middlegame",
@@ -198,13 +256,13 @@
       "depth": 3,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 280.896,
-      "minMs": 272.788,
-      "maxMs": 287.409,
+      "averageMs": 262.451,
+      "minMs": 258.544,
+      "maxMs": 269.106,
       "nodes": 73,
       "evaluated": 72,
       "workUnits": 72,
-      "workUnitsPerSecond": 256.323
+      "workUnitsPerSecond": 274.336
     },
     {
       "position": "developed middlegame",
@@ -212,13 +270,13 @@
       "depth": 4,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 120.486,
-      "minMs": 119.273,
-      "maxMs": 121.623,
+      "averageMs": 115.609,
+      "minMs": 114.18,
+      "maxMs": 116.878,
       "nodes": 421,
       "evaluated": 150,
       "workUnits": 150,
-      "workUnitsPerSecond": 1244.953
+      "workUnitsPerSecond": 1297.476
     },
     {
       "position": "developed middlegame",
@@ -226,13 +284,69 @@
       "depth": 4,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 467.23,
-      "minMs": 454.034,
-      "maxMs": 502.451,
+      "averageMs": 428.773,
+      "minMs": 422.737,
+      "maxMs": 435.516,
       "nodes": 97,
       "evaluated": 96,
       "workUnits": 96,
-      "workUnitsPerSecond": 205.466
+      "workUnitsPerSecond": 223.895
+    },
+    {
+      "position": "developed middlegame",
+      "algorithm": "minimax",
+      "depth": 5,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 546.49,
+      "minMs": 542.128,
+      "maxMs": 552.383,
+      "nodes": 1565,
+      "evaluated": 627,
+      "workUnits": 627,
+      "workUnitsPerSecond": 1147.323
+    },
+    {
+      "position": "developed middlegame",
+      "algorithm": "mcts",
+      "depth": 5,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 618.674,
+      "minMs": 613.512,
+      "maxMs": 622.499,
+      "nodes": 121,
+      "evaluated": 120,
+      "workUnits": 120,
+      "workUnitsPerSecond": 193.963
+    },
+    {
+      "position": "developed middlegame",
+      "algorithm": "minimax",
+      "depth": 6,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 1438.833,
+      "minMs": 1423.202,
+      "maxMs": 1470.891,
+      "nodes": 5068,
+      "evaluated": 1646,
+      "workUnits": 1646,
+      "workUnitsPerSecond": 1143.982
+    },
+    {
+      "position": "developed middlegame",
+      "algorithm": "mcts",
+      "depth": 6,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 901.934,
+      "minMs": 882.362,
+      "maxMs": 929.397,
+      "nodes": 145,
+      "evaluated": 144,
+      "workUnits": 144,
+      "workUnitsPerSecond": 159.657
     },
     {
       "position": "tactical position",
@@ -240,13 +354,13 @@
       "depth": 1,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 1.873,
-      "minMs": 1.724,
-      "maxMs": 2.12,
+      "averageMs": 1.783,
+      "minMs": 1.664,
+      "maxMs": 1.851,
       "nodes": 6,
       "evaluated": 5,
       "workUnits": 5,
-      "workUnitsPerSecond": 2669.383
+      "workUnitsPerSecond": 2804.105
     },
     {
       "position": "tactical position",
@@ -254,13 +368,13 @@
       "depth": 1,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 32.403,
-      "minMs": 31.632,
-      "maxMs": 33.518,
+      "averageMs": 30.146,
+      "minMs": 29.446,
+      "maxMs": 32.241,
       "nodes": 25,
       "evaluated": 24,
       "workUnits": 24,
-      "workUnitsPerSecond": 740.67
+      "workUnitsPerSecond": 796.114
     },
     {
       "position": "tactical position",
@@ -268,13 +382,13 @@
       "depth": 2,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 11.419,
-      "minMs": 11.299,
-      "maxMs": 11.795,
+      "averageMs": 11.391,
+      "minMs": 10.9,
+      "maxMs": 11.975,
       "nodes": 31,
       "evaluated": 17,
       "workUnits": 17,
-      "workUnitsPerSecond": 1488.713
+      "workUnitsPerSecond": 1492.414
     },
     {
       "position": "tactical position",
@@ -282,13 +396,13 @@
       "depth": 2,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 129.826,
-      "minMs": 127.181,
-      "maxMs": 132.559,
+      "averageMs": 112.352,
+      "minMs": 111.379,
+      "maxMs": 114.36,
       "nodes": 49,
       "evaluated": 48,
       "workUnits": 48,
-      "workUnitsPerSecond": 369.726
+      "workUnitsPerSecond": 427.229
     },
     {
       "position": "tactical position",
@@ -296,13 +410,13 @@
       "depth": 3,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 36.361,
-      "minMs": 35.253,
-      "maxMs": 39.197,
+      "averageMs": 32.983,
+      "minMs": 32.401,
+      "maxMs": 33.302,
       "nodes": 121,
       "evaluated": 57,
       "workUnits": 57,
-      "workUnitsPerSecond": 1567.613
+      "workUnitsPerSecond": 1728.149
     },
     {
       "position": "tactical position",
@@ -310,13 +424,13 @@
       "depth": 3,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 270.771,
-      "minMs": 254.727,
-      "maxMs": 298.664,
+      "averageMs": 240.189,
+      "minMs": 234.354,
+      "maxMs": 255.556,
       "nodes": 73,
       "evaluated": 72,
       "workUnits": 72,
-      "workUnitsPerSecond": 265.907
+      "workUnitsPerSecond": 299.764
     },
     {
       "position": "tactical position",
@@ -324,13 +438,13 @@
       "depth": 4,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 140.552,
-      "minMs": 135.84,
-      "maxMs": 153.067,
+      "averageMs": 131.648,
+      "minMs": 128.75,
+      "maxMs": 135.981,
       "nodes": 402,
       "evaluated": 166,
       "workUnits": 166,
-      "workUnitsPerSecond": 1181.054
+      "workUnitsPerSecond": 1260.937
     },
     {
       "position": "tactical position",
@@ -338,13 +452,69 @@
       "depth": 4,
       "samples": 5,
       "warmups": 2,
-      "averageMs": 438.771,
-      "minMs": 413.061,
-      "maxMs": 488.314,
+      "averageMs": 414.619,
+      "minMs": 390.233,
+      "maxMs": 460.568,
       "nodes": 96,
       "evaluated": 96,
       "workUnits": 96,
-      "workUnitsPerSecond": 218.793
+      "workUnitsPerSecond": 231.538
+    },
+    {
+      "position": "tactical position",
+      "algorithm": "minimax",
+      "depth": 5,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 375.883,
+      "minMs": 372.348,
+      "maxMs": 381.027,
+      "nodes": 1451,
+      "evaluated": 528,
+      "workUnits": 528,
+      "workUnitsPerSecond": 1404.693
+    },
+    {
+      "position": "tactical position",
+      "algorithm": "mcts",
+      "depth": 5,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 602.571,
+      "minMs": 591.64,
+      "maxMs": 622.172,
+      "nodes": 116,
+      "evaluated": 120,
+      "workUnits": 120,
+      "workUnitsPerSecond": 199.147
+    },
+    {
+      "position": "tactical position",
+      "algorithm": "minimax",
+      "depth": 6,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 1437.369,
+      "minMs": 1426.92,
+      "maxMs": 1445.511,
+      "nodes": 4584,
+      "evaluated": 1650,
+      "workUnits": 1650,
+      "workUnitsPerSecond": 1147.93
+    },
+    {
+      "position": "tactical position",
+      "algorithm": "mcts",
+      "depth": 6,
+      "samples": 5,
+      "warmups": 2,
+      "averageMs": 818.615,
+      "minMs": 798.979,
+      "maxMs": 835.912,
+      "nodes": 137,
+      "evaluated": 144,
+      "workUnits": 144,
+      "workUnitsPerSecond": 175.907
     }
   ]
 }

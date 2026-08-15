@@ -64,6 +64,15 @@ test.describe("3D arena", () => {
     });
   });
 
+  test("runs live MCTS on the 3D board at depth 6", async ({ page }) => {
+    await enter3DArena(page);
+    await page.locator("#live-ai-algorithm").selectOption("mcts");
+    await page.locator("#live-ai-depth").fill("6");
+    await expect(page.locator("#live-ai-depth")).toHaveValue("6");
+    await expect.poll(async () => (await snapshot(page)).robotAnimating, { timeout: 15_000 }).toBe(true);
+    await page.locator("#live-ai-algorithm").selectOption("off");
+  });
+
   test("animates a legal player move and commits it to the live chess state", async ({ page }) => {
     await enter3DArena(page);
     await getDebug(page);

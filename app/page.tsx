@@ -49,6 +49,8 @@ import benchmarkReport from "@/benchmarks/search-benchmark.json";
 import { PIECE_DESIGNS, PieceDesignKey } from "@/components/pieces";
 import type { ChessboardOptions } from "react-chessboard";
 import { playMoveSound, playCaptureSound, playCheckSound, setSoundMuted } from "@/lib/audio";
+import { buildMinimaxTrace } from "@/lib/minimax";
+import { buildMctsTrace } from "@/lib/mcts";
 
 const BOT_MOVE_API_URL = "/api/bot-move";
 const COACH_API_URL = "/api/coach";
@@ -212,6 +214,7 @@ type EngineProfile = {
 type GameOutcome = "active" | "checkmate" | "stalemate" | "draw" | "gameover";
 type CoachLlmConnection = "checking" | "connected" | "disconnected" | "disabled";
 type SidebarTab = "coach" | "speech" | "ai" | "benchmarks" | "3d";
+type LiveAiMode = "off" | "minimax" | "mcts";
 
 const EMOTION_PROFILES: Record<EmotionLabel, { depth: number; skillLevel: number; elo: number }> = {
   stressed: { depth: 1, skillLevel: 1, elo: 1320 },
@@ -321,6 +324,10 @@ export default function ChessPage() {
   const [statusMessage, setStatusMessage] = useState("Sentio online.");
   const [isBotThinking, setIsBotThinking] = useState(false);
   const [lastBotMove, setLastBotMove] = useState<{ uci: string; san: string; fen: string } | null>(null);
+  const [liveAiMode, setLiveAiMode] = useState<LiveAiMode>("off");
+  const [liveAiDepth, setLiveAiDepth] = useState(3);
+  const [liveAiAnimating, setLiveAiAnimating] = useState(false);
+  const liveAiTurnInFlightRef = useRef(false);
   const [coachLlmConnection, setCoachLlmConnection] =
     useState<CoachLlmConnection>("checking");
   const [coachLlmDetail, setCoachLlmDetail] = useState("Checking LLM health...");
@@ -544,6 +551,58 @@ export default function ChessPage() {
     setStatusMessage("Game over.");
     return true;
   }
+
+  function runLiveAiMove() {
+    if (liveAiMode === "off" || chessRef.current.isGameOver()) return false;
+    const chess = chessRef.current;
+    const currentFen = chess.fen();
+    setIsBotThinking(true);
+    setStatusMessage(`${liveAiMode === "mcts" ? "MCTS" : "Minimax"} is searching at depth ${liveAiDepth}...`);
+    const trace = liveAiMode === "mcts"
+      ? buildMctsTrace(currentFen, { iterations: Math.min(180, Math.max(24, liveAiDepth * 24)), branchLimit: 5, rolloutDepth: liveAiDepth, aiColor: chess.turn() })
+      : buildMinimaxTrace(currentFen, { depth: liveAiDepth, branchLimit: 5, aiColor: chess.turn() });
+    const selected = trace.selectedMove;
+    if (!selected) {
+      setIsBotThinking(false);
+      setStatusMessage("No legal move available for the live AI.");
+      return false;
+    }
+    const target = chess.get(selected.uci.slice(2, 4) as Square);
+    const isCapture = Boolean(target);
+    const applied = chess.move({
+      from: selected.uci.slice(0, 2) as Square,
+      to: selected.uci.slice(2, 4) as Square,
+      promotion: selected.uci.length === 5 ? selected.uci[4] as "q" | "r" | "b" | "n" : undefined,
+    });
+    if (!applied) {
+      setIsBotThinking(false);
+      setStatusMessage("Live AI returned an unusable move.");
+      return false;
+    }
+    const nextFen = chess.fen();
+    setLastBotMove({ uci: `${applied.from}${applied.to}${applied.promotion ?? ""}`, san: applied.san, fen: nextFen });
+    setGamePosition(nextFen);
+    if (isCapture) playCaptureSound();
+    else if (chess.inCheck()) playCheckSound();
+    else playMoveSound();
+    updateGameOutcome(chess);
+    setBotRemark(`${liveAiMode === "mcts" ? "MCTS" : "Minimax"} selected ${applied.san} · depth ${liveAiDepth}`);
+    setStatusMessage(`${liveAiMode === "mcts" ? "MCTS" : "Minimax"} plays ${applied.san}`);
+    setIsBotThinking(false);
+    return true;
+  }
+
+  // The scheduler intentionally calls the local move routine from the latest render; state dependencies control turn boundaries.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (activeTab !== "3d" || liveAiMode === "off" || gameOutcome !== "active" || liveAiAnimating || liveAiTurnInFlightRef.current) return;
+    const timer = window.setTimeout(() => {
+      liveAiTurnInFlightRef.current = true;
+      const moved = runLiveAiMove();
+      if (!moved) liveAiTurnInFlightRef.current = false;
+    }, 480);
+    return () => window.clearTimeout(timer);
+  }, [activeTab, gamePosition, liveAiMode, liveAiDepth, liveAiAnimating, gameOutcome]);
 
   async function triggerBotTurn(currentFen: string) {
     setIsBotThinking(true);
@@ -1003,6 +1062,8 @@ export default function ChessPage() {
           : null;
 
   function resetGame() {
+    liveAiTurnInFlightRef.current = false;
+    setLiveAiAnimating(false);
     const newChess = new Chess();
     chessRef.current = newChess;
     setGamePosition(newChess.fen());
@@ -1497,7 +1558,24 @@ export default function ChessPage() {
               }
             }}
             setStatusMessage={setStatusMessage}
-            onExit={() => setActiveTab("coach")}
+            liveAiMode={liveAiMode}
+            liveAiDepth={liveAiDepth}
+            onLiveAiModeChange={(mode) => {
+              liveAiTurnInFlightRef.current = false;
+              setLiveAiMode(mode);
+              if (mode === "off") setLiveAiAnimating(false);
+            }}
+            onLiveAiDepthChange={setLiveAiDepth}
+            onAnimationStateChange={(animating) => {
+              liveAiTurnInFlightRef.current = animating;
+              setLiveAiAnimating(animating);
+            }}
+            onExit={() => {
+              liveAiTurnInFlightRef.current = false;
+              setLiveAiMode("off");
+              setLiveAiAnimating(false);
+              setActiveTab("coach");
+            }}
           />
         </div>
       )}

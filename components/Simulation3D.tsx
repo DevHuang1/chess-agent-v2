@@ -1048,6 +1048,11 @@ type Simulation3DProps = {
   chessRef: React.MutableRefObject<Chess>;
   gamePosition: string;
   onMoveExecuted: () => void;
+  liveAiMode?: "off" | "minimax" | "mcts";
+  liveAiDepth?: number;
+  onLiveAiModeChange?: (mode: "off" | "minimax" | "mcts") => void;
+  onLiveAiDepthChange?: (depth: number) => void;
+  onAnimationStateChange?: (animating: boolean) => void;
   setStatusMessage: (msg: string) => void;
   onExit: () => void;
   theme?: "dark" | "light";
@@ -1057,6 +1062,11 @@ export default function Simulation3D({
   chessRef,
   gamePosition,
   onMoveExecuted,
+  liveAiMode = "off",
+  liveAiDepth = 3,
+  onLiveAiModeChange,
+  onLiveAiDepthChange,
+  onAnimationStateChange,
   setStatusMessage,
   onExit,
   theme = "dark",
@@ -1086,6 +1096,8 @@ export default function Simulation3D({
   const robotAnimatingRef = useRef(false);
   const playerAnimatingRef = useRef(false);
   const pendingGamePositionRef = useRef<string | null>(null);
+  const liveAiModeRef = useRef(liveAiMode);
+  const onAnimationStateChangeRef = useRef(onAnimationStateChange);
   const gamePositionRef = useRef(gamePosition);
   const firstRunRef = useRef(true);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
@@ -1149,6 +1161,11 @@ export default function Simulation3D({
     }
   }, []);
 
+  useEffect(() => {
+    liveAiModeRef.current = liveAiMode;
+    onAnimationStateChangeRef.current = onAnimationStateChange;
+  }, [liveAiMode, onAnimationStateChange]);
+
   // Rebuild 3D pieces when the board FEN changes (user move, bot move, or reset)
   useEffect(() => {
     const s = sceneRef.current;
@@ -1172,27 +1189,32 @@ export default function Simulation3D({
 
     if (
       last &&
-      last.color === "b" &&
+      (last.color === "b" || liveAiModeRef.current !== "off") &&
       s.startRobotAnim &&
       !robotAnimatingRef.current
     ) {
+      onAnimationStateChangeRef.current?.(true);
       s.startRobotAnim(last.from, last.to, last.flags, () => {
         rebuildPieces(chessRef.current, s.scene, s.pieces);
         setSelectedSquare(null);
         setLegalSquares([]);
         robotAnimatingRef.current = false;
+        onAnimationStateChangeRef.current?.(false);
       });
     } else {
       rebuildPieces(chess, s.scene, s.pieces);
       setSelectedSquare(null);
       setLegalSquares([]);
+      onAnimationStateChangeRef.current?.(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gamePosition, rebuildPieces]);
 
   // Keep a ref to the latest onMoveExecuted so the mount-only effect always calls the current one
   const onMoveRef = useRef(onMoveExecuted);
-  useEffect(() => { onMoveRef.current = onMoveExecuted; }, [onMoveExecuted]);
+  useEffect(() => {
+    onMoveRef.current = onMoveExecuted;
+  }, [onMoveExecuted]);
 
   // Sync refs during render so the detect loop closure has up-to-date values
   // eslint-disable-next-line react-hooks/refs
@@ -1788,6 +1810,7 @@ export default function Simulation3D({
     function cancelActiveAnimations() {
       robotAnim = null;
       robotAnimatingRef.current = false;
+      onAnimationStateChangeRef.current?.(false);
       playerAnimatingRef.current = false;
       pendingGamePositionRef.current = null;
       if (gestureAnim) {
@@ -1992,12 +2015,13 @@ export default function Simulation3D({
     }
 
     function releaseHeldPiece(cursorSq: string | null) {
+      if (liveAiModeRef.current !== "off") return;
       const validation = validateDropTarget(grabbedPieceSquare, cursorSq, legalRef.current);
       dropPiece(validation.accepted ? validation.target : null);
     }
 
     function processHand(lm: HandLandmark[], rawGesture: Gesture) {
-      if (robotAnimatingRef.current) return;
+      if (robotAnimatingRef.current || liveAiModeRef.current !== "off") return;
       handActiveRef.current = true;
       setHandActive(true);
 
@@ -2830,7 +2854,29 @@ export default function Simulation3D({
             Camera
           </span>
         </div>
-        <div className="absolute top-52 right-4 z-20 w-48 rounded-lg border border-zinc-700/60 bg-black/55 p-3 text-xs text-zinc-200 backdrop-blur-sm shadow-xl light:bg-white/85 light:border-slate-300 light:text-slate-700">
+        <div className="absolute top-52 right-4 z-20 w-52 rounded-lg border border-cyan-500/30 bg-black/60 p-3 text-xs text-zinc-200 backdrop-blur-sm shadow-xl light:bg-white/90 light:border-cyan-300 light:text-slate-700">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="font-semibold tracking-wide">Live AI arena</span>
+            <span className={`text-[10px] uppercase tracking-wider ${liveAiMode === "off" ? "text-zinc-500" : "text-emerald-300"}`}>{liveAiMode === "off" ? "Manual" : "Live"}</span>
+          </div>
+          <label className="mb-2 block">
+            <span className="mb-1 block text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500">Decision engine</span>
+            <select
+              id="live-ai-algorithm"
+              value={liveAiMode}
+              onChange={(event) => onLiveAiModeChange?.(event.target.value as "off" | "minimax" | "mcts")}
+              className="w-full rounded border border-zinc-600 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-100 outline-none light:border-slate-300 light:bg-white light:text-slate-800"
+            >
+              <option value="off">Manual play</option>
+              <option value="minimax">Minimax</option>
+              <option value="mcts">MCTS</option>
+            </select>
+          </label>
+          <label className="mb-3 block">
+            <span className="mb-1 flex justify-between text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500"><span>Search depth</span><span className="font-mono text-cyan-300">{liveAiDepth}</span></span>
+            <input id="live-ai-depth" type="range" min="1" max="6" value={liveAiDepth} onChange={(event) => onLiveAiDepthChange?.(Number(event.target.value))} className="w-full accent-cyan-400" />
+          </label>
+          <div className="mb-3 border-t border-zinc-700/60 pt-2 text-[10px] text-zinc-500 light:border-slate-200">{liveAiMode === "off" ? "Use pointer or hand gestures to play." : `Both sides will alternate ${liveAiMode} decisions.`}</div>
           <div className="mb-2 flex items-center justify-between">
             <span className="font-semibold tracking-wide">Scene lighting</span>
             <span className="text-[10px] uppercase tracking-wider text-cyan-300 light:text-cyan-700">Live</span>

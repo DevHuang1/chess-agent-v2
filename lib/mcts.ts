@@ -49,9 +49,9 @@ export function buildMctsTrace(
   fen: string,
   options: { iterations?: number; branchLimit?: number; rolloutDepth?: number; aiColor?: "w" | "b" } = {},
 ): MctsTrace {
-  const iterations = Math.max(12, Math.min(140, options.iterations ?? 64));
+  const iterations = Math.max(12, Math.min(180, options.iterations ?? 64));
   const branchLimit = Math.max(2, Math.min(8, options.branchLimit ?? 5));
-  const rolloutDepth = Math.max(1, Math.min(5, options.rolloutDepth ?? 3));
+  const rolloutDepth = Math.max(1, Math.min(6, options.rolloutDepth ?? 3));
   const rootChess = new Chess(fen);
   const aiColor = options.aiColor ?? rootChess.turn();
   const seed = { value: hashSeed(fen) };
