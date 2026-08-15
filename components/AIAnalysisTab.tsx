@@ -140,13 +140,15 @@ export default function AIAnalysisTab({ fen, isBotThinking, lastBotMove, emotion
           </div>
         </div>
         {viewMode === "graph" ? (
-          <MinimaxGraph3D
-            trace={trace}
-            algorithm={algorithm}
-            activeNodeIndex={safeActiveNodeIndex}
-            selectedNodeId={selectedNodeId}
-            onSelectNode={(nodeId) => { setSelectedNodeId(nodeId); const index = trace?.nodes.findIndex((node) => node.id === nodeId) ?? -1; if (index >= 0) setActiveNodeIndex(index); }}
-          />
+          <div className="ai-graph-stage flex w-full justify-center">
+            <MinimaxGraph3D
+              trace={trace}
+              algorithm={algorithm}
+              activeNodeIndex={safeActiveNodeIndex}
+              selectedNodeId={selectedNodeId}
+              onSelectNode={(nodeId) => { setSelectedNodeId(nodeId); const index = trace?.nodes.findIndex((node) => node.id === nodeId) ?? -1; if (index >= 0) setActiveNodeIndex(index); }}
+            />
+          </div>
         ) : (
         <div className="mx-auto grid aspect-square w-full max-w-[300px] grid-cols-8 overflow-hidden rounded-lg border border-zinc-700 shadow-2xl light:border-slate-300">
           {board.flatMap((row, rankIndex) => row.map((piece, fileIndex) => {

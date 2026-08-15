@@ -119,7 +119,12 @@ function makeLayout(trace: MinimaxTrace, focusIndex: number): LayoutNode[] {
       });
     });
   }
-  return relaxLayout(result);
+  const relaxed = relaxLayout(result);
+  if (relaxed.length === 0) return relaxed;
+  const minX = Math.min(...relaxed.map((node) => node.graphX));
+  const maxX = Math.max(...relaxed.map((node) => node.graphX));
+  const centerX = (minX + maxX) / 2;
+  return relaxed.map((node) => ({ ...node, graphX: node.graphX - centerX }));
 }
 
 function relaxLayout(nodes: LayoutNode[]): LayoutNode[] {

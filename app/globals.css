@@ -167,8 +167,13 @@ body {
   transform: translateX(-2px) scale(1.04);
 }
 
-.controller-panel-collapsed .controller-toggle {
-  animation: sentio-controller-toggle-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.controller-content {
+  animation: sentio-controller-content-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .controller-rail {
@@ -355,6 +360,8 @@ body {
 .controller-split-region {
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow: visible;
 }
 
 .controller-split-grid {
@@ -366,7 +373,9 @@ body {
 .controller-split-grid .controller-primary-pane,
 .controller-split-grid .controller-secondary-pane {
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .controller-split-grid .controller-primary-pane > *,
@@ -409,6 +418,25 @@ body {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+.ai-lab-workspace-panel {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.ai-lab-workspace-panel > .chat-scroll {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+}
+
+.ai-lab-workspace-panel .ai-graph-shell {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
 }
 
 @media (max-width: 900px) {
