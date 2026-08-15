@@ -37,9 +37,11 @@ test("opens the full-width live AI Lab workspace", async ({ page }) => {
   await expect(page.getByText("AI Lab · Live Game Analysis", { exact: true })).toBeVisible();
   await expect(page.getByText("waiting for first move", { exact: true })).toBeVisible();
   await expect(page.getByText("WAITING FOR GAME", { exact: true })).toBeVisible();
+  expect(await page.locator(".ai-lab-workspace-panel").evaluate((element) => getComputedStyle(element).overflowY)).toBe("auto");
   await expect(page.getByRole("button", { name: "Replay", exact: true })).toHaveCount(0);
 
   await page.getByRole("navigation", { name: "Workspace navigation" }).getByRole("button", { name: "Board", exact: true }).click();
+  expect(await page.locator(".controller-content").evaluate((element) => getComputedStyle(element).overflowY)).toBe("auto");
   await page.locator("#sentio-engine-board-square-e2").click();
   await page.locator("#sentio-engine-board-square-e4").click();
   await page.getByRole("button", { name: "AI Lab", exact: true }).click();
@@ -49,6 +51,15 @@ test("opens the full-width live AI Lab workspace", async ({ page }) => {
   await expect(page.getByText("Minimax Flight Recorder", { exact: true })).toBeVisible();
   await expect(page.getByText("Position under analysis", { exact: true })).toBeVisible();
   await expect(page.getByText("Search tree", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Search graph nodes")).toBeVisible();
+  await expect(page.getByLabel("Graph node status")).toBeVisible();
+  await expect(page.getByLabel("Graph node depth")).toBeVisible();
+  await page.getByLabel("Search graph nodes").fill("e4");
+  await expect(page.getByText(/matching nodes/)).toBeVisible();
+  await page.getByLabel("Graph node status").selectOption("principal");
+  await expect(page.getByText(/matching nodes/)).toBeVisible();
+  await page.getByRole("button", { name: "Clear filters" }).click();
+  await expect(page.getByLabel("Search graph nodes")).toHaveValue("");
   await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
   await expect(page.getByLabel("Minimax depth")).toHaveValue("3");
 
@@ -62,7 +73,19 @@ test("opens the full-width live AI Lab workspace", async ({ page }) => {
   await page.getByRole("button", { name: "3D Graph" }).click();
   await expect(page.getByLabel("3D minimax decision tree")).toBeVisible();
   await expect(page.getByLabel("AI Lab graph overview navigator")).toBeVisible();
+  await expect(page.getByLabel("3D graph navigation controls")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Zoom in graph" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Pan graph left" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Reset graph camera" })).toBeVisible();
+  await page.getByRole("button", { name: "Zoom in graph" }).click();
+  await page.getByRole("button", { name: "Pan graph right" }).click();
+  await page.getByRole("button", { name: "Reset graph camera" }).click();
   await expect(page.getByRole("button", { name: "Reset view" })).toBeVisible();
+  const graphShell = await page.locator(".ai-graph-shell").boundingBox();
+  const graphCard = await page.locator(".ai-lab-workspace-panel").boundingBox();
+  expect(graphShell).not.toBeNull();
+  expect(graphCard).not.toBeNull();
+  expect(Math.abs((graphShell?.x ?? 0) + (graphShell?.width ?? 0) / 2 - ((graphCard?.x ?? 0) + (graphCard?.width ?? 0) / 2))).toBeLessThan(12);
   await expect(page.getByText("3D MCTS rollout graph", { exact: true })).toBeVisible();
 
   await page.getByRole("navigation", { name: "Workspace navigation" }).getByRole("button", { name: "Board", exact: true }).click();
