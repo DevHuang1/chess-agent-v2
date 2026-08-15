@@ -22,6 +22,7 @@ const COLORS = {
   pruned: 0xfb7185,
   exploring: 0xa78bfa,
   edge: 0x64748b,
+  activeEdge: 0x67e8f9,
 };
 
 function isMctsNode(node: MinimaxSearchNode | MctsSearchNode | null): node is MctsSearchNode {
@@ -33,6 +34,38 @@ function nodeColor(node: MinimaxSearchNode) {
   if (node.status === "evaluated") return COLORS.evaluated;
   if (node.status === "pruned") return COLORS.pruned;
   return node.depth === 0 ? COLORS.root : COLORS.exploring;
+}
+
+function createParticleField(node: LayoutNode): THREE.Points {
+  const count = 14;
+  const positions = new Float32Array(count * 3);
+  const velocities = Array.from({ length: count }, () => new THREE.Vector3());
+  const phases = Array.from({ length: count }, () => Math.random() * Math.PI * 2);
+  for (let index = 0; index < count; index++) {
+    const offset = index * 3;
+    const angle = phases[index];
+    const radius = 0.18 + Math.random() * 0.16;
+    positions[offset] = Math.cos(angle) * radius;
+    positions[offset + 1] = (Math.random() - 0.5) * 0.18;
+    positions[offset + 2] = Math.sin(angle) * radius;
+    velocities[index].set(Math.cos(angle) * 0.08, 0.12 + Math.random() * 0.08, Math.sin(angle) * 0.08);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  const material = new THREE.PointsMaterial({
+    color: nodeColor(node),
+    size: 0.07,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    sizeAttenuation: true,
+  });
+  const particles = new THREE.Points(geometry, material);
+  particles.userData.velocities = velocities;
+  particles.userData.phases = phases;
+  particles.userData.baseColor = nodeColor(node);
+  return particles;
 }
 
 function makeLayout(trace: MinimaxTrace, focusIndex: number): LayoutNode[] {
@@ -205,6 +238,8 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const graphGroupRef = useRef<THREE.Group | null>(null);
   const nodeMeshesRef = useRef(new Map<string, THREE.Mesh>());
+  const particleSystemsRef = useRef(new Map<string, THREE.Points>());
+  const glowRingsRef = useRef(new Map<string, THREE.Mesh>());
   const layoutRef = useRef<LayoutNode[]>([]);
   const hoveredNodeRef = useRef<string | null>(null);
   const onSelectNodeRef = useRef(onSelectNode);
@@ -327,8 +362,41 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
         mesh.scale.y = mesh.scale.x;
         mesh.scale.z = mesh.scale.x;
         const material = mesh.material as THREE.MeshStandardMaterial;
-        material.emissiveIntensity = isSelected ? 1.45 : isActive ? 1.15 : 0.42;
+        material.emissiveIntensity = isSelected ? 1.8 : isActive ? 1.35 : 0.42;
         material.opacity = isSelected || isActive ? 1 : (mesh.userData.baseOpacity as number ?? 0.94);
+
+        const particles = particleSystemsRef.current.get(nodeId);
+        if (particles) {
+          const particleMaterial = particles.material as THREE.PointsMaterial;
+          const particleTarget = isSelected ? 0.95 : isActive ? 0.78 : hoveredNodeRef.current === nodeId ? 0.42 : 0.04;
+          particleMaterial.opacity += (particleTarget - particleMaterial.opacity) * Math.min(1, delta * 8);
+          particles.rotation.y += delta * (isActive || isSelected ? 1.8 : 0.35);
+          particles.rotation.x = Math.sin(now * 0.0014 + (particles.userData.phaseOffset as number ?? 0)) * 0.16;
+          const positionAttribute = particles.geometry.getAttribute("position") as THREE.BufferAttribute;
+          const velocities = particles.userData.velocities as THREE.Vector3[];
+          for (let index = 0; index < velocities.length; index++) {
+            const currentY = positionAttribute.getY(index) + velocities[index].y * delta;
+            positionAttribute.setY(index, currentY > 0.62 ? -0.2 : currentY);
+          }
+          positionAttribute.needsUpdate = true;
+        }
+
+        const ring = glowRingsRef.current.get(nodeId);
+        if (ring) {
+          const ringMaterial = ring.material as THREE.MeshBasicMaterial;
+          const ringTarget = isSelected ? 0.82 : isActive ? 0.58 : hoveredNodeRef.current === nodeId ? 0.28 : 0.04;
+          ringMaterial.opacity += (ringTarget - ringMaterial.opacity) * Math.min(1, delta * 10);
+          ring.rotation.z += delta * (isActive || isSelected ? 1.2 : 0.22);
+          const ringScale = isSelected ? 1.18 + Math.sin(now * 0.006) * 0.08 : isActive ? 1.08 + Math.sin(now * 0.005) * 0.06 : 1;
+          ring.scale.setScalar(ringScale);
+        }
+      }
+      for (const child of graphGroup.children) {
+        if (!(child instanceof THREE.Line)) continue;
+        const edgeMaterial = child.material as THREE.LineBasicMaterial;
+        const hotEdge = Boolean(child.userData.hotEdge);
+        const targetOpacity = hotEdge ? 0.86 + Math.sin(now * 0.007) * 0.12 : (child.userData.baseOpacity as number ?? 0.42);
+        edgeMaterial.opacity += (targetOpacity - edgeMaterial.opacity) * Math.min(1, delta * 9);
       }
       renderer.render(scene, camera);
     };
@@ -346,6 +414,8 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     resize();
 
     const nodeMeshes = nodeMeshesRef.current;
+    const particleSystems = particleSystemsRef.current;
+    const glowRings = glowRingsRef.current;
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
@@ -355,7 +425,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       renderer.domElement.removeEventListener("wheel", onWheel);
       cameraResetRef.current = null;
       graphGroup.traverse((object) => {
-        if (!(object instanceof THREE.Mesh)) return;
+        if (!(object instanceof THREE.Mesh || object instanceof THREE.Points)) return;
         object.geometry.dispose();
         const material = object.material;
         if (Array.isArray(material)) material.forEach((entry) => entry.dispose());
@@ -366,6 +436,8 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       renderer.dispose();
       renderer.domElement.remove();
       nodeMeshes.clear();
+      particleSystems.clear();
+      glowRings.clear();
       scene.clear();
     };
   }, []);
@@ -374,7 +446,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     const group = graphGroupRef.current;
     if (!group) return;
     group.traverse((object) => {
-      if (!(object instanceof THREE.Mesh || object instanceof THREE.Line)) return;
+      if (!(object instanceof THREE.Mesh || object instanceof THREE.Line || object instanceof THREE.Points)) return;
       object.geometry.dispose();
       const material = object.material;
       if (Array.isArray(material)) material.forEach((entry) => entry.dispose());
@@ -382,6 +454,8 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     });
     group.clear();
     nodeMeshesRef.current.clear();
+    particleSystemsRef.current.clear();
+    glowRingsRef.current.clear();
     if (!trace) {
       layoutRef.current = [];
       return;
@@ -389,6 +463,7 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
     const layout = makeLayout(trace, activeNodeIndex);
     layoutRef.current = layout;
     const byId = new Map(layout.map((node) => [node.id, node]));
+    const activeNodeId = trace.nodes[activeNodeIndex]?.id;
     const edgeMaterial = new THREE.LineBasicMaterial({ color: COLORS.edge, transparent: true, opacity: 0.42 });
     for (const node of layout) {
       for (const childId of node.children) {
@@ -396,10 +471,17 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
         if (!child) continue;
         const points = [new THREE.Vector3(node.graphX, node.graphY, node.graphZ), new THREE.Vector3(child.graphX, child.graphY, child.graphZ)];
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const hotEdge = node.id === activeNodeId || child.id === activeNodeId || node.id === selectedNodeId || child.id === selectedNodeId;
         const edge = new THREE.Line(geometry, edgeMaterial.clone());
+        const edgeLineMaterial = edge.material as THREE.LineBasicMaterial;
+        edgeLineMaterial.color.setHex(hotEdge ? COLORS.activeEdge : COLORS.edge);
+        edgeLineMaterial.opacity = hotEdge ? 0.86 : 0.42;
+        edge.userData.hotEdge = hotEdge;
+        edge.userData.baseOpacity = 0.42;
         group.add(edge);
       }
     }
+    edgeMaterial.dispose();
     for (const node of layout) {
       const baseOpacity = node.status === "pruned" ? 0.58 : 0.94;
       const material = new THREE.MeshStandardMaterial({ color: nodeColor(node), emissive: nodeColor(node), emissiveIntensity: 0.42, metalness: 0.25, roughness: 0.32, transparent: true, opacity: baseOpacity });
@@ -409,8 +491,32 @@ export default function MinimaxGraph3D({ trace, algorithm = "minimax", activeNod
       mesh.userData.baseOpacity = baseOpacity;
       nodeMeshesRef.current.set(node.id, mesh);
       group.add(mesh);
+
+      const isHot = node.id === activeNodeId || node.id === selectedNodeId;
+      if (isHot || node.status === "principal" || node.status === "pruned") {
+        const particles = createParticleField(node);
+        particles.position.copy(mesh.position);
+        particles.userData.phaseOffset = Math.random() * Math.PI * 2;
+        particleSystemsRef.current.set(node.id, particles);
+        group.add(particles);
+      }
+
+      const glowMaterial = new THREE.MeshBasicMaterial({
+        color: nodeColor(node),
+        transparent: true,
+        opacity: isHot ? 0.56 : 0.04,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      });
+      const glowRing = new THREE.Mesh(new THREE.RingGeometry(node.depth === 0 ? 0.52 : 0.36, node.depth === 0 ? 0.58 : 0.41, 28), glowMaterial);
+      glowRing.position.copy(mesh.position);
+      glowRing.rotation.x = Math.PI / 2;
+      glowRing.userData.nodeId = node.id;
+      glowRingsRef.current.set(node.id, glowRing);
+      group.add(glowRing);
     }
-  }, [trace, activeNodeIndex]);
+  }, [trace, activeNodeIndex, selectedNodeId]);
 
   const overview = useMemo(() => (trace ? makeOverview(trace, activeNodeIndex) : { nodes: [], edges: [] }), [trace, activeNodeIndex]);
   const hoveredNode = trace?.nodes.find((node) => node.id === hoveredNodeId) ?? null;
