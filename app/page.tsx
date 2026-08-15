@@ -43,6 +43,7 @@ import dynamic from "next/dynamic";
 import SpeechTab from "@/components/SpeechTab";
 import Simulation3D from "@/components/Simulation3D";
 import GameInfo from "@/components/GameInfo";
+import AIAnalysisTab from "@/components/AIAnalysisTab";
 import { PIECE_DESIGNS, PieceDesignKey } from "@/components/pieces";
 import type { ChessboardOptions } from "react-chessboard";
 import { playMoveSound, playCaptureSound, playCheckSound, setSoundMuted } from "@/lib/audio";
@@ -208,7 +209,7 @@ type EngineProfile = {
 
 type GameOutcome = "active" | "checkmate" | "stalemate" | "draw" | "gameover";
 type CoachLlmConnection = "checking" | "connected" | "disconnected" | "disabled";
-type SidebarTab = "coach" | "speech" | "3d";
+type SidebarTab = "coach" | "speech" | "ai" | "3d";
 
 const EMOTION_PROFILES: Record<EmotionLabel, { depth: number; skillLevel: number; elo: number }> = {
   stressed: { depth: 1, skillLevel: 1, elo: 1320 },
@@ -317,6 +318,7 @@ export default function ChessPage() {
   const [gameOutcome, setGameOutcome] = useState<GameOutcome>("active");
   const [statusMessage, setStatusMessage] = useState("Sentio online.");
   const [isBotThinking, setIsBotThinking] = useState(false);
+  const [lastBotMove, setLastBotMove] = useState<{ uci: string; san: string; fen: string } | null>(null);
   const [coachLlmConnection, setCoachLlmConnection] =
     useState<CoachLlmConnection>("checking");
   const [coachLlmDetail, setCoachLlmDetail] = useState("Checking LLM health...");
@@ -613,26 +615,40 @@ export default function ChessPage() {
       const lower = uciMove.toLowerCase();
 
       let isCapture = false;
+      let appliedBotSan = "";
+      let appliedBotUci = lower.substring(0, 4);
       try {
         const from = lower.substring(0, 2);
         const to = lower.substring(2, 4);
         const target = chess.get(to as Square);
         isCapture = !!target && target.color === "w";
-        chess.move({
+        const appliedMove = chess.move({
           from: from as Square,
           to: to as Square,
           promotion: lower.length === 5 ? (lower[4] as "q" | "r" | "b" | "n") : undefined,
         });
+        if (appliedMove) {
+          appliedBotSan = appliedMove.san;
+          appliedBotUci = `${appliedMove.from}${appliedMove.to}${appliedMove.promotion ?? ""}`;
+        }
       } catch {
         // The engine's suggested move is illegal on the current position —
         // fall back to a guaranteed-legal local move.
         fallbackUsed = true;
         fallbackReason = "Engine returned an illegal move.";
         const m = localBotMove(chess);
-        if (m) chess.move({ from: m.from, to: m.to });
+        if (m) {
+          const fallbackMove = chess.move({ from: m.from, to: m.to });
+          if (fallbackMove) {
+            appliedBotSan = fallbackMove.san;
+            appliedBotUci = `${fallbackMove.from}${fallbackMove.to}${fallbackMove.promotion ?? ""}`;
+          }
+        }
       }
 
-      setGamePosition(chess.fen());
+      const nextFen = chess.fen();
+      setLastBotMove(appliedBotSan ? { uci: appliedBotUci, san: appliedBotSan, fen: nextFen } : null);
+      setGamePosition(nextFen);
       if (isCapture) {
         playCaptureSound();
       } else if (chess.inCheck()) {
@@ -989,6 +1005,7 @@ export default function ChessPage() {
     chessRef.current = newChess;
     setGamePosition(newChess.fen());
     setGameOutcome("active");
+    setLastBotMove(null);
     setSelectedSquare(null);
     setLegalMoveSquares([]);
     setStatusMessage("New game started.");
@@ -1215,6 +1232,17 @@ export default function ChessPage() {
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab("ai")}
+            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+              activeTab === "ai"
+                ? "bg-cyan-500/20 text-cyan-200 border border-cyan-500/30 shadow-sm light:bg-cyan-100 light:text-cyan-700"
+                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+            }`}
+          >
+            AI Lab
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("3d")}
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
               activeTab === "3d"
@@ -1363,6 +1391,13 @@ export default function ChessPage() {
                 }
               }}
               setStatusMessage={setStatusMessage}
+            />
+          ) : activeTab === "ai" ? (
+            <AIAnalysisTab
+              fen={gamePosition}
+              isBotThinking={isBotThinking}
+              lastBotMove={lastBotMove}
+              emotion={emotion}
             />
           ) : (
             <div className="flex flex-1 flex-col justify-between p-1 space-y-4">
