@@ -1,0 +1,90 @@
+[
+  {
+    "id": "italian-basics",
+    "title": "The Italian Game",
+    "category": "openings",
+    "intro": "The classical way to start an open game: quick development, central control, and a safe king. Follow the main moves and notice what each one accomplishes.",
+    "steps": [
+      { "san": "e4", "narration": "Claim the center and open lines for the queen and bishop." },
+      { "san": "e5", "narration": "Black mirrors, contesting the center directly." },
+      { "san": "Nf3", "narration": "Develop with tempo — the knight attacks e5." },
+      { "san": "Nc6", "narration": "Black defends e5 while developing." },
+      { "san": "Bc4", "narration": "The Italian bishop eyes f7, Black's weakest square." },
+      { "san": "Bc5", "narration": "Black mirrors, targeting f2 in return." },
+      { "san": "c3", "narration": "Preparing d4 to build a full pawn center." },
+      { "san": "Nf6", "narration": "Black counter-attacks e4 before White can play d4." },
+      { "san": "d3", "narration": "A solid modern approach: keep the center flexible and castle next." },
+      { "san": "d6", "narration": "Black opens a line for development too. A balanced middlegame ahead." }
+    ]
+  },
+  {
+    "id": "scholars-mate",
+    "title": "Scholar's Mate — Trap & Antidote",
+    "category": "openings",
+    "intro": "The most famous beginner trap. Learn how it wins — and why defending correctly makes it harmless.",
+    "steps": [
+      { "san": "e4", "narration": "White opens with the most logical move." },
+      { "san": "e5", "narration": "Black responds symmetrically." },
+      { "san": "Qh5", "narration": "The early queen sortie, eyeing f7. Already dubious — but beginners fall for it." },
+      { "san": "Nc6", "narration": "A natural developing move… but it ignores the threat!" },
+      { "san": "Bc4", "narration": "Adding a second attacker to f7. The trap is set." },
+      { "san": "Nf6", "narration": "Blunder — this loses. Black had to defend (g6 or Qe7). Notice how the position punishes careless development." },
+      { "san": "Qxf7#", "narration": "Mate! The queen is protected by the bishop on c4, and the king has no escape. Lesson: defend f7, don't rush — and never bring the queen out this early yourself." }
+    ]
+  },
+  {
+    "id": "legal-mate",
+    "title": "Légal's Mate",
+    "category": "openings",
+    "intro": "A legendary trap where White sacrifices the queen — and mates with three minor pieces. A beautiful lesson in development leads.",
+    "steps": [
+      { "san": "e4", "narration": "White takes the center." },
+      { "san": "e5", "narration": "Black mirrors." },
+      { "san": "Bc4", "narration": "Targeting f7." },
+      { "san": "d6", "narration": "Black supports e5 (Philidor-style)." },
+      { "san": "Nf3", "narration": "Attacking e5 with a developing move." },
+      { "san": "Bg4", "narration": "This pin looks annoying — it actually loses. The bishop attacks the pinned knight." },
+      { "san": "Nc3", "narration": "Quietly bringing out the second knight. Now the trap springs." },
+      { "san": "g6", "narration": "Black continues naturally, ignoring the danger." },
+      { "san": "Nxe5!", "narration": "The refutation: ignore the pin! Taking the queen seems to win for Black…" },
+      { "san": "Bxd1", "narration": "Black grabs the queen — and falls into it." },
+      { "san": "Bxf7+", "narration": "Check! The bishop and knights dominate while Black's queen is stranded far from the king." },
+      { "san": "Ke7", "narration": "Forced — the only square." },
+      { "san": "Nd5#", "narration": "Mate with the c3-knight. Every White piece participates; Black never finished developing. Development matters!" }
+    ]
+  },
+  {
+    "id": "back-rank-mate",
+    "title": "Back-Rank Mate Basics",
+    "category": "endgames",
+    "intro": "When a castled king is trapped behind its own pawns, a single rook can end the game. This pattern wins countless club games.",
+    "startFen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1",
+    "steps": [
+      { "san": "Ra8#", "narration": "The rook invades the back rank. The pawns on f7, g7 and h7 — meant as protection — become a prison. Always give your king an escape hatch (a Luft square like h3/h6) before the endgame arrives." }
+    ]
+  },
+  {
+    "id": "two-rook-ladder",
+    "title": "The Two-Rook Ladder",
+    "category": "endgames",
+    "intro": "Up two rooks, mating is mechanical: cut off ranks one by one until the king runs out of board.",
+    "startFen": "7k/8/8/8/8/8/R7/1R5K w - - 0 1",
+    "steps": [
+      { "san": "Rb7", "narration": "The first rook cuts off rank 7. The king is confined to the last rank." },
+      { "san": "Kg8", "narration": "Black's only legal move — the ladder tightens." },
+      { "san": "Ra8#", "narration": "The second rook delivers mate on the eighth rank. No checks were needed earlier — just patient cutting-off. This technique wins 'up a rook' endgames instantly." }
+    ]
+  },
+  {
+    "id": "smothered-mate",
+    "title": "The Smothered Mate Sacrifice",
+    "category": "attacks",
+    "intro": "Philidor's legacy: a queen sacrifice forces Black's own pieces to smother their king. One of the most beautiful patterns in chess.",
+    "startFen": "5r1k/6pp/7N/8/2Q5/8/8/6K1 w - - 0 1",
+    "steps": [
+      { "san": "Qg8+", "narration": "The stunning sacrifice. The rook must capture — the king can't reach g8 safely because the knight on h6 guards it." },
+      { "san": "Rxg8", "narration": "Forced. Black's own rook now blocks g8." },
+      { "san": "Nf7#", "narration": "Mate! The knight checks from f7 while the king is buried by its own rook and pawns. Remember the recipe: knight check drives the king to the corner, then Qg8+ deflects the defender." }
+    ]
+  }
+]

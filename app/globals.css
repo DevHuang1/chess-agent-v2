@@ -3,28 +3,62 @@
 @custom-variant light (&:is(.light *));
 
 :root {
-  --background: #0d0d11;
+  /* Deep blue-black base — richer than flat zinc, lets board wood tones pop. */
+  --background: #0a0d14;
   --foreground: #f4f4f5;
   --sentio-accent: #f59e0b;
   --sentio-accent-glow: rgba(245, 158, 11, 0.15);
   --sentio-board-light: #ebecd0;
   --sentio-board-dark: #779556;
-  --sentio-board-frame-from: #2a2b30;
-  --sentio-board-frame-to: #141518;
+  --sentio-board-frame-from: #1c2230;
+  --sentio-board-frame-to: #10141d;
+  /* Panel surface tokens (dark). */
+  --panel: rgba(15, 20, 31, 0.82);
+  --panel-border: rgba(120, 134, 158, 0.22);
+  --panel-raised: rgba(23, 30, 45, 0.9);
+  --text-muted: #8b94a7;
+  /* Train section accent. */
+  --train-accent: #a78bfa;
+  --train-accent-glow: rgba(167, 139, 250, 0.16);
+  /* Emotion spectrum — one functional palette used app-wide. */
+  --emotion-calm: #38bdf8;
+  --emotion-focused: #22d3ee;
+  --emotion-neutral: #a1a1aa;
+  --emotion-frustrated: #fb923c;
+  --emotion-stressed: #f87171;
+  --emotion-confident: #34d399;
 }
 
 .light {
-  --background: #f8fafc;
+  --background: #f4f6fb;
   --foreground: #0f172a;
   --sentio-accent: #d97706;
   --sentio-accent-glow: rgba(217, 119, 6, 0.15);
   --sentio-board-frame-from: #e2e8f0;
   --sentio-board-frame-to: #cbd5e1;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-border: rgba(100, 116, 139, 0.3);
+  --panel-raised: rgba(255, 255, 255, 0.95);
+  --text-muted: #64748b;
+  --train-accent: #7c3aed;
+  --train-accent-glow: rgba(124, 58, 237, 0.12);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-panel-border: var(--panel-border);
+  --color-panel-raised: var(--panel-raised);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--sentio-accent);
+  --color-train: var(--train-accent);
+  --color-emotion-calm: var(--emotion-calm);
+  --color-emotion-focused: var(--emotion-focused);
+  --color-emotion-neutral: var(--emotion-neutral);
+  --color-emotion-frustrated: var(--emotion-frustrated);
+  --color-emotion-stressed: var(--emotion-stressed);
+  --color-emotion-confident: var(--emotion-confident);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -453,6 +487,83 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .controller-floating {
+    animation-duration: 1ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Training Arena — panel + interaction utilities.
+ * Built on the token layer so dark/light themes swap automatically.
+ * ------------------------------------------------------------------------- */
+
+.train-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(12px);
+}
+
+.train-panel-raised {
+  background: var(--panel-raised);
+  border: 1px solid var(--panel-border);
+}
+
+.train-accent-text {
+  color: var(--train-accent);
+}
+
+.train-accent-ring:focus-visible {
+  outline: 2px solid var(--train-accent);
+  outline-offset: 2px;
+}
+
+/* Puzzle Rush feedback ---------------------------------------------------- */
+
+@keyframes train-shake {
+  10%, 90% { transform: translateX(-1.5px); }
+  20%, 80% { transform: translateX(3px); }
+  30%, 50%, 70% { transform: translateX(-5px); }
+  40%, 60% { transform: translateX(5px); }
+}
+
+.train-shake {
+  animation: train-shake 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes train-solve-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
+  70% { box-shadow: 0 0 0 14px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+
+.train-solve-pulse {
+  animation: train-solve-pulse 620ms ease-out both;
+}
+
+@keyframes train-xp-pop {
+  0% { opacity: 0; transform: translateY(6px) scale(0.85); }
+  25% { opacity: 1; transform: translateY(-4px) scale(1.08); }
+  100% { opacity: 0; transform: translateY(-26px) scale(0.95); }
+}
+
+.train-xp-pop {
+  animation: train-xp-pop 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes train-level-up-in {
+  0% { opacity: 0; transform: scale(0.7) rotate(-4deg); }
+  55% { opacity: 1; transform: scale(1.06) rotate(1.5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.train-level-up-badge {
+  animation: train-level-up-in 720ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .train-shake,
+  .train-solve-pulse,
+  .train-xp-pop,
+  .train-level-up-badge {
     animation-duration: 1ms !important;
   }
 }

@@ -61,7 +61,7 @@ import {
   playCheckSound,
   setSoundMuted,
 } from "@/lib/audio";
-import { buildMinimaxTrace } from "@/lib/minimax";
+import { buildMinimaxTrace, evaluateMaterial } from "@/lib/minimax";
 import { buildMctsTrace } from "@/lib/mcts";
 import {
   useSidebarPreferences,
@@ -70,6 +70,19 @@ import {
 import { useEmotionDetection } from "@/hooks/useEmotionDetection";
 import { useCoachAudio } from "@/hooks/useCoachAudio";
 import VoiceCoachControl from "@/components/VoiceCoachControl";
+import EmotionMonitor from "@/components/EmotionMonitor";
+import { FUSION_WEIGHTS, type GameSignals } from "@/lib/emotionFusion";
+import { EMOTION_EMOJI } from "@/lib/emotionClassifier";
+import {
+  emptyProgress,
+  levelFromXp,
+  loadProgress,
+  saveProgress,
+  tierForLevel,
+  type PuzzleProgress,
+} from "@/lib/puzzleProgress";
+import { queueUnanalyzedGame } from "@/lib/gameAnalysis";
+import TrainingWorkspace from "@/components/train/TrainingWorkspace";
 import { EMOTION_PROFILES, type EmotionLabel } from "@/lib/engineProfiles";
 import { lookupOpening } from "@/lib/openings";
 
@@ -324,7 +337,9 @@ export default function ChessPage() {
   const aiHandRef = useRef<HTMLDivElement | null>(null);
   const aiHandRafRef = useRef<number | null>(null);
 
-  const [workspaceTab, setWorkspaceTab] = useState<"board" | "aiLab">("board");
+  const [workspaceTab, setWorkspaceTab] = useState<
+    "board" | "aiLab" | "train"
+  >("board");
   const [activeTab, setActiveTab] = useState<SidebarTab>("coach");
 
   const {
@@ -339,12 +354,112 @@ export default function ChessPage() {
     setDetached: setControllerDetached,
   } = useSidebarPreferences();
 
-  const { videoRef, emotion, setEmotion, emotionHistoryRef } =
-    useEmotionDetection({
-      activeTab,
-      auto: emotionMode === "auto",
-      onStatus: setStatusMessage,
-    });
+  // --- Gameplay telemetry feeding the emotion fusion (lib/emotionFusion.ts).
+  // When the bot finished its last move; think time = player move time minus
+  // this. Zero means the player has not yet replied to a bot move.
+  const botMoveAtRef = useRef(0);
+  // Timestamps of recent setbacks (player moves that dropped their own eval).
+  const playerSetbacksRef = useRef<number[]>([]);
+  // The most recent eval loss caused by a player move, with its timestamp.
+  const lastEvalLossRef = useRef<{ loss: number; at: number } | null>(null);
+  // Latest evaluation after a player move (White's perspective).
+  const lastPlayerEvalRef = useRef<number | null>(null);
+  // Setback memory window: older setbacks stop influencing fusion.
+  const SETBACK_WINDOW_MS = 90_000;
+  // How long a blunder keeps boosting negative emotions.
+  const EVAL_LOSS_FRESH_MS = 30_000;
+
+  /** Snapshot of player behaviour for the emotion pipeline. */
+  function getGameSignals(): Partial<GameSignals> {
+    const now = Date.now();
+    playerSetbacksRef.current = playerSetbacksRef.current.filter(
+      (t) => now - t < SETBACK_WINDOW_MS,
+    );
+    const freshLoss =
+      lastEvalLossRef.current &&
+      now - lastEvalLossRef.current.at < EVAL_LOSS_FRESH_MS
+        ? lastEvalLossRef.current.loss
+        : null;
+    return {
+      thinkTimeMs:
+        botMoveAtRef.current > 0 ? now - botMoveAtRef.current : null,
+      lastMoveEvalLossCp: freshLoss,
+      recentSetbacks: playerSetbacksRef.current.length,
+      playerEvalCp: lastPlayerEvalRef.current,
+    };
+  }
+
+  function clearGameplayTelemetry(): void {
+    botMoveAtRef.current = 0;
+    playerSetbacksRef.current = [];
+    lastEvalLossRef.current = null;
+    lastPlayerEvalRef.current = null;
+  }
+
+  const {
+    videoRef,
+    emotion,
+    setEmotion,
+    emotionHistoryRef,
+    emotionScores,
+    emotionTimeline,
+  } = useEmotionDetection({
+    activeTab,
+    auto: emotionMode === "auto",
+    onStatus: setStatusMessage,
+    getGameSignals,
+  });
+
+  // Training profile (XP/level) — persisted to localStorage.
+  // Initialize with the deterministic empty profile so server render and
+  // first client render match; hydrate from localStorage after mount
+  // (a lazy useState(loadProgress()) initializer reads localStorage during
+  // hydration and causes a text-mismatch on the header level badge).
+  const [trainProgress, setTrainProgress] = useState<PuzzleProgress>(
+    emptyProgress,
+  );
+  const [progressLoaded, setProgressLoaded] = useState(false);
+  useEffect(() => {
+    // Deferred so state updates don't cascade inside the effect.
+    const t = window.setTimeout(() => {
+      setTrainProgress(loadProgress());
+      setProgressLoaded(true);
+    }, 0);
+    return () => window.clearTimeout(t);
+  }, []);
+  useEffect(() => {
+    if (!progressLoaded) return; // Don't clobber storage with the SSR default.
+    saveProgress(trainProgress);
+  }, [progressLoaded, trainProgress]);
+
+  /** Seed the live board at an arbitrary position (Learn → "Play it out"). */
+  function startTrainingGame(fen: string): void {
+    if (!fen) return;
+    let chess: Chess;
+    try {
+      chess = new Chess(fen);
+    } catch {
+      return;
+    }
+    gameIdRef.current += 1;
+    botRequestControllerRef.current?.abort(
+      new Error("Training game started"),
+    );
+    botRequestControllerRef.current = null;
+    chessRef.current = chess;
+    clearGameplayTelemetry();
+    botMoveAtRef.current = 0;
+    setPendingPromotion(null);
+    setHintMove(null);
+    setSelectedSquare(null);
+    setLegalMoveTargets([]);
+    setLastBotMove(null);
+    setBackendEngineProfile(null);
+    setWorkspaceTab("board");
+    setGamePosition(chess.fen());
+    updateGameOutcome(chess);
+    setStatusMessage("Training position loaded. You're up!");
+  }
 
   const engineProfile = backendEngineProfile ?? {
     emotion,
@@ -536,6 +651,20 @@ export default function ChessPage() {
       setGameOutcome("active");
       return false;
     }
+    // Park the finished game for later analysis in the Progress view.
+    queueUnanalyzedGame({
+      id: `game-${gameIdRef.current}-${Date.now()}`,
+      finishedAt: Date.now(),
+      outcome: chess.isCheckmate()
+        ? chess.turn() === "w"
+          ? "black wins"
+          : "white wins"
+        : chess.isStalemate()
+          ? "stalemate"
+          : "draw",
+      playerColor: "w",
+      movesSan: chess.history(),
+    });
     if (chess.isCheckmate()) {
       setGameOutcome("checkmate");
       setStatusMessage("Checkmate. Game over.");
@@ -802,6 +931,8 @@ export default function ChessPage() {
           ? { uci: appliedBotUci, san: appliedBotSan, fen: nextFen }
           : null,
       );
+      // Mark when the bot moved so the player's next think time is measurable.
+      botMoveAtRef.current = Date.now();
       setGamePosition(nextFen);
       if (isCapture) {
         playCaptureSound();
@@ -843,6 +974,7 @@ export default function ChessPage() {
     try {
       if (chess.turn() !== "w") return false;
 
+      const playerEvalBefore = evaluateMaterial(chess, "w");
       const move = chess.move({
         from: from as Square,
         to: to as Square,
@@ -850,6 +982,16 @@ export default function ChessPage() {
       });
 
       if (!move) return false;
+
+      // Track the positional cost of the player's own move: a large
+      // self-inflicted eval drop counts as a setback for emotion fusion.
+      const evalAfter = evaluateMaterial(chess, "w");
+      lastPlayerEvalRef.current = evalAfter;
+      const evalLoss = Math.max(0, playerEvalBefore - evalAfter);
+      lastEvalLossRef.current = { loss: evalLoss, at: Date.now() };
+      if (evalLoss >= FUSION_WEIGHTS.setbackCp) {
+        playerSetbacksRef.current.push(Date.now());
+      }
 
       if (move.captured) {
         playCaptureSound();
@@ -929,6 +1071,8 @@ export default function ChessPage() {
     setLegalMoveTargets([]);
     setGamePosition(chess.fen());
     updateGameOutcome(chess);
+    // The rewound move's eval consequences no longer reflect the game state.
+    clearGameplayTelemetry();
     setStatusMessage("Took back your last move.");
   }
 
@@ -1385,6 +1529,7 @@ export default function ChessPage() {
     setReplayMoveIndex(-1);
     setReplayPlaying(false);
     setReplayBusy(false);
+    clearGameplayTelemetry();
     setStatusMessage("New game started.");
   }
 
@@ -1549,14 +1694,13 @@ export default function ChessPage() {
             </button>
             <button
               type="button"
-              aria-current={workspaceTab === "aiLab" ? "page" : undefined}
+              aria-current={workspaceTab === "train" ? "page" : undefined}
               onClick={() => {
-                setWorkspaceTab("aiLab");
-                setActiveTab("coach");
+                setWorkspaceTab("train");
               }}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${workspaceTab === "aiLab" ? "bg-cyan-500/20 text-cyan-200 light:bg-cyan-100 light:text-cyan-700" : "text-zinc-500 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-800"}`}
+              className={`train-accent-ring rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${workspaceTab === "train" ? "bg-violet-500/20 text-violet-300 light:bg-violet-100 light:text-violet-700" : "text-zinc-500 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-800"}`}
             >
-              AI Lab
+              🧩 Train
             </button>
           </nav>
 
@@ -1602,6 +1746,15 @@ export default function ChessPage() {
             <span className="rounded bg-amber-500/10 px-2 py-0.5 font-medium text-amber-500 dark:text-amber-300 capitalize">
               {engineProfile.emotion}
             </span>
+            {progressLoaded && (
+              <span
+                className="rounded px-2 py-0.5 font-mono text-[10px] font-semibold"
+                style={{ color: tierForLevel(levelFromXp(trainProgress.xp)).color }}
+                title={`Training level ${levelFromXp(trainProgress.xp)} · ${trainProgress.xp} XP`}
+              >
+                🏅 Lv {levelFromXp(trainProgress.xp)}
+              </span>
+            )}
             <span className="rounded bg-zinc-800/80 dark:bg-zinc-800 dark:text-zinc-200 light:bg-slate-200 light:text-slate-800 px-2 py-0.5 font-mono font-semibold">
               {engineProfile.elo} ELO
             </span>
@@ -1681,7 +1834,19 @@ export default function ChessPage() {
           </div>
         </header>
 
-        {workspaceTab === "aiLab" ? (
+        {workspaceTab === "train" ? (
+          <section
+            className="flex min-h-0 flex-1 flex-col overflow-hidden"
+            aria-label="Training Arena"
+          >
+            <TrainingWorkspace
+              progress={trainProgress}
+              emotion={emotion}
+              onProgressUpdate={setTrainProgress}
+              onPlayFromPosition={startTrainingGame}
+            />
+          </section>
+        ) : workspaceTab === "aiLab" ? (
           <section
             className="ai-lab-workspace flex min-h-0 flex-1 flex-col overflow-hidden p-6"
             aria-label="Full-width AI Lab workspace"
@@ -1790,12 +1955,19 @@ export default function ChessPage() {
                   <span className="rounded-full bg-zinc-950/80 backdrop-blur-md border border-zinc-800 px-2.5 py-1 font-mono text-[10px] text-zinc-400 uppercase tracking-wider light:bg-white/80 light:border-slate-300 light:text-slate-600">
                     Camera Feed
                   </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-emerald-950/80 backdrop-blur-md border border-emerald-800/50 px-2.5 py-1 font-mono text-[10px] text-emerald-300 font-semibold light:bg-emerald-100 light:border-emerald-300 light:text-emerald-700">
+                  <span className="flex items-center gap-1.5 rounded-full bg-zinc-950/80 backdrop-blur-md border border-zinc-800 px-2.5 py-1 font-mono text-[10px] text-emerald-300 font-semibold light:bg-white/80 light:border-slate-300 light:text-emerald-700">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    {emotion}
+                    {EMOTION_EMOJI[emotion]} {emotion}
                   </span>
                 </div>
               </div>
+
+              <EmotionMonitor
+                scores={emotionScores}
+                activeEmotion={emotion}
+                timeline={emotionTimeline}
+                manual={emotionMode === "manual"}
+              />
 
               {botRemark && (
                 <div className="w-64 rounded-xl border border-amber-500/20 bg-amber-950/20 p-3 text-xs text-zinc-300 backdrop-blur-md light:border-amber-300 light:bg-amber-100 light:text-slate-700">
