@@ -1,5 +1,5 @@
 import { Chess, Move, Square } from "chess.js";
-import { evaluateHeuristics, MinimaxSearchNode, MinimaxTrace } from "./minimax";
+import { DEFAULT_WEIGHTS, evaluateHeuristics, HeuristicWeights, MinimaxSearchNode, MinimaxTrace } from "./minimax";
 
 export type MctsPhase = "selection" | "expansion" | "simulation" | "backpropagation";
 
@@ -47,11 +47,12 @@ function resultFromScore(score: number) {
 
 export function buildMctsTrace(
   fen: string,
-  options: { iterations?: number; branchLimit?: number; rolloutDepth?: number; aiColor?: "w" | "b" } = {},
+  options: { iterations?: number; branchLimit?: number; rolloutDepth?: number; aiColor?: "w" | "b"; weights?: HeuristicWeights } = {},
 ): MctsTrace {
   const iterations = Math.max(12, Math.min(180, options.iterations ?? 64));
   const branchLimit = Math.max(2, Math.min(8, options.branchLimit ?? 5));
   const rolloutDepth = Math.max(1, Math.min(6, options.rolloutDepth ?? 3));
+  const weights = options.weights ?? DEFAULT_WEIGHTS;
   const rootChess = new Chess(fen);
   const aiColor = options.aiColor ?? rootChess.turn();
   const seed = { value: hashSeed(fen) };
@@ -165,7 +166,8 @@ export function buildMctsTrace(
       rollout.move({ from: chosen.from as Square, to: chosen.to as Square, promotion: chosen.promotion });
     }
     evaluatedLeaves++;
-    const score = evaluateHeuristics(rollout, aiColor).material + evaluateHeuristics(rollout, aiColor).positional + evaluateHeuristics(rollout, aiColor).kingSafety;
+    const rolloutHeuristics = evaluateHeuristics(rollout, aiColor);
+    const score = rolloutHeuristics.material * weights.material + rolloutHeuristics.positional * weights.positional + rolloutHeuristics.kingSafety * weights.kingSafety;
     const result = rollout.isCheckmate() ? (rollout.turn() === aiColor ? 0 : 1) : resultFromScore(score);
 
     for (const node of path) {

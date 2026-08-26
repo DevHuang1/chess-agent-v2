@@ -15,8 +15,9 @@
  * frontend sends your FEN and detected emotion to a Python FastAPI backend.
  * The backend maps your emotion to a Stockfish profile — stressed gets you
  * an engine that searches only one ply deep at ELO 1320; confident gets you
- * a depth-10 search at ELO 3190. It spawns an isolated Stockfish instance
- * per request, configures it with the profile, and returns the best move.
+ * a depth-10 search at ELO 3190. It acquires a Stockfish instance from a
+ * small persistent pool, reconfigures it with the profile, and returns the
+ * best move.
  * This keeps you in flow: easier when you're struggling, harder when you're
  * cruising.
  *
@@ -37,12 +38,18 @@
  * closely as you watch the board.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Chess, Square } from "chess.js";
 import dynamic from "next/dynamic";
 import SpeechTab from "@/components/SpeechTab";
-import Simulation3D, { ReplayGame, ReplayMove } from "@/components/Simulation3D";
+import Simulation3D, {
+  ReplayGame,
+  ReplayMove,
+} from "@/components/Simulation3D";
 import GameInfo from "@/components/GameInfo";
+import LogicianPanel from "@/components/LogicianPanel";
+import OverflowMenu from "@/components/OverflowMenu";
+import EvalBar from "@/components/EvalBar";
 import AIAnalysisTab from "@/components/AIAnalysisTab";
 import BenchmarkTab from "@/components/BenchmarkTab";
 import benchmarkReport from "@/benchmarks/search-benchmark.json";
@@ -56,18 +63,19 @@ import {
 } from "@/lib/audio";
 import { buildMinimaxTrace } from "@/lib/minimax";
 import { buildMctsTrace } from "@/lib/mcts";
+import {
+  useSidebarPreferences,
+  type SidebarTab,
+} from "@/hooks/useSidebarPreferences";
+import { useEmotionDetection } from "@/hooks/useEmotionDetection";
+import { useCoachAudio } from "@/hooks/useCoachAudio";
+import VoiceCoachControl from "@/components/VoiceCoachControl";
+import { EMOTION_PROFILES, type EmotionLabel } from "@/lib/engineProfiles";
+import { lookupOpening } from "@/lib/openings";
 
 const BOT_MOVE_API_URL = "/api/bot-move";
 const COACH_API_URL = "/api/coach";
-const SIDEBAR_PREFERENCES_KEY = "sentio-sidebar-preferences-v1";
-
-type EmotionLabel =
-  | "calm"
-  | "focused"
-  | "neutral"
-  | "frustrated"
-  | "stressed"
-  | "confident";
+const REPLAY_GAMES_KEY = "sentio-replay-games-v1";
 
 const COACH_AUTO_ENCOURAGEMENT: Record<string, string[]> = {
   confident: [
@@ -157,29 +165,6 @@ const CAPTURE_REMARKS = [
   "Oops. Did you need that?",
 ];
 
-function pieceColorAtSquare(square: string, fen: string): "w" | "b" | null {
-  const board = fen.split(" ")[0];
-  const rows = board.split("/");
-  const file = square.charCodeAt(0) - 97;
-  const rank = 8 - parseInt(square[1]);
-  const row = rows[rank];
-  if (!row) return null;
-  let col = 0;
-  for (const ch of row) {
-    if (col > file) break;
-    if (col === file) {
-      if (ch >= "1" && ch <= "8") return null;
-      return ch === ch.toUpperCase() ? "w" : "b";
-    }
-    if (ch >= "1" && ch <= "8") {
-      col += parseInt(ch);
-    } else {
-      col++;
-    }
-  }
-  return null;
-}
-
 function generateRemark(
   em: EmotionLabel,
   isCheck: boolean,
@@ -224,26 +209,12 @@ type EngineProfile = {
 };
 
 type GameOutcome = "active" | "checkmate" | "stalemate" | "draw" | "gameover";
-type CoachLlmConnection = "checking" | "connected" | "disconnected" | "disabled";
-type SidebarTab = "coach" | "speech" | "ai" | "benchmarks" | "3d" | "replay";
-type SidebarPreferences = {
-  expanded?: boolean;
-  wide?: boolean;
-  split?: boolean;
-  splitTab?: SidebarTab;
-  detached?: boolean;
-};
+type CoachLlmConnection =
+  | "checking"
+  | "connected"
+  | "disconnected"
+  | "disabled";
 type LiveAiMode = "off" | "minimax" | "mcts";
-
-function readSidebarPreferences(): SidebarPreferences {
-  if (typeof window === "undefined") return {};
-  try {
-    const saved = window.localStorage.getItem(SIDEBAR_PREFERENCES_KEY);
-    return saved ? JSON.parse(saved) as SidebarPreferences : {};
-  } catch {
-    return {};
-  }
-}
 
 function serializeReplayMoves(chess: Chess): ReplayMove[] {
   return chess.history({ verbose: true }).map((move) => ({
@@ -255,15 +226,6 @@ function serializeReplayMoves(chess: Chess): ReplayMove[] {
     promotion: move.promotion,
   }));
 }
-
-const EMOTION_PROFILES: Record<EmotionLabel, { depth: number; skillLevel: number; elo: number }> = {
-  stressed: { depth: 1, skillLevel: 1, elo: 1320 },
-  frustrated: { depth: 2, skillLevel: 3, elo: 1320 },
-  calm: { depth: 4, skillLevel: 6, elo: 1600 },
-  neutral: { depth: 6, skillLevel: 10, elo: 2000 },
-  focused: { depth: 8, skillLevel: 15, elo: 2600 },
-  confident: { depth: 10, skillLevel: 20, elo: 3190 },
-};
 
 const Chessboard = dynamic(
   () => import("react-chessboard").then((mod) => mod.Chessboard),
@@ -280,102 +242,46 @@ const Chessboard = dynamic(
   },
 );
 
-type FaceApiModule = typeof import("@vladmandic/face-api");
-
-const EXPRESSION_TO_EMOTION: Record<string, EmotionLabel> = {
-  happy: "confident",
-  neutral: "neutral",
-  sad: "frustrated",
-  angry: "frustrated",
-  fearful: "stressed",
-  surprised: "focused",
-  disgusted: "stressed",
-};
-
-const EMOTION_BUFFER_SIZE = 3;
-const emotionBuffer: EmotionLabel[] = [];
-
-function mostFrequentInBuffer(): EmotionLabel | null {
-  if (emotionBuffer.length === 0) return null;
-  const counts: Record<string, number> = {};
-  for (const e of emotionBuffer) {
-    counts[e] = (counts[e] ?? 0) + 1;
-  }
-  return Object.entries(counts).sort(
-    (a, b) => b[1] - a[1],
-  )[0][0] as EmotionLabel;
-}
-
-async function detectEmotionFromVideo(
-  faceapi: FaceApiModule,
-  videoElement: HTMLVideoElement | null,
-): Promise<EmotionLabel> {
-  if (
-    !videoElement ||
-    videoElement.videoWidth === 0 ||
-    videoElement.videoHeight === 0
-  ) {
-    return "neutral";
-  }
-
-  try {
-    const detection = await faceapi
-      .detectSingleFace(
-        videoElement,
-        new faceapi.TinyFaceDetectorOptions({ inputSize: 320 }),
-      )
-      .withFaceExpressions();
-
-    if (!detection?.expressions) {
-      return "neutral";
-    }
-
-    const sorted = detection.expressions.asSortedArray();
-    const top = sorted[0];
-
-    if (!top || top.probability < 0.35) {
-      return "neutral";
-    }
-
-    return EXPRESSION_TO_EMOTION[top.expression] ?? "neutral";
-  } catch {
-    return "neutral";
-  }
-}
-
 export default function ChessPage() {
   const chessRef = useRef(new Chess());
-  const videoRef = useRef<HTMLVideoElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const lastMoveTimestampRef = useRef<number>(0);
-  const faceapiRef = useRef<FaceApiModule | null>(null);
-  const emotionHistoryRef = useRef<EmotionLabel[]>([]);
   const lastCoachAutoMessageRef = useRef(0);
+  // Incremented on every reset so stale bot responses can never be applied
+  // to a new game.
+  const gameIdRef = useRef(0);
+  // Active engine request, so reset/undo can cancel it immediately instead
+  // of letting a stale timeout fire later.
+  const botRequestControllerRef = useRef<AbortController | null>(null);
 
   const [gamePosition, setGamePosition] = useState(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   );
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
-  const [legalMoveSquares, setLegalMoveSquares] = useState<string[]>([]);
-  const [emotion, setEmotion] = useState<EmotionLabel>("neutral");
+  const [legalMoveTargets, setLegalMoveTargets] = useState<
+    { square: string; isCapture: boolean }[]
+  >([]);
+  const [pendingPromotion, setPendingPromotion] = useState<{
+    from: string;
+    to: string;
+  } | null>(null);
   const [emotionMode, setEmotionMode] = useState<"auto" | "manual">("auto");
-  const [modelsLoaded, setModelsLoaded] = useState(false);
   const [backendEngineProfile, setBackendEngineProfile] =
     useState<EngineProfile | null>(null);
-  const engineProfile = backendEngineProfile ?? {
-    emotion,
-    ...(EMOTION_PROFILES[emotion] ?? EMOTION_PROFILES.neutral),
-  };
   const [gameOutcome, setGameOutcome] = useState<GameOutcome>("active");
-  const [moveQualities, setMoveQualities] = useState<Record<number, string>>(
-    {},
-  );
-  const [lastPositionScore, setLastPositionScore] = useState<number | null>(
+  const [statusMessage, setStatusMessage] = useState("Sentio online.");
+  const [hintMove, setHintMove] = useState<{ from: string; to: string } | null>(
     null,
   );
-  const [statusMessage, setStatusMessage] = useState("Sentio online.");
+  const [isHintLoading, setIsHintLoading] = useState(false);
+  const [evaluation, setEvaluation] = useState<number | null>(null);
+  const lastHintAtRef = useRef(0);
   const [isBotThinking, setIsBotThinking] = useState(false);
-  const [lastBotMove, setLastBotMove] = useState<{ uci: string; san: string; fen: string } | null>(null);
+  const [lastBotMove, setLastBotMove] = useState<{
+    uci: string;
+    san: string;
+    fen: string;
+  } | null>(null);
   const [liveAiMode, setLiveAiMode] = useState<LiveAiMode>("off");
   const [liveAiDepth, setLiveAiDepth] = useState(3);
   const [liveAiAnimating, setLiveAiAnimating] = useState(false);
@@ -387,7 +293,11 @@ export default function ChessPage() {
   const [replayBusy, setReplayBusy] = useState(false);
   const [replayAnimate, setReplayAnimate] = useState(true);
   const replayCounterRef = useRef(1);
-  const [currentReplayGame, setCurrentReplayGame] = useState<ReplayGame>({ id: "current", label: "Current game", moves: [] });
+  const [currentReplayGame, setCurrentReplayGame] = useState<ReplayGame>({
+    id: "current",
+    label: "Current game",
+    moves: [],
+  });
   const [coachLlmConnection, setCoachLlmConnection] =
     useState<CoachLlmConnection>("checking");
   const [coachLlmDetail, setCoachLlmDetail] = useState(
@@ -400,46 +310,76 @@ export default function ChessPage() {
   const [groqAvailable, setGroqAvailable] = useState(false);
   const [groqDetail, setGroqDetail] = useState("Checking Groq...");
 
+  const {
+    muted: coachAudioMuted,
+    autoRead: coachAutoRead,
+    status: coachAudioStatus,
+    speak: speakCoachReply,
+    stop: stopCoachReply,
+    setMuted: setCoachAudioMuted,
+    setAutoRead: setCoachAutoRead,
+  } = useCoachAudio();
+
   const boardWrapRef = useRef<HTMLDivElement | null>(null);
   const aiHandRef = useRef<HTMLDivElement | null>(null);
   const aiHandRafRef = useRef<number | null>(null);
 
   const [workspaceTab, setWorkspaceTab] = useState<"board" | "aiLab">("board");
   const [activeTab, setActiveTab] = useState<SidebarTab>("coach");
-  const [controllerExpanded, setControllerExpanded] = useState(true);
-  const [controllerWide, setControllerWide] = useState(false);
-  const [controllerSplit, setControllerSplit] = useState(false);
-  const [splitTab, setSplitTab] = useState<SidebarTab>("benchmarks");
-  const [controllerDetached, setControllerDetached] = useState(false);
-  const [sidebarPreferencesReady, setSidebarPreferencesReady] = useState(false);
+
+  const {
+    expanded: controllerExpanded,
+    wide: controllerWide,
+    split: controllerSplit,
+    detached: controllerDetached,
+    setExpanded: setControllerExpanded,
+    setWide: setControllerWide,
+    setSplit: setControllerSplit,
+    setSplitTab,
+    setDetached: setControllerDetached,
+  } = useSidebarPreferences();
+
+  const { videoRef, emotion, setEmotion, emotionHistoryRef } =
+    useEmotionDetection({
+      activeTab,
+      auto: emotionMode === "auto",
+      onStatus: setStatusMessage,
+    });
+
+  const engineProfile = backendEngineProfile ?? {
+    emotion,
+    ...EMOTION_PROFILES[emotion],
+  };
 
   const [pieceDesign, setPieceDesign] = useState<PieceDesignKey>("chesscom");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [soundMutedState, setSoundMutedState] = useState<boolean>(false);
 
+  // Restore persisted replay games once on mount (deferred past first paint
+  // to avoid a synchronous setState inside the effect).
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      const preferences = readSidebarPreferences();
-      if (typeof preferences.expanded === "boolean") setControllerExpanded(preferences.expanded);
-      if (typeof preferences.wide === "boolean") setControllerWide(preferences.wide);
-      if (typeof preferences.split === "boolean") setControllerSplit(preferences.split);
-      if (preferences.splitTab === "benchmarks") setSplitTab("benchmarks");
-      if (typeof preferences.detached === "boolean") setControllerDetached(preferences.detached);
-      setSidebarPreferencesReady(true);
+      try {
+        const saved = window.localStorage.getItem(REPLAY_GAMES_KEY);
+        if (saved) setSavedReplayGames(JSON.parse(saved) as ReplayGame[]);
+      } catch {
+        // Ignore corrupted replay storage.
+      }
     });
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
+  // Persist replay games whenever they change.
   useEffect(() => {
-    if (!sidebarPreferencesReady) return;
-    window.localStorage.setItem(SIDEBAR_PREFERENCES_KEY, JSON.stringify({
-      expanded: controllerExpanded,
-      wide: controllerWide,
-      split: controllerSplit,
-      splitTab,
-      detached: controllerDetached,
-    }));
-  }, [sidebarPreferencesReady, controllerExpanded, controllerWide, controllerSplit, splitTab, controllerDetached]);
+    try {
+      window.localStorage.setItem(
+        REPLAY_GAMES_KEY,
+        JSON.stringify(savedReplayGames),
+      );
+    } catch {
+      // Storage unavailable; replays stay in-memory for this session.
+    }
+  }, [savedReplayGames]);
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
@@ -468,92 +408,6 @@ export default function ChessPage() {
   });
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    const isE2ETest = process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("e2e");
-    if (isE2ETest || activeTab === "3d") {
-      return () => {
-        document.body.style.overflow = "";
-      };
-    }
-    lastMoveTimestampRef.current = Date.now();
-    let mediaStream: MediaStream | null = null;
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        mediaStream = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      })
-      .catch((err) => {
-        console.error("Webcam video source offline:", err);
-        setStatusMessage(
-          "Webcam unavailable. Emotion fallback set to neutral.",
-        );
-      });
-
-    import("@vladmandic/face-api")
-      .then((mod) => {
-        Promise.all([
-          mod.nets.tinyFaceDetector.loadFromUri("/models"),
-          mod.nets.faceExpressionNet.loadFromUri("/models"),
-        ])
-          .then(() => {
-            faceapiRef.current = mod;
-            setModelsLoaded(true);
-          })
-          .catch((loadErr) => {
-            console.error("Failed to load face-api models:", loadErr);
-            setStatusMessage("Emotion models failed to load.");
-          });
-      })
-      .catch((importErr) => {
-        console.error("Failed to import face-api:", importErr);
-      });
-
-    return () => {
-      document.body.style.overflow = "";
-      if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, [activeTab]);
-
-  useEffect(() => {
-    const isE2ETest = process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("e2e");
-    if (isE2ETest || activeTab === "3d" || emotionMode !== "auto" || !faceapiRef.current || !modelsLoaded) return;
-
-    const intervalId = window.setInterval(async () => {
-      const api = faceapiRef.current;
-      if (!api) return;
-
-      const estimatedEmotion = await detectEmotionFromVideo(
-        api,
-        videoRef.current,
-      );
-      emotionBuffer.push(estimatedEmotion);
-      if (emotionBuffer.length > EMOTION_BUFFER_SIZE) {
-        emotionBuffer.shift();
-      }
-      const smoothed = mostFrequentInBuffer();
-      if (smoothed) {
-        setEmotion(smoothed);
-        emotionHistoryRef.current.push(smoothed);
-        if (emotionHistoryRef.current.length > 7) {
-          emotionHistoryRef.current.shift();
-        }
-      }
-    }, 2200);
-
-    return () => {
-      window.clearInterval(intervalId);
-      emotionBuffer.length = 0;
-      emotionHistoryRef.current = [];
-    };
-  }, [activeTab, emotionMode, modelsLoaded]);
-
-  useEffect(() => {
     if (emotionMode === "auto") {
       postCoachEncouragementRef.current(emotion);
     }
@@ -564,6 +418,24 @@ export default function ChessPage() {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
     }
   }, [chatMessages]);
+
+  // When "read replies aloud" is enabled, auto-play the newest assistant reply
+  // once (skipping the welcome and any error bubbles).
+  const lastSpokenRef = useRef<string>("");
+  useEffect(() => {
+    if (!coachAutoRead || coachAudioMuted) return;
+    const latest = chatMessages[chatMessages.length - 1];
+    if (
+      latest &&
+      latest.role === "assistant" &&
+      latest.id !== "welcome" &&
+      !latest.id.startsWith("assistant-error-") &&
+      latest.id !== lastSpokenRef.current
+    ) {
+      lastSpokenRef.current = latest.id;
+      void speakCoachReply(latest.id, latest.content);
+    }
+  }, [chatMessages, coachAutoRead, coachAudioMuted, speakCoachReply]);
 
   useEffect(() => {
     let active = true;
@@ -629,6 +501,36 @@ export default function ChessPage() {
     };
   }, []);
 
+  // Debounced evaluation fetch for the eval bar.
+  useEffect(() => {
+    if (
+      workspaceTab !== "board" ||
+      activeTab === "3d" ||
+      activeTab === "replay" ||
+      gameOutcome !== "active"
+    ) {
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        try {
+          const response = await fetch(
+            `/api/bot-move?fen=${encodeURIComponent(gamePosition)}&depth=2`,
+            { cache: "no-store", signal: AbortSignal.timeout(8000) },
+          );
+          if (!response.ok) return;
+          const data = (await response.json()) as { evaluation?: number };
+          if (typeof data.evaluation === "number") {
+            setEvaluation(data.evaluation);
+          }
+        } catch {
+          // Keep the last evaluation on transient failures.
+        }
+      })();
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [gamePosition, gameOutcome, workspaceTab, activeTab]);
+
   function updateGameOutcome(chess: Chess) {
     if (!chess.isGameOver()) {
       setGameOutcome("active");
@@ -659,10 +561,22 @@ export default function ChessPage() {
     const chess = chessRef.current;
     const currentFen = chess.fen();
     setIsBotThinking(true);
-    setStatusMessage(`${liveAiMode === "mcts" ? "MCTS" : "Minimax"} is searching at depth ${liveAiDepth}...`);
-    const trace = liveAiMode === "mcts"
-      ? buildMctsTrace(currentFen, { iterations: Math.min(180, Math.max(24, liveAiDepth * 24)), branchLimit: 5, rolloutDepth: liveAiDepth, aiColor: chess.turn() })
-      : buildMinimaxTrace(currentFen, { depth: liveAiDepth, branchLimit: 5, aiColor: chess.turn() });
+    setStatusMessage(
+      `${liveAiMode === "mcts" ? "MCTS" : "Minimax"} is searching at depth ${liveAiDepth}...`,
+    );
+    const trace =
+      liveAiMode === "mcts"
+        ? buildMctsTrace(currentFen, {
+            iterations: Math.min(180, Math.max(24, liveAiDepth * 24)),
+            branchLimit: 5,
+            rolloutDepth: liveAiDepth,
+            aiColor: chess.turn(),
+          })
+        : buildMinimaxTrace(currentFen, {
+            depth: liveAiDepth,
+            branchLimit: 5,
+            aiColor: chess.turn(),
+          });
     const selected = trace.selectedMove;
     if (!selected) {
       setIsBotThinking(false);
@@ -674,7 +588,10 @@ export default function ChessPage() {
     const applied = chess.move({
       from: selected.uci.slice(0, 2) as Square,
       to: selected.uci.slice(2, 4) as Square,
-      promotion: selected.uci.length === 5 ? selected.uci[4] as "q" | "r" | "b" | "n" : undefined,
+      promotion:
+        selected.uci.length === 5
+          ? (selected.uci[4] as "q" | "r" | "b" | "n")
+          : undefined,
     });
     if (!applied) {
       setIsBotThinking(false);
@@ -682,42 +599,85 @@ export default function ChessPage() {
       return false;
     }
     const nextFen = chess.fen();
-    setLastBotMove({ uci: `${applied.from}${applied.to}${applied.promotion ?? ""}`, san: applied.san, fen: nextFen });
+    setLastBotMove({
+      uci: `${applied.from}${applied.to}${applied.promotion ?? ""}`,
+      san: applied.san,
+      fen: nextFen,
+    });
     setGamePosition(nextFen);
     if (isCapture) playCaptureSound();
     else if (chess.inCheck()) playCheckSound();
     else playMoveSound();
     updateGameOutcome(chess);
-    setBotRemark(`${liveAiMode === "mcts" ? "MCTS" : "Minimax"} selected ${applied.san} · depth ${liveAiDepth}`);
-    setStatusMessage(`${liveAiMode === "mcts" ? "MCTS" : "Minimax"} plays ${applied.san}`);
+    setBotRemark(
+      `${liveAiMode === "mcts" ? "MCTS" : "Minimax"} selected ${applied.san} · depth ${liveAiDepth}`,
+    );
+    setStatusMessage(
+      `${liveAiMode === "mcts" ? "MCTS" : "Minimax"} plays ${applied.san}`,
+    );
     setIsBotThinking(false);
     return true;
   }
 
   // The scheduler intentionally calls the local move routine from the latest render; state dependencies control turn boundaries.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    if (activeTab !== "3d" || liveAiMode === "off" || gameOutcome !== "active" || liveAiAnimating || liveAiTurnInFlightRef.current) return;
+    if (
+      activeTab !== "3d" ||
+      liveAiMode === "off" ||
+      gameOutcome !== "active" ||
+      liveAiAnimating ||
+      liveAiTurnInFlightRef.current
+    )
+      return;
     const timer = window.setTimeout(() => {
       liveAiTurnInFlightRef.current = true;
       const moved = runLiveAiMove();
       if (!moved) liveAiTurnInFlightRef.current = false;
     }, 480);
     return () => window.clearTimeout(timer);
-  }, [activeTab, gamePosition, liveAiMode, liveAiDepth, liveAiAnimating, gameOutcome]);
+  }, [
+    activeTab,
+    gamePosition,
+    liveAiMode,
+    liveAiDepth,
+    liveAiAnimating,
+    gameOutcome,
+  ]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   async function triggerBotTurn(currentFen: string) {
+    // Snapshot the game generation: if the user resets mid-flight, the stale
+    // response is discarded instead of applied to the new game.
+    const requestGameId = gameIdRef.current;
     setIsBotThinking(true);
     setStatusMessage("Sentio engine is calculating...");
 
     // Local fallback bot: if the engine backend is unreachable, slow, or
-    // returns an illegal move, pick a random legal move in the browser so the
-    // game never freezes on the bot's turn.
+    // returns an illegal move, run a shallow local search so the game never
+    // freezes on the bot's turn (random move as a last resort).
     const localBotMove = (
       chess: Chess,
     ): { from: Square; to: Square } | null => {
       const moves = chess.moves({ verbose: true });
       if (moves.length === 0) return null;
+      try {
+        const trace = buildMinimaxTrace(chess.fen(), {
+          depth: 2,
+          branchLimit: 5,
+          aiColor: chess.turn(),
+        });
+        const selected = trace.selectedMove;
+        if (selected) {
+          const from = selected.uci.slice(0, 2);
+          const to = selected.uci.slice(2, 4);
+          if (moves.some((m) => m.from === from && m.to === to)) {
+            return { from: from as Square, to: to as Square };
+          }
+        }
+      } catch {
+        // Fall through to a random move.
+      }
       const m = moves[Math.floor(Math.random() * moves.length)];
       return { from: m.from, to: m.to };
     };
@@ -725,20 +685,23 @@ export default function ChessPage() {
     let uciMove: string | null = null;
     let fallbackUsed = false;
     let fallbackReason = "";
+    // Track the controller so reset/undo can cancel this request immediately.
+    const controller = new AbortController();
+    botRequestControllerRef.current = controller;
+    const timer = setTimeout(
+      () => controller.abort(new Error("Engine request timed out")),
+      20000,
+    );
     try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 20000);
       const response = await fetch(BOT_MOVE_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fen: currentFen,
           emotion,
-          strengthPreference: "adaptive",
         }),
         signal: controller.signal,
       });
-      clearTimeout(timer);
 
       if (!response.ok) {
         const data = (await response.json().catch(() => null)) as {
@@ -763,6 +726,12 @@ export default function ChessPage() {
         fallbackReason = data.status ?? "No move available from engine.";
       }
     } catch (error) {
+      // If the user reset/undid mid-flight, stay quiet — the generation check
+      // below discards everything anyway.
+      if (controller.signal.aborted && gameIdRef.current !== requestGameId) {
+        setIsBotThinking(false);
+        return;
+      }
       fallbackUsed = true;
       fallbackReason =
         error instanceof Error && error.name === "AbortError"
@@ -773,6 +742,19 @@ export default function ChessPage() {
       const m = localBotMove(chessRef.current);
       if (m) uciMove = m.from + m.to;
       console.error("Communication failure with Stockfish engine:", error);
+    } finally {
+      // Always clear the timeout so it can never abort a finished request
+      // (the source of the "signal is aborted without reason" console noise).
+      clearTimeout(timer);
+      if (botRequestControllerRef.current === controller) {
+        botRequestControllerRef.current = null;
+      }
+    }
+
+    if (gameIdRef.current !== requestGameId) {
+      // The game was reset while the engine was thinking; discard this move.
+      setIsBotThinking(false);
+      return;
     }
 
     if (uciMove) {
@@ -815,7 +797,11 @@ export default function ChessPage() {
       }
 
       const nextFen = chess.fen();
-      setLastBotMove(appliedBotSan ? { uci: appliedBotUci, san: appliedBotSan, fen: nextFen } : null);
+      setLastBotMove(
+        appliedBotSan
+          ? { uci: appliedBotUci, san: appliedBotSan, fen: nextFen }
+          : null,
+      );
       setGamePosition(nextFen);
       if (isCapture) {
         playCaptureSound();
@@ -847,7 +833,12 @@ export default function ChessPage() {
     setIsBotThinking(false);
   }
 
-  function applyMove(from: string, to: string, now: number) {
+  function commitPlayerMove(
+    from: string,
+    to: string,
+    promotion: "q" | "r" | "b" | "n",
+    now: number,
+  ) {
     const chess = chessRef.current;
     try {
       if (chess.turn() !== "w") return false;
@@ -855,7 +846,7 @@ export default function ChessPage() {
       const move = chess.move({
         from: from as Square,
         to: to as Square,
-        promotion: "q",
+        promotion,
       });
 
       if (!move) return false;
@@ -871,7 +862,8 @@ export default function ChessPage() {
       const nextFen = chess.fen();
       lastMoveTimestampRef.current = now;
       setSelectedSquare(null);
-      setLegalMoveSquares([]);
+      setLegalMoveTargets([]);
+      setHintMove(null);
       setGamePosition(nextFen);
       setStatusMessage(`You played ${from}-${to}.`);
 
@@ -886,6 +878,135 @@ export default function ChessPage() {
     }
   }
 
+  function applyMove(from: string, to: string, now: number) {
+    const chess = chessRef.current;
+    if (chess.turn() !== "w") return false;
+
+    const piece = chess.get(from as Square);
+    if (piece?.type === "p" && to[1] === "8") {
+      // Defer to the promotion picker instead of silently promoting to queen.
+      setPendingPromotion({ from, to });
+      return true;
+    }
+
+    return commitPlayerMove(from, to, "q", now);
+  }
+
+  function choosePromotion(piece: "q" | "r" | "b" | "n") {
+    const pending = pendingPromotion;
+    setPendingPromotion(null);
+    if (!pending) return;
+
+    commitPlayerMove(pending.from, pending.to, piece, Date.now());
+  }
+
+  /**
+   * Rewind to the player's previous decision point: undoes the bot's reply
+   * and the player's move. Also cancels any in-flight engine request via the
+   * game-generation counter.
+   */
+  function undoMovePair() {
+    const chess = chessRef.current;
+    const historyLength = chess.history().length;
+    if (historyLength === 0) return;
+
+    // Invalidate any pending bot response so it can never land after the undo.
+    gameIdRef.current += 1;
+    botRequestControllerRef.current?.abort(new Error("Superseded by undo"));
+    botRequestControllerRef.current = null;
+    setIsBotThinking(false);
+    setPendingPromotion(null);
+    setHintMove(null);
+
+    // If it's already White's turn, remove the full pair (bot reply + our
+    // move). Otherwise (e.g. we just delivered mate) remove only our move.
+    const undos = chess.turn() === "w" ? Math.min(2, historyLength) : 1;
+    for (let i = 0; i < undos; i++) {
+      if (!chess.undo()) break;
+    }
+
+    setSelectedSquare(null);
+    setLegalMoveTargets([]);
+    setGamePosition(chess.fen());
+    updateGameOutcome(chess);
+    setStatusMessage("Took back your last move.");
+  }
+
+  /** Ask the engine for a strong candidate move and highlight it on the board. */
+  async function requestHint() {
+    const chess = chessRef.current;
+    if (
+      gameOutcome !== "active" ||
+      chess.turn() !== "w" ||
+      isBotThinking ||
+      isHintLoading
+    ) {
+      return;
+    }
+
+    const now = Date.now();
+    if (now - lastHintAtRef.current < 5000) return;
+    lastHintAtRef.current = now;
+
+    setIsHintLoading(true);
+    try {
+      const response = await fetch(BOT_MOVE_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fen: chess.fen(),
+          emotion: "neutral",
+          purpose: "hint",
+        }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(20000),
+      });
+      if (!response.ok) throw new Error("Hint service unavailable.");
+      const data = (await response.json()) as { botMove?: string | null };
+      if (!data.botMove)
+        throw new Error("No hint available for this position.");
+      const uci = data.botMove.toLowerCase();
+      const from = uci.slice(0, 2);
+      const to = uci.slice(2, 4);
+      const isLegal = chess
+        .moves({ verbose: true })
+        .some((m) => m.from === from && m.to === to);
+      if (!isLegal) throw new Error("Hint returned an unusable move.");
+      setHintMove({ from, to });
+      setStatusMessage(`Hint: consider ${from}-${to}.`);
+    } catch (error) {
+      setStatusMessage(
+        error instanceof Error ? error.message : "Could not fetch a hint.",
+      );
+    } finally {
+      setIsHintLoading(false);
+    }
+  }
+
+  // Ctrl/Cmd+Z takes back the last move pair (ignored while typing).
+  // Declared after undoMovePair so the handler reference is initialized.
+  /* eslint-disable react-hooks/exhaustive-deps */
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z") {
+        const target = event.target as HTMLElement | null;
+        if (
+          target &&
+          (target.tagName === "INPUT" ||
+            target.tagName === "TEXTAREA" ||
+            target.isContentEditable)
+        ) {
+          return;
+        }
+        event.preventDefault();
+        undoMovePair();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+  /* eslint-enable react-hooks/exhaustive-deps */
+
   function handleSquareClick(square: string, now: number) {
     const chess = chessRef.current;
     if (gameOutcome !== "active") return;
@@ -896,14 +1017,19 @@ export default function ChessPage() {
       if (pieceOnSquare && pieceOnSquare.color === activeColor) {
         setSelectedSquare(square);
         const moves = chess.moves({ square: square as Square, verbose: true });
-        setLegalMoveSquares(moves.map((m) => m.to));
+        setLegalMoveTargets(
+          moves.map((m) => ({
+            square: m.to,
+            isCapture: Boolean(chess.get(m.to as Square)),
+          })),
+        );
       }
       return;
     }
 
     if (selectedSquare === square) {
       setSelectedSquare(null);
-      setLegalMoveSquares([]);
+      setLegalMoveTargets([]);
       return;
     }
 
@@ -912,10 +1038,15 @@ export default function ChessPage() {
       if (pieceOnSquare && pieceOnSquare.color === activeColor) {
         setSelectedSquare(square);
         const moves = chess.moves({ square: square as Square, verbose: true });
-        setLegalMoveSquares(moves.map((m) => m.to));
+        setLegalMoveTargets(
+          moves.map((m) => ({
+            square: m.to,
+            isCapture: Boolean(chess.get(m.to as Square)),
+          })),
+        );
       } else {
         setSelectedSquare(null);
-        setLegalMoveSquares([]);
+        setLegalMoveTargets([]);
       }
     }
   }
@@ -942,7 +1073,8 @@ export default function ChessPage() {
       const nextFen = chess.fen();
       lastMoveTimestampRef.current = now;
       setSelectedSquare(null);
-      setLegalMoveSquares([]);
+      setLegalMoveTargets([]);
+      setHintMove(null);
       setGamePosition(nextFen);
       setStatusMessage(`Coach played ${move.from}-${move.to}.`);
       if (updateGameOutcome(chess)) return;
@@ -1031,8 +1163,12 @@ export default function ChessPage() {
     }
   }
 
-  async function handleAskCoach(now: number) {
-    const question = chatInput.trim();
+  async function handleAskCoach(
+    now: number,
+    options?: { question?: string; source?: "typed" | "voice-coach" },
+  ) {
+    const source = options?.source ?? "typed";
+    const question = (options?.question ?? chatInput).trim();
     if (!question || isCoachThinking) return;
 
     const userMessage: ChatMessage = {
@@ -1055,6 +1191,15 @@ export default function ChessPage() {
           recentEmotions: emotionHistoryRef.current,
           question,
           mode: coachMode,
+          // Voice Coach submissions request a Burmese reply and signal that the
+          // input is a chess-coaching question (bypasses English classifier).
+          ...(source === "voice-coach"
+            ? {
+                responseLanguage: "my",
+                inputLanguage: "my",
+                source: "voice-coach",
+              }
+            : {}),
         }),
       });
 
@@ -1106,49 +1251,62 @@ export default function ChessPage() {
     }
   }
 
-  const customSquareStyles = selectedSquare
+  const hintSquareStyles: Record<string, Record<string, string>> = hintMove
     ? {
-        [selectedSquare]: { backgroundColor: "rgba(245, 158, 11, 0.45)" },
-        ...Object.fromEntries(
-          legalMoveSquares.map((sq) => {
-            const color = pieceColorAtSquare(sq, gamePosition);
-            if (color && color !== "w") {
+        [hintMove.from]: {
+          boxShadow: "inset 0 0 0 4px rgba(251, 191, 36, 0.85)",
+        },
+        [hintMove.to]: {
+          boxShadow: "inset 0 0 0 4px rgba(251, 191, 36, 0.85)",
+          background:
+            "radial-gradient(circle, rgba(251,191,36,0.5) 30%, transparent 30%)",
+        },
+      }
+    : {};
+
+  const customSquareStyles = {
+    ...hintSquareStyles,
+    ...(selectedSquare
+      ? {
+          [selectedSquare]: { backgroundColor: "rgba(245, 158, 11, 0.45)" },
+          ...Object.fromEntries(
+            legalMoveTargets.map(({ square: sq, isCapture }) => {
+              if (isCapture) {
+                return [
+                  sq,
+                  {
+                    boxShadow: "inset 0 0 0 4px rgba(239,68,68,0.5)",
+                    borderRadius: "0",
+                  },
+                ];
+              }
               return [
                 sq,
                 {
-                  boxShadow: "inset 0 0 0 4px rgba(239,68,68,0.5)",
-                  borderRadius: "0",
+                  background:
+                    "radial-gradient(circle, rgba(34,197,94,0.5) 25%, transparent 25%)",
                 },
               ];
-            }
-            return [
-              sq,
-              {
-                background:
-                  "radial-gradient(circle, rgba(34,197,94,0.5) 25%, transparent 25%)",
-              },
-            ];
-          }),
-        ),
-      }
-    : {};
+            }),
+          ),
+        }
+      : {}),
+  };
 
   const chessboardOptions: ChessboardOptions = {
     id: "sentio-engine-board",
     position: gamePosition,
     onSquareClick: ({ square }) => {
-      // eslint-disable-next-line react-hooks/purity
       handleSquareClick(square, Date.now());
     },
     onPieceClick: ({ square }) => {
-      // eslint-disable-next-line react-hooks/purity
       if (square) handleSquareClick(square, Date.now());
     },
     onPieceDrop: ({ sourceSquare, targetSquare }) => {
       if (!targetSquare) return false;
       const chess = chessRef.current;
       if (chess.turn() !== "w") return false;
-      // eslint-disable-next-line react-hooks/purity
+
       const now = Date.now();
       return applyMove(sourceSquare, targetSquare, now);
     },
@@ -1198,18 +1356,32 @@ export default function ChessPage() {
     const completedMoves = serializeReplayMoves(chessRef.current);
     if (completedMoves.length > 0) {
       const id = `game-${replayCounterRef.current++}`;
-      setSavedReplayGames((previous) => [{ id, label: `Game ${replayCounterRef.current - 1} · ${completedMoves.length} plies`, moves: completedMoves }, ...previous].slice(0, 8));
+      setSavedReplayGames((previous) =>
+        [
+          {
+            id,
+            label: `Game ${replayCounterRef.current - 1} · ${completedMoves.length} plies`,
+            moves: completedMoves,
+          },
+          ...previous,
+        ].slice(0, 8),
+      );
     }
+    gameIdRef.current += 1;
+    botRequestControllerRef.current?.abort(new Error("Superseded by reset"));
+    botRequestControllerRef.current = null;
     liveAiTurnInFlightRef.current = false;
     setLiveAiAnimating(false);
+    setPendingPromotion(null);
+    setHintMove(null);
     const newChess = new Chess();
     chessRef.current = newChess;
     setGamePosition(newChess.fen());
     setGameOutcome("active");
     setLastBotMove(null);
     setSelectedSquare(null);
-    setLegalMoveSquares([]);
-        setReplayGameId("current");
+    setLegalMoveTargets([]);
+    setReplayGameId("current");
     setReplayMoveIndex(-1);
     setReplayPlaying(false);
     setReplayBusy(false);
@@ -1218,22 +1390,63 @@ export default function ChessPage() {
 
   useEffect(() => {
     if (replayGameId === "current") {
-      setCurrentReplayGame({ id: "current", label: "Current game", moves: serializeReplayMoves(chessRef.current) });
+      setCurrentReplayGame({
+        id: "current",
+        label: "Current game",
+        moves: serializeReplayMoves(chessRef.current),
+      });
     }
   }, [gamePosition, replayGameId, activeTab]);
 
   const replayGames = [currentReplayGame, ...savedReplayGames];
-  const activeReplayGame = replayGames.find((game) => game.id === replayGameId) ?? replayGames[0];
+  const activeReplayGame =
+    replayGames.find((game) => game.id === replayGameId) ?? replayGames[0];
   const replayActive = activeTab === "replay";
-  const hasGameActivity = gamePosition !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  const hasGameActivity =
+    gamePosition !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
   const splitSecondaryTab: SidebarTab = "benchmarks";
 
-  function setReplayBoard(game: ReplayGame, targetIndex: number, animateMove: boolean) {
+  const openingName = useMemo(
+    () => lookupOpening(chessRef.current.history())?.name ?? null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- recompute when the position changes
+    [gamePosition],
+  );
+
+  const canUndo = chessRef.current.history().length > 0;
+
+  function exportPgn() {
+    const pgn = chessRef.current.pgn();
+    if (!pgn) {
+      setStatusMessage("No moves to export yet.");
+      return;
+    }
+    const blob = new Blob([pgn], { type: "application/x-chess-pgn" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `sentio-game-${Date.now()}.pgn`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setStatusMessage("PGN downloaded.");
+  }
+
+  function setReplayBoard(
+    game: ReplayGame,
+    targetIndex: number,
+    animateMove: boolean,
+  ) {
     const board = new Chess();
-    const boundedIndex = Math.max(-1, Math.min(targetIndex, game.moves.length - 1));
+    const boundedIndex = Math.max(
+      -1,
+      Math.min(targetIndex, game.moves.length - 1),
+    );
     const movesToApply = game.moves.slice(0, boundedIndex + 1);
     for (const move of movesToApply) {
-      board.move({ from: move.from as Square, to: move.to as Square, promotion: move.promotion as "q" | "r" | "b" | "n" | undefined });
+      board.move({
+        from: move.from as Square,
+        to: move.to as Square,
+        promotion: move.promotion as "q" | "r" | "b" | "n" | undefined,
+      });
     }
     if (!animateMove) {
       chessRef.current = board;
@@ -1247,10 +1460,18 @@ export default function ChessPage() {
     if (!move) return;
     const before = new Chess();
     for (const previous of game.moves.slice(0, boundedIndex)) {
-      before.move({ from: previous.from as Square, to: previous.to as Square, promotion: previous.promotion as "q" | "r" | "b" | "n" | undefined });
+      before.move({
+        from: previous.from as Square,
+        to: previous.to as Square,
+        promotion: previous.promotion as "q" | "r" | "b" | "n" | undefined,
+      });
     }
     const animatedBoard = new Chess(before.fen());
-    const applied = animatedBoard.move({ from: move.from as Square, to: move.to as Square, promotion: move.promotion as "q" | "r" | "b" | "n" | undefined });
+    const applied = animatedBoard.move({
+      from: move.from as Square,
+      to: move.to as Square,
+      promotion: move.promotion as "q" | "r" | "b" | "n" | undefined,
+    });
     if (!applied) return;
     chessRef.current = animatedBoard;
     setReplayMoveIndex(boundedIndex);
@@ -1282,19 +1503,31 @@ export default function ChessPage() {
   }
 
   useEffect(() => {
-    if (!replayActive || !replayPlaying || replayBusy || !activeReplayGame || replayMoveIndex >= activeReplayGame.moves.length - 1) {
+    if (
+      !replayActive ||
+      !replayPlaying ||
+      replayBusy ||
+      !activeReplayGame ||
+      replayMoveIndex >= activeReplayGame.moves.length - 1
+    ) {
       return;
     }
     const timer = window.setTimeout(() => stepReplay(1), 980);
     return () => window.clearTimeout(timer);
-  }, [replayActive, replayPlaying, replayBusy, activeReplayGame, replayMoveIndex]);
+  }, [
+    replayActive,
+    replayPlaying,
+    replayBusy,
+    activeReplayGame,
+    replayMoveIndex,
+  ]);
 
   return (
     <main
-      className={`flex h-screen w-screen overflow-hidden sentio-bg transition-colors duration-300 ${theme === "light" ? "light text-zinc-900" : "text-zinc-100"}`}
+      className={`flex h-screen w-screen flex-col overflow-hidden sentio-bg transition-colors duration-300 lg:flex-row ${theme === "light" ? "light text-zinc-900" : "text-zinc-100"}`}
     >
       <section className="flex flex-1 flex-col min-w-0">
-        <header className="flex items-center gap-3 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-5 py-2 shadow-sm dark:bg-zinc-950/80 light:bg-white/90 light:border-slate-200">
+        <header className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-zinc-800/80 bg-zinc-950/80 px-3 py-2 shadow-sm backdrop-blur-md lg:flex-nowrap lg:px-5 dark:bg-zinc-950/80 light:bg-white/90 light:border-slate-200">
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.6)] animate-pulse" />
             <span className="font-mono text-base font-bold tracking-tight text-amber-500 dark:text-amber-400">
@@ -1302,15 +1535,35 @@ export default function ChessPage() {
             </span>
           </div>
 
-          <nav className="workspace-nav z-50 flex shrink-0 items-center gap-1 rounded-lg border border-zinc-800/80 bg-zinc-900/70 p-1 light:border-slate-300 light:bg-slate-100" aria-label="Workspace navigation">
-            <button type="button" aria-current={workspaceTab === "board" ? "page" : undefined} onClick={() => setWorkspaceTab("board")} className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${workspaceTab === "board" ? "bg-amber-500/20 text-amber-300 light:bg-amber-100 light:text-amber-700" : "text-zinc-500 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-800"}`}>Board</button>
-            <button type="button" aria-current={workspaceTab === "aiLab" ? "page" : undefined} onClick={() => { setWorkspaceTab("aiLab"); setActiveTab("coach"); }} className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${workspaceTab === "aiLab" ? "bg-cyan-500/20 text-cyan-200 light:bg-cyan-100 light:text-cyan-700" : "text-zinc-500 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-800"}`}>AI Lab</button>
+          <nav
+            className="workspace-nav z-50 flex shrink-0 items-center gap-1 rounded-lg border border-zinc-800/80 bg-zinc-900/70 p-1 light:border-slate-300 light:bg-slate-100"
+            aria-label="Workspace navigation"
+          >
+            <button
+              type="button"
+              aria-current={workspaceTab === "board" ? "page" : undefined}
+              onClick={() => setWorkspaceTab("board")}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${workspaceTab === "board" ? "bg-amber-500/20 text-amber-300 light:bg-amber-100 light:text-amber-700" : "text-zinc-500 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-800"}`}
+            >
+              Board
+            </button>
+            <button
+              type="button"
+              aria-current={workspaceTab === "aiLab" ? "page" : undefined}
+              onClick={() => {
+                setWorkspaceTab("aiLab");
+                setActiveTab("coach");
+              }}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${workspaceTab === "aiLab" ? "bg-cyan-500/20 text-cyan-200 light:bg-cyan-100 light:text-cyan-700" : "text-zinc-500 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-800"}`}
+            >
+              AI Lab
+            </button>
           </nav>
 
           <div className="h-4 w-px bg-zinc-800/80 dark:bg-zinc-800 light:bg-slate-300" />
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-medium text-zinc-500 dark:text-zinc-400 light:text-slate-600">
+            <span className="hidden font-medium text-zinc-500 md:inline dark:text-zinc-400 light:text-slate-600">
               Emotion:
             </span>
             <select
@@ -1343,7 +1596,7 @@ export default function ChessPage() {
           <div className="h-4 w-px bg-zinc-800/80 dark:bg-zinc-800 light:bg-slate-300" />
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-medium text-zinc-500 dark:text-zinc-400 light:text-slate-600">
+            <span className="hidden font-medium text-zinc-500 md:inline dark:text-zinc-400 light:text-slate-600">
               Bot Profile:
             </span>
             <span className="rounded bg-amber-500/10 px-2 py-0.5 font-medium text-amber-500 dark:text-amber-300 capitalize">
@@ -1352,7 +1605,7 @@ export default function ChessPage() {
             <span className="rounded bg-zinc-800/80 dark:bg-zinc-800 dark:text-zinc-200 light:bg-slate-200 light:text-slate-800 px-2 py-0.5 font-mono font-semibold">
               {engineProfile.elo} ELO
             </span>
-            <span className="text-zinc-500 dark:text-zinc-400 light:text-slate-500">
+            <span className="hidden text-zinc-500 lg:inline dark:text-zinc-400 light:text-slate-500">
               d:{engineProfile.depth}
             </span>
             {isBotThinking && (
@@ -1364,24 +1617,24 @@ export default function ChessPage() {
 
           <div className="h-4 w-px bg-zinc-800/80 dark:bg-zinc-800 light:bg-slate-300" />
 
-          <div className="flex items-center gap-1.5 text-xs">
-            <span className="mr-1 text-zinc-500 dark:text-zinc-400 light:text-slate-600 font-medium">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="hidden font-medium text-zinc-500 md:inline dark:text-zinc-400 light:text-slate-600">
               Pieces:
             </span>
-            {Object.entries(PIECE_DESIGNS).map(([key, d]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setPieceDesign(key as PieceDesignKey)}
-                className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
-                  pieceDesign === key
-                    ? "bg-amber-500/20 text-amber-500 dark:text-amber-300 border border-amber-500/40 shadow-sm"
-                    : "text-zinc-500 hover:text-zinc-300 dark:hover:text-zinc-200 light:text-slate-600 light:hover:text-slate-900 hover:bg-zinc-800/50 light:hover:bg-slate-200/60"
-                }`}
-              >
-                {d.label}
-              </button>
-            ))}
+            <select
+              aria-label="Piece design"
+              value={pieceDesign}
+              onChange={(event) =>
+                setPieceDesign(event.target.value as PieceDesignKey)
+              }
+              className="rounded-md border border-zinc-800 bg-zinc-900/90 px-2 py-1 text-xs outline-none focus:border-amber-500/50 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200 light:bg-slate-100 light:border-slate-300 light:text-slate-800"
+            >
+              {Object.entries(PIECE_DESIGNS).map(([key, d]) => (
+                <option key={key} value={key}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex-1" />
@@ -1395,54 +1648,63 @@ export default function ChessPage() {
                 setSoundMuted(nextMuted);
               }}
               className="flex items-center gap-1.5 rounded-lg border border-zinc-700/60 dark:border-zinc-700/60 light:border-slate-300 bg-zinc-900/90 dark:bg-zinc-900 light:bg-slate-100 px-2.5 py-1 text-xs font-semibold text-zinc-300 dark:text-zinc-200 light:text-slate-800 hover:border-amber-500/50 transition-all shadow-sm"
-              title="Toggle Capture & Move Sound Effects"
+              title={
+                soundMutedState
+                  ? "Sound muted — click to enable"
+                  : "Sound on — click to mute"
+              }
+              aria-label={soundMutedState ? "Enable sound" : "Mute sound"}
+              aria-pressed={!soundMutedState}
             >
-              {soundMutedState ? (
-                <>
-                  <span className="text-rose-400">🔇</span>
-                  <span>Muted</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-emerald-400">🔊</span>
-                  <span>Sound On</span>
-                </>
-              )}
+              <span
+                className={`text-base leading-none ${soundMutedState ? "text-rose-400" : "text-emerald-400"}`}
+              >
+                {soundMutedState ? "🔇" : "🔊"}
+              </span>
             </button>
 
             <button
               type="button"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="flex items-center gap-1.5 rounded-lg border border-zinc-700/60 dark:border-zinc-700/60 light:border-slate-300 bg-zinc-900/90 dark:bg-zinc-900 light:bg-slate-100 px-2.5 py-1 text-xs font-semibold text-zinc-300 dark:text-zinc-200 light:text-slate-800 hover:border-amber-500/50 transition-all shadow-sm"
-              title="Toggle Light / Dark Mode"
+              title={
+                theme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              aria-label="Toggle light / dark mode"
             >
-              {theme === "dark" ? (
-                <>
-                  <span className="text-amber-400">☀️</span>
-                  <span>Light</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-blue-500">🌙</span>
-                  <span>Dark</span>
-                </>
-              )}
+              <span className="text-base leading-none">
+                {theme === "dark" ? "☀️" : "🌙"}
+              </span>
             </button>
           </div>
-
         </header>
 
         {workspaceTab === "aiLab" ? (
-          <section className="ai-lab-workspace flex min-h-0 flex-1 flex-col overflow-hidden p-6" aria-label="Full-width AI Lab workspace">
+          <section
+            className="ai-lab-workspace flex min-h-0 flex-1 flex-col overflow-hidden p-6"
+            aria-label="Full-width AI Lab workspace"
+          >
             <div className="mb-4 flex items-end justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(103,232,249,0.8)]" />
-                  <h1 className="text-lg font-bold text-cyan-100 light:text-cyan-900">AI Lab · Live Game Analysis</h1>
+                  <h1 className="text-lg font-bold text-cyan-100 light:text-cyan-900">
+                    AI Lab · Live Game Analysis
+                  </h1>
                 </div>
-                <p className="mt-1 text-xs text-zinc-400 light:text-slate-600">A full-width view of the current user-versus-AI game. Analysis starts after the first real move and follows the live position only.</p>
+                <p className="mt-1 text-xs text-zinc-400 light:text-slate-600">
+                  A full-width view of the current user-versus-AI game. Analysis
+                  starts after the first real move and follows the live position
+                  only.
+                </p>
               </div>
-              <span className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-cyan-200 light:border-cyan-300 light:bg-cyan-50 light:text-cyan-700">{hasGameActivity && activeTab !== "replay" ? "tracking live game" : "waiting for first move"}</span>
+              <span className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-cyan-200 light:border-cyan-300 light:bg-cyan-50 light:text-cyan-700">
+                {hasGameActivity && activeTab !== "replay"
+                  ? "tracking live game"
+                  : "waiting for first move"}
+              </span>
             </div>
             <div className="ai-lab-workspace-panel min-h-0 flex-1 overflow-hidden rounded-2xl border border-cyan-500/25 bg-zinc-950/45 p-4 shadow-2xl light:border-cyan-300 light:bg-white/60">
               <AIAnalysisTab
@@ -1455,460 +1717,654 @@ export default function ChessPage() {
             </div>
           </section>
         ) : (
-        <div className="flex flex-1 items-center justify-center gap-8 p-6 min-h-0">
-          <div
-            ref={boardWrapRef}
-            className="aspect-square w-[660px] max-w-[85vw] max-h-[75vh] rounded-2xl sentio-board-frame p-3.5 shadow-2xl touch-none border border-zinc-700/40 relative overflow-hidden light:border-slate-300"
-            onTouchEndCapture={handleBoardTouchEndCapture}
-          >
-            <Chessboard options={chessboardOptions} />
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 overflow-y-auto p-4 xl:flex-row xl:gap-8 xl:overflow-hidden xl:p-6">
+            <div className="hidden h-[75vh] max-h-full shrink-0 self-center xl:block">
+              <EvalBar evaluation={evaluation} />
+            </div>
             <div
-              ref={aiHandRef}
-              className="absolute left-0 top-0 z-30 pointer-events-none opacity-0"
-              style={{
-                transition: "opacity 120ms ease-out",
-                filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
-              }}
-              title="Coach move"
+              ref={boardWrapRef}
+              className="aspect-square w-[660px] max-w-[85vw] max-h-[75vh] rounded-2xl sentio-board-frame p-3.5 shadow-2xl touch-none border border-zinc-700/40 relative overflow-hidden light:border-slate-300"
+              onTouchEndCapture={handleBoardTouchEndCapture}
             >
-              <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M19.15 4.12c-.13-.14-.3-.2-.46-.2l-.02 0c-.16 0-.31.06-.42.17L14 8.28V4.5c0-.38-.31-.66-.69-.66-.38 0-.69.28-.69.66v5.23c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27V2.69c0-.38-.31-.69-.69-.69-.38 0-.69.31-.69.69v6.86c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27V4.46c0-.38-.31-.69-.69-.69-.38 0-.69.28-.69.69v6.5c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27v-2.5c0-.38-.31-.69-.69-.69-.38 0-.69.28-.69.69v7.86c0 .34.13.66.36.9l3.08 3.24c.22.24.53.36.85.36h.03c.58 0 1.15-.22 1.58-.61l4.43-4.19c.47-.45.74-1.07.74-1.72v-9.09c0-.69-1-.77-1.6-1.29zM14.02 14.71h-3.31V13h3.31v1.71z"
-                  fill="#f59e0b"
-                  stroke="#18181b"
-                  strokeWidth="1"
-                  strokeLinejoin="round"
+              <Chessboard options={chessboardOptions} />
+              <div
+                ref={aiHandRef}
+                className="absolute left-0 top-0 z-30 pointer-events-none opacity-0"
+                style={{
+                  transition: "opacity 120ms ease-out",
+                  filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
+                }}
+                title="Coach move"
+              >
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M19.15 4.12c-.13-.14-.3-.2-.46-.2l-.02 0c-.16 0-.31.06-.42.17L14 8.28V4.5c0-.38-.31-.66-.69-.66-.38 0-.69.28-.69.66v5.23c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27V2.69c0-.38-.31-.69-.69-.69-.38 0-.69.31-.69.69v6.86c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27V4.46c0-.38-.31-.69-.69-.69-.38 0-.69.28-.69.69v6.5c0 .15-.11.27-.26.27-.15 0-.26-.12-.26-.27v-2.5c0-.38-.31-.69-.69-.69-.38 0-.69.28-.69.69v7.86c0 .34.13.66.36.9l3.08 3.24c.22.24.53.36.85.36h.03c.58 0 1.15-.22 1.58-.61l4.43-4.19c.47-.45.74-1.07.74-1.72v-9.09c0-.69-1-.77-1.6-1.29zM14.02 14.71h-3.31V13h3.31v1.71z"
+                    fill="#f59e0b"
+                    stroke="#18181b"
+                    strokeWidth="1"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              {pendingPromotion ? (
+                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                  <div className="rounded-xl border border-amber-500/40 bg-zinc-900 p-4 shadow-2xl light:border-amber-300 light:bg-white">
+                    <p className="mb-2 text-xs font-semibold text-zinc-200 light:text-slate-800">
+                      Choose promotion piece
+                    </p>
+                    <div className="flex gap-2">
+                      {(
+                        [
+                          ["q", "♛"],
+                          ["r", "♜"],
+                          ["b", "♝"],
+                          ["n", "♞"],
+                        ] as const
+                      ).map(([piece, glyph]) => (
+                        <button
+                          key={piece}
+                          type="button"
+                          onClick={() => choosePromotion(piece)}
+                          className="h-12 w-12 rounded-lg border border-zinc-700 bg-zinc-800 text-3xl leading-none text-amber-300 transition-colors hover:border-amber-400 hover:bg-zinc-700 light:border-slate-300 light:bg-slate-100 light:text-slate-800 light:hover:bg-slate-200"
+                        >
+                          {glyph}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="flex flex-col items-center gap-3">
+              <div className="relative w-64 h-72 shrink-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl group light:border-slate-300 light:bg-slate-200">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="h-full w-full scale-x-[-1] object-cover"
                 />
-              </svg>
+                <div className="absolute inset-0 pointer-events-none border border-amber-500/10 rounded-2xl" />
+                <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
+                  <span className="rounded-full bg-zinc-950/80 backdrop-blur-md border border-zinc-800 px-2.5 py-1 font-mono text-[10px] text-zinc-400 uppercase tracking-wider light:bg-white/80 light:border-slate-300 light:text-slate-600">
+                    Camera Feed
+                  </span>
+                  <span className="flex items-center gap-1.5 rounded-full bg-emerald-950/80 backdrop-blur-md border border-emerald-800/50 px-2.5 py-1 font-mono text-[10px] text-emerald-300 font-semibold light:bg-emerald-100 light:border-emerald-300 light:text-emerald-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    {emotion}
+                  </span>
+                </div>
+              </div>
+
+              {botRemark && (
+                <div className="w-64 rounded-xl border border-amber-500/20 bg-amber-950/20 p-3 text-xs text-zinc-300 backdrop-blur-md light:border-amber-300 light:bg-amber-100 light:text-slate-700">
+                  <span className="text-amber-400 font-bold block mb-0.5 light:text-amber-700">
+                    Sentio Engine:
+                  </span>
+                  <span className="italic">{botRemark}</span>
+                </div>
+              )}
             </div>
           </div>
-
-          <div className="flex flex-col items-center gap-3">
-            <div className="relative w-64 h-72 shrink-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl group light:border-slate-300 light:bg-slate-200">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="h-full w-full scale-x-[-1] object-cover"
-              />
-              <div className="absolute inset-0 pointer-events-none border border-amber-500/10 rounded-2xl" />
-              <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
-                <span className="rounded-full bg-zinc-950/80 backdrop-blur-md border border-zinc-800 px-2.5 py-1 font-mono text-[10px] text-zinc-400 uppercase tracking-wider light:bg-white/80 light:border-slate-300 light:text-slate-600">
-                  Camera Feed
-                </span>
-                <span className="flex items-center gap-1.5 rounded-full bg-emerald-950/80 backdrop-blur-md border border-emerald-800/50 px-2.5 py-1 font-mono text-[10px] text-emerald-300 font-semibold light:bg-emerald-100 light:border-emerald-300 light:text-emerald-700">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  {emotion}
-                </span>
-              </div>
-            </div>
-
-            {botRemark && (
-              <div className="w-64 rounded-xl border border-amber-500/20 bg-amber-950/20 p-3 text-xs text-zinc-300 backdrop-blur-md light:border-amber-300 light:bg-amber-100 light:text-slate-700">
-                <span className="text-amber-400 font-bold block mb-0.5 light:text-amber-700">
-                  Sentio Engine:
-                </span>
-                <span className="italic">{botRemark}</span>
-              </div>
-            )}
-          </div>
-        </div>
         )}
       </section>
 
-{workspaceTab === "board" ? (
-      <aside className={`controller-panel ${controllerDetached ? "controller-floating" : ""} ${controllerExpanded ? (controllerWide ? "controller-panel-wide" : "controller-panel-expanded w-[440px]") : "controller-panel-collapsed w-[72px] px-2"} flex shrink-0 flex-col overflow-hidden border-l border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md light:border-slate-300 light:bg-white/90`} data-controller-expanded={controllerExpanded} data-controller-wide={controllerWide} data-controller-split={controllerSplit} data-controller-detached={controllerDetached}>
-        <div className={`flex items-center ${controllerExpanded ? "justify-between" : "justify-center"} mb-2`}>
-          {controllerExpanded ? (
-            <div className="min-w-0">
-              <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">Game Controller</h1>
-              <p className="truncate text-xs text-zinc-400 light:text-slate-600">{statusMessage}</p>
-            </div>
-          ) : (
-            <span className="font-mono text-lg font-bold text-amber-400 light:text-amber-700" aria-hidden="true">S</span>
-          )}
-          <div className={`flex items-center ${controllerExpanded ? "gap-2" : "flex-col gap-2"}`}>
+      {workspaceTab === "board" ? (
+        <aside
+          className={`controller-panel ${controllerDetached ? "controller-floating" : ""} ${controllerExpanded ? (controllerWide ? "controller-panel-wide" : "controller-panel-expanded w-full lg:w-[440px]") : "controller-panel-collapsed w-full lg:w-[72px] px-2"} flex shrink-0 flex-col overflow-hidden border-t border-zinc-800/80 bg-zinc-950/90 p-4 backdrop-blur-md lg:border-t-0 lg:border-l light:border-slate-300 light:bg-white/90`}
+          data-controller-expanded={controllerExpanded}
+          data-controller-wide={controllerWide}
+          data-controller-split={controllerSplit}
+          data-controller-detached={controllerDetached}
+        >
+          <div
+            className={`flex items-center ${controllerExpanded ? "justify-between" : "justify-center"} mb-2`}
+          >
             {controllerExpanded ? (
-              <button
-                type="button"
-                onClick={resetGame}
-                className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-amber-300 transition-colors light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
-              >
-                Reset Game
-              </button>
-            ) : null}
-            {controllerExpanded ? (
-              <button
-                type="button"
-                aria-label={controllerWide ? "Use compact game controller" : "Expand game controller width"}
-                aria-pressed={controllerWide}
-                onClick={() => setControllerWide((wide) => !wide)}
-                className="controller-wide-toggle rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-cyan-400/50 hover:bg-zinc-800 hover:text-cyan-200 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-cyan-700"
-                title={controllerWide ? "Use compact controller width" : "Expand controller for a larger view"}
-              >
-                {controllerWide ? "Compact" : "Wide"}
-              </button>
-            ) : null}
-            {controllerExpanded ? (
-              <button
-                type="button"
-                aria-label={controllerSplit ? "Use single sidebar view" : "Split sidebar view"}
-                aria-pressed={controllerSplit}
-                onClick={() => {
-                  if (activeTab === "3d" || activeTab === "replay") return;
-                  setControllerSplit((split) => !split);
-                  setControllerWide(true);
-                }}
-                disabled={activeTab === "3d" || activeTab === "replay"}
-                className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-violet-400/50 hover:bg-zinc-800 hover:text-violet-200 disabled:cursor-not-allowed disabled:opacity-40 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-violet-700"
-                title={activeTab === "3d" || activeTab === "replay" ? "Split view is unavailable in full-screen 3D modes" : controllerSplit ? "Use one sidebar component" : "Compare two sidebar components"}
-              >
-                {controllerSplit ? "Single" : "Split"}
-              </button>
-            ) : null}
-            {controllerExpanded ? (
-              <button
-                type="button"
-                aria-label={controllerDetached ? "Dock sidebar" : "Float sidebar"}
-                aria-pressed={controllerDetached}
-                onClick={() => setControllerDetached((detached) => !detached)}
-                className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:border-emerald-400/50 hover:bg-zinc-800 hover:text-emerald-200 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-emerald-700"
-                title={controllerDetached ? "Dock sidebar back into the page" : "Float sidebar over the board"}
-              >
-                {controllerDetached ? "Dock" : "Float"}
-              </button>
-            ) : null}
-            <button
-              type="button"
-              aria-label={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
-              aria-expanded={controllerExpanded}
-              onClick={() => setControllerExpanded((expanded) => !expanded)}
-              className="controller-toggle rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-amber-500/50 hover:bg-zinc-800 hover:text-amber-300 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
-              title={controllerExpanded ? "Collapse game controller" : "Expand game controller"}
-            >
-              {controllerExpanded ? "›" : "‹"}
-            </button>
-          </div>
-        </div>
-
-        {controllerExpanded ? (
-          <div className={`controller-content ${controllerWide ? "controller-wide-mode" : ""} min-h-0 flex-1`}>
-        <div className="mt-2">
-          {/* eslint-disable-next-line react-hooks/refs */}
-          <GameInfo moves={chessRef.current.history({ verbose: true })} />
-        </div>
-
-        <div className="mt-3 flex gap-1 rounded-xl bg-zinc-900/90 p-1 border border-zinc-800 light:bg-slate-100 light:border-slate-300">
-          <button
-            type="button"
-            onClick={() => setActiveTab("coach")}
-            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
-              activeTab === "coach"
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
-                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
-            }`}
-          >
-            AI Coach
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("speech")}
-            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
-              activeTab === "speech"
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
-                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
-            }`}
-          >
-            Voice Moves
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("benchmarks")}
-            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
-              activeTab === "benchmarks"
-                ? "bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 shadow-sm light:bg-emerald-100 light:text-emerald-700"
-                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
-            }`}
-          >
-            Benchmarks
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("replay")}
-            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
-              activeTab === "replay"
-                ? "bg-violet-500/20 text-violet-200 border border-violet-500/30 shadow-sm light:bg-violet-100 light:text-violet-700"
-                : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
-            }`}
-          >
-            Replay
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("3d")}
-            className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
-              activeTab === "3d"
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
-                : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 light:text-slate-500 light:hover:text-slate-700 light:hover:bg-slate-200/60"
-            }`}
-          >
-            3D Mode
-          </button>
-        </div>
-
-        {controllerSplit ? (
-          <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-violet-400/20 bg-violet-950/20 px-2.5 py-2 text-[11px] light:border-violet-300 light:bg-violet-50">
-            <span className="font-semibold text-violet-200 light:text-violet-800">Compare with</span>
-            <select
-              aria-label="Split sidebar component"
-              value={splitSecondaryTab}
-              onChange={(event) => setSplitTab(event.target.value as SidebarTab)}
-              className="rounded-md border border-violet-400/30 bg-zinc-950 px-2 py-1 text-[11px] text-violet-100 outline-none light:border-violet-300 light:bg-white light:text-violet-800"
-            >
-              <option value="benchmarks">Benchmarks</option>
-            </select>
-          </div>
-        ) : null}
-
-        <div className={`controller-split-region mt-3 min-h-0 flex-1 ${controllerSplit ? "controller-split-grid" : ""}`}>
-          <div className="controller-primary-pane flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-slate-300 light:bg-white/70">
-          {activeTab === "coach" ? (
-            <>
-              <div className="flex items-center justify-between mb-2.5">
-                <p className="text-sm text-zinc-200 font-semibold light:text-slate-800">
-                  Coach Assistant
+              <div className="min-w-0">
+                <h1 className="font-mono text-base font-bold text-amber-400 light:text-amber-700">
+                  Game Controller
+                </h1>
+                <p className="truncate text-xs text-zinc-400 light:text-slate-600">
+                  {statusMessage}
                 </p>
-                {coachMode === "groq" ? (
-                  <span
-                    title={groqDetail}
-                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      groqAvailable
-                        ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300"
-                        : "bg-rose-950/80 text-rose-300 border border-rose-800/50 light:bg-rose-100 light:text-rose-700 light:border-rose-300"
-                    }`}
-                  >
-                    {groqAvailable ? "Groq Active" : "Groq Needs Key"}
-                  </span>
-                ) : (
-                  <span
-                    title={coachLlmDetail}
-                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      coachLlmConnection === "connected"
-                        ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300"
-                        : coachLlmConnection === "disabled"
-                          ? "bg-zinc-800 text-zinc-400 border border-zinc-700 light:bg-slate-200 light:text-slate-600 light:border-slate-300"
-                          : coachLlmConnection === "checking"
-                            ? "bg-amber-950/80 text-amber-300 border border-amber-800/50 light:bg-amber-100 light:text-amber-700 light:border-amber-300"
-                            : "bg-rose-950/80 text-rose-300 border border-rose-800/50 light:bg-rose-100 light:text-rose-700 light:border-rose-300"
-                    }`}
-                  >
-                    {coachLlmConnection === "connected"
-                      ? "LLM Active"
-                      : coachLlmConnection === "disabled"
-                        ? "Standard Mode"
-                        : coachLlmConnection === "checking"
-                          ? "Checking LLM..."
-                          : "Offline"}
-                  </span>
-                )}
               </div>
-              <div className="mb-2.5 flex gap-1 rounded-lg bg-zinc-900/90 p-1 border border-zinc-800 light:bg-slate-100 light:border-slate-300">
-                <button
-                  type="button"
-                  onClick={() => setCoachMode("groq")}
-                  disabled={!groqAvailable}
-                  className={`flex-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-all ${
-                    coachMode === "groq"
-                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
-                      : "text-zinc-500 hover:text-zinc-300 disabled:opacity-40 light:text-slate-500 light:hover:text-slate-700"
-                  }`}
-                  title={groqDetail}
-                >
-                  Groq
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCoachMode("llm")}
-                  disabled={coachLlmConnection === "disabled"}
-                  className={`flex-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-all ${
-                    coachMode === "llm"
-                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
-                      : "text-zinc-500 hover:text-zinc-300 disabled:opacity-40 light:text-slate-500 light:hover:text-slate-700"
-                  }`}
-                  title={coachLlmDetail}
-                >
-                  Local LLM
-                </button>
-              </div>
-              <div
-                ref={chatScrollRef}
-                className="min-h-0 flex-1 space-y-2.5 overflow-y-auto pr-1 chat-scroll"
+            ) : (
+              <span
+                className="font-mono text-lg font-bold text-amber-400 light:text-amber-700"
+                aria-hidden="true"
               >
-                {chatMessages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`rounded-xl border ${
-                      message.role === "assistant"
-                        ? "border-zinc-800 bg-zinc-900/90 text-zinc-200 light:border-slate-300 light:bg-white light:text-slate-800"
-                        : "border-amber-500/20 bg-amber-950/20 text-amber-100 light:border-amber-300 light:bg-amber-100 light:text-amber-900"
-                    }`}
-                  >
-                    <div className="p-3 text-xs leading-relaxed whitespace-pre-line">
-                      {message.content}
-                    </div>
-                    {message.bestMove && message.playedByCoach && (
-                      <div className="border-t border-zinc-800/80 px-3 py-2 text-[11px] light:border-slate-300">
-                        <span className="font-mono font-bold text-amber-400 light:text-amber-700">
-                          ▶ {message.bestMove.san}
-                        </span>
-                        <span className="ml-2 text-zinc-400 light:text-slate-500">
-                          playing it now
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-3 flex gap-2">
-                <input
-                  value={chatInput}
-                  onChange={(event) => setChatInput(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      void handleAskCoach(Date.now());
-                    }
-                  }}
-                  placeholder="Ask coach for tactical advice or plan..."
-                  className="flex-1 rounded-lg border border-zinc-700/80 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/60 transition-colors light:border-slate-300 light:bg-white light:text-slate-800"
-                />
+                S
+              </span>
+            )}
+            <div
+              className={`flex items-center ${controllerExpanded ? "gap-2" : "flex-col gap-2"}`}
+            >
+              {controllerExpanded ? (
                 <button
                   type="button"
                   onClick={() => {
-                    void handleAskCoach(Date.now());
+                    void requestHint();
                   }}
-                  disabled={isCoachThinking || !chatInput.trim()}
-                  className="rounded-lg bg-amber-500 px-4 py-2 text-xs font-bold text-zinc-950 hover:bg-amber-400 disabled:opacity-40 transition-colors shadow-sm"
+                  disabled={
+                    isHintLoading || isBotThinking || gameOutcome !== "active"
+                  }
+                  className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-emerald-300 transition-colors disabled:cursor-not-allowed disabled:opacity-40 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-emerald-700"
+                  title="Ask the engine for a strong move (5s cooldown)"
                 >
-                  {isCoachThinking ? "..." : "Ask"}
+                  {isHintLoading ? "…" : "Hint"}
                 </button>
-              </div>
-            </>
-          ) : activeTab === "speech" ? (
-            <SpeechTab
-              chessRef={chessRef}
-              gameOutcome={gameOutcome}
-              isBotThinking={isBotThinking}
-              onMoveExecuted={() => {
-                const nextFen = chessRef.current.fen();
-                setGamePosition(nextFen);
-                setSelectedSquare(null);
-                setLegalMoveSquares([]);
-                updateGameOutcome(chessRef.current);
-                if (
-                  chessRef.current.turn() === "b" &&
-                  !chessRef.current.isGameOver()
-                ) {
-                  void triggerBotTurn(nextFen);
-                }
-              }}
-              setStatusMessage={setStatusMessage}
-            />
-          ) : activeTab === "benchmarks" ? (
-            <BenchmarkTab report={benchmarkReport} />
-          ) : (
-            <div className="flex flex-1 flex-col justify-between p-1 space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2.5 light:border-slate-300">
-                  <span className="text-xs font-bold text-amber-400 light:text-amber-700">
-                    3D Interactive Arena
-                  </span>
-                  <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-300 light:bg-amber-100 light:border-amber-300 light:text-amber-700">
-                    3D Active
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-400 leading-relaxed light:text-slate-600">
-                  The board has morphed into a full 3D studio where you and
-                  Sentio AI sit face-to-face.
-                </p>
-
-                <div className="rounded-xl bg-zinc-950/80 border border-zinc-800/80 p-3 space-y-2.5 text-xs light:bg-white light:border-slate-300">
-                  <span className="font-semibold text-zinc-300 block light:text-slate-700">
-                    Controls:
-                  </span>
-                  <ul className="space-y-2 text-zinc-400 text-[11px] light:text-slate-600">
-                    <li className="flex items-start gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1 shrink-0" />
-<span>
-                        <strong className="text-zinc-200 light:text-slate-800">
-                          Move Piece:
-                        </strong>{" "}
-                        Click a piece and a green square, or use fist + hold for
-                        2s
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-1 shrink-0" />
-                      <span>
-                        <strong className="text-zinc-200 light:text-slate-800">
-                          Orbit View:
-                        </strong>{" "}
-                        Right-click & drag canvas to tilt and rotate camera
-                        angle
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1 shrink-0" />
-                      <span>
-                        <strong className="text-zinc-200 light:text-slate-800">
-                          Zoom:
-                        </strong>{" "}
-                        Scroll wheel or pinch trackpad
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-purple-400 mt-1 shrink-0" />
-<span>
-                        <strong className="text-zinc-200 light:text-slate-800">
-                          Webcam Gestures:
-                        </strong>{" "}
-                        Palm to aim · Fist to grab · Hold still over a green
-                        square for 2s to place · Palm to release
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
+              ) : null}
+              {controllerExpanded ? (
+                <button
+                  type="button"
+                  onClick={undoMovePair}
+                  disabled={!canUndo}
+                  className="rounded-lg border border-zinc-700/60 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-violet-300 transition-colors disabled:cursor-not-allowed disabled:opacity-40 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-violet-700"
+                  title="Take back your last move (Ctrl/Cmd+Z)"
+                >
+                  Undo
+                </button>
+              ) : null}
+              {controllerExpanded ? (
+                <OverflowMenu
+                  items={[
+                    {
+                      label: "Export PGN",
+                      icon: "📄",
+                      onSelect: exportPgn,
+                      title: "Download the current game as PGN",
+                    },
+                    {
+                      label: "Reset Game",
+                      icon: "🔄",
+                      onSelect: resetGame,
+                    },
+                    {
+                      label: controllerWide ? "Compact width" : "Wide panel",
+                      icon: "↔",
+                      onSelect: () => setControllerWide((wide) => !wide),
+                      title: "Toggle controller width",
+                    },
+                    {
+                      label: controllerSplit ? "Single pane" : "Split panes",
+                      icon: "⧉",
+                      disabled: activeTab === "3d" || activeTab === "replay",
+                      onSelect: () => {
+                        if (activeTab === "3d" || activeTab === "replay")
+                          return;
+                        setControllerSplit((split) => !split);
+                        setControllerWide(true);
+                      },
+                      title: "Compare two sidebar components",
+                    },
+                    {
+                      label: controllerDetached
+                        ? "Dock sidebar"
+                        : "Float sidebar",
+                      icon: "🪟",
+                      onSelect: () =>
+                        setControllerDetached((detached) => !detached),
+                    },
+                  ]}
+                />
+              ) : null}
               <button
                 type="button"
-                onClick={() => setActiveTab("coach")}
-                className="w-full rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-4 py-2.5 text-xs font-bold text-zinc-200 transition-all shadow-sm light:bg-slate-200 light:hover:bg-slate-300 light:border-slate-300 light:text-slate-800"
+                aria-label={
+                  controllerExpanded
+                    ? "Collapse game controller"
+                    : "Expand game controller"
+                }
+                aria-expanded={controllerExpanded}
+                onClick={() => setControllerExpanded((expanded) => !expanded)}
+                className="controller-toggle rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-amber-500/50 hover:bg-zinc-800 hover:text-amber-300 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:bg-slate-100 light:hover:text-amber-700"
+                title={
+                  controllerExpanded
+                    ? "Collapse game controller"
+                    : "Expand game controller"
+                }
               >
-                Return to 2D Board & Coach
+                {controllerExpanded ? "›" : "‹"}
               </button>
             </div>
-          )}
           </div>
-          {controllerSplit && activeTab !== "3d" && activeTab !== "replay" ? (
-            <div className="controller-secondary-pane flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-violet-400/25 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-violet-300 light:bg-white/70">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-violet-200 light:text-violet-800">Benchmarks</span>
-                <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[9px] font-semibold text-violet-200 light:text-violet-700">side-by-side</span>
+
+          {controllerExpanded ? (
+            <div
+              className={`controller-content ${controllerWide ? "controller-wide-mode" : ""} min-h-0 flex-1`}
+            >
+              <div className="mt-2">
+                {}
+                <GameInfo
+                  moves={chessRef.current.history({ verbose: true })}
+                  openingName={openingName}
+                />
               </div>
-              <BenchmarkTab report={benchmarkReport} />
+
+              <div className="mt-3 grid grid-cols-3 gap-1 rounded-xl border border-zinc-800 bg-zinc-900/90 p-1 light:border-slate-300 light:bg-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("coach")}
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+                    activeTab === "coach"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
+                      : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+                  }`}
+                >
+                  AI Coach
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("speech")}
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+                    activeTab === "speech"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
+                      : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+                  }`}
+                >
+                  Voice Moves
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("logician")}
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+                    activeTab === "logician"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
+                      : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+                  }`}
+                  title="Rule-based advice from the Prolog knowledge base"
+                >
+                  Logician
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("benchmarks")}
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+                    activeTab === "benchmarks"
+                      ? "bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 shadow-sm light:bg-emerald-100 light:text-emerald-700"
+                      : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+                  }`}
+                >
+                  Benchmarks
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("replay")}
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+                    activeTab === "replay"
+                      ? "bg-violet-500/20 text-violet-200 border border-violet-500/30 shadow-sm light:bg-violet-100 light:text-violet-700"
+                      : "text-zinc-500 hover:text-zinc-300 light:text-slate-500 light:hover:text-slate-700"
+                  }`}
+                >
+                  Replay
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("3d")}
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+                    activeTab === "3d"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm light:bg-amber-100 light:text-amber-700"
+                      : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 light:text-slate-500 light:hover:text-slate-700 light:hover:bg-slate-200/60"
+                  }`}
+                >
+                  3D Mode
+                </button>
+              </div>
+
+              {controllerSplit ? (
+                <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-violet-400/20 bg-violet-950/20 px-2.5 py-2 text-[11px] light:border-violet-300 light:bg-violet-50">
+                  <span className="font-semibold text-violet-200 light:text-violet-800">
+                    Compare with
+                  </span>
+                  <select
+                    aria-label="Split sidebar component"
+                    value={splitSecondaryTab}
+                    onChange={(event) =>
+                      setSplitTab(event.target.value as SidebarTab)
+                    }
+                    className="rounded-md border border-violet-400/30 bg-zinc-950 px-2 py-1 text-[11px] text-violet-100 outline-none light:border-violet-300 light:bg-white light:text-violet-800"
+                  >
+                    <option value="benchmarks">Benchmarks</option>
+                  </select>
+                </div>
+              ) : null}
+
+              <div
+                className={`controller-split-region mt-3 min-h-0 flex-1 ${controllerSplit ? "controller-split-grid" : ""}`}
+              >
+                <div className="controller-primary-pane flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-slate-300 light:bg-white/70">
+                  {activeTab === "coach" ? (
+                    <>
+                      <div className="flex items-center justify-between mb-2.5">
+                        <p className="text-sm text-zinc-200 font-semibold light:text-slate-800">
+                          Coach Assistant
+                        </p>
+                        {coachMode === "groq" ? (
+                          <span
+                            title={groqDetail}
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                              groqAvailable
+                                ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300"
+                                : "bg-rose-950/80 text-rose-300 border border-rose-800/50 light:bg-rose-100 light:text-rose-700 light:border-rose-300"
+                            }`}
+                          >
+                            {groqAvailable ? "Groq Active" : "Groq Needs Key"}
+                          </span>
+                        ) : (
+                          <span
+                            title={coachLlmDetail}
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                              coachLlmConnection === "connected"
+                                ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300"
+                                : coachLlmConnection === "disabled"
+                                  ? "bg-zinc-800 text-zinc-400 border border-zinc-700 light:bg-slate-200 light:text-slate-600 light:border-slate-300"
+                                  : coachLlmConnection === "checking"
+                                    ? "bg-amber-950/80 text-amber-300 border border-amber-800/50 light:bg-amber-100 light:text-amber-700 light:border-amber-300"
+                                    : "bg-rose-950/80 text-rose-300 border border-rose-800/50 light:bg-rose-100 light:text-rose-700 light:border-rose-300"
+                            }`}
+                          >
+                            {coachLlmConnection === "connected"
+                              ? "LLM Active"
+                              : coachLlmConnection === "disabled"
+                                ? "Standard Mode"
+                                : coachLlmConnection === "checking"
+                                  ? "Checking LLM..."
+                                  : "Offline"}
+                          </span>
+                        )}
+                      </div>
+                      <div className="mb-2.5 flex gap-1 rounded-lg bg-zinc-900/90 p-1 border border-zinc-800 light:bg-slate-100 light:border-slate-300">
+                        <button
+                          type="button"
+                          onClick={() => setCoachMode("groq")}
+                          disabled={!groqAvailable}
+                          className={`flex-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-all ${
+                            coachMode === "groq"
+                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
+                              : "text-zinc-500 hover:text-zinc-300 disabled:opacity-40 light:text-slate-500 light:hover:text-slate-700"
+                          }`}
+                          title={groqDetail}
+                        >
+                          Groq
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCoachMode("llm")}
+                          disabled={coachLlmConnection === "disabled"}
+                          className={`flex-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-all ${
+                            coachMode === "llm"
+                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
+                              : "text-zinc-500 hover:text-zinc-300 disabled:opacity-40 light:text-slate-500 light:hover:text-slate-700"
+                          }`}
+                          title={coachLlmDetail}
+                        >
+                          Local LLM
+                        </button>
+                      </div>
+
+                      <VoiceCoachControl
+                        onTranscriptReady={(text) => setChatInput(text)}
+                        onSubmit={(text) =>
+                          void handleAskCoach(Date.now(), {
+                            question: text,
+                            source: "voice-coach",
+                          })
+                        }
+                        disabled={isCoachThinking}
+                      />
+
+                      <div className="mb-2.5 flex items-center gap-3 text-[11px] text-zinc-400 light:text-slate-600">
+                        <label className="flex items-center gap-1.5">
+                          <input
+                            type="checkbox"
+                            checked={coachAudioMuted}
+                            onChange={(event) =>
+                              setCoachAudioMuted(event.target.checked)
+                            }
+                            className="accent-amber-500"
+                          />
+                          Mute audio
+                        </label>
+                        <label className="flex items-center gap-1.5">
+                          <input
+                            type="checkbox"
+                            checked={!coachAudioMuted && coachAutoRead}
+                            onChange={(event) =>
+                              setCoachAutoRead(event.target.checked)
+                            }
+                            className="accent-amber-500"
+                          />
+                          Read replies aloud
+                        </label>
+                      </div>
+
+                      <div
+                        ref={chatScrollRef}
+                        className="min-h-0 flex-1 space-y-2.5 overflow-y-auto pr-1 chat-scroll"
+                      >
+                        {chatMessages.map((message) => (
+                          <div
+                            key={message.id}
+                            className={`rounded-xl border ${
+                              message.role === "assistant"
+                                ? "border-zinc-800 bg-zinc-900/90 text-zinc-200 light:border-slate-300 light:bg-white light:text-slate-800"
+                                : "border-amber-500/20 bg-amber-950/20 text-amber-100 light:border-amber-300 light:bg-amber-100 light:text-amber-900"
+                            }`}
+                          >
+                            <div className="p-3 text-xs leading-relaxed whitespace-pre-line">
+                              {message.content}
+                            </div>
+                            {message.role === "assistant" && (
+                              <div className="flex items-center gap-1 border-t border-zinc-800/80 px-3 py-1.5 light:border-slate-300">
+                                <button
+                                  type="button"
+                                  aria-label={`Read reply aloud: ${message.id}`}
+                                  title="Read this reply aloud (Burmese)"
+                                  onClick={() => {
+                                    if (
+                                      coachAudioStatus.phase === "playing" &&
+                                      coachAudioStatus.id === message.id
+                                    ) {
+                                      stopCoachReply();
+                                    } else {
+                                      void speakCoachReply(
+                                        message.id,
+                                        message.content,
+                                      );
+                                    }
+                                  }}
+                                  className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold transition-colors disabled:opacity-40 ${
+                                    coachAudioStatus.phase === "playing" &&
+                                    coachAudioStatus.id === message.id
+                                      ? "text-amber-300 hover:text-amber-200 light:text-amber-700"
+                                      : "text-zinc-400 hover:text-amber-300 light:text-slate-500 light:hover:text-amber-700"
+                                  }`}
+                                >
+                                  {coachAudioStatus.phase === "loading" &&
+                                  coachAudioStatus.id === message.id ? (
+                                    <span className="animate-pulse">⏳</span>
+                                  ) : coachAudioStatus.phase === "playing" &&
+                                    coachAudioStatus.id === message.id ? (
+                                    <span>■ stop</span>
+                                  ) : (
+                                    <span>🔊 read aloud</span>
+                                  )}
+                                </button>
+                                {coachAudioStatus.phase === "error" &&
+                                  coachAudioStatus.id === message.id && (
+                                    <span className="text-[10px] italic text-zinc-500 light:text-slate-500">
+                                      audio unavailable — text still shown
+                                    </span>
+                                  )}
+                              </div>
+                            )}
+                            {message.bestMove && message.playedByCoach && (
+                              <div className="border-t border-zinc-800/80 px-3 py-2 text-[11px] light:border-slate-300">
+                                <span className="font-mono font-bold text-amber-400 light:text-amber-700">
+                                  ▶ {message.bestMove.san}
+                                </span>
+                                <span className="ml-2 text-zinc-400 light:text-slate-500">
+                                  playing it now
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-3 flex gap-2">
+                        <input
+                          value={chatInput}
+                          onChange={(event) => setChatInput(event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              void handleAskCoach(Date.now());
+                            }
+                          }}
+                          placeholder="Ask coach for tactical advice or plan..."
+                          className="flex-1 rounded-lg border border-zinc-700/80 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/60 transition-colors light:border-slate-300 light:bg-white light:text-slate-800"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            void handleAskCoach(Date.now());
+                          }}
+                          disabled={isCoachThinking || !chatInput.trim()}
+                          className="rounded-lg bg-amber-500 px-4 py-2 text-xs font-bold text-zinc-950 hover:bg-amber-400 disabled:opacity-40 transition-colors shadow-sm"
+                        >
+                          {isCoachThinking ? "..." : "Ask"}
+                        </button>
+                      </div>
+                    </>
+                  ) : activeTab === "speech" ? (
+                    <SpeechTab
+                      chessRef={chessRef}
+                      gameOutcome={gameOutcome}
+                      isBotThinking={isBotThinking}
+                      onMoveExecuted={() => {
+                        const nextFen = chessRef.current.fen();
+                        setGamePosition(nextFen);
+                        setSelectedSquare(null);
+                        setLegalMoveTargets([]);
+                        updateGameOutcome(chessRef.current);
+                        if (
+                          chessRef.current.turn() === "b" &&
+                          !chessRef.current.isGameOver()
+                        ) {
+                          void triggerBotTurn(nextFen);
+                        }
+                      }}
+                      setStatusMessage={setStatusMessage}
+                    />
+                  ) : activeTab === "logician" ? (
+                    <LogicianPanel fen={gamePosition} active />
+                  ) : activeTab === "benchmarks" ? (
+                    <BenchmarkTab report={benchmarkReport} />
+                  ) : (
+                    <div className="flex flex-1 flex-col justify-between p-1 space-y-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2.5 light:border-slate-300">
+                          <span className="text-xs font-bold text-amber-400 light:text-amber-700">
+                            3D Interactive Arena
+                          </span>
+                          <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-300 light:bg-amber-100 light:border-amber-300 light:text-amber-700">
+                            3D Active
+                          </span>
+                        </div>
+                        <p className="text-xs text-zinc-400 leading-relaxed light:text-slate-600">
+                          The board has morphed into a full 3D studio where you
+                          and Sentio AI sit face-to-face.
+                        </p>
+
+                        <div className="rounded-xl bg-zinc-950/80 border border-zinc-800/80 p-3 space-y-2.5 text-xs light:bg-white light:border-slate-300">
+                          <span className="font-semibold text-zinc-300 block light:text-slate-700">
+                            Controls:
+                          </span>
+                          <ul className="space-y-2 text-zinc-400 text-[11px] light:text-slate-600">
+                            <li className="flex items-start gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1 shrink-0" />
+                              <span>
+                                <strong className="text-zinc-200 light:text-slate-800">
+                                  Move Piece:
+                                </strong>{" "}
+                                Click a piece and a green square, or use fist +
+                                hold for 2s
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-1 shrink-0" />
+                              <span>
+                                <strong className="text-zinc-200 light:text-slate-800">
+                                  Orbit View:
+                                </strong>{" "}
+                                Right-click & drag canvas to tilt and rotate
+                                camera angle
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1 shrink-0" />
+                              <span>
+                                <strong className="text-zinc-200 light:text-slate-800">
+                                  Zoom:
+                                </strong>{" "}
+                                Scroll wheel or pinch trackpad
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-purple-400 mt-1 shrink-0" />
+                              <span>
+                                <strong className="text-zinc-200 light:text-slate-800">
+                                  Webcam Gestures:
+                                </strong>{" "}
+                                Palm to aim · Fist to grab · Hold still over a
+                                green square for 2s to place · Palm to release
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("coach")}
+                        className="w-full rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 px-4 py-2.5 text-xs font-bold text-zinc-200 transition-all shadow-sm light:bg-slate-200 light:hover:bg-slate-300 light:border-slate-300 light:text-slate-800"
+                      >
+                        Return to 2D Board & Coach
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {controllerSplit &&
+                activeTab !== "3d" &&
+                activeTab !== "replay" ? (
+                  <div className="controller-secondary-pane flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-violet-400/25 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-violet-300 light:bg-white/70">
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-violet-200 light:text-violet-800">
+                        Benchmarks
+                      </span>
+                      <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[9px] font-semibold text-violet-200 light:text-violet-700">
+                        side-by-side
+                      </span>
+                    </div>
+                    <BenchmarkTab report={benchmarkReport} />
+                  </div>
+                ) : null}
+              </div>
             </div>
-          ) : null}
-        </div>
-          </div>
-        ) : (
-          <div className="controller-rail mt-4 flex flex-1 flex-col items-center gap-3 text-center">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500 [writing-mode:vertical-rl] light:text-slate-500">Controller</span>
-            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" title={statusMessage} />
-          </div>
-        )}
-      </aside>
+          ) : (
+            <div className="controller-rail mt-4 flex flex-1 flex-row items-center justify-center gap-3 text-center lg:flex-col">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500 lg:[writing-mode:vertical-rl] light:text-slate-500">
+                Controller
+              </span>
+              <span
+                className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"
+                title={statusMessage}
+              />
+            </div>
+          )}
+        </aside>
       ) : null}
 
       {gameResultText && (
@@ -1931,61 +2387,62 @@ export default function ChessPage() {
         </div>
       )}
 
-      {workspaceTab === "board" && (activeTab === "3d" || activeTab === "replay") && (
-        <div className="fixed inset-0 z-50">
-          <Simulation3D
-            chessRef={chessRef}
-            gamePosition={gamePosition}
-            theme={theme}
-            onMoveExecuted={() => {
-              const nextFen = chessRef.current.fen();
-              setGamePosition(nextFen);
-              setSelectedSquare(null);
-              setLegalMoveSquares([]);
-              updateGameOutcome(chessRef.current);
-              if (
-                chessRef.current.turn() === "b" &&
-                !chessRef.current.isGameOver()
-              ) {
-                void triggerBotTurn(nextFen);
-              }
-            }}
-            setStatusMessage={setStatusMessage}
-            liveAiMode={liveAiMode}
-            liveAiDepth={liveAiDepth}
-            onLiveAiModeChange={(mode) => {
-              liveAiTurnInFlightRef.current = false;
-              setLiveAiMode(mode);
-              if (mode === "off") setLiveAiAnimating(false);
-            }}
-            onLiveAiDepthChange={setLiveAiDepth}
-            replayActive={replayActive}
-            replayGames={replayGames}
-            replayGameId={replayGameId}
-            replayMoveIndex={replayMoveIndex}
-            replayPlaying={replayPlaying}
-            replayBusy={replayBusy}
-            replayAnimate={replayAnimate}
-            onReplaySelect={selectReplayGame}
-            onReplayStep={stepReplay}
-            onReplayPlayingChange={setReplayPlaying}
-            onAnimationStateChange={(animating) => {
-              liveAiTurnInFlightRef.current = animating;
-              setLiveAiAnimating(animating);
-              if (replayActive) setReplayBusy(animating);
-            }}
-            onExit={() => {
-              liveAiTurnInFlightRef.current = false;
-              setLiveAiMode("off");
-              setLiveAiAnimating(false);
-              setReplayPlaying(false);
-              setReplayBusy(false);
-              setReplayGameId("current");
-              setActiveTab("coach");
-            }}
-          />
-        </div>
-      )}
+      {workspaceTab === "board" &&
+        (activeTab === "3d" || activeTab === "replay") && (
+          <div className="fixed inset-0 z-50">
+            <Simulation3D
+              chessRef={chessRef}
+              gamePosition={gamePosition}
+              theme={theme}
+              onMoveExecuted={() => {
+                const nextFen = chessRef.current.fen();
+                setGamePosition(nextFen);
+                setSelectedSquare(null);
+                setLegalMoveTargets([]);
+                updateGameOutcome(chessRef.current);
+                if (
+                  chessRef.current.turn() === "b" &&
+                  !chessRef.current.isGameOver()
+                ) {
+                  void triggerBotTurn(nextFen);
+                }
+              }}
+              setStatusMessage={setStatusMessage}
+              liveAiMode={liveAiMode}
+              liveAiDepth={liveAiDepth}
+              onLiveAiModeChange={(mode) => {
+                liveAiTurnInFlightRef.current = false;
+                setLiveAiMode(mode);
+                if (mode === "off") setLiveAiAnimating(false);
+              }}
+              onLiveAiDepthChange={setLiveAiDepth}
+              replayActive={replayActive}
+              replayGames={replayGames}
+              replayGameId={replayGameId}
+              replayMoveIndex={replayMoveIndex}
+              replayPlaying={replayPlaying}
+              replayBusy={replayBusy}
+              replayAnimate={replayAnimate}
+              onReplaySelect={selectReplayGame}
+              onReplayStep={stepReplay}
+              onReplayPlayingChange={setReplayPlaying}
+              onAnimationStateChange={(animating) => {
+                liveAiTurnInFlightRef.current = animating;
+                setLiveAiAnimating(animating);
+                if (replayActive) setReplayBusy(animating);
+              }}
+              onExit={() => {
+                liveAiTurnInFlightRef.current = false;
+                setLiveAiMode("off");
+                setLiveAiAnimating(false);
+                setReplayPlaying(false);
+                setReplayBusy(false);
+                setReplayGameId("current");
+                setActiveTab("coach");
+              }}
+            />
+          </div>
+        )}
     </main>
   );
 }

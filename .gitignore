@@ -45,3 +45,5 @@ backend/recordings/
 backend/models/
 backend/uvicorn.log
 backend/__pycache__/
+/test-results/
+playwright-report/

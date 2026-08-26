@@ -1,12 +1,15 @@
 import { Chess } from "chess.js";
 import { NextResponse } from "next/server";
+import { EMOTION_PROFILES, normalizeEmotion } from "@/lib/engineProfiles";
+import { buildMinimaxTrace } from "@/lib/minimax";
 
 const BACKEND_BOT_MOVE_API_URL = process.env.BOT_MOVE_API_URL;
 
 type MoveRequest = {
   fen: string;
   emotion?: string;
-  strengthPreference?: "adaptive" | "gentle" | "challenging";
+  /** "play" (default) uses the adaptive emotion profile; "hint" always uses maximum strength. */
+  purpose?: "play" | "hint";
 };
 
 type Profile = {
@@ -14,15 +17,6 @@ type Profile = {
   skillLevel: number;
   elo: number;
   moveQuality?: string;
-};
-
-const EMOTION_STRENGTH_PROFILES: Record<string, Profile> = {
-  stressed: { depth: 1, skillLevel: 1, elo: 1320 },
-  frustrated: { depth: 2, skillLevel: 3, elo: 1320 },
-  calm: { depth: 4, skillLevel: 6, elo: 1500 },
-  neutral: { depth: 6, skillLevel: 10, elo: 1700 },
-  focused: { depth: 8, skillLevel: 15, elo: 2700 },
-  confident: { depth: 10, skillLevel: 20, elo: 3190 },
 };
 
 const PIECE_VALUES: Record<string, number> = {
@@ -51,86 +45,45 @@ function evaluateBoard(chess: Chess): number {
   return score;
 }
 
-function minimax(
-  chess: Chess,
-  depth: number,
-  alpha: number,
-  beta: number,
-  isMaximizing: boolean,
-): number {
-  if (depth === 0 || chess.isGameOver()) {
-    return evaluateBoard(chess);
-  }
-
-  const moves = chess.moves({ verbose: true });
-  if (isMaximizing) {
-    let maxEval = -Infinity;
-    for (const move of moves) {
-      chess.move(move);
-      const evalVal = minimax(chess, depth - 1, alpha, beta, false);
-      chess.undo();
-      maxEval = Math.max(maxEval, evalVal);
-      alpha = Math.max(alpha, evalVal);
-      if (beta <= alpha) break;
-    }
-    return maxEval;
-  } else {
-    let minEval = Infinity;
-    for (const move of moves) {
-      chess.move(move);
-      const evalVal = minimax(chess, depth - 1, alpha, beta, true);
-      chess.undo();
-      minEval = Math.min(minEval, evalVal);
-      beta = Math.min(beta, evalVal);
-      if (beta <= alpha) break;
-    }
-    return minEval;
-  }
-}
-
-function classifyMoveQuality(
-  currentScore: number,
-  newScore: number,
-  isBlack: boolean,
-): string {
-  const scoreDelta = newScore - currentScore;
-
-  // For black (minimizing), positive delta means worsening position
-  // For white (maximizing), negative delta means worsening position
-
-  let quality: string;
+/**
+ * Classify how a move changed the mover's position.
+ *
+ * Positive scoreDelta always means the position improved for White and
+ * worsened for Black (evaluateBoard is from White's perspective).
+ */
+function classifyMoveQuality(scoreDelta: number, isBlack: boolean): string {
   if (isBlack) {
-    // Black wants lower scores
-    if (scoreDelta <= -20) quality = "Blunder";
-    else if (scoreDelta <= -10) quality = "Mistake";
-    else if (scoreDelta <= 0) quality = "Good";
-    else quality = "Excellent";
-  } else {
-    // White wants higher scores
-    if (scoreDelta >= 20) quality = "Excellent";
-    else if (scoreDelta >= 10) quality = "Good";
-    else if (scoreDelta >= 0) quality = "Mistake";
-    else quality = "Blunder";
+    // Black wants the score to go down.
+    if (scoreDelta <= -20) return "Excellent";
+    if (scoreDelta <= 0) return "Good";
+    if (scoreDelta <= 20) return "Mistake";
+    return "Blunder";
   }
-
-  return quality;
+  // White wants the score to go up.
+  if (scoreDelta >= 20) return "Excellent";
+  if (scoreDelta >= 0) return "Good";
+  if (scoreDelta >= -20) return "Mistake";
+  return "Blunder";
 }
 
 function calculateJsBotMove(
   fen: string,
   emotion: string,
+  purpose: "play" | "hint" = "play",
 ): {
   botMove: string | null;
   engineProfile: Profile & { emotion: string };
   status?: string;
 } {
-  const normEmotion = EMOTION_STRENGTH_PROFILES[emotion.toLowerCase()]
-    ? emotion.toLowerCase()
-    : "neutral";
-  const profile = EMOTION_STRENGTH_PROFILES[normEmotion];
+  const normEmotion = normalizeEmotion(emotion);
+  // Hints ignore the adaptive profile and use the strongest settings.
+  const profile =
+    purpose === "hint"
+      ? { depth: 6, skillLevel: 20, elo: 3190 }
+      : EMOTION_PROFILES[normEmotion];
 
   const chess = new Chess(fen);
-  if (chess.isGameOver()) {
+  if (chess.isGameOver() || chess.moves({ verbose: true }).length === 0) {
     return {
       botMove: null,
       status: "Checkmate or Draw",
@@ -139,18 +92,12 @@ function calculateJsBotMove(
   }
 
   const moves = chess.moves({ verbose: true });
-  if (moves.length === 0) {
-    return {
-      botMove: null,
-      status: "Checkmate or Draw",
-      engineProfile: { emotion: normEmotion, ...profile },
-    };
-  }
-
   const isBlack = chess.turn() === "b";
   const searchDepth = Math.min(3, Math.max(1, Math.floor(profile.depth / 2)));
 
-  const blunderProbability = ((20 - profile.skillLevel) / 20) * 0.45;
+  // Hints must never blunder on purpose.
+  const blunderProbability =
+    purpose === "hint" ? 0 : ((20 - profile.skillLevel) / 20) * 0.45;
   if (Math.random() < blunderProbability) {
     const randomMove = moves[Math.floor(Math.random() * moves.length)];
     const uci = randomMove.from + randomMove.to + (randomMove.promotion || "");
@@ -160,45 +107,43 @@ function calculateJsBotMove(
     };
   }
 
-  // Evaluate the current position before making any move
-  const currentScore = evaluateBoard(chess);
+  // Reuse the full search implementation from lib/minimax.ts (transposition
+  // table, killer moves, history heuristic, move ordering) instead of a
+  // separate naive minimax.
+  const trace = buildMinimaxTrace(fen, {
+    depth: searchDepth,
+    branchLimit: 5,
+    aiColor: chess.turn(),
+  });
 
-  let bestMove = moves[0];
-  let bestScore = isBlack ? Infinity : -Infinity;
-  let bestMoveQuality = "Good"; // Default quality
+  let botMove: string | null = trace.selectedMove
+    ? trace.selectedMove.uci
+    : null;
 
-  for (const move of moves) {
-    chess.move(move);
-    const score = minimax(
-      chess,
-      searchDepth - 1,
-      -Infinity,
-      Infinity,
-      !isBlack,
-    );
-    chess.undo();
-
-    // Calculate the delta (score change) for this move
-    const scoreDelta = score - currentScore;
-
-    // Classify move quality based on score delta
-    const moveQuality = classifyMoveQuality(currentScore, score, isBlack);
-
-    // Track the best move and its quality
-    if (isBlack ? score < bestScore : score > bestScore) {
-      bestScore = score;
-      bestMove = move;
-      bestMoveQuality = moveQuality;
-    }
+  if (!botMove) {
+    const randomMove = moves[Math.floor(Math.random() * moves.length)];
+    botMove = randomMove.from + randomMove.to + (randomMove.promotion || "");
   }
 
-  const uciMove = bestMove.from + bestMove.to + (bestMove.promotion || "");
+  // Score the chosen move to attach a quality label.
+  const currentScore = evaluateBoard(chess);
+  let scoreAfter = currentScore;
+  try {
+    const applied = chess.move(botMove);
+    if (applied) {
+      scoreAfter = evaluateBoard(chess);
+      chess.undo();
+    }
+  } catch {
+    // Move already validated by the search; keep currentScore on failure.
+  }
+
   return {
-    botMove: uciMove,
+    botMove,
     engineProfile: {
       emotion: normEmotion,
       ...profile,
-      moveQuality: bestMoveQuality,
+      moveQuality: classifyMoveQuality(scoreAfter - currentScore, isBlack),
     },
   };
 }
@@ -221,23 +166,16 @@ export async function POST(request: Request) {
 
   const emotion =
     typeof payload.emotion === "string" ? payload.emotion : "neutral";
-  const strengthPreference =
-    payload.strengthPreference === "gentle" ||
-    payload.strengthPreference === "challenging"
-      ? payload.strengthPreference
-      : "adaptive";
+  const purpose = payload.purpose === "hint" ? "hint" : "play";
 
   if (BACKEND_BOT_MOVE_API_URL) {
     try {
       const backendResponse = await fetch(BACKEND_BOT_MOVE_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fen: payload.fen,
-          emotion,
-          strengthPreference,
-        }),
+        body: JSON.stringify({ fen: payload.fen, emotion, purpose }),
         cache: "no-store",
+        signal: AbortSignal.timeout(25000),
       });
 
       if (backendResponse.ok) {
@@ -249,13 +187,14 @@ export async function POST(request: Request) {
     }
   }
 
-  const result = calculateJsBotMove(payload.fen, emotion);
+  const result = calculateJsBotMove(payload.fen, emotion, purpose);
   return NextResponse.json(result, { status: 200 });
 }
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const fen = searchParams.get("fen");
+  const depthParam = Number.parseInt(searchParams.get("depth") ?? "", 10);
 
   if (!fen || typeof fen !== "string") {
     return NextResponse.json(
@@ -264,15 +203,61 @@ export async function GET(request: Request) {
     );
   }
 
+  let chess: Chess;
   try {
-    const chess = new Chess(fen);
-    const score = evaluateBoard(chess);
-    const isBlack = chess.turn() === "b";
-    return NextResponse.json({ evaluation: score, isBlack }, { status: 200 });
+    chess = new Chess(fen);
   } catch {
     return NextResponse.json(
       { detail: "Invalid FEN position." },
       { status: 400 },
+    );
+  }
+
+  const isBlack = chess.turn() === "b";
+
+  if (chess.isGameOver()) {
+    // Terminal positions get a decisive evaluation from White's perspective.
+    const terminalEval = chess.isCheckmate()
+      ? chess.turn() === "w"
+        ? -100_000
+        : 100_000
+      : 0;
+    return NextResponse.json(
+      { evaluation: terminalEval, isBlack, gameOver: true },
+      { status: 200 },
+    );
+  }
+
+  // Shallow search gives a far more accurate evaluation than raw material.
+  // Depth is clamped to keep the request cheap; falls back to material-only
+  // if the search yields no move.
+  const depth = Number.isFinite(depthParam)
+    ? Math.min(4, Math.max(1, depthParam))
+    : 2;
+
+  try {
+    const trace = buildMinimaxTrace(fen, {
+      depth,
+      branchLimit: 5,
+      aiColor: chess.turn(),
+    });
+
+    let evaluation: number;
+    if (trace.selectedMove) {
+      // Search scores are from the side-to-move's perspective; convert to
+      // White's perspective for the eval bar.
+      evaluation = isBlack
+        ? -trace.selectedMove.score
+        : trace.selectedMove.score;
+    } else {
+      evaluation = evaluateBoard(chess);
+    }
+
+    return NextResponse.json({ evaluation, isBlack }, { status: 200 });
+  } catch {
+    return NextResponse.json(
+      { evaluation: evaluateBoard(chess), isBlack },
+      { status: 200 },
     );
   }
 }

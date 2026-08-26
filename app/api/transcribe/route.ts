@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/audio/transcriptions";
+// Reject oversized uploads before buffering them into memory (and before
+// base64-encoding them for Gemini).
+const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const BACKEND_TRANSCRIBE_URL =
   process.env.BACKEND_TRANSCRIBE_URL ?? "http://localhost:8000/api/transcribe";
@@ -10,7 +13,10 @@ const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 const ELEVENLABS_MODEL = process.env.ELEVENLABS_MODEL ?? "scribe_v2";
 const ASSEMBLYAI_API_KEY = process.env.ASSEMBLYAI_API_KEY;
 
-async function transcribeWithAssemblyAI(audioFile: Blob, language?: string): Promise<string | null> {
+async function transcribeWithAssemblyAI(
+  audioFile: Blob,
+  language?: string,
+): Promise<string | null> {
   const headers = { authorization: ASSEMBLYAI_API_KEY as string };
   const buf = Buffer.from(await audioFile.arrayBuffer());
 
@@ -21,45 +27,65 @@ async function transcribeWithAssemblyAI(audioFile: Blob, language?: string): Pro
     signal: AbortSignal.timeout(30000),
   });
   if (!uploadResponse.ok) {
-    throw new Error(`AssemblyAI upload error (${uploadResponse.status}): ${await uploadResponse.text()}`);
+    throw new Error(
+      `AssemblyAI upload error (${uploadResponse.status}): ${await uploadResponse.text()}`,
+    );
   }
-  const { upload_url } = (await uploadResponse.json()) as { upload_url: string };
+  const { upload_url } = (await uploadResponse.json()) as {
+    upload_url: string;
+  };
 
-  const transcriptResponse = await fetch("https://api.assemblyai.com/v2/transcript", {
-    method: "POST",
-    headers: { ...headers, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      audio_url: upload_url,
-      language_code: language,
-      speech_models: ["universal-3-5-pro", "universal-2"],
-      punctuate: false,
-      format_text: false,
-    }),
-    signal: AbortSignal.timeout(30000),
-  });
+  const transcriptResponse = await fetch(
+    "https://api.assemblyai.com/v2/transcript",
+    {
+      method: "POST",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        audio_url: upload_url,
+        language_code: language,
+        speech_models: ["universal-3-5-pro", "universal-2"],
+        punctuate: false,
+        format_text: false,
+      }),
+      signal: AbortSignal.timeout(30000),
+    },
+  );
   if (!transcriptResponse.ok) {
-    throw new Error(`AssemblyAI transcript error (${transcriptResponse.status}): ${await transcriptResponse.text()}`);
+    throw new Error(
+      `AssemblyAI transcript error (${transcriptResponse.status}): ${await transcriptResponse.text()}`,
+    );
   }
   const { id } = (await transcriptResponse.json()) as { id: string };
 
   const deadline = Date.now() + 25000;
   while (Date.now() < deadline) {
-    const pollResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${id}`, {
-      headers,
-      signal: AbortSignal.timeout(10000),
-    });
+    const pollResponse = await fetch(
+      `https://api.assemblyai.com/v2/transcript/${id}`,
+      {
+        headers,
+        signal: AbortSignal.timeout(10000),
+      },
+    );
     if (!pollResponse.ok) {
-      throw new Error(`AssemblyAI poll error (${pollResponse.status}): ${await pollResponse.text()}`);
+      throw new Error(
+        `AssemblyAI poll error (${pollResponse.status}): ${await pollResponse.text()}`,
+      );
     }
-    const poll = (await pollResponse.json()) as { status: string; text?: string };
+    const poll = (await pollResponse.json()) as {
+      status: string;
+      text?: string;
+    };
     if (poll.status === "completed") return (poll.text ?? "").trim() || null;
-    if (poll.status === "error") throw new Error(`AssemblyAI transcription failed`);
+    if (poll.status === "error")
+      throw new Error(`AssemblyAI transcription failed`);
     await new Promise((r) => setTimeout(r, 1500));
   }
   throw new Error("AssemblyAI transcription timed out");
 }
 
-async function transcribeWithElevenLabs(audioFile: Blob): Promise<string | null> {
+async function transcribeWithElevenLabs(
+  audioFile: Blob,
+): Promise<string | null> {
   const form = new FormData();
   form.append("file", audioFile, "recording.webm");
   form.append("model_id", ELEVENLABS_MODEL);
@@ -78,7 +104,9 @@ async function transcribeWithElevenLabs(audioFile: Blob): Promise<string | null>
   return (data.text ?? "").trim() || null;
 }
 
-async function transcribeWithLocalBackend(audioFile: Blob): Promise<string | null> {
+async function transcribeWithLocalBackend(
+  audioFile: Blob,
+): Promise<string | null> {
   const backendForm = new FormData();
   backendForm.append("file", audioFile);
   backendForm.append("language", "my");
@@ -109,7 +137,9 @@ async function transcribeWithLocalBackend(audioFile: Blob): Promise<string | nul
 }
 
 async function transcribeWithGemini(audioFile: Blob): Promise<string | null> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  // The API key goes in a header, not the URL — keys in query strings leak
+  // into server logs, proxies, and error reporters.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
   const buf = Buffer.from(await audioFile.arrayBuffer());
   const mimeType = audioFile.type || "audio/webm";
   const body = {
@@ -127,7 +157,10 @@ async function transcribeWithGemini(audioFile: Blob): Promise<string | null> {
   };
   const response = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": GEMINI_API_KEY as string,
+    },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(30000),
   });
@@ -139,7 +172,10 @@ async function transcribeWithGemini(audioFile: Blob): Promise<string | null> {
     candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
   };
   const parts = data.candidates?.[0]?.content?.parts ?? [];
-  const text = parts.map((p) => p.text ?? "").join("").trim();
+  const text = parts
+    .map((p) => p.text ?? "")
+    .join("")
+    .trim();
   return text || null;
 }
 
@@ -159,13 +195,23 @@ export async function POST(request: Request) {
     );
   }
 
+  if (audioFile.size > MAX_UPLOAD_BYTES) {
+    return NextResponse.json(
+      { detail: "Audio file too large (max 15MB)." },
+      { status: 413 },
+    );
+  }
+
   const language = formData.get("language")?.toString() || undefined;
   const provider = formData.get("provider")?.toString() || undefined;
 
   if (provider === "assemblyai") {
     if (ASSEMBLYAI_API_KEY) {
       try {
-        const assemblyText = await transcribeWithAssemblyAI(audioFile, language);
+        const assemblyText = await transcribeWithAssemblyAI(
+          audioFile,
+          language,
+        );
         if (assemblyText) return NextResponse.json({ text: assemblyText });
       } catch (error) {
         console.error("AssemblyAI transcription failed:", error);
@@ -199,6 +245,16 @@ export async function POST(request: Request) {
   if (language === "my") {
     const localText = await transcribeWithLocalBackend(audioFile);
     if (localText) return NextResponse.json({ text: localText });
+
+    if (ELEVENLABS_API_KEY) {
+      try {
+        const elevenLabsText = await transcribeWithElevenLabs(audioFile);
+        if (elevenLabsText) return NextResponse.json({ text: elevenLabsText });
+      } catch (error) {
+        // Fall through to the final fallback if ElevenLabs is unavailable.
+        console.error("ElevenLabs Burmese transcription failed:", error);
+      }
+    }
 
     if (GEMINI_API_KEY) {
       try {

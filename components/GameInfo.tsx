@@ -19,9 +19,11 @@ const MOVE_QUALITY_COLORS: Record<string, string> = {
 export default function GameInfo({
   moves,
   moveQualities = {},
+  openingName,
 }: {
   moves: Move[];
   moveQualities?: Record<number, string>;
+  openingName?: string | null;
 }) {
   const info = useMemo(() => {
     const whiteCaptures: string[] = [];
@@ -86,6 +88,19 @@ export default function GameInfo({
 
   return (
     <div className="rounded-md border border-zinc-800 bg-zinc-900/80 p-3 text-xs light:border-slate-200 light:bg-white/80">
+      {openingName ? (
+        <div className="mb-2 flex items-center gap-2 border-b border-zinc-800 pb-2 light:border-slate-200">
+          <span className="rounded bg-amber-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-amber-400 light:bg-amber-100 light:text-amber-700">
+            OPENING
+          </span>
+          <span
+            className="truncate font-semibold text-zinc-200 light:text-slate-800"
+            title={openingName}
+          >
+            {openingName}
+          </span>
+        </div>
+      ) : null}
       <div className="mb-1 flex items-center justify-between">
         <span className="font-semibold text-zinc-300 light:text-slate-700">
           Moves
@@ -94,7 +109,7 @@ export default function GameInfo({
           {rows.length} {rows.length === 1 ? "move pair" : "move pairs"}
         </span>
       </div>
-      <div className="max-h-24 overflow-y-auto rounded bg-zinc-950/60 p-2 font-mono text-zinc-300 leading-relaxed light:bg-slate-100 light:text-slate-700">
+      <div className="max-h-44 overflow-y-auto rounded bg-zinc-950/60 p-2.5 font-mono text-zinc-300 leading-relaxed light:bg-slate-100 light:text-slate-700">
         {rows.length > 0 ? (
           <table className="w-full">
             <tbody>

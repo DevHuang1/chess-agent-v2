@@ -31,6 +31,7 @@
 
 import { Chess } from "chess.js";
 import { NextResponse } from "next/server";
+import { buildCoachPrompt } from "@/lib/coachPrompt";
 
 type CoachRequest = {
   fen: string;
@@ -38,6 +39,23 @@ type CoachRequest = {
   recentEmotions?: string[];
   question?: string;
   mode?: string;
+  /**
+   * Desired coach reply language. Backward compatible: when absent, behaviour
+   * is unchanged (English coaching). "my" asks the provider to answer in
+   * natural Burmese Unicode while preserving chess notation and FEN values.
+   */
+  responseLanguage?: "en" | "my";
+  /**
+   * Language of the user's question. "my" is sent by the Voice Coach flow and
+   * is a strong signal that this is a chess-coaching request even though the
+   * English keyword classifier may not match Burmese text.
+   */
+  inputLanguage?: "en" | "my";
+  /**
+   * Origin of the request. "voice-coach" bypasses the English-only general
+   * query heuristic so Burmese voice questions keep full chess context.
+   */
+  source?: "typed" | "voice-coach";
 };
 
 type CoachMeta = {
@@ -87,12 +105,16 @@ type LlmChatCompletionResponse = {
 };
 
 const EMOTION_ENCOURAGEMENT: Record<string, string> = {
-  confident: "They are feeling confident. Acknowledge their form and keep them sharp.",
-  focused: "They are concentrated. Encourage precision and remind them to stay calm under pressure.",
+  confident:
+    "They are feeling confident. Acknowledge their form and keep them sharp.",
+  focused:
+    "They are concentrated. Encourage precision and remind them to stay calm under pressure.",
   neutral: "They are composed. Keep the advice clear and tactical.",
   calm: "They are relaxed. Reinforce good habits and keep them engaged.",
-  frustrated: "They seem frustrated. Be kind and encouraging. Tell them they are doing well and not to give up.",
-  stressed: "They appear stressed or anxious. Be warm and supportive. Remind them to breathe and trust their instincts.",
+  frustrated:
+    "They seem frustrated. Be kind and encouraging. Tell them they are doing well and not to give up.",
+  stressed:
+    "They appear stressed or anxious. Be warm and supportive. Remind them to breathe and trust their instincts.",
 };
 
 const COACH_LLM_ENABLED = process.env.COACH_LLM_ENABLED === "true";
@@ -105,7 +127,7 @@ const COACH_GROQ_API_KEY = process.env.GROQ_API_KEY;
 const COACH_GROQ_BASE_URL =
   process.env.COACH_GROQ_BASE_URL ?? "https://api.groq.com/openai/v1";
 const COACH_GROQ_MODEL =
-  process.env.COACH_GROQ_MODEL ?? "llama-3.3-70b-versatile";
+  process.env.COACH_GROQ_MODEL ?? "openai/gpt-oss-120b";
 
 function getAuthHeaders(apiKey?: string): Record<string, string> {
   const headers: Record<string, string> = {};
@@ -123,6 +145,7 @@ function buildFallbackReply(
   legalMoves: ReturnType<Chess["moves"]>,
   question?: string,
   bestMove?: { uci: string; san: string } | null,
+  responseLanguage?: CoachRequest["responseLanguage"],
 ): CoachReply {
   const primaryAdvice = gameOver
     ? "Game over reached. Review critical turning points and missed tactics."
@@ -133,14 +156,23 @@ function buildFallbackReply(
         : `Position is flexible (${legalMoves.length} legal moves). Improve your worst-placed piece.`;
 
   const candidateMoves = legalMoves.slice(0, 3).map((move) => move.san);
-  const encouragement = EMOTION_ENCOURAGEMENT[emotion] ?? EMOTION_ENCOURAGEMENT.neutral;
+  const encouragement =
+    EMOTION_ENCOURAGEMENT[emotion] ?? EMOTION_ENCOURAGEMENT.neutral;
   const questionSuffix =
     question && question.trim()
       ? `You asked: "${question.trim()}". Focus answer: evaluate king safety, loose pieces, and checks-captures-threats.`
       : "Tip: before each move, scan checks, captures, and threats for both sides.";
 
+  // In Burmese mode the LLM stream (when reachable) returns a full Burmese reply.
+  // This rule-based fallback stays in English but notes the mode in Burmese so
+  // the player still understands why the text is not in Burmese.
+  const burmeseNote =
+    responseLanguage === "my"
+      ? "\n\n(စက်ဖြင့်ဘာသာပြန်သင်ကြားမှု မရရှိနိုင်ပါ — အင်္ဂလိပ်ဖြင့် အကြံပြုချက် ဖော်ပြပေးထားပါသည်။)"
+      : "";
+
   return {
-    message: `${encouragement} ${primaryAdvice} ${questionSuffix}`,
+    message: `${encouragement} ${primaryAdvice} ${questionSuffix}${burmeseNote}`,
     suggestions: candidateMoves.map(
       (san, index) => `Candidate ${index + 1}: ${san}`,
     ),
@@ -155,8 +187,12 @@ function buildFallbackReply(
   };
 }
 
-async function fetchStockfishBestMove(fen: string, emotion: string): Promise<{ uci: string; san: string } | null> {
-  const BOT_MOVE_API_URL = process.env.BOT_MOVE_API_URL ?? "http://127.0.0.1:8000/api/bot-move";
+async function fetchStockfishBestMove(
+  fen: string,
+  emotion: string,
+): Promise<{ uci: string; san: string } | null> {
+  const BOT_MOVE_API_URL =
+    process.env.BOT_MOVE_API_URL ?? "http://127.0.0.1:8000/api/bot-move";
   try {
     const response = await fetch(BOT_MOVE_API_URL, {
       method: "POST",
@@ -176,93 +212,18 @@ async function fetchStockfishBestMove(fen: string, emotion: string): Promise<{ u
     return null;
   }
 }
-function isGeneralQuery(question?: string): boolean {
-  if (!question || !question.trim()) return false;
-
-  // 1. Vocabulary terms that explicitly target chess context
-  const chessKeywords = [
-    "move",
-    "fen",
-    "check",
-    "mate",
-    "castle",
-    "tactic",
-    "line",
-    "plan",
-    "pawn",
-    "knight",
-    "bishop",
-    "rook",
-    "queen",
-    "king",
-    "board",
-    "position",
-    "square",
-    "capture",
-    "attack",
-    "defend",
-    "win",
-    "lose",
-    "blunder",
-    "threat",
-    "play",
-    "game",
-    "white",
-    "black",
-    "evaluation",
-    "pieces",
-    "fork",
-    "pin",
-    "opening",
-    "gambit",
-    "endgame",
-    "stockfish",
-    "analyze",
-    "what now",
-  ];
-
-  const lowerQuestion = question.toLowerCase().trim();
-
-  // Check if it contains any chess vocabulary
-  const hasChessKeywords = chessKeywords.some((keyword) =>
-    lowerQuestion.includes(keyword),
-  );
-
-  // 2. Regex to catch raw algebraic chess moves typed alone (e.g., "e4", "Nf3", "O-O", "exd5")
-  const chessMoveRegex =
-    /^[a-h][1-8]$|^[KQRBN][a-h]?[1-8]?x?[a-h][1-8][+#]?$|^O-O(-O)?$/i;
-  const isRawMove = chessMoveRegex.test(lowerQuestion);
-
-  // It's a general conversation if it has NO chess keywords AND isn't a standalone chess move notation
-  return !hasChessKeywords && !isRawMove;
-}
+const HEALTH_CACHE_TTL_MS = 30_000;
+let healthCache: { value: CoachHealth; expiresAt: number } | null = null;
 
 async function generateProviderMessage(
   payload: CoachRequest,
   fallback: CoachReply,
   provider: LlmProvider,
 ): Promise<string> {
-  const question = payload.question?.trim();
-  const isGeneral = isGeneralQuery(question);
-
-  const systemContent = isGeneral
-    ? "You are a helpful, direct, and brilliant AI assistant. Provide a highly accurate and thorough response to the user's question, completely ignoring any ongoing chess gameplay context."
-    : "You are Sentio, an empathetic and encouraging chess coach. The user's emotional state is reflected in the emotion field — if they are frustrated or stressed, be warm, supportive, and praise their effort. If they are confident or focused, acknowledge their strength and keep them sharp. Always be encouraging, never harsh. Respond with final coaching only. Do not output hidden reasoning.";
-
-  const userContent = isGeneral
-    ? question!
-    : [
-        `FEN: ${payload.fen}`,
-        `Emotion: ${fallback.meta.emotion}`,
-        ...(payload.recentEmotions?.length ? [`Recent emotions (last 15s): ${payload.recentEmotions.join(", ")}`] : []),
-        `Side to move: ${fallback.meta.sideToMove}`,
-        `In check: ${fallback.meta.inCheck}`,
-        `Game over: ${fallback.meta.gameOver}`,
-        `Legal move count: ${fallback.meta.legalMoveCount}`,
-        `Candidate moves: ${fallback.suggestions.join(", ") || "none"}`,
-        `Question: ${question || "Give me the best coaching advice for this position."}`,
-        "Respond in plain language with: 1) quick evaluation 2) best practical plan 3) one concrete tactical warning.",
-      ].join("\n");
+  const { isGeneral, systemContent, userContent } = buildCoachPrompt(
+    payload,
+    fallback,
+  );
 
   const response = await fetch(`${provider.baseUrl}/chat/completions`, {
     method: "POST",
@@ -273,7 +234,11 @@ async function generateProviderMessage(
     body: JSON.stringify({
       model: provider.model,
       temperature: isGeneral ? 0.7 : 0.35,
-      max_tokens: isGeneral ? 600 : 220,
+      // Reasoning models (e.g. openai/gpt-oss-*) spend completion tokens on
+      // hidden reasoning BEFORE the visible answer, so the budget must be much
+      // larger than the answer alone, and reasoning_effort is minimized.
+      max_tokens: isGeneral ? 2000 : 1500,
+      reasoning_effort: "low",
       messages: [
         {
           role: "system",
@@ -286,6 +251,8 @@ async function generateProviderMessage(
       ],
     }),
     cache: "no-store",
+    // Bound the LLM call so a hung provider can't stall the request forever.
+    signal: AbortSignal.timeout(30_000),
   });
 
   const rawBody = await response.text();
@@ -350,8 +317,7 @@ async function getGroqHealth(): Promise<CoachHealth["groq"]> {
   } catch (error) {
     return {
       available: false,
-      detail:
-        error instanceof Error ? error.message : "Could not reach Groq.",
+      detail: error instanceof Error ? error.message : "Could not reach Groq.",
       model: COACH_GROQ_MODEL,
     };
   }
@@ -412,7 +378,15 @@ async function getCoachHealth(): Promise<CoachHealth> {
 }
 
 export async function GET() {
+  // Cache health results briefly: every open client tab polls this endpoint
+  // every 10s, and each uncached check hits the Groq /models API. Caching
+  // avoids burning through provider rate limits.
+  const now = Date.now();
+  if (healthCache && now < healthCache.expiresAt) {
+    return NextResponse.json(healthCache.value);
+  }
   const health = await getCoachHealth();
+  healthCache = { value: health, expiresAt: Date.now() + HEALTH_CACHE_TTL_MS };
   return NextResponse.json(health);
 }
 
@@ -449,9 +423,9 @@ export async function POST(request: Request) {
   const inCheck = chess.inCheck();
   const gameOver = chess.isGameOver();
 
-  const [stockfishBestMove] = await Promise.all([
-    gameOver ? Promise.resolve(null) : fetchStockfishBestMove(payload.fen, emotion),
-  ]);
+  const stockfishBestMove = gameOver
+    ? null
+    : await fetchStockfishBestMove(payload.fen, emotion);
 
   const fallback = buildFallbackReply(
     emotion,
@@ -461,6 +435,7 @@ export async function POST(request: Request) {
     legalMoves,
     payload.question,
     stockfishBestMove,
+    payload.responseLanguage,
   );
 
   const mode = (payload.mode ?? "groq").toLowerCase();
