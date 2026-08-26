@@ -5,6 +5,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { parseChessMove } from "@/lib/speechParser";
 import { censorText } from "@/lib/censor";
 import { playMoveSound, playCaptureSound, playCheckSound } from "@/lib/audio";
+import {
+  createVoiceRecorder,
+  MIC_CAPTURE_CONSTRAINTS,
+} from "@/lib/voiceRecorder";
 
 declare global {
   interface SpeechRecognition extends EventTarget {
@@ -228,8 +232,16 @@ export default function SpeechTab({
 
   const startGroqRecording = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      // Shared Burmese-tuned capture constraints + high-bitrate recorder.
+      const stream = await navigator.mediaDevices.getUserMedia(
+        MIC_CAPTURE_CONSTRAINTS,
+      );
+      const recorder = createVoiceRecorder(stream);
+      if (!recorder) {
+        stream.getTracks().forEach((t) => t.stop());
+        setError("Recording is not supported in this browser.");
+        return;
+      }
       audioChunksRef.current = [];
 
       recorder.ondataavailable = (event) => {
@@ -238,7 +250,9 @@ export default function SpeechTab({
 
       recorder.onstop = async () => {
         stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const blob = new Blob(audioChunksRef.current, {
+          type: recorder.mimeType || "audio/webm",
+        });
         if (blob.size < 1000) return;
 
         const formData = new FormData();

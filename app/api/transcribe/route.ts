@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/audio/transcriptions";
+// whisper-large-v3-turbo handles Burmese acceptably; the non-turbo
+// whisper-large-v3 is stronger on low-resource languages when accuracy
+// matters more than latency — configurable via env.
+const GROQ_MODEL = process.env.GROQ_STT_MODEL ?? "whisper-large-v3-turbo";
 // Reject oversized uploads before buffering them into memory (and before
 // base64-encoding them for Gemini).
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
@@ -12,6 +16,55 @@ const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 const ELEVENLABS_MODEL = process.env.ELEVENLABS_MODEL ?? "scribe_v2";
 const ASSEMBLYAI_API_KEY = process.env.ASSEMBLYAI_API_KEY;
+
+/**
+ * Vocabulary boost for Whisper decoding of Burmese chess speech. The prompt
+ * biases the decoder toward the piece words and square-letter sounds it
+ * habitually mangles (Burmese has no /f/, so "f3" surfaces as အာပ်/အဖ်...).
+ * Also carries the English notation the parser expects back.
+ */
+const BURMESE_STT_PROMPT = [
+  "မြန်မာစကား စစ်ဆေးရန် အသံ။",
+  "Chess vocabulary: ဘုရင် (king), မိဖုရား (queen), ရိုက် (rook), လှေ (rook),",
+  "ဆင် (bishop), မြင်း (knight), နိုင်/စစ်သား (pawn).",
+  'Squares sound like: "အီး သုံး" = e3, "အာပ် ဖိုး" = f4, "ဘီ နှစ်" = b2.',
+  "Keep chess notation (a-h, 1-8, Nf3, O-O) in Latin letters.",
+].join(" ");
+
+/**
+ * Groq-hosted Whisper transcription. `prompt` optionally steers decoding
+ * toward domain vocabulary; temperature 0 keeps results deterministic so
+ * retries don't reshuffle mishearings.
+ */
+async function transcribeWithGroq(
+  audioFile: Blob,
+  language?: string,
+  prompt?: string,
+): Promise<string | null> {
+  if (!GROQ_API_KEY) return null;
+  const groqForm = new FormData();
+  groqForm.append("file", audioFile);
+  groqForm.append("model", GROQ_MODEL);
+  groqForm.append("response_format", "json");
+  groqForm.append("temperature", "0");
+  if (language) groqForm.append("language", language);
+  if (prompt) groqForm.append("prompt", prompt);
+
+  const response = await fetch(GROQ_API_URL, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${GROQ_API_KEY}` },
+    body: groqForm,
+    signal: AbortSignal.timeout(15000),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Groq API error (${response.status}): ${text}`);
+  }
+
+  const data = (await response.json()) as { text?: string };
+  return (data.text ?? "").trim() || null;
+}
 
 async function transcribeWithAssemblyAI(
   audioFile: Blob,
@@ -149,7 +202,7 @@ async function transcribeWithGemini(audioFile: Blob): Promise<string | null> {
         parts: [
           { inlineData: { mimeType, data: buf.toString("base64") } },
           {
-            text: "Transcribe this audio exactly as heard. It is a chess move command in Burmese. Return only the transcription, no commentary.",
+            text: "Transcribe this audio exactly as heard. It is spoken in Burmese (Myanmar) — it may be a chess move command or a general question about the game. Write Burmese in Myanmar script and keep any chess notation (piece letters, squares like e4, Nf3, O-O) in Latin letters. Return only the transcription, no commentary.",
           },
         ],
       },
@@ -246,6 +299,21 @@ export async function POST(request: Request) {
     const localText = await transcribeWithLocalBackend(audioFile);
     if (localText) return NextResponse.json({ text: localText });
 
+    // Whisper tier: fast and cheap; the vocabulary prompt biases decoding
+    // toward chess piece words and Burmese phonetics of square names.
+    if (GROQ_API_KEY) {
+      try {
+        const groqText = await transcribeWithGroq(
+          audioFile,
+          language,
+          BURMESE_STT_PROMPT,
+        );
+        if (groqText) return NextResponse.json({ text: groqText });
+      } catch (error) {
+        console.error("Groq Burmese transcription failed:", error);
+      }
+    }
+
     if (ELEVENLABS_API_KEY) {
       try {
         const elevenLabsText = await transcribeWithElevenLabs(audioFile);
@@ -271,37 +339,13 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!GROQ_API_KEY) {
+  try {
+    const groqText = await transcribeWithGroq(audioFile, language);
+    if (groqText !== null) return NextResponse.json({ text: groqText });
     return NextResponse.json(
       { detail: "GROQ_API_KEY is not configured in environment." },
       { status: 400 },
     );
-  }
-
-  try {
-    const groqForm = new FormData();
-    groqForm.append("file", audioFile);
-    groqForm.append("model", "whisper-large-v3-turbo");
-    groqForm.append("response_format", "json");
-    if (language) groqForm.append("language", language);
-
-    const response = await fetch(GROQ_API_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${GROQ_API_KEY}` },
-      body: groqForm,
-      signal: AbortSignal.timeout(15000),
-    });
-
-    if (!response.ok) {
-      const text = await response.text();
-      return NextResponse.json(
-        { detail: `Groq API error (${response.status}): ${text}` },
-        { status: 502 },
-      );
-    }
-
-    const data = (await response.json()) as { text?: string };
-    return NextResponse.json({ text: data.text ?? "" });
   } catch (error) {
     return NextResponse.json(
       {
