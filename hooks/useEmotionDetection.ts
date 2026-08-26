@@ -1,22 +1,51 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  classifyEmotion,
+  pickEmotion,
+  type EmotionScores,
+} from "@/lib/emotionClassifier";
+import { fuseEmotion, type GameSignals } from "@/lib/emotionFusion";
+import { classifyBlendshapes } from "@/lib/blendshapeEmotion";
 import type { EmotionLabel } from "@/lib/engineProfiles";
 
 type FaceApiModule = typeof import("@vladmandic/face-api");
+type VisionModule = typeof import("@mediapipe/tasks-vision");
+type FaceLandmarkerInstance = Awaited<
+  ReturnType<VisionModule["FaceLandmarker"]["createFromOptions"]>
+>;
 
-const EXPRESSION_TO_EMOTION: Record<string, EmotionLabel> = {
-  happy: "confident",
-  neutral: "neutral",
-  sad: "frustrated",
-  angry: "frustrated",
-  fearful: "stressed",
-  surprised: "focused",
-  disgusted: "stressed",
-};
+/**
+ * Which facial-analysis backend drives emotion detection. Set
+ * NEXT_PUBLIC_EMOTION_BACKEND=blendshapes to use the MediaPipe
+ * FaceLandmarker valence/arousal pipeline (more accurate separation of
+ * calm/neutral/focused/stressed); the default remains the lightweight
+ * face-api.js expression classifier. Both fall back to "neutral" when the
+ * camera or models are unavailable.
+ */
+const EMOTION_BACKEND: "face-api" | "blendshapes" =
+  process.env.NEXT_PUBLIC_EMOTION_BACKEND === "blendshapes"
+    ? "blendshapes"
+    : "face-api";
 
 const EMOTION_BUFFER_SIZE = 3;
 const DETECTION_INTERVAL_MS = 2200;
+/** How many timeline samples to retain for the monitor UI. */
+const EMOTION_TIMELINE_LIMIT = 120;
+
+export type EmotionSource = "face-api" | "blendshapes" | "fallback";
+
+export type DetectionOutcome = {
+  emotion: EmotionLabel;
+  scores: EmotionScores;
+};
+
+/** One smoothed emotion sample with the time it became active. */
+export type EmotionTimelineEntry = {
+  emotion: EmotionLabel;
+  at: number;
+};
 
 function isE2ETestRun(): boolean {
   return (
@@ -25,16 +54,21 @@ function isE2ETestRun(): boolean {
   );
 }
 
-async function detectEmotionFromVideo(
+function fallbackOutcome(): DetectionOutcome {
+  return { emotion: "neutral", scores: classifyEmotion(null).scores };
+}
+
+/** face-api.js path: full expression distribution → composite classifier. */
+async function detectWithFaceApi(
   faceapi: FaceApiModule,
   videoElement: HTMLVideoElement | null,
-): Promise<EmotionLabel> {
+): Promise<DetectionOutcome> {
   if (
     !videoElement ||
     videoElement.videoWidth === 0 ||
     videoElement.videoHeight === 0
   ) {
-    return "neutral";
+    return fallbackOutcome();
   }
 
   try {
@@ -46,19 +80,59 @@ async function detectEmotionFromVideo(
       .withFaceExpressions();
 
     if (!detection?.expressions) {
-      return "neutral";
+      return fallbackOutcome();
     }
 
-    const sorted = detection.expressions.asSortedArray();
-    const top = sorted[0];
-
-    if (!top || top.probability < 0.35) {
-      return "neutral";
+    // Pass every channel's probability to the classifier instead of argmax:
+    // elevated-but-not-dominant fear/disgust/surprise still carry signal.
+    const raw = detection.expressions as unknown as Record<string, unknown>;
+    const expressions: Record<string, number> = {};
+    for (const key of [
+      "happy",
+      "neutral",
+      "sad",
+      "angry",
+      "fearful",
+      "disgusted",
+      "surprised",
+    ]) {
+      const value = raw[key];
+      expressions[key] = typeof value === "number" ? value : 0;
     }
-
-    return EXPRESSION_TO_EMOTION[top.expression] ?? "neutral";
+    return classifyEmotion(expressions);
   } catch {
-    return "neutral";
+    return fallbackOutcome();
+  }
+}
+
+/** MediaPipe path: blendshapes → valence/arousal → circumplex scores. */
+function detectWithBlendshapes(
+  landmarker: FaceLandmarkerInstance,
+  videoElement: HTMLVideoElement | null,
+): DetectionOutcome {
+  if (
+    !videoElement ||
+    videoElement.videoWidth === 0 ||
+    videoElement.videoHeight === 0
+  ) {
+    return fallbackOutcome();
+  }
+
+  try {
+    const result = landmarker.detectForVideo(videoElement, performance.now());
+    const categories = result.faceBlendshapes?.[0]?.categories;
+    if (!categories?.length) {
+      return fallbackOutcome();
+    }
+    const { emotion, scores } = classifyBlendshapes(
+      categories.map((c) => ({
+        categoryName: c.categoryName,
+        score: c.score,
+      })),
+    );
+    return { emotion, scores };
+  } catch {
+    return fallbackOutcome();
   }
 }
 
@@ -89,8 +163,18 @@ function mostFrequentInBuffer(
 }
 
 /**
- * Encapsulates the webcam + face-api.js emotion-detection subsystem:
- * camera lifecycle, model loading, periodic inference, and temporal smoothing.
+ * Encapsulates the webcam emotion-detection subsystem: camera lifecycle,
+ * model loading, periodic inference, gameplay-signal fusion, and temporal
+ * smoothing.
+ *
+ * Detection runs one of two backends (see EMOTION_BACKEND):
+ *   - "face-api"     TinyFaceDetector + FaceExpressionNet, scored by the
+ *                    composite classifier (lib/emotionClassifier.ts)
+ *   - "blendshapes"  MediaPipe FaceLandmarker blendshapes mapped through a
+ *                    valence/arousal circumplex (lib/blendshapeEmotion.ts)
+ *
+ * When `getGameSignals` is supplied, each reading is additionally fused with
+ * gameplay telemetry (lib/emotionFusion.ts) before smoothing.
  *
  * The camera and detector pause while the 3D tab is active (or during e2e
  * tests, via the ?e2e query flag).
@@ -99,16 +183,31 @@ export function useEmotionDetection(options: {
   activeTab: string;
   auto: boolean;
   onStatus?: (message: string) => void;
+  getGameSignals?: () => Partial<GameSignals> | null;
 }) {
-  const { activeTab, auto, onStatus } = options;
+  const { activeTab, auto, onStatus, getGameSignals } = options;
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const faceapiRef = useRef<FaceApiModule | null>(null);
+  const landmarkerRef = useRef<FaceLandmarkerInstance | null>(null);
   const emotionHistoryRef = useRef<EmotionLabel[]>([]);
   const emotionBufferRef = useRef<EmotionLabel[]>([]);
   const lastSmoothedRef = useRef<EmotionLabel>("neutral");
+  // Stable access to the latest telemetry provider without re-triggering
+  // the inference effect below.
+  const gameSignalsRef = useRef(getGameSignals);
+  useEffect(() => {
+    gameSignalsRef.current = getGameSignals;
+  }, [getGameSignals]);
+
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [emotion, setEmotion] = useState<EmotionLabel>("neutral");
+  const [emotionScores, setEmotionScores] = useState<EmotionScores | null>(
+    null,
+  );
+  const [emotionTimeline, setEmotionTimeline] = useState<
+    EmotionTimelineEntry[]
+  >([]);
 
   // Camera + model lifecycle.
   useEffect(() => {
@@ -120,6 +219,7 @@ export function useEmotionDetection(options: {
     }
 
     let mediaStream: MediaStream | null = null;
+    let cancelled = false;
 
     navigator.mediaDevices
       .getUserMedia({ video: true })
@@ -134,63 +234,126 @@ export function useEmotionDetection(options: {
         onStatus?.("Webcam unavailable. Emotion fallback set to neutral.");
       });
 
-    import("@vladmandic/face-api")
-      .then((mod) => {
-        Promise.all([
-          mod.nets.tinyFaceDetector.loadFromUri("/models"),
-          mod.nets.faceExpressionNet.loadFromUri("/models"),
-        ])
-          .then(() => {
-            faceapiRef.current = mod;
-            setModelsLoaded(true);
-          })
-          .catch((loadErr) => {
-            console.error("Failed to load face-api models:", loadErr);
-            onStatus?.("Emotion models failed to load.");
-          });
-      })
-      .catch((importErr) => {
-        console.error("Failed to import face-api:", importErr);
-      });
+    const loadFaceApi = (): void => {
+      import("@vladmandic/face-api")
+        .then((mod) => {
+          Promise.all([
+            mod.nets.tinyFaceDetector.loadFromUri("/models"),
+            mod.nets.faceExpressionNet.loadFromUri("/models"),
+          ])
+            .then(() => {
+              if (cancelled) return;
+              faceapiRef.current = mod;
+              setModelsLoaded(true);
+            })
+            .catch((loadErr) => {
+              console.error("Failed to load face-api models:", loadErr);
+              onStatus?.("Emotion models failed to load.");
+            });
+        })
+        .catch((importErr) => {
+          console.error("Failed to import face-api:", importErr);
+        });
+    };
+
+    if (EMOTION_BACKEND === "blendshapes") {
+      import("@mediapipe/tasks-vision")
+        .then(async (vision) => {
+          const fileset = await vision.FilesetResolver.forVisionTasks(
+            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm",
+          );
+          const landmarker = await vision.FaceLandmarker.createFromOptions(
+            fileset,
+            {
+              baseOptions: {
+                modelAssetPath: "/models/face_landmarker.task",
+                delegate: "GPU",
+              },
+              runningMode: "VIDEO",
+              numFaces: 1,
+              outputFaceBlendshapes: true,
+              outputFacialTransformationMatrixes: false,
+            },
+          );
+          if (cancelled) {
+            landmarker.close();
+            return;
+          }
+          landmarkerRef.current = landmarker;
+          setModelsLoaded(true);
+        })
+        .catch((err) => {
+          console.error(
+            "Blendshape backend unavailable; falling back to face-api:",
+            err,
+          );
+          if (!cancelled) loadFaceApi();
+        });
+    } else {
+      loadFaceApi();
+    }
 
     return () => {
+      cancelled = true;
       document.body.style.overflow = "";
       if (mediaStream) {
         mediaStream.getTracks().forEach((track) => track.stop());
       }
+      landmarkerRef.current?.close();
+      landmarkerRef.current = null;
+      faceapiRef.current = null;
     };
     // onStatus is a stable setState function; omitting it is intentional.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
-  // Periodic inference with temporal smoothing.
+  // Periodic inference with fusion + temporal smoothing.
   useEffect(() => {
+    const backendReady =
+      EMOTION_BACKEND === "blendshapes"
+        ? landmarkerRef.current !== null
+        : faceapiRef.current !== null;
     if (
       isE2ETestRun() ||
       activeTab === "3d" ||
       !auto ||
-      !faceapiRef.current ||
+      !backendReady ||
       !modelsLoaded
     ) {
       return;
     }
 
     const intervalId = window.setInterval(async () => {
-      const api = faceapiRef.current;
-      if (!api) return;
+      let outcome: DetectionOutcome;
+      if (EMOTION_BACKEND === "blendshapes") {
+        const landmarker = landmarkerRef.current;
+        if (!landmarker) return;
+        outcome = detectWithBlendshapes(landmarker, videoRef.current);
+      } else {
+        const faceapi = faceapiRef.current;
+        if (!faceapi) return;
+        outcome = await detectWithFaceApi(faceapi, videoRef.current);
+      }
 
-      const estimatedEmotion = await detectEmotionFromVideo(
-        api,
-        videoRef.current,
-      );
+      // Fuse with gameplay telemetry when a provider is wired up.
+      const signals = gameSignalsRef.current?.();
+      const fused = signals
+        ? fuseEmotion(outcome.scores, signals)
+        : { emotion: pickEmotion(outcome.scores), scores: outcome.scores };
+
       const buffer = emotionBufferRef.current;
-      buffer.push(estimatedEmotion);
+      buffer.push(fused.emotion);
       if (buffer.length > EMOTION_BUFFER_SIZE) {
         buffer.shift();
       }
       const smoothed = mostFrequentInBuffer(buffer, lastSmoothedRef.current);
       lastSmoothedRef.current = smoothed;
       setEmotion(smoothed);
+      setEmotionScores(fused.scores);
+      setEmotionTimeline((prev) => [
+        ...prev.slice(-(EMOTION_TIMELINE_LIMIT - 1)),
+        { emotion: smoothed, at: Date.now() },
+      ]);
       emotionHistoryRef.current.push(smoothed);
       if (emotionHistoryRef.current.length > 7) {
         emotionHistoryRef.current.shift();
@@ -205,5 +368,14 @@ export function useEmotionDetection(options: {
     };
   }, [activeTab, auto, modelsLoaded]);
 
-  return { videoRef, modelsLoaded, emotion, setEmotion, emotionHistoryRef };
+  return {
+    videoRef,
+    modelsLoaded,
+    emotion,
+    setEmotion,
+    emotionHistoryRef,
+    emotionScores,
+    emotionTimeline,
+    emotionBackend: EMOTION_BACKEND,
+  };
 }

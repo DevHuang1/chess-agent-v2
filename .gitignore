@@ -47,3 +47,5 @@ backend/uvicorn.log
 backend/__pycache__/
 /test-results/
 playwright-report/
+# Patched SWI-Prolog dylibs (rebuilt by backend/start-backend.sh)
+backend/lib/
