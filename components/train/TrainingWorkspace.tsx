@@ -24,6 +24,9 @@ import type { EmotionLabel } from "@/lib/engineProfiles";
 import PuzzleRush from "./PuzzleRush";
 import LearnPositions from "./LearnPositions";
 import ProgressView from "./ProgressView";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type View = "hub" | "rush" | "learn" | "progress";
 
@@ -109,7 +112,7 @@ export default function TrainingWorkspace({
 
       <div className="grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Profile card */}
-        <div className="train-panel col-span-1 flex items-center gap-4 rounded-xl p-5 sm:col-span-2">
+        <Card className="col-span-1 flex items-center gap-4 p-5 sm:col-span-2">
           <svg width="96" height="96" viewBox="0 0 96 96" className="shrink-0">
             <circle
               cx="48"
@@ -143,8 +146,11 @@ export default function TrainingWorkspace({
             </text>
           </svg>
           <div>
-            <div className="font-mono text-lg font-bold" style={{ color: tier.color }}>
-              {tier.name} · Level {level}
+            <div className="flex items-center gap-2">
+              <div className="font-mono text-lg font-bold" style={{ color: tier.color }}>
+                {tier.name} · Level {level}
+              </div>
+              <Badge variant="muted">Lvl {level}</Badge>
             </div>
             <div className="mt-1 text-xs text-zinc-400 light:text-slate-600">
               {xpIntoLevel} / {xpForNext} XP to level {level + 1}
@@ -154,7 +160,7 @@ export default function TrainingWorkspace({
               {progress.bestStreak}
             </div>
           </div>
-        </div>
+        </Card>
 
         <HubCard
           emoji="⚡"
@@ -177,14 +183,14 @@ export default function TrainingWorkspace({
         />
 
         {/* Mood strip — Sentio twist */}
-        <div className="train-panel col-span-1 flex items-center justify-between rounded-xl px-5 py-4 sm:col-span-2">
+        <Card className="col-span-1 flex items-center justify-between px-5 py-4 sm:col-span-2">
           <span className="text-xs text-zinc-400 light:text-slate-600">
             Live mood (adapts puzzle difficulty when you&apos;re tense):
           </span>
           <span className="font-mono text-sm">
             {EMOTION_EMOJI[emotion]} {emotion}
           </span>
-        </div>
+        </Card>
       </div>
     </div>
   );
@@ -210,17 +216,28 @@ function HubCard({
   wide?: boolean;
 }) {
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className={`train-panel train-accent-ring rounded-xl p-5 text-left transition-transform hover:scale-[1.02] ${wide ? "sm:col-span-2" : ""}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      className={`cursor-pointer transition-transform hover:scale-[1.02] ${wide ? "sm:col-span-2" : ""}`}
     >
-      <div className="text-2xl">{emoji}</div>
-      <div className="mt-2 font-mono text-sm font-bold">{title}</div>
-      <p className="mt-1 text-xs text-zinc-400 light:text-slate-600">
-        {description}
-      </p>
-    </button>
+      <Card className="train-accent-ring h-full">
+        <CardContent className="p-5">
+          <div className="text-2xl">{emoji}</div>
+          <div className="mt-2 font-mono text-sm font-bold">{title}</div>
+          <p className="mt-1 text-xs text-zinc-400 light:text-slate-600">
+            {description}
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

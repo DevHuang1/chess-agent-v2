@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 export type SidebarTab =
+  | "game"
   | "coach"
   | "speech"
   | "logician"

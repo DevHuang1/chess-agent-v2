@@ -5,6 +5,9 @@ import * as THREE from "three";
 import type { MinimaxSearchNode, MinimaxTrace } from "@/lib/minimax";
 import type { MctsSearchNode } from "@/lib/mcts";
 import { AgentStrategy, AgentTrace } from "@/lib/agents";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 type AgentsGraph3DProps = {
   agents: AgentTrace[];
@@ -911,110 +914,120 @@ export default function AgentsGraph3D({
         className="absolute left-1/2 top-3 hidden -translate-x-1/2 items-center gap-1 rounded-lg border border-cyan-400/25 bg-zinc-950/85 p-1.5 shadow-xl backdrop-blur-md md:flex"
         aria-label="3D graph navigation controls"
       >
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           aria-label="Zoom out graph"
           onClick={() => cameraZoomRef.current?.(2)}
-          className="rounded border border-cyan-400/25 px-2 py-1 text-xs font-bold text-cyan-200 transition-colors hover:bg-cyan-400/10"
+          className="h-7 w-7 text-cyan-200 hover:bg-cyan-400/10"
         >
           −
-        </button>
+        </Button>
         <span
           className="min-w-14 text-center font-mono text-[10px] text-cyan-200"
           aria-live="polite"
         >
           {zoomRadius.toFixed(1)}×
         </span>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           aria-label="Zoom in graph"
           onClick={() => cameraZoomRef.current?.(-2)}
-          className="rounded border border-cyan-400/25 px-2 py-1 text-xs font-bold text-cyan-200 transition-colors hover:bg-cyan-400/10"
+          className="h-7 w-7 text-cyan-200 hover:bg-cyan-400/10"
         >
           +
-        </button>
+        </Button>
         <span className="mx-0.5 h-4 w-px bg-zinc-700" />
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           aria-label="Pan graph left"
           onClick={() => cameraPanRef.current?.(-0.65, 0)}
-          className="rounded border border-zinc-700 px-1.5 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-800"
+          className="h-7 w-7 text-zinc-300 hover:bg-zinc-800"
         >
           ←
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           aria-label="Pan graph up"
           onClick={() => cameraPanRef.current?.(0, 0.5)}
-          className="rounded border border-zinc-700 px-1.5 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-800"
+          className="h-7 w-7 text-zinc-300 hover:bg-zinc-800"
         >
           ↑
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           aria-label="Pan graph down"
           onClick={() => cameraPanRef.current?.(0, -0.5)}
-          className="rounded border border-zinc-700 px-1.5 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-800"
+          className="h-7 w-7 text-zinc-300 hover:bg-zinc-800"
         >
           ↓
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           aria-label="Pan graph right"
           onClick={() => cameraPanRef.current?.(0.65, 0)}
-          className="rounded border border-zinc-700 px-1.5 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-800"
+          className="h-7 w-7 text-zinc-300 hover:bg-zinc-800"
         >
           →
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
           aria-label="Reset graph camera"
           onClick={() => cameraResetRef.current?.()}
-          className="ml-0.5 rounded border border-amber-400/25 px-2 py-1 text-[10px] font-semibold text-amber-200 transition-colors hover:bg-amber-400/10"
+          className="ml-0.5 h-7 text-[10px] text-amber-200 hover:bg-amber-400/10"
         >
           Reset
-        </button>
+        </Button>
       </div>
       <div className="pointer-events-none absolute bottom-3 left-3 hidden flex-wrap gap-1.5 text-[9px] sm:flex">
         {agents.map((entry) => (
-          <span
+          <Badge
             key={entry.agent.id}
-            className="flex items-center gap-1 rounded border border-zinc-700/70 bg-zinc-950/70 px-1.5 py-1"
+            variant="outline"
+            className="gap-1 bg-zinc-950/70 text-zinc-300"
           >
             <span
               className="h-2 w-2 rounded-full"
               style={{ backgroundColor: entry.agent.color }}
             />
-            <span className="text-zinc-300">{entry.agent.name}</span>
-          </span>
+            {entry.agent.name}
+          </Badge>
         ))}
       </div>
-      <div className="pointer-events-none absolute bottom-3 right-3 flex max-w-[240px] flex-col gap-1 rounded-lg border border-cyan-300/40 bg-cyan-950/75 px-2.5 py-2 text-[10px] shadow-lg backdrop-blur-sm">
-        <div className="font-semibold uppercase tracking-wider text-cyan-200">
-          Agents in parallel
-        </div>
-        {agents.map((entry, index) => {
-          const node =
-            entry.trace.nodes[
-              activeIndexes[index] % Math.max(1, entry.trace.nodes.length)
-            ] ?? null;
-          return (
-            <div
-              key={entry.agent.id}
-              className="flex items-center justify-between gap-2 font-mono"
-            >
-              <span className="flex items-center gap-1.5">
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: entry.agent.color }}
-                />
-                <span className="text-zinc-300">{entry.agent.name}</span>
-              </span>
-              <span className="text-white">{node?.san ?? "root"}</span>
-            </div>
-          );
-        })}
-      </div>
+      <Card className="pointer-events-none absolute bottom-3 right-3 w-56 max-w-[240px] border-cyan-300/40 bg-cyan-950/75 shadow-lg">
+        <CardContent className="p-2.5 text-[10px]">
+          <div className="mb-1 font-semibold uppercase tracking-wider text-cyan-200">
+            Agents in parallel
+          </div>
+          {agents.map((entry, index) => {
+            const node =
+              entry.trace.nodes[
+                activeIndexes[index] % Math.max(1, entry.trace.nodes.length)
+              ] ?? null;
+            return (
+              <div
+                key={entry.agent.id}
+                className="flex items-center justify-between gap-2 font-mono"
+              >
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className="h-2 w-2 rounded-full"
+                    style={{ backgroundColor: entry.agent.color }}
+                  />
+                  <span className="text-zinc-300">{entry.agent.name}</span>
+                </span>
+                <span className="text-white">{node?.san ?? "root"}</span>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
       <div
         className="absolute bottom-3 left-1/2 w-[min(420px,calc(100%-24px))] -translate-x-1/2 rounded-lg border border-cyan-400/25 bg-zinc-950/85 p-2 shadow-xl backdrop-blur-md"
         aria-label="AI Lab graph overview navigator"
@@ -1075,84 +1088,87 @@ export default function AgentsGraph3D({
           <span className="text-[9px] text-zinc-500">
             each column = one agent searching in parallel
           </span>
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => cameraResetRef.current?.()}
-            className="rounded border border-cyan-400/25 px-1.5 py-1 text-[9px] font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/10"
+            className="h-6 px-1.5 py-0 text-[9px] text-cyan-200 hover:bg-cyan-400/10"
           >
             Reset view
-          </button>
+          </Button>
         </div>
       </div>
       {detail ? (
-        <div className="absolute right-3 top-3 w-56 max-w-[calc(100%-24px)] rounded-lg border border-cyan-400/30 bg-zinc-950/90 p-3 text-[10px] text-zinc-300 shadow-xl backdrop-blur-md light:bg-white/90 light:text-slate-700">
-          <div className="flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1.5 font-mono text-sm font-bold text-cyan-200 light:text-cyan-800">
-              <span
-                className="h-2 w-2 rounded-full"
-                style={{ backgroundColor: detail.agent.color }}
-              />
-              {detail.node.san ?? "root"}
-            </span>
-            <span className="font-mono text-amber-200 light:text-amber-700">
-              {detail.node.score === null
-                ? "—"
-                : (detail.node.score / 100).toFixed(2)}
-            </span>
-          </div>
-          <div className="mt-1 text-zinc-500">{detail.node.explanation}</div>
-          <div className="mt-1 font-mono text-[9px] text-zinc-400">
-            {detail.agent.name} · {detail.agent.tagline}
-          </div>
-          {mctsNode ? (
-            <div className="mt-2 grid grid-cols-2 gap-1 border-y border-cyan-400/15 py-2 font-mono text-[9px]">
-              <span className="text-zinc-500">phase</span>
-              <span className="text-right text-cyan-200">{mctsNode.phase}</span>
-              <span className="text-zinc-500">visits</span>
-              <span className="text-right text-cyan-200">
-                {mctsNode.visits}
+        <Card className="absolute right-3 top-3 w-56 max-w-[calc(100%-24px)] border-cyan-400/30 bg-zinc-950/90 shadow-xl light:bg-white/90 light:text-slate-700">
+          <CardContent className="p-3 text-[10px] text-zinc-300">
+            <div className="flex items-center justify-between gap-2">
+              <span className="flex items-center gap-1.5 font-mono text-sm font-bold text-cyan-200 light:text-cyan-800">
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ backgroundColor: detail.agent.color }}
+                />
+                {detail.node.san ?? "root"}
               </span>
-              <span className="text-zinc-500">win rate</span>
-              <span className="text-right text-emerald-200">
-                {(mctsNode.winRate * 100).toFixed(0)}%
-              </span>
-              <span className="text-zinc-500">UCT</span>
-              <span className="text-right text-amber-200">
-                {Number.isFinite(mctsNode.exploration)
-                  ? mctsNode.exploration.toFixed(2)
-                  : "∞"}
+              <span className="font-mono text-amber-200 light:text-amber-700">
+                {detail.node.score === null
+                  ? "—"
+                  : (detail.node.score / 100).toFixed(2)}
               </span>
             </div>
-          ) : null}
-          <div className="mt-3 border-t border-zinc-800 pt-2 light:border-slate-200">
-            <div className="mb-1 uppercase tracking-wider text-zinc-500">
-              Heuristic breakdown
+            <div className="mt-1 text-zinc-500">{detail.node.explanation}</div>
+            <div className="mt-1 font-mono text-[9px] text-zinc-400">
+              {detail.agent.name} · {detail.agent.tagline}
             </div>
-            <div className="space-y-1 font-mono">
-              <div className="flex justify-between">
-                <span className="text-zinc-500">material</span>
-                <span className="text-cyan-200 light:text-cyan-800">
-                  {detail.node.heuristics.material}
+            {mctsNode ? (
+              <div className="mt-2 grid grid-cols-2 gap-1 border-y border-cyan-400/15 py-2 font-mono text-[9px]">
+                <span className="text-zinc-500">phase</span>
+                <span className="text-right text-cyan-200">{mctsNode.phase}</span>
+                <span className="text-zinc-500">visits</span>
+                <span className="text-right text-cyan-200">
+                  {mctsNode.visits}
+                </span>
+                <span className="text-zinc-500">win rate</span>
+                <span className="text-right text-emerald-200">
+                  {(mctsNode.winRate * 100).toFixed(0)}%
+                </span>
+                <span className="text-zinc-500">UCT</span>
+                <span className="text-right text-amber-200">
+                  {Number.isFinite(mctsNode.exploration)
+                    ? mctsNode.exploration.toFixed(2)
+                    : "∞"}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-500">positional</span>
-                <span className="text-emerald-200 light:text-emerald-800">
-                  {detail.node.heuristics.positional}
-                </span>
+            ) : null}
+            <div className="mt-3 border-t border-zinc-800 pt-2 light:border-slate-200">
+              <div className="mb-1 uppercase tracking-wider text-zinc-500">
+                Heuristic breakdown
               </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-500">king safety</span>
-                <span className="text-amber-200 light:text-amber-800">
-                  {detail.node.heuristics.kingSafety}
-                </span>
+              <div className="space-y-1 font-mono">
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">material</span>
+                  <span className="text-cyan-200 light:text-cyan-800">
+                    {detail.node.heuristics.material}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">positional</span>
+                  <span className="text-emerald-200 light:text-emerald-800">
+                    {detail.node.heuristics.positional}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">king safety</span>
+                  <span className="text-amber-200 light:text-amber-800">
+                    {detail.node.heuristics.kingSafety}
+                  </span>
+                </div>
+              </div>
+              <div className="mt-2 text-[9px] text-zinc-500">
+                Hover or click any node to inspect its weighted evaluation.
               </div>
             </div>
-            <div className="mt-2 text-[9px] text-zinc-500">
-              Hover or click any node to inspect its weighted evaluation.
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       ) : null}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export type MenuItem = {
   label: string;
@@ -46,27 +47,27 @@ export default function OverflowMenu({
 
   return (
     <div ref={rootRef} className="relative">
-      <button
-        type="button"
+      <Button
+        variant={open ? "accent" : "outline"}
+        size="sm"
         aria-label={label}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className={`rounded-lg border border-zinc-700/60 bg-zinc-900 px-2.5 py-1.5 text-xs font-bold text-zinc-300 transition-colors hover:border-amber-500/50 hover:text-amber-300 light:border-slate-300 light:bg-white light:text-slate-700 light:hover:text-amber-700 ${
-          open ? "border-amber-500/50 text-amber-300" : ""
-        }`}
+        className="font-bold"
       >
         ⋯
-      </button>
+      </Button>
       {open ? (
         <div
           role="menu"
           className="absolute right-0 top-full z-50 mt-1 w-44 overflow-hidden rounded-xl border border-zinc-700/80 bg-zinc-900 py-1 shadow-2xl light:border-slate-300 light:bg-white"
         >
           {items.map((item) => (
-            <button
+            <Button
               key={item.label}
-              type="button"
+              variant="ghost"
+              size="sm"
               role="menuitem"
               disabled={item.disabled}
               onClick={() => {
@@ -78,7 +79,7 @@ export default function OverflowMenu({
             >
               {item.icon ? <span aria-hidden="true">{item.icon}</span> : null}
               {item.label}
-            </button>
+            </Button>
           ))}
         </div>
       ) : null}

@@ -31,6 +31,16 @@ import {
 } from "@/lib/puzzleProgress";
 import { EMOTION_EMOJI } from "@/lib/emotionClassifier";
 import type { EmotionLabel } from "@/lib/engineProfiles";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  trainShake,
+  trainSolvePulse,
+  trainXpPop,
+  trainLevelUpIn,
+} from "@/lib/animations";
+import type { JSAnimation } from "animejs";
 
 const Chessboard = dynamic(
   () => import("react-chessboard").then((mod) => mod.Chessboard),
@@ -94,13 +104,14 @@ export default function PuzzleRush({
   if (!mode) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-6 p-6">
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="sm"
           onClick={onExit}
-          className="self-start rounded-md border border-zinc-700/60 px-3 py-1 text-xs text-zinc-400 hover:text-zinc-200 light:border-slate-300 light:text-slate-600"
+          className="self-start"
         >
           ← Back
-        </button>
+        </Button>
         <h2 className="font-mono text-xl font-bold train-accent-text">
           Puzzle Rush
         </h2>
@@ -150,19 +161,20 @@ function ModeCard({
   onSelect: () => void;
 }) {
   return (
-    <button
-      type="button"
+    <Card
+      className="train-accent-ring w-56 cursor-pointer p-5 text-left transition-transform hover:scale-[1.02]"
       onClick={onSelect}
-      className="train-panel train-accent-ring w-56 rounded-xl p-5 text-left transition-transform hover:scale-[1.02]"
     >
-      <div className="font-mono text-lg font-bold">{title}</div>
-      <p className="mt-1 text-xs text-zinc-400 light:text-slate-600">
-        {description}
-      </p>
-      <p className="mt-3 font-mono text-[10px] uppercase tracking-wider text-zinc-500 light:text-slate-500">
-        Best: {best}
-      </p>
-    </button>
+      <CardContent className="p-0">
+        <div className="font-mono text-lg font-bold">{title}</div>
+        <p className="mt-1 text-xs text-zinc-400 light:text-slate-600">
+          {description}
+        </p>
+        <p className="mt-3 font-mono text-[10px] uppercase tracking-wider text-zinc-500 light:text-slate-500">
+          Best: {best}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -196,12 +208,45 @@ function PuzzleRushRun({
   const [leveledUpNow, setLeveledUpNow] = useState(false);
   const [easeMode, setEaseMode] = useState(false);
 
+  // Animation refs
+  const boardRef = useRef<HTMLDivElement>(null);
+  const xpPopRef = useRef<HTMLDivElement>(null);
+  const levelUpRef = useRef<HTMLDivElement>(null);
+  const boardAnimRef = useRef<JSAnimation | null>(null);
+
   // Run-local mirror of progress so summary + streaks stay consistent even
   // while the parent re-renders.
   const progressRef = useRef(progress);
   useEffect(() => {
     progressRef.current = progress;
   }, [progress]);
+
+  // --- Anime.js animation hooks ---
+  useEffect(() => {
+    if (shake && boardRef.current) {
+      boardAnimRef.current?.cancel();
+      boardAnimRef.current = trainShake(boardRef.current);
+    }
+  }, [shake]);
+
+  useEffect(() => {
+    if (pulse && boardRef.current) {
+      boardAnimRef.current?.cancel();
+      boardAnimRef.current = trainSolvePulse(boardRef.current);
+    }
+  }, [pulse]);
+
+  useEffect(() => {
+    if (xpPop !== null && xpPopRef.current) {
+      trainXpPop(xpPopRef.current);
+    }
+  }, [xpPop]);
+
+  useEffect(() => {
+    if (leveledUpNow && levelUpRef.current) {
+      trainLevelUpIn(levelUpRef.current);
+    }
+  }, [leveledUpNow]);
 
   const solvedIdsRef = useRef<Set<string>>(
     new Set(progress.solvedIds), // Persisted dedup: no instant re-seen puzzles.
@@ -429,26 +474,27 @@ function PuzzleRushRun({
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
         <h2 className="font-mono text-2xl font-bold">Run complete</h2>
-        <div className="train-panel-raised rounded-xl px-8 py-6 text-center">
-          <div className="font-mono text-5xl font-bold text-emerald-400">
-            {solvedCount}
-          </div>
-          <div className="mt-1 text-xs uppercase tracking-wider text-zinc-500 light:text-slate-500">
-            puzzles solved · +{xpThisRun} XP
-          </div>
-          {finished.newBest && (
-            <div className="mt-2 text-sm font-bold text-amber-400">
-              ★ New personal best!
+        <Card className="px-8 py-6 text-center">
+          <CardContent>
+            <div className="font-mono text-5xl font-bold text-emerald-400">
+              {solvedCount}
             </div>
-          )}
-        </div>
-        <button
-          type="button"
+            <div className="mt-1 text-xs uppercase tracking-wider text-zinc-500 light:text-slate-500">
+              puzzles solved · +{xpThisRun} XP
+            </div>
+            {finished.newBest && (
+              <div className="mt-2 text-sm font-bold text-amber-400">
+                ★ New personal best!
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Button
+          variant="outline"
           onClick={onQuit}
-          className="rounded-lg bg-violet-500/20 px-6 py-2 text-sm font-semibold text-violet-300 hover:bg-violet-500/30 light:bg-violet-100 light:text-violet-700"
         >
           Back to modes
-        </button>
+        </Button>
       </div>
     );
   }
@@ -460,57 +506,65 @@ function PuzzleRushRun({
     <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:flex-row lg:items-start lg:justify-center lg:overflow-hidden">
       {/* Left rail: quit + clock/strikes + score */}
       <div className="flex shrink-0 items-center justify-between gap-3 lg:w-48 lg:flex-col lg:items-stretch">
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="sm"
           onClick={onQuit}
-          className="rounded-md border border-zinc-700/60 px-2 py-1 text-xs text-zinc-400 hover:text-zinc-200 light:border-slate-300 light:text-slate-600"
         >
           ← Quit
-        </button>
+        </Button>
         {mode === "rush" ? (
-          <div className="train-panel rounded-xl px-4 py-3 text-center lg:py-5">
-            <div
-              className={`font-mono text-3xl font-bold ${timeLeftMs < 30_000 ? "text-red-400" : ""}`}
-            >
-              {minutes}:{String(seconds).padStart(2, "0")}
-            </div>
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500">
-              time left
-            </div>
-          </div>
+          <Card className="px-4 py-3 text-center lg:py-5">
+            <CardContent>
+              <div
+                className={`font-mono text-3xl font-bold ${timeLeftMs < 30_000 ? "text-red-400" : ""}`}
+              >
+                {minutes}:{String(seconds).padStart(2, "0")}
+              </div>
+              <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+                time left
+              </div>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="train-panel rounded-xl px-4 py-3 text-center lg:py-5">
-            <div className="text-xl tracking-widest">
-              {"♥".repeat(Math.max(0, MAX_STRIKES - strikes))}
-              <span className="opacity-25">{"♥".repeat(strikes)}</span>
-            </div>
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500">
-              strikes
-            </div>
-          </div>
+          <Card className="px-4 py-3 text-center lg:py-5">
+            <CardContent>
+              <div className="text-xl tracking-widest">
+                {"♥".repeat(Math.max(0, MAX_STRIKES - strikes))}
+                <span className="opacity-25">{"♥".repeat(strikes)}</span>
+              </div>
+              <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+                strikes
+              </div>
+            </CardContent>
+          </Card>
         )}
-        <div className="train-panel rounded-xl px-4 py-3 text-center lg:py-5">
-          <div className="font-mono text-3xl font-bold text-violet-300 light:text-violet-700">
-            {solvedCount}
-          </div>
-          <div className="whitespace-nowrap text-[10px] uppercase tracking-wider text-zinc-500">
-            solved · 🔥{progress.currentStreak}
-          </div>
-        </div>
+        <Card className="px-4 py-3 text-center lg:py-5">
+          <CardContent>
+            <div className="font-mono text-3xl font-bold text-violet-300 light:text-violet-700">
+              {solvedCount}
+            </div>
+            <div className="whitespace-nowrap text-[10px] uppercase tracking-wider text-zinc-500">
+              solved · 🔥{progress.currentStreak}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Board */}
       <div
         aria-label="Puzzle board. Find the best move."
         role="group"
-        className={`relative mx-auto w-full max-w-[520px] shrink-0 overflow-hidden rounded-xl ${shake ? "train-shake" : ""} ${pulse ? "train-solve-pulse" : ""}`}
+        ref={boardRef}
+        className="relative mx-auto w-full max-w-[520px] shrink-0 overflow-hidden rounded-xl"
       >
         <Chessboard options={boardOptions} />
         {xpPop !== null && (
           <div
+            ref={xpPopRef}
             role="status"
             aria-live="polite"
-            className="train-xp-pop pointer-events-none absolute right-3 top-3 rounded-lg bg-emerald-500/25 px-3 py-1 font-mono text-lg font-bold text-emerald-300"
+            className="pointer-events-none absolute right-3 top-3 rounded-lg bg-emerald-500/25 px-3 py-1 font-mono text-lg font-bold text-emerald-300"
           >
             +{xpPop} XP
           </div>
@@ -519,79 +573,86 @@ function PuzzleRushRun({
 
       {/* Right rail: puzzle meta, hint/skip, emotion toast, level-up */}
       <div className="flex w-full shrink-0 flex-col gap-3 lg:w-56">
-        <div className="train-panel rounded-xl p-4">
-          <div className="text-[10px] uppercase tracking-wider text-zinc-500">
-            Find the best move for{" "}
-            {current?.solverColor === "b" ? "Black" : "White"}
-          </div>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="rounded bg-zinc-800/80 px-2 py-0.5 font-mono text-[10px] text-zinc-300">
-              rating ~{current?.rating ?? "?"}
-            </span>
-            <span className="text-xs">
-              {EMOTION_EMOJI[emotion]} {emotion}
-            </span>
-          </div>
-          <div className="mt-2 min-h-5 text-xs text-sky-300">
-            {hintRevealed ? `Theme: ${current?.primaryTheme}` : ""}
-          </div>
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setHintRevealed(true);
-                setUsedHintThisPuzzle(true);
-              }}
-              className="flex-1 rounded-md border border-zinc-700/60 px-2 py-1 text-xs text-zinc-300 hover:border-amber-500/50 light:border-slate-300 light:text-slate-700"
-              title="Reveal the theme (H)"
-            >
-              💡 Hint
-            </button>
-            <button
-              type="button"
-              onClick={loadNext}
-              className="flex-1 rounded-md border border-zinc-700/60 px-2 py-1 text-xs text-zinc-300 hover:border-violet-500/50 light:border-slate-300 light:text-slate-700"
-              title="Skip this puzzle (Enter)"
-            >
-              Skip
-            </button>
-          </div>
-        </div>
+        <Card className="p-4">
+          <CardContent>
+            <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+              Find the best move for{" "}
+              {current?.solverColor === "b" ? "Black" : "White"}
+            </div>
+            <div className="mt-2 flex items-center justify-between">
+              <Badge variant="outline">
+                rating ~{current?.rating ?? "?"}
+              </Badge>
+              <Badge variant="outline">
+                {EMOTION_EMOJI[emotion]} {emotion}
+              </Badge>
+            </div>
+            <div className="mt-2 min-h-5 text-xs text-sky-300">
+              {hintRevealed ? `Theme: ${current?.primaryTheme}` : ""}
+            </div>
+            <div className="mt-3 flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => {
+                  setHintRevealed(true);
+                  setUsedHintThisPuzzle(true);
+                }}
+                title="Reveal the theme (H)"
+              >
+                💡 Hint
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={loadNext}
+                title="Skip this puzzle (Enter)"
+              >
+                Skip
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {easeOffered && (
-          <div
+          <Card
             role="alert"
-            className="train-panel rounded-xl border-l-4 border-l-orange-400 p-3 text-xs"
+            className="border-l-4 border-l-orange-400 p-3"
           >
-            <p className="text-zinc-300">
-              Looking a bit tense — want easier puzzles?
-            </p>
-            <div className="mt-2 flex gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setEaseMode(true);
-                  setEaseDismissed(true);
-                }}
-                className="rounded bg-orange-400/20 px-2 py-1 font-semibold text-orange-300"
-              >
-                Ease up
-              </button>
-              <button
-                type="button"
-                onClick={() => setEaseDismissed(true)}
-                className="rounded px-2 py-1 text-zinc-400 hover:text-zinc-200"
-              >
-                No thanks
-              </button>
-            </div>
-          </div>
+            <CardContent>
+              <p className="text-xs text-zinc-300">
+                Looking a bit tense — want easier puzzles?
+              </p>
+              <div className="mt-2 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEaseMode(true);
+                    setEaseDismissed(true);
+                  }}
+                >
+                  Ease up
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEaseDismissed(true)}
+                >
+                  No thanks
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {leveledUpNow && (
           <div
+            ref={levelUpRef}
             role="status"
-            className="train-level-up-badge rounded-xl bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 p-4 text-center"
+            className="rounded-xl bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 p-4 text-center"
           >
             <div className="text-2xl">🏆</div>
             <div className="font-mono text-sm font-bold text-violet-200">

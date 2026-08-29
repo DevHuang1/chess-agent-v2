@@ -8,6 +8,11 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import GameInfo from "@/components/GameInfo";
 import { FilesetResolver, GestureRecognizer } from "@mediapipe/tasks-vision";
 import { validateDropTarget } from "@/lib/dropValidation";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // MediaPipe's wasm writes its internal logs (e.g. "INFO: Created TensorFlow
 // Lite XNNPACK delegate for CPU.") to stderr, which emscripten routes through
@@ -2943,14 +2948,13 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
     <div className="flex h-screen w-screen bg-black light:bg-slate-200">
       <div ref={containerRef} className="flex-1 relative overflow-hidden">
         <div className="absolute top-4 left-4 z-20 flex gap-2 flex-wrap">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={onExit}
-            className="rounded bg-black/60 px-3 py-1.5 text-sm text-zinc-200 hover:bg-zinc-800 border border-zinc-700 backdrop-blur-sm light:bg-white/80 light:text-slate-800 light:border-slate-300 light:hover:bg-slate-100"
           >
             ← Exit 3D
-          </button>
-          <span className="rounded bg-black/40 px-3 py-1.5 text-sm text-zinc-300 border border-zinc-700/50 backdrop-blur-sm light:bg-white/80 light:text-slate-700 light:border-slate-300">
+          </Button>
+          <Badge variant="outline">
             {selectedSquare
               ? `Holding ${selectedSquare}`
               : hoveredSquare
@@ -2958,20 +2962,21 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
                 : handActive
                   ? gestureLabel || "Hand detected"
                   : "Palm to aim · Fist to hold · Hold over a green square for 2s · Palm to release"}
-          </span>
+          </Badge>
           {gestureLabel === "Palm" && (
-            <span className="rounded bg-emerald-800/40 px-3 py-1.5 text-xs text-emerald-300 border border-emerald-700/30 backdrop-blur-sm light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300">
+            <Badge variant="success">
               Open palm — move over the board (green square)
-            </span>
+            </Badge>
           )}
           {gestureLabel === "Fist" && (
-                          <span className="rounded bg-amber-800/40 px-3 py-1.5 text-xs text-amber-300 border border-amber-700/30 backdrop-blur-sm light:bg-amber-100 light:text-amber-700 light:border-amber-300">
+                          <Badge variant="warning">
               Fist — hold the piece, then keep the target steady
 
-            </span>
+            </Badge>
           )}
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => {
               if (calibModeRef.current !== "off") {
                 calibModeRef.current = "off";
@@ -2983,24 +2988,26 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
                 setStatusMessage("Hold your hand over the TOP row (black side) and click anywhere on the board");
               }
             }}
-            className={`rounded px-3 py-1.5 text-sm border backdrop-blur-sm ${
+            className={
               calibMode !== "off"
                 ? "bg-violet-800/60 text-violet-200 border-violet-600 hover:bg-violet-700/60 light:bg-violet-100 light:text-violet-700 light:border-violet-300"
-                : "bg-black/60 text-zinc-200 border-zinc-700 hover:bg-zinc-800 light:bg-white/80 light:text-slate-800 light:border-slate-300 light:hover:bg-slate-100"
-            }`}
+                : undefined
+            }
           >
             {calibMode === "off" ? "Calibrate hand" : calibMode === "top" ? "Click: top row →" : "Click: bottom row →"}
-          </button>
+          </Button>
         </div>
         <div className="absolute top-20 left-4 z-20 w-96">
           {/* eslint-disable-next-line react-hooks/refs */}
           <GameInfo moves={chessRef.current.history({ verbose: true })} />
         </div>
         <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2 rounded-lg bg-black/50 px-3 py-2 border border-zinc-700/50 backdrop-blur-sm light:bg-white/80 light:border-slate-300">
-          <span className={`h-2 w-2 rounded-full ${handActive ? "bg-emerald-400 animate-pulse" : "bg-zinc-600 light:bg-slate-400"}`} />
-          <span className="text-xs text-zinc-300 light:text-slate-700">{handActive ? `Hand · ${gestureLabel || "tracking"}` : "No hand"}</span>
+          <Badge variant={handActive ? "success" : "muted"}>
+            {handActive ? `Hand · ${gestureLabel || "tracking"}` : "No hand"}
+          </Badge>
         </div>
-        <div className="absolute top-4 right-4 z-20 w-40 rounded-lg border border-zinc-700/60 bg-black/50 p-1 backdrop-blur-sm shadow-xl light:bg-white/80 light:border-slate-300">
+        <Card className="absolute top-4 right-4 z-20 w-40 bg-black/50 light:bg-white/80">
+          <CardContent className="p-1">
           <video
             ref={videoRef}
             muted
@@ -3010,24 +3017,28 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
           <span className="block px-1 pt-1 text-[10px] uppercase tracking-wider text-zinc-400 font-mono light:text-slate-500">
             Camera
           </span>
-        </div>
-        <div className="absolute top-52 right-4 z-20 w-52 rounded-lg border border-cyan-500/30 bg-black/60 p-3 text-xs text-zinc-200 backdrop-blur-sm shadow-xl light:bg-white/90 light:border-cyan-300 light:text-slate-700">
+          </CardContent>
+        </Card>
+        <div className="absolute top-52 right-4 z-20 w-52">
+          <Card className="border-cyan-500/30 bg-black/60 light:bg-white/90 light:border-cyan-300">
+            <CardContent className="p-3 text-xs text-zinc-200 light:text-slate-700">
           <div className="mb-2 flex items-center justify-between">
             <span className="font-semibold tracking-wide">Live AI arena</span>
-            <span className={`text-[10px] uppercase tracking-wider ${liveAiMode === "off" ? "text-zinc-500" : "text-emerald-300"}`}>{liveAiMode === "off" ? "Manual" : "Live"}</span>
+            <Badge variant={liveAiMode === "off" ? "muted" : "success"}>{liveAiMode === "off" ? "Manual" : "Live"}</Badge>
           </div>
           <label className="mb-2 block">
             <span className="mb-1 block text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500">Decision engine</span>
-            <select
-              id="live-ai-algorithm"
+            <Select
               value={liveAiMode}
-              onChange={(event) => onLiveAiModeChange?.(event.target.value as "off" | "minimax" | "mcts")}
-              className="w-full rounded border border-zinc-600 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-100 outline-none light:border-slate-300 light:bg-white light:text-slate-800"
+              onValueChange={(value) => onLiveAiModeChange?.(value as "off" | "minimax" | "mcts")}
             >
-              <option value="off">Manual play</option>
-              <option value="minimax">Minimax</option>
-              <option value="mcts">MCTS</option>
-            </select>
+              <SelectTrigger id="live-ai-algorithm" />
+              <SelectContent>
+                <SelectItem value="off">Manual play</SelectItem>
+                <SelectItem value="minimax">Minimax</SelectItem>
+                <SelectItem value="mcts">MCTS</SelectItem>
+              </SelectContent>
+            </Select>
           </label>
           <label className="mb-3 block">
             <span className="mb-1 flex justify-between text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500"><span>Search depth</span><span className="font-mono text-cyan-300">{liveAiDepth}</span></span>
@@ -3036,37 +3047,41 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
           <div className="mb-3 border-t border-zinc-700/60 pt-2 text-[10px] text-zinc-500 light:border-slate-200">{liveAiMode === "off" ? "Use pointer or hand gestures to play." : `Both sides will alternate ${liveAiMode} decisions.`}</div>
           {replayActive ? <div className="mb-3 rounded border border-violet-400/25 bg-violet-400/10 p-2">
             <div className="mb-2 flex items-center justify-between"><span className="font-semibold text-violet-200 light:text-violet-800">Replay studio</span><span className="font-mono text-[10px] text-violet-300">{Math.max(0, replayMoveIndex + 1)}/{replayGames.find((game) => game.id === replayGameId)?.moves.length ?? 0}</span></div>
-            <select id="replay-game-select" value={replayGameId} onChange={(event) => onReplaySelect?.(event.target.value)} className="mb-2 w-full rounded border border-zinc-600 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-100 outline-none light:border-slate-300 light:bg-white light:text-slate-800">
-              {replayGames.map((game) => <option key={game.id} value={game.id}>{game.label}{game.moves.length === 0 ? " · no moves" : ""}</option>)}
-            </select>
+            <Select value={replayGameId} onValueChange={(value) => onReplaySelect?.(value)}>
+              <SelectTrigger id="replay-game-select" className="mb-2" />
+              <SelectContent>
+                {replayGames.map((game) => <SelectItem key={game.id} value={game.id}>{game.label}{game.moves.length === 0 ? " · no moves" : ""}</SelectItem>)}
+              </SelectContent>
+            </Select>
             <div className="flex gap-1.5">
-              <button type="button" aria-label="Replay previous move" disabled={replayBusy} onClick={() => onReplayStep?.(-1)} className="flex-1 rounded border border-zinc-600 px-2 py-1 text-[10px] text-zinc-300 disabled:opacity-40 light:border-slate-300 light:text-slate-700">Prev</button>
-              <button type="button" aria-label={replayPlaying ? "Pause replay" : "Play replay"} onClick={() => onReplayPlayingChange?.(!replayPlaying)} className="flex-1 rounded border border-violet-400/40 bg-violet-400/15 px-2 py-1 text-[10px] text-violet-200 light:text-violet-800">{replayPlaying ? "Pause" : "Play"}</button>
-              <button type="button" aria-label="Replay next move" disabled={replayBusy} onClick={() => onReplayStep?.(1)} className="flex-1 rounded border border-zinc-600 px-2 py-1 text-[10px] text-zinc-300 disabled:opacity-40 light:border-slate-300 light:text-slate-700">Next</button>
+              <Button variant="ghost" size="icon" aria-label="Replay previous move" disabled={replayBusy} onClick={() => onReplayStep?.(-1)}>Prev</Button>
+              <Button variant="ghost" size="icon" aria-label={replayPlaying ? "Pause replay" : "Play replay"} onClick={() => onReplayPlayingChange?.(!replayPlaying)}>{replayPlaying ? "Pause" : "Play"}</Button>
+              <Button variant="ghost" size="icon" aria-label="Replay next move" disabled={replayBusy} onClick={() => onReplayStep?.(1)}>Next</Button>
             </div>
             <div className="mt-2 text-[10px] text-zinc-500">{replayBusy ? "Robot animating move..." : "Review each move on the 3D board."}</div>
           </div> : null}
           <div className="mb-2 flex items-center justify-between">
             <span className="font-semibold tracking-wide">Scene lighting</span>
-            <span className="text-[10px] uppercase tracking-wider text-cyan-300 light:text-cyan-700">Live</span>
+            <Badge variant="info">Live</Badge>
           </div>
           <label className="mb-2 block">
             <span className="mb-1 block text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500">Preset</span>
-            <select
-              id="lighting-preset"
+            <Select
               value={lightingPreset}
-              onChange={(event) => {
-                const next = event.target.value as LightingPresetName;
+              onValueChange={(value) => {
+                const next = value as LightingPresetName;
                 setLightingPreset(next);
                 setStatusMessage(`Lighting preset: ${next}`);
               }}
-              className="w-full rounded border border-zinc-600 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-100 outline-none light:border-slate-300 light:bg-white light:text-slate-800"
             >
-              <option value="studio">Studio</option>
-              <option value="warm">Warm gallery</option>
-              <option value="cool">Cool rim</option>
-              <option value="dramatic">Dramatic</option>
-            </select>
+              <SelectTrigger id="lighting-preset" />
+              <SelectContent>
+                <SelectItem value="studio">Studio</SelectItem>
+                <SelectItem value="warm">Warm gallery</SelectItem>
+                <SelectItem value="cool">Cool rim</SelectItem>
+                <SelectItem value="dramatic">Dramatic</SelectItem>
+              </SelectContent>
+            </Select>
           </label>
           <label className="mb-2 block">
             <span className="mb-1 flex justify-between text-[10px] uppercase tracking-wider text-zinc-400 light:text-slate-500">
@@ -3086,28 +3101,26 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
           </label>
           <label className="flex items-center justify-between text-[11px]">
             <span>Contact shadows</span>
-            <input
+            <Checkbox
               id="lighting-shadows"
-              type="checkbox"
               checked={shadowsEnabled}
               onChange={(event) => setShadowsEnabled(event.target.checked)}
-              className="accent-cyan-400"
             />
           </label>
           <label className="mt-2 flex items-center justify-between text-[11px]">
             <span>Mechanical audio</span>
-            <input
+            <Checkbox
               id="mechanical-audio"
-              type="checkbox"
               checked={soundEnabled}
               onChange={(event) => {
                 const enabled = event.target.checked;
                 setSoundEnabled(enabled);
                 if (enabled) audioUnlockRef.current();
               }}
-              className="accent-cyan-400"
             />
           </label>
+          </CardContent>
+        </Card>
         </div>
       </div>
     </div>

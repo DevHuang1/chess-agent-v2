@@ -2,9 +2,10 @@
 
 @custom-variant light (&:is(.light *));
 
+/* ── Sentio brand tokens ─────────────────────────────────────────────── */
 :root {
-  /* Deep blue-black base — richer than flat zinc, lets board wood tones pop. */
-  --background: #0a0d14;
+  /* Surface tokens (refreshed — slightly deeper than before). */
+  --background: #080b12;
   --foreground: #f4f4f5;
   --sentio-accent: #f59e0b;
   --sentio-accent-glow: rgba(245, 158, 11, 0.15);
@@ -12,14 +13,17 @@
   --sentio-board-dark: #779556;
   --sentio-board-frame-from: #1c2230;
   --sentio-board-frame-to: #10141d;
+
   /* Panel surface tokens (dark). */
-  --panel: rgba(15, 20, 31, 0.82);
-  --panel-border: rgba(120, 134, 158, 0.22);
-  --panel-raised: rgba(23, 30, 45, 0.9);
+  --panel: rgba(12, 16, 26, 0.85);
+  --panel-border: rgba(120, 134, 158, 0.18);
+  --panel-raised: rgba(18, 24, 38, 0.92);
   --text-muted: #8b94a7;
+
   /* Train section accent. */
   --train-accent: #a78bfa;
   --train-accent-glow: rgba(167, 139, 250, 0.16);
+
   /* Emotion spectrum — one functional palette used app-wide. */
   --emotion-calm: #38bdf8;
   --emotion-focused: #22d3ee;
@@ -27,6 +31,34 @@
   --emotion-frustrated: #fb923c;
   --emotion-stressed: #f87171;
   --emotion-confident: #34d399;
+
+  /* ── shadcn/ui standard tokens ─────────────────────────────────────── */
+  --primary: #f59e0b;
+  --primary-foreground: #0a0d14;
+  --secondary: rgba(120, 134, 158, 0.15);
+  --secondary-foreground: #f4f4f5;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --muted: rgba(120, 134, 158, 0.12);
+  --muted-foreground: #64748b;
+  --accent: rgba(245, 158, 11, 0.12);
+  --accent-foreground: #f59e0b;
+  --popover: rgba(12, 16, 26, 0.95);
+  --popover-foreground: #f4f4f5;
+  --card: rgba(15, 20, 31, 0.82);
+  --card-foreground: #f4f4f5;
+  --border: rgba(120, 134, 158, 0.18);
+  --input: rgba(120, 134, 158, 0.15);
+  --ring: #f59e0b;
+  --radius: 0.75rem;
+
+  /* Sidebar tokens */
+  --sidebar: rgba(10, 14, 22, 0.92);
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-accent: rgba(245, 158, 11, 0.08);
+  --sidebar-accent-foreground: #f59e0b;
+  --sidebar-border: rgba(120, 134, 158, 0.15);
+  --sidebar-ring: #f59e0b;
 }
 
 .light {
@@ -37,13 +69,40 @@
   --sentio-board-frame-from: #e2e8f0;
   --sentio-board-frame-to: #cbd5e1;
   --panel: rgba(255, 255, 255, 0.88);
-  --panel-border: rgba(100, 116, 139, 0.3);
+  --panel-border: rgba(100, 116, 139, 0.25);
   --panel-raised: rgba(255, 255, 255, 0.95);
   --text-muted: #64748b;
   --train-accent: #7c3aed;
   --train-accent-glow: rgba(124, 58, 237, 0.12);
+
+  /* shadcn/ui light tokens */
+  --primary: #d97706;
+  --primary-foreground: #fafafa;
+  --secondary: rgba(100, 116, 139, 0.12);
+  --secondary-foreground: #0f172a;
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+  --muted: rgba(100, 116, 139, 0.1);
+  --muted-foreground: #64748b;
+  --accent: rgba(217, 119, 6, 0.1);
+  --accent-foreground: #d97706;
+  --popover: rgba(255, 255, 255, 0.98);
+  --popover-foreground: #0f172a;
+  --card: rgba(255, 255, 255, 0.85);
+  --card-foreground: #0f172a;
+  --border: rgba(100, 116, 139, 0.25);
+  --input: rgba(100, 116, 139, 0.2);
+  --ring: #d97706;
+
+  --sidebar: rgba(248, 250, 252, 0.95);
+  --sidebar-foreground: #0f172a;
+  --sidebar-accent: rgba(217, 119, 6, 0.08);
+  --sidebar-accent-foreground: #d97706;
+  --sidebar-border: rgba(100, 116, 139, 0.2);
+  --sidebar-ring: #d97706;
 }
 
+/* ── Tailwind v4 theme mapping ──────────────────────────────────────── */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -59,10 +118,43 @@
   --color-emotion-frustrated: var(--emotion-frustrated);
   --color-emotion-stressed: var(--emotion-stressed);
   --color-emotion-confident: var(--emotion-confident);
+
+  /* shadcn/ui Tailwind v4 colors */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-shadcn: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.375rem;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* ── Base styles ────────────────────────────────────────────────────── */
 body {
   background: var(--background);
   color: var(--foreground);
@@ -71,6 +163,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* ── Sentio background gradient ─────────────────────────────────────── */
 .sentio-bg {
   background:
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(245, 158, 11, 0.07), transparent),
@@ -85,18 +178,20 @@ body {
     var(--background);
 }
 
+/* ── Sentio card ────────────────────────────────────────────────────── */
 .sentio-card {
-  background: rgba(24, 24, 27, 0.85);
-  border: 1px solid rgba(63, 63, 70, 0.5);
-  backdrop-filter: blur(12px);
+  background: rgba(20, 24, 36, 0.88);
+  border: 1px solid rgba(63, 63, 70, 0.4);
+  backdrop-filter: blur(14px);
 }
 
 .light .sentio-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(226, 232, 240, 0.8);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
 }
 
+/* ── Board frame ────────────────────────────────────────────────────── */
 .sentio-board-frame {
   background: linear-gradient(
     145deg,
@@ -114,6 +209,7 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+/* ── Chat scrollbar ─────────────────────────────────────────────────── */
 .chat-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(63, 63, 70, 0.6) transparent;
@@ -144,7 +240,7 @@ body {
   background: rgba(148, 163, 184, 0.8);
 }
 
-
+/* ── Controller panel ───────────────────────────────────────────────── */
 .controller-panel {
   position: relative;
   isolation: isolate;
@@ -171,140 +267,8 @@ body {
   box-shadow: -18px 0 42px rgba(0, 0, 0, 0.16);
 }
 
-.controller-panel-expanded::before {
-  animation: sentio-controller-scan 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 .controller-panel-collapsed {
   box-shadow: -10px 0 28px rgba(0, 0, 0, 0.22);
-}
-
-.controller-content {
-  min-width: 0;
-  transform-origin: right center;
-  animation: sentio-controller-content-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.controller-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 34px;
-  transition:
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease;
-}
-
-.controller-toggle:hover {
-  transform: translateX(-2px) scale(1.04);
-}
-
-.controller-content {
-  animation: sentio-controller-content-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  min-width: 0;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-}
-
-.controller-rail {
-  animation: sentio-controller-rail-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.controller-rail > span:first-child {
-  animation: sentio-controller-label-in 520ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.controller-rail > span:last-child {
-  animation: sentio-controller-status-pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes sentio-controller-content-in {
-  from {
-    opacity: 0;
-    filter: blur(5px);
-    transform: translateX(22px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateX(0) scale(1);
-  }
-}
-
-@keyframes sentio-controller-scan {
-  0% {
-    opacity: 0;
-    transform: translateY(-18%);
-  }
-  28%, 72% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(118%);
-  }
-}
-
-@keyframes sentio-controller-toggle-in {
-  from {
-    opacity: 0;
-    transform: rotate(-12deg) scale(0.78);
-  }
-  to {
-    opacity: 1;
-    transform: rotate(0) scale(1);
-  }
-}
-
-@keyframes sentio-controller-rail-in {
-  from {
-    opacity: 0;
-    transform: translateX(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes sentio-controller-label-in {
-  from {
-    opacity: 0;
-    letter-spacing: 0.05em;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    letter-spacing: 0.2em;
-    transform: translateY(0);
-  }
-}
-
-@keyframes sentio-controller-status-pulse {
-  0%, 100% {
-    opacity: 0.55;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.18);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .controller-panel,
-  .controller-toggle,
-  .controller-content,
-  .controller-rail,
-  .controller-rail > span {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
-  }
 }
 
 @media (max-width: 900px) {
@@ -327,7 +291,7 @@ body {
   box-shadow: -10px 0 28px rgba(15, 23, 42, 0.12);
 }
 
-
+/* ── Controller wide mode ───────────────────────────────────────────── */
 .controller-panel-wide {
   width: min(620px, 48vw);
   box-shadow: -24px 0 56px rgba(0, 0, 0, 0.24);
@@ -337,10 +301,6 @@ body {
   border-color: rgba(34, 211, 238, 0.45);
   background: rgba(34, 211, 238, 0.12);
   color: #a5f3fc;
-}
-
-.controller-wide-mode {
-  animation: sentio-controller-wide-in 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .controller-wide-mode .ai-graph-shell {
@@ -353,17 +313,6 @@ body {
 
 .light .controller-panel-wide {
   box-shadow: -24px 0 56px rgba(15, 23, 42, 0.14);
-}
-
-@keyframes sentio-controller-wide-in {
-  from {
-    opacity: 0.72;
-    transform: translateX(16px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
 }
 
 @media (max-width: 1100px) {
@@ -384,39 +333,7 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .controller-wide-mode {
-    animation-duration: 1ms !important;
-  }
-}
-
-
-.controller-split-region {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow: visible;
-}
-
-.controller-split-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 0.75rem;
-}
-
-.controller-split-grid .controller-primary-pane,
-.controller-split-grid .controller-secondary-pane {
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-}
-
-.controller-split-grid .controller-primary-pane > *,
-.controller-split-grid .controller-secondary-pane > * {
-  min-width: 0;
-}
-
+/* ── Controller floating mode ───────────────────────────────────────── */
 .controller-floating {
   position: fixed;
   top: 1rem;
@@ -427,7 +344,6 @@ body {
   border: 1px solid rgba(34, 211, 238, 0.3);
   border-radius: 1rem;
   box-shadow: -18px 20px 64px rgba(0, 0, 0, 0.42);
-  animation: sentio-controller-float-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .controller-floating.controller-panel-collapsed {
@@ -443,17 +359,7 @@ body {
   box-shadow: -18px 20px 64px rgba(15, 23, 42, 0.2);
 }
 
-@keyframes sentio-controller-float-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
+/* ── AI lab workspace ───────────────────────────────────────────────── */
 .ai-lab-workspace-panel {
   min-height: 0;
   overflow-y: auto;
@@ -473,29 +379,7 @@ body {
   margin-inline: auto;
 }
 
-@media (max-width: 900px) {
-  .controller-split-grid {
-    grid-template-columns: minmax(0, 1fr);
-    overflow-y: auto;
-  }
-
-  .controller-split-grid .controller-primary-pane,
-  .controller-split-grid .controller-secondary-pane {
-    min-height: 360px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .controller-floating {
-    animation-duration: 1ms !important;
-  }
-}
-
-/* ---------------------------------------------------------------------------
- * Training Arena — panel + interaction utilities.
- * Built on the token layer so dark/light themes swap automatically.
- * ------------------------------------------------------------------------- */
-
+/* ── Training arena ─────────────────────────────────────────────────── */
 .train-panel {
   background: var(--panel);
   border: 1px solid var(--panel-border);
@@ -516,54 +400,45 @@ body {
   outline-offset: 2px;
 }
 
-/* Puzzle Rush feedback ---------------------------------------------------- */
-
-@keyframes train-shake {
-  10%, 90% { transform: translateX(-1.5px); }
-  20%, 80% { transform: translateX(3px); }
-  30%, 50%, 70% { transform: translateX(-5px); }
-  40%, 60% { transform: translateX(5px); }
+/* ── Landing page ───────────────────────────────────────────────────── */
+.landing-scroll-root {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.train-shake {
-  animation: train-shake 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+.landing-webgl-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
 
-@keyframes train-solve-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
-  70% { box-shadow: 0 0 0 14px rgba(52, 211, 153, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+.landing-content {
+  position: relative;
+  z-index: 1;
 }
 
-.train-solve-pulse {
-  animation: train-solve-pulse 620ms ease-out both;
+.feature-card {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  transform-style: preserve-3d;
 }
 
-@keyframes train-xp-pop {
-  0% { opacity: 0; transform: translateY(6px) scale(0.85); }
-  25% { opacity: 1; transform: translateY(-4px) scale(1.08); }
-  100% { opacity: 0; transform: translateY(-26px) scale(0.95); }
+.magnetic-btn {
+  display: inline-flex;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.train-xp-pop {
-  animation: train-xp-pop 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes train-level-up-in {
-  0% { opacity: 0; transform: scale(0.7) rotate(-4deg); }
-  55% { opacity: 1; transform: scale(1.06) rotate(1.5deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
-}
-
-.train-level-up-badge {
-  animation: train-level-up-in 720ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+.landing-nav {
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .train-shake,
-  .train-solve-pulse,
-  .train-xp-pop,
-  .train-level-up-badge {
-    animation-duration: 1ms !important;
+  .feature-card,
+  .magnetic-btn {
+    transition: none;
   }
 }

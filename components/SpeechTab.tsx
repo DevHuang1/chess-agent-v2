@@ -9,6 +9,11 @@ import {
   createVoiceRecorder,
   MIC_CAPTURE_CONSTRAINTS,
 } from "@/lib/voiceRecorder";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 
 declare global {
   interface SpeechRecognition extends EventTarget {
@@ -303,111 +308,69 @@ export default function SpeechTab({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-lg text-zinc-300 font-medium light:text-slate-700">Speech Control</p>
-        <span
-          className={`rounded px-2 py-0.5 text-xs font-semibold ${
-            isListening || isRecording
-              ? "bg-emerald-900/40 text-emerald-300 animate-pulse light:bg-emerald-100 light:text-emerald-700"
-              : "bg-zinc-700 text-zinc-400 light:bg-slate-200 light:text-slate-600"
-          }`}
-        >
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-lg font-medium text-zinc-300 light:text-slate-700">
+          Speech Control
+        </p>
+        <Badge variant={isListening || isRecording ? "success" : "muted"}>
           {isListening || isRecording ? "LISTENING" : "IDLE"}
-        </span>
+        </Badge>
       </div>
 
-      <div className="flex gap-2 mb-3">
-        <button
-          type="button"
-          onClick={() => setMode("groq")}
-          className={`flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors ${
-            mode === "groq"
-              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
-              : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600 light:bg-slate-100 light:text-slate-600 light:border-slate-300 light:hover:border-slate-400"
-          }`}
-        >
-          Groq
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("elevenlabs")}
-          title="ElevenLabs Scribe (cloud transcription)"
-          className={`flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors ${
-            mode === "elevenlabs"
-              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
-              : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600 light:bg-slate-100 light:text-slate-600 light:border-slate-300 light:hover:border-slate-400"
-          }`}
-        >
-          ElevenLabs
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("assemblyai")}
-          title="AssemblyAI Universal-1 (cloud transcription)"
-          className={`flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors ${
-            mode === "assemblyai"
-              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
-              : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600 light:bg-slate-100 light:text-slate-600 light:border-slate-300 light:hover:border-slate-400"
-          }`}
-        >
-          AssemblyAI
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("browser")}
-          disabled={!browserSupported}
-          title={
-            browserSupported
-              ? undefined
-              : `${langEntry.label} isn't supported by Chrome's built-in speech — use Groq mode.`
-          }
-          className={`flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40 ${
-            mode === "browser"
-              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 light:bg-amber-100 light:text-amber-700"
-              : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600 light:bg-slate-100 light:text-slate-600 light:border-slate-300 light:hover:border-slate-400"
-          }`}
-        >
-          Browser
-        </button>
+      <div className="mb-3 flex gap-2">
+        {(["groq", "elevenlabs", "assemblyai", "browser"] as const).map((m) => (
+          <Button
+            key={m}
+            variant={mode === m ? "accent" : "outline"}
+            size="sm"
+            className="flex-1 capitalize"
+            disabled={m === "browser" && !browserSupported}
+            title={
+              m === "browser" && !browserSupported
+                ? `${langEntry.label} isn't supported by Chrome's built-in speech — use Groq mode.`
+                : undefined
+            }
+            onClick={() => setMode(m)}
+          >
+            {m === "assemblyai" ? "Assembly" : m === "elevenlabs" ? "ElevenLabs" : m.charAt(0).toUpperCase() + m.slice(1)}
+          </Button>
+        ))}
       </div>
 
       {!browserSupported && (
-        <p className="mb-3 rounded bg-amber-950/20 border border-amber-500/20 px-2.5 py-1.5 text-[11px] text-amber-300/90 light:bg-amber-100 light:border-amber-300 light:text-amber-800">
-          ⚠ Chrome&apos;s built-in speech doesn&apos;t support {langEntry.label} — Groq mode is
+        <div className="mb-3 rounded border border-amber-500/20 bg-amber-950/20 px-2.5 py-1.5 text-[11px] text-amber-300/90 light:border-amber-300 light:bg-amber-100 light:text-amber-800">
+          Chrome&apos;s built-in speech doesn&apos;t support {langEntry.label} — Groq mode is
           used automatically.
-        </p>
+        </div>
       )}
 
       <div className="mb-3 flex items-center gap-2">
-        <select
-          value={language}
-          onChange={(e) => {
-            const next = e.target.value;
-            setLanguage(next);
-            if (mode === "browser" && !BROWSER_SPEECH_LANGS.has(next.split("-")[0])) {
-              setMode("groq");
-            }
-          }}
-          className="flex-1 rounded border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-200 light:border-slate-300 light:bg-white light:text-slate-800"
-        >
-          {LANGUAGES.map((l) => (
-            <option key={l.code} value={l.code}>
-              {l.label}
-            </option>
-          ))}
-        </select>
-        <button
-          type="button"
-          onClick={() => setShowSpeechHelp((prev) => !prev)}
+        <Select value={language} onValueChange={(v) => {
+          setLanguage(v);
+          if (mode === "browser" && !BROWSER_SPEECH_LANGS.has(v.split("-")[0])) {
+            setMode("groq");
+          }
+        }}>
+          <SelectTrigger className="flex-1 h-8 text-sm">
+            <span>{langEntry.label}</span>
+          </SelectTrigger>
+          <SelectContent>
+            {LANGUAGES.map((l) => (
+              <SelectItem key={l.code} value={l.code}>
+                {l.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          variant={showSpeechHelp ? "accent" : "outline"}
+          size="icon"
+          className="h-8 w-8 shrink-0"
           title="What to say"
-          className={`h-8 w-8 shrink-0 rounded-full border text-sm font-bold transition-all ${
-            showSpeechHelp
-              ? "border-amber-500/40 bg-amber-500/20 text-amber-300 light:border-amber-400 light:bg-amber-100 light:text-amber-700"
-              : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-amber-500/40 hover:text-amber-300 light:border-slate-300 light:bg-white light:text-slate-500"
-          }`}
+          onClick={() => setShowSpeechHelp((prev) => !prev)}
         >
           ?
-        </button>
+        </Button>
       </div>
 
       {showSpeechHelp && (
@@ -430,20 +393,19 @@ export default function SpeechTab({
         </div>
       )}
 
-      <div className="flex items-center gap-2 mb-3">
+      <div className="mb-3 flex items-center gap-2">
         <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer light:text-slate-600">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={autoExecute}
             onChange={(e) => setAutoExecute(e.target.checked)}
-            className="accent-amber-500"
           />
           Auto-execute moves
         </label>
       </div>
 
-      <button
-        type="button"
+      <Button
+        variant={isListening || isRecording ? "destructive" : "default"}
+        className="w-full py-2.5"
         onClick={
           mode === "browser"
             ? isListening
@@ -453,32 +415,29 @@ export default function SpeechTab({
               ? stopGroqRecording
               : startGroqRecording
         }
-        className={`w-full rounded py-2.5 text-sm font-semibold transition-colors ${
-          isListening || isRecording
-            ? "bg-rose-600 text-white hover:bg-rose-500"
-            : "bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40"
-        }`}
       >
         {isListening || isRecording ? "Stop Listening" : "Start Listening"}
-      </button>
+      </Button>
 
-      <div className="mt-3 min-h-0 flex-1 overflow-y-auto rounded border border-zinc-800 bg-zinc-900 p-3 light:border-slate-300 light:bg-white">
-        <p className="text-xs text-zinc-500 mb-1 light:text-slate-500">Transcript:</p>
-        <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed light:text-slate-700">
-          {transcript || <span className="text-zinc-600 italic light:text-slate-400">Waiting for speech...</span>}
-        </p>
-      </div>
+      <Card className="mt-3 min-h-0 flex-1 overflow-y-auto border-zinc-800 bg-zinc-900 light:border-slate-300 light:bg-white">
+        <CardContent className="p-3">
+          <p className="mb-1 text-xs text-zinc-500 light:text-slate-500">Transcript:</p>
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-300 light:text-slate-700">
+            {transcript || <span className="italic text-zinc-600 light:text-slate-400">Waiting for speech...</span>}
+          </p>
+        </CardContent>
+      </Card>
 
       {lastMove && (
-        <div className="mt-2 rounded bg-emerald-900/20 px-3 py-2 text-sm text-emerald-300 border border-emerald-800/30 light:bg-emerald-100 light:text-emerald-700 light:border-emerald-300">
+        <Badge variant="success" className="mt-2">
           Last move: {lastMove}
-        </div>
+        </Badge>
       )}
 
       {error && (
-        <div className="mt-2 rounded bg-rose-900/20 px-3 py-2 text-sm text-rose-300 border border-rose-800/30 light:bg-rose-100 light:text-rose-700 light:border-rose-300">
+        <Badge variant="destructive" className="mt-2">
           {error}
-        </div>
+        </Badge>
       )}
     </div>
   );

@@ -2,6 +2,9 @@
 
 import { useMemo } from "react";
 import type { Move } from "chess.js";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const PIECE_VALUES: Record<string, number> = { p: 1, n: 3, b: 3, r: 5, q: 9 };
 const PIECE_SYMBOLS: Record<string, Record<string, string>> = {
@@ -9,11 +12,11 @@ const PIECE_SYMBOLS: Record<string, Record<string, string>> = {
   b: { k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" },
 };
 
-const MOVE_QUALITY_COLORS: Record<string, string> = {
-  Excellent: "text-emerald-400",
-  Good: "text-blue-400",
-  Mistake: "text-amber-400",
-  Blunder: "text-rose-400",
+const QUALITY_VARIANT: Record<string, "success" | "info" | "warning" | "destructive"> = {
+  Excellent: "success",
+  Good: "info",
+  Mistake: "warning",
+  Blunder: "destructive",
 };
 
 export default function GameInfo({
@@ -75,71 +78,72 @@ export default function GameInfo({
 
   const getQualityBadge = (quality?: string) => {
     if (!quality) return null;
-    const colorClass = MOVE_QUALITY_COLORS[quality] ?? "text-zinc-500";
     return (
-      <span
-        className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase ${colorClass} bg-zinc-800/50`}
+      <Badge
+        variant={QUALITY_VARIANT[quality] ?? "muted"}
+        className="ml-1 text-[9px] uppercase"
         title={`Move quality: ${quality}`}
       >
         {quality}
-      </span>
+      </Badge>
     );
   };
 
   return (
-    <div className="rounded-md border border-zinc-800 bg-zinc-900/80 p-3 text-xs light:border-slate-200 light:bg-white/80">
-      {openingName ? (
-        <div className="mb-2 flex items-center gap-2 border-b border-zinc-800 pb-2 light:border-slate-200">
-          <span className="rounded bg-amber-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-amber-400 light:bg-amber-100 light:text-amber-700">
-            OPENING
+    <Card className="border-zinc-800 bg-zinc-900/80 light:border-slate-200 light:bg-white/80">
+      <CardContent className="p-3 text-xs">
+        {openingName ? (
+          <div className="mb-2 flex items-center gap-2 border-b border-zinc-800 pb-2 light:border-slate-200">
+            <Badge variant="accent" className="text-[9px] uppercase">
+              OPENING
+            </Badge>
+            <span
+              className="font-semibold text-zinc-200 light:text-slate-800"
+              title={openingName}
+            >
+              {openingName}
+            </span>
+          </div>
+        ) : null}
+        <div className="mb-1 flex items-center justify-between">
+          <span className="font-semibold text-zinc-300 light:text-slate-700">
+            Moves
           </span>
-          <span
-            className="truncate font-semibold text-zinc-200 light:text-slate-800"
-            title={openingName}
-          >
-            {openingName}
+          <span className="text-zinc-600 light:text-slate-500">
+            {rows.length} {rows.length === 1 ? "move pair" : "move pairs"}
           </span>
         </div>
-      ) : null}
-      <div className="mb-1 flex items-center justify-between">
-        <span className="font-semibold text-zinc-300 light:text-slate-700">
-          Moves
-        </span>
-        <span className="text-zinc-600 light:text-slate-500">
-          {rows.length} {rows.length === 1 ? "move pair" : "move pairs"}
-        </span>
-      </div>
-      <div className="max-h-44 overflow-y-auto rounded bg-zinc-950/60 p-2.5 font-mono text-zinc-300 leading-relaxed light:bg-slate-100 light:text-slate-700">
-        {rows.length > 0 ? (
-          <table className="w-full">
-            <tbody>
-              {rows.map((r) => (
-                <tr
-                  key={r.num}
-                  className="border-b border-zinc-900 last:border-0 light:border-slate-200"
-                >
-                  <td className="pr-2 align-top text-zinc-600 light:text-slate-500">
-                    {r.num}.
-                  </td>
-                  <td className="pr-2 align-top">
-                    {r.white}
-                    {getQualityBadge(r.whiteQuality)}
-                  </td>
-                  <td className="align-top">
-                    {r.black}
-                    {getQualityBadge(r.blackQuality)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <span className="italic text-zinc-600 light:text-slate-500">
-            No moves yet
-          </span>
-        )}
-      </div>
-      <div className="mt-2 border-t border-zinc-800 pt-2 light:border-slate-200">
+        <div className="max-h-44 overflow-y-auto rounded bg-zinc-950/60 p-2.5 font-mono text-zinc-300 leading-relaxed light:bg-slate-100 light:text-slate-700">
+          {rows.length > 0 ? (
+            <table className="w-full">
+              <tbody>
+                {rows.map((r) => (
+                  <tr
+                    key={r.num}
+                    className="border-b border-zinc-900 last:border-0 light:border-slate-200"
+                  >
+                    <td className="pr-2 align-top text-zinc-600 light:text-slate-500">
+                      {r.num}.
+                    </td>
+                    <td className="pr-2 align-top">
+                      {r.white}
+                      {getQualityBadge(r.whiteQuality)}
+                    </td>
+                    <td className="align-top">
+                      {r.black}
+                      {getQualityBadge(r.blackQuality)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <span className="italic text-zinc-600 light:text-slate-500">
+              No moves yet
+            </span>
+          )}
+        </div>
+        <Separator className="my-2" />
         <span className="font-semibold text-zinc-300 light:text-slate-700">
           Captures
         </span>
@@ -181,7 +185,7 @@ export default function GameInfo({
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

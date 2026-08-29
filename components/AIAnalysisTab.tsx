@@ -6,6 +6,11 @@ import { MinimaxSearchNode } from "@/lib/minimax";
 import { MctsSearchNode } from "@/lib/mcts";
 import { AgentStrategy, AgentTrace, buildAgentTraces } from "@/lib/agents";
 import AgentsGraph3D from "@/components/AgentsGraph3D";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 
 type LastBotMove = {
   uci: string;
@@ -178,419 +183,439 @@ export default function AIAnalysisTab({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1 chat-scroll">
-      <div className="rounded-xl border border-cyan-500/25 bg-gradient-to-br from-cyan-950/35 via-zinc-950/80 to-amber-950/20 p-3 light:border-cyan-300 light:bg-cyan-50/70">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-cyan-100 light:text-cyan-900">
-                {algorithm === "mcts"
-                  ? "MCTS Rollout Observatory"
-                  : "Minimax Flight Recorder"}
-              </span>
-              <span
-                className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${liveSearch ? "border-cyan-300/50 bg-cyan-400/15 text-cyan-200 animate-pulse" : "border-zinc-700 bg-zinc-900 text-zinc-400 light:border-slate-300 light:bg-white light:text-slate-500"}`}
-              >
+      <Card className="border-cyan-500/25 bg-gradient-to-br from-cyan-950/35 via-zinc-950/80 to-amber-950/20 light:border-cyan-300 light:bg-cyan-50/70">
+        <CardContent className="p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-cyan-100 light:text-cyan-900">
+                  {algorithm === "mcts"
+                    ? "MCTS Rollout Observatory"
+                    : "Minimax Flight Recorder"}
+                </span>
+                <Badge
+                  variant={
+                    !analysisEnabled
+                      ? "muted"
+                      : liveSearch
+                        ? "info"
+                        : "outline"
+                  }
+                  className={`text-[10px] ${liveSearch ? "animate-pulse" : ""}`}
+                >
+                  {!analysisEnabled
+                    ? "WAITING FOR GAME"
+                    : liveSearch
+                      ? "SEARCHING"
+                      : "LIVE TRACE"}
+                </Badge>
+              </div>
+              <p className="mt-1 text-[11px] leading-relaxed text-zinc-400 light:text-slate-600">
                 {!analysisEnabled
-                  ? "WAITING FOR GAME"
-                  : liveSearch
-                    ? "SEARCHING"
-                    : "LIVE TRACE"}
+                  ? "Make the first move to start live AI analysis. This workspace follows the current game only; use the separate Replay tab for completed games."
+                  : algorithm === "mcts"
+                    ? `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search select promising branches, expand candidates, simulate continuations, and backpropagate win rates.`
+                    : `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search compare candidate moves, back up evaluations, and prune branches before choosing the principal variation.`}
+              </p>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex rounded-md border border-zinc-700/80 bg-black/20 p-0.5 light:border-slate-300 light:bg-white/60">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setAlgorithm("minimax")}
+                  className={`text-[10px] ${algorithm === "minimax" ? "bg-amber-400/15 text-amber-200" : "text-zinc-500"}`}
+                >
+                  Minimax
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setAlgorithm("mcts")}
+                  className={`text-[10px] ${algorithm === "mcts" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}
+                >
+                  MCTS
+                </Button>
+              </div>
+              <div className="rounded-lg border border-zinc-700/70 bg-black/25 px-2 py-1 text-right text-[10px] light:border-slate-300 light:bg-white/60">
+                <div className="font-mono text-cyan-300 light:text-cyan-700">
+                  {emotion}
+                </div>
+                <div className="text-zinc-500 light:text-slate-500">
+                  engine mood
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[10px] sm:gap-3">
+            <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2.5 light:border-slate-300 light:bg-white/70">
+              <div className="font-mono text-lg text-cyan-200 light:text-cyan-800">
+                {trace?.depth ?? depth}
+              </div>
+              <div className="text-zinc-500">plies</div>
+            </div>
+            <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2.5 light:border-slate-300 light:bg-white/70">
+              <div className="font-mono text-lg text-emerald-300 light:text-emerald-700">
+                {algorithm === "mcts"
+                  ? (mctsTrace?.iterations ?? 0)
+                  : (trace?.evaluatedLeaves ?? 0)}
+              </div>
+              <div className="text-zinc-500">
+                {algorithm === "mcts" ? "rollouts" : "leaves"}
+              </div>
+            </div>
+            <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2.5 light:border-slate-300 light:bg-white/70">
+              <div className="font-mono text-lg text-rose-300 light:text-rose-700">
+                {algorithm === "mcts"
+                  ? (mctsTrace?.rootVisits ?? 0)
+                  : (trace?.prunedBranches ?? 0)}
+              </div>
+              <div className="text-zinc-500">
+                {algorithm === "mcts" ? "root visits" : "pruned"}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-zinc-800/80 bg-zinc-950/50 light:border-slate-300 light:bg-white/70">
+        <CardContent className="p-3">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <div>
+              <span className="text-xs font-semibold text-zinc-200 light:text-slate-800">
+                Position under analysis
+              </span>
+              <span className="ml-2 font-mono text-[10px] text-zinc-500">
+                {fen.split(" ")[1] === "b" ? "AI to move" : "player to move"}
               </span>
             </div>
-            <p className="mt-1 text-[11px] leading-relaxed text-zinc-400 light:text-slate-600">
-              {!analysisEnabled
-                ? "Make the first move to start live AI analysis. This workspace follows the current game only; use the separate Replay tab for completed games."
-                : algorithm === "mcts"
-                  ? `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search select promising branches, expand candidates, simulate continuations, and backpropagate win rates.`
-                  : `Watch the ${trace?.sideToMove === "b" ? "AI" : "player"} search compare candidate moves, back up evaluations, and prune branches before choosing the principal variation.`}
-            </p>
-          </div>
-          <div className="flex flex-col items-end gap-2">
             <div className="flex rounded-md border border-zinc-700/80 bg-black/20 p-0.5 light:border-slate-300 light:bg-white/60">
-              <button
-                type="button"
-                onClick={() => setAlgorithm("minimax")}
-                className={`rounded px-2 py-1 text-[10px] font-semibold ${algorithm === "minimax" ? "bg-amber-400/15 text-amber-200" : "text-zinc-500"}`}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewMode("board")}
+                className={`text-[10px] ${viewMode === "board" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}
               >
-                Minimax
-              </button>
-              <button
-                type="button"
-                onClick={() => setAlgorithm("mcts")}
-                className={`rounded px-2 py-1 text-[10px] font-semibold ${algorithm === "mcts" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}
+                Board
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewMode("graph")}
+                className={`text-[10px] ${viewMode === "graph" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}
               >
-                MCTS
-              </button>
-            </div>
-            <div className="rounded-lg border border-zinc-700/70 bg-black/25 px-2 py-1 text-right text-[10px] light:border-slate-300 light:bg-white/60">
-              <div className="font-mono text-cyan-300 light:text-cyan-700">
-                {emotion}
-              </div>
-              <div className="text-zinc-500 light:text-slate-500">
-                engine mood
-              </div>
+                3D Graph
+              </Button>
             </div>
           </div>
-        </div>
-
-        <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[10px] sm:gap-3">
-          <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2.5 light:border-slate-300 light:bg-white/70">
-            <div className="font-mono text-lg text-cyan-200 light:text-cyan-800">
-              {trace?.depth ?? depth}
-            </div>
-            <div className="text-zinc-500">plies</div>
-          </div>
-          <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2.5 light:border-slate-300 light:bg-white/70">
-            <div className="font-mono text-lg text-emerald-300 light:text-emerald-700">
-              {algorithm === "mcts"
-                ? (mctsTrace?.iterations ?? 0)
-                : (trace?.evaluatedLeaves ?? 0)}
-            </div>
-            <div className="text-zinc-500">
-              {algorithm === "mcts" ? "rollouts" : "leaves"}
-            </div>
-          </div>
-          <div className="rounded-lg border border-zinc-700/70 bg-zinc-950/50 p-2.5 light:border-slate-300 light:bg-white/70">
-            <div className="font-mono text-lg text-rose-300 light:text-rose-700">
-              {algorithm === "mcts"
-                ? (mctsTrace?.rootVisits ?? 0)
-                : (trace?.prunedBranches ?? 0)}
-            </div>
-            <div className="text-zinc-500">
-              {algorithm === "mcts" ? "root visits" : "pruned"}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/50 p-3 light:border-slate-300 light:bg-white/70">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <div>
-            <span className="text-xs font-semibold text-zinc-200 light:text-slate-800">
-              Position under analysis
-            </span>
-            <span className="ml-2 font-mono text-[10px] text-zinc-500">
-              {fen.split(" ")[1] === "b" ? "AI to move" : "player to move"}
-            </span>
-          </div>
-          <div className="flex rounded-md border border-zinc-700/80 bg-black/20 p-0.5 light:border-slate-300 light:bg-white/60">
-            <button
-              type="button"
-              onClick={() => setViewMode("board")}
-              className={`rounded px-2 py-1 text-[10px] font-semibold ${viewMode === "board" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}
-            >
-              Board
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("graph")}
-              className={`rounded px-2 py-1 text-[10px] font-semibold ${viewMode === "graph" ? "bg-cyan-400/15 text-cyan-200" : "text-zinc-500"}`}
-            >
-              3D Graph
-            </button>
-          </div>
-        </div>
-        {viewMode === "graph" ? (
-          <div className="ai-graph-stage flex w-full justify-center">
-            <AgentsGraph3D
-              agents={agentTraces}
-              algorithm={algorithm}
-              activeIndexes={activeIndexes}
-              selected={
-                selectedNode
-                  ? {
-                      agentId: focusedEntry?.agent.id ?? "materialist",
-                      nodeId: selectedNode.id,
-                    }
-                  : null
-              }
-              highlightedNodeIds={highlightedNodeIds}
-              highlightAgentId={focusedEntry?.agent.id}
-              highlightFilterActive={filterActive}
-              onSelectNode={(agentId, nodeId) => {
-                setSelectedAgentId(agentId);
-                setSelectedNodeId(nodeId);
-                const entry = agentTraces.find(
-                  (candidate) => candidate.agent.id === agentId,
-                );
-                const index =
-                  entry?.trace.nodes.findIndex((node) => node.id === nodeId) ??
-                  -1;
-                if (index >= 0) setActiveNodeIndex(index);
-              }}
-            />
-          </div>
-        ) : (
-          <div className="mx-auto grid aspect-square w-[min(380px,80vw)] max-w-full grid-cols-8 overflow-hidden rounded-lg border border-zinc-700 shadow-2xl light:border-slate-300">
-            {board.flatMap((row, rankIndex) =>
-              row.map((piece, fileIndex) => {
-                const square = `${String.fromCharCode(97 + fileIndex)}${8 - rankIndex}`;
-                const isLight = (rankIndex + fileIndex) % 2 === 0;
-                const isFrom = square === highlightedFrom;
-                const isTo = square === highlightedTo;
-                return (
-                  <div
-                    key={square}
-                    className={`relative flex aspect-square items-center justify-center text-3xl sm:text-4xl ${isLight ? "bg-[#ead9c3] text-zinc-900" : "bg-[#75563b] text-white"} ${isFrom ? "ring-inset ring-4 ring-cyan-300" : ""} ${isTo ? "ring-inset ring-4 ring-amber-300" : ""}`}
-                    title={`${square}${isFrom ? " · candidate origin" : ""}${isTo ? " · candidate destination" : ""}`}
-                  >
-                    {piece ? (
-                      <span
-                        className={`drop-shadow-md ${piece.color === "b" ? "text-zinc-950" : "text-white"}`}
-                      >
-                        {PIECES[`${piece.color}${piece.type}`]}
-                      </span>
-                    ) : null}
-                    {fileIndex === 0 ? (
-                      <span className="absolute left-1 top-0.5 text-[8px] font-mono opacity-60">
-                        {8 - rankIndex}
-                      </span>
-                    ) : null}
-                    {rankIndex === 7 ? (
-                      <span className="absolute bottom-0 right-1 text-[8px] font-mono opacity-60">
-                        {String.fromCharCode(97 + fileIndex)}
-                      </span>
-                    ) : null}
-                  </div>
-                );
-              }),
-            )}
-          </div>
-        )}
-        <div className="mt-2 flex items-center justify-between gap-2 text-[10px]">
-          <span className="text-zinc-500">
-            {viewMode === "graph"
-              ? algorithm === "mcts"
-                ? "Active rollout is enlarged · drag to orbit · click a node for stats"
-                : "Active branch is enlarged · drag to orbit · click a node for heuristic weights"
-              : "Cyan: candidate origin · Amber: destination"}
-          </span>
-          {lastBotMove ? (
-            <span className="font-mono text-amber-300 light:text-amber-700">
-              Last AI: {lastBotMove.san}
-            </span>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/50 p-3 light:border-slate-300 light:bg-white/70">
-        <div className="mb-2 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-semibold text-zinc-200 light:text-slate-800">
-              Search tree
-            </span>
-            <span className="ml-2 text-[10px] text-zinc-500">
-              click a node to inspect
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsPlaying((value) => !value)}
-            className="rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-[10px] font-semibold text-cyan-200 hover:bg-cyan-500/20 light:text-cyan-800"
-          >
-            {isPlaying ? "Pause" : "Play"}
-          </button>
-        </div>
-        <div className="mb-2 flex flex-wrap gap-1.5">
-          {agentTraces.map((entry) => (
-            <button
-              type="button"
-              key={entry.agent.id}
-              onClick={() => {
-                setSelectedAgentId(entry.agent.id);
-                setSelectedNodeId(null);
-              }}
-              className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] font-semibold transition-colors ${focusedEntry?.agent.id === entry.agent.id ? "border-cyan-300/70 bg-cyan-400/10 text-cyan-100" : "border-zinc-700 text-zinc-400 hover:bg-zinc-800/60"}`}
-            >
-              <span
-                className="h-2 w-2 rounded-full"
-                style={{ backgroundColor: entry.agent.color }}
-              />
-              {entry.agent.name}
-            </button>
-          ))}
-        </div>
-        <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
-          <input
-            aria-label="Search graph nodes"
-            value={nodeQuery}
-            onChange={(event) => setNodeQuery(event.target.value)}
-            placeholder="Search SAN, node ID, or explanation"
-            className="min-w-0 rounded-lg border border-zinc-700/80 bg-zinc-950 px-3 py-2 text-[11px] text-zinc-100 outline-none transition-colors focus:border-cyan-400/60 light:border-slate-300 light:bg-white light:text-slate-800"
-          />
-          <select
-            aria-label="Graph node status"
-            value={statusFilter}
-            onChange={(event) =>
-              setStatusFilter(event.target.value as typeof statusFilter)
-            }
-            className="rounded-lg border border-zinc-700/80 bg-zinc-950 px-2 py-2 text-[11px] text-zinc-200 outline-none light:border-slate-300 light:bg-white light:text-slate-800"
-          >
-            <option value="all">All statuses</option>
-            <option value="principal">Principal</option>
-            <option value="evaluated">Evaluated</option>
-            <option value="pruned">Pruned</option>
-            <option value="exploring">Exploring</option>
-          </select>
-          <select
-            aria-label="Graph node depth"
-            value={depthFilter}
-            onChange={(event) =>
-              setDepthFilter(event.target.value as typeof depthFilter)
-            }
-            className="rounded-lg border border-zinc-700/80 bg-zinc-950 px-2 py-2 text-[11px] text-zinc-200 outline-none light:border-slate-300 light:bg-white light:text-slate-800"
-          >
-            <option value="all">All depths</option>
-            {availableDepths.map((value) => (
-              <option key={value} value={value}>
-                Depth {value}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="mb-2 flex items-center justify-between text-[10px] text-zinc-500">
-          <span>
-            {filterActive
-              ? `${filteredNodes.length} matching nodes`
-              : `${trace?.nodes.length ?? 0} nodes in trace`}
-          </span>
-          {filterActive ? (
-            <button
-              type="button"
-              onClick={() => {
-                setNodeQuery("");
-                setStatusFilter("all");
-                setDepthFilter("all");
-              }}
-              className="text-cyan-300 hover:text-cyan-100"
-            >
-              Clear filters
-            </button>
-          ) : null}
-        </div>
-        <div className="grid grid-cols-1 gap-2">
-          {trace && filteredNodes.length > 0 ? (
-            filteredNodes.slice(0, 36).map((node) => (
-              <button
-                type="button"
-                key={node.id}
-                onClick={() => {
-                  setSelectedNodeId(node.id);
+          {viewMode === "graph" ? (
+            <div className="ai-graph-stage flex w-full justify-center">
+              <AgentsGraph3D
+                agents={agentTraces}
+                algorithm={algorithm}
+                activeIndexes={activeIndexes}
+                selected={
+                  selectedNode
+                    ? {
+                        agentId: focusedEntry?.agent.id ?? "materialist",
+                        nodeId: selectedNode.id,
+                      }
+                    : null
+                }
+                highlightedNodeIds={highlightedNodeIds}
+                highlightAgentId={focusedEntry?.agent.id}
+                highlightFilterActive={filterActive}
+                onSelectNode={(agentId, nodeId) => {
+                  setSelectedAgentId(agentId);
+                  setSelectedNodeId(nodeId);
+                  const entry = agentTraces.find(
+                    (candidate) => candidate.agent.id === agentId,
+                  );
                   const index =
-                    trace?.nodes.findIndex(
-                      (candidate) => candidate.id === node.id,
-                    ) ?? -1;
+                    entry?.trace.nodes.findIndex((node) => node.id === nodeId) ??
+                    -1;
                   if (index >= 0) setActiveNodeIndex(index);
                 }}
-                className={`flex items-center justify-between rounded-lg border px-2.5 py-2 text-left transition-all ${nodeTone(node, node.id === selectedNode?.id)} ${node.depth === 0 ? "border-cyan-500/30" : "ml-2"}`}
-              >
-                <span className="min-w-0">
-                  <span className="mr-2 font-mono text-[10px] text-zinc-500">
-                    d{node.depth}
-                  </span>
-                  <span className="font-mono text-xs font-bold">
-                    {node.san ?? "root"}
-                  </span>
-                  <span className="ml-2 truncate text-[10px] opacity-70">
-                    {node.status === "pruned"
-                      ? "alpha–beta cutoff"
-                      : isMctsNode(node)
-                        ? `${node.phase} · ${node.visits} visits`
-                        : node.explanation}
-                  </span>
-                </span>
-                <span className="ml-2 shrink-0 font-mono text-[10px]">
-                  {formatScore(node.score)}
-                </span>
-              </button>
-            ))
+              />
+            </div>
           ) : (
-            <div className="rounded-lg border border-dashed border-zinc-700 p-4 text-center text-xs text-zinc-500 light:border-slate-300">
-              {trace
-                ? "No nodes match the current search or filters."
-                : "Make a move to give Sentio a position to search."}
+            <div className="mx-auto grid aspect-square w-[min(380px,80vw)] max-w-full grid-cols-8 overflow-hidden rounded-lg border border-zinc-700 shadow-2xl light:border-slate-300">
+              {board.flatMap((row, rankIndex) =>
+                row.map((piece, fileIndex) => {
+                  const square = `${String.fromCharCode(97 + fileIndex)}${8 - rankIndex}`;
+                  const isLight = (rankIndex + fileIndex) % 2 === 0;
+                  const isFrom = square === highlightedFrom;
+                  const isTo = square === highlightedTo;
+                  return (
+                    <div
+                      key={square}
+                      className={`relative flex aspect-square items-center justify-center text-3xl sm:text-4xl ${isLight ? "bg-[#ead9c3] text-zinc-900" : "bg-[#75563b] text-white"} ${isFrom ? "ring-inset ring-4 ring-cyan-300" : ""} ${isTo ? "ring-inset ring-4 ring-amber-300" : ""}`}
+                      title={`${square}${isFrom ? " · candidate origin" : ""}${isTo ? " · candidate destination" : ""}`}
+                    >
+                      {piece ? (
+                        <span
+                          className={`drop-shadow-md ${piece.color === "b" ? "text-zinc-950" : "text-white"}`}
+                        >
+                          {PIECES[`${piece.color}${piece.type}`]}
+                        </span>
+                      ) : null}
+                      {fileIndex === 0 ? (
+                        <span className="absolute left-1 top-0.5 text-[8px] font-mono opacity-60">
+                          {8 - rankIndex}
+                        </span>
+                      ) : null}
+                      {rankIndex === 7 ? (
+                        <span className="absolute bottom-0 right-1 text-[8px] font-mono opacity-60">
+                          {String.fromCharCode(97 + fileIndex)}
+                        </span>
+                      ) : null}
+                    </div>
+                  );
+                }),
+              )}
             </div>
           )}
-        </div>
-      </div>
+          <div className="mt-2 flex items-center justify-between gap-2 text-[10px]">
+            <span className="text-zinc-500">
+              {viewMode === "graph"
+                ? algorithm === "mcts"
+                  ? "Active rollout is enlarged · drag to orbit · click a node for stats"
+                  : "Active branch is enlarged · drag to orbit · click a node for heuristic weights"
+                : "Cyan: candidate origin · Amber: destination"}
+            </span>
+            {lastBotMove ? (
+              <span className="font-mono text-amber-300 light:text-amber-700">
+                Last AI: {lastBotMove.san}
+              </span>
+            ) : null}
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-amber-500/25 bg-amber-950/15 p-3 light:border-amber-300 light:bg-amber-50/70">
-          <div className="text-[10px] uppercase tracking-wider text-amber-300 light:text-amber-700">
-            {algorithm === "mcts" ? "Most visited line" : "Principal variation"}
-          </div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {principal.length > 0 ? (
-              principal.map((move, index) => (
-                <span
-                  key={`${move}-${index}`}
-                  className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-1 font-mono text-xs text-amber-100 light:text-amber-800"
-                >
-                  {index + 1}. {move}
-                </span>
-              ))
-            ) : (
-              <span className="text-xs text-zinc-500">
-                Waiting for an AI turn.
+      <Card className="border-zinc-800/80 bg-zinc-950/50 light:border-slate-300 light:bg-white/70">
+        <CardContent className="p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <div>
+              <span className="text-xs font-semibold text-zinc-200 light:text-slate-800">
+                Search tree
               </span>
-            )}
-          </div>
-          <div className="mt-3 text-xs text-zinc-300 light:text-slate-700">
-            {algorithm === "mcts" &&
-            trace?.selectedMove &&
-            "visits" in trace.selectedMove ? (
-              <span className="mr-2 text-cyan-200">
-                {trace.selectedMove.visits} visits ·{" "}
-                {(trace.selectedMove.winRate * 100).toFixed(0)}% win rate
+              <span className="ml-2 text-[10px] text-zinc-500">
+                click a node to inspect
               </span>
-            ) : null}
-            Selected:{" "}
-            <strong className="font-mono text-amber-300 light:text-amber-700">
-              {trace?.selectedMove?.san ?? lastBotMove?.san ?? "—"}
-            </strong>
-            {trace?.selectedMove ? (
-              <span className="ml-2 text-zinc-500">
-                evaluation {formatScore(trace.selectedMove.score)}
-              </span>
-            ) : null}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsPlaying((value) => !value)}
+              className="border-cyan-500/30 bg-cyan-500/10 text-[10px] text-cyan-200 hover:bg-cyan-500/20"
+            >
+              {isPlaying ? "Pause" : "Play"}
+            </Button>
           </div>
-        </div>
-        <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/50 p-3 light:border-slate-300 light:bg-white/70">
-          <div className="mb-2 text-[10px] uppercase tracking-wider text-zinc-500">
-            Playback depth
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              aria-label={
-                algorithm === "mcts" ? "MCTS rollout depth" : "Minimax depth"
-              }
-              type="range"
-              min="1"
-              max="6"
-              value={depth}
-              onChange={(event) => setDepth(Number(event.target.value))}
-              className="w-full accent-cyan-400"
-            />
-            <span className="w-7 text-right font-mono text-xs text-cyan-300">
-              {depth}
-            </span>
-          </div>
-          <div className="mt-3 flex items-center gap-2">
-            <span className="text-[10px] text-zinc-500">
-              {algorithm === "mcts" ? "Rollout speed" : "Animation speed"}
-            </span>
-            {[0.5, 1, 2].map((value) => (
-              <button
-                type="button"
-                key={value}
-                onClick={() => setSpeed(value)}
-                className={`rounded-md border px-2 py-1 text-[10px] ${speed === value ? "border-cyan-300 bg-cyan-400/15 text-cyan-200" : "border-zinc-700 text-zinc-500"}`}
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {agentTraces.map((entry) => (
+              <Button
+                key={entry.agent.id}
+                variant={focusedEntry?.agent.id === entry.agent.id ? "accent" : "outline"}
+                size="sm"
+                onClick={() => {
+                  setSelectedAgentId(entry.agent.id);
+                  setSelectedNodeId(null);
+                }}
+                className="text-[10px]"
               >
-                {value}×
-              </button>
+                <span
+                  className="mr-1.5 h-2 w-2 rounded-full inline-block"
+                  style={{ backgroundColor: entry.agent.color }}
+                />
+                {entry.agent.name}
+              </Button>
             ))}
           </div>
-        </div>
+          <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+            <Input
+              aria-label="Search graph nodes"
+              value={nodeQuery}
+              onChange={(event) => setNodeQuery(event.target.value)}
+              placeholder="Search SAN, node ID, or explanation"
+              className="min-w-0 text-[11px]"
+            />
+            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+              <SelectTrigger className="h-9 text-[11px]">
+                <span>Status</span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="principal">Principal</SelectItem>
+                <SelectItem value="evaluated">Evaluated</SelectItem>
+                <SelectItem value="pruned">Pruned</SelectItem>
+                <SelectItem value="exploring">Exploring</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={depthFilter} onValueChange={(v) => setDepthFilter(v as typeof depthFilter)}>
+              <SelectTrigger className="h-9 text-[11px]">
+                <span>Depth</span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All depths</SelectItem>
+                {availableDepths.map((value) => (
+                  <SelectItem key={value} value={String(value)}>
+                    Depth {value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="mb-2 flex items-center justify-between text-[10px] text-zinc-500">
+            <span>
+              {filterActive
+                ? `${filteredNodes.length} matching nodes`
+                : `${trace?.nodes.length ?? 0} nodes in trace`}
+            </span>
+            {filterActive ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                type="button"
+                onClick={() => {
+                  setNodeQuery("");
+                  setStatusFilter("all");
+                  setDepthFilter("all");
+                }}
+                className="h-auto p-0 text-cyan-300 hover:text-cyan-100"
+              >
+                Clear filters
+              </Button>
+            ) : null}
+          </div>
+          <div className="grid grid-cols-1 gap-2">
+            {trace && filteredNodes.length > 0 ? (
+              filteredNodes.slice(0, 36).map((node) => (
+                <Button
+                  variant="ghost"
+                  type="button"
+                  key={node.id}
+                  onClick={() => {
+                    setSelectedNodeId(node.id);
+                    const index =
+                      trace?.nodes.findIndex(
+                        (candidate) => candidate.id === node.id,
+                      ) ?? -1;
+                    if (index >= 0) setActiveNodeIndex(index);
+                  }}
+                  className={`flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-left transition-all ${nodeTone(node, node.id === selectedNode?.id)} ${node.depth === 0 ? "border-cyan-500/30" : "ml-2"}`}
+                >
+                  <span className="min-w-0">
+                    <span className="mr-2 font-mono text-[10px] text-zinc-500">
+                      d{node.depth}
+                    </span>
+                    <span className="font-mono text-xs font-bold">
+                      {node.san ?? "root"}
+                    </span>
+                    <span className="ml-2 truncate text-[10px] opacity-70">
+                      {node.status === "pruned"
+                        ? "alpha–beta cutoff"
+                        : isMctsNode(node)
+                          ? `${node.phase} · ${node.visits} visits`
+                          : node.explanation}
+                    </span>
+                  </span>
+                  <span className="ml-2 shrink-0 font-mono text-[10px]">
+                    {formatScore(node.score)}
+                  </span>
+                </Button>
+              ))
+            ) : (
+              <div className="rounded-lg border border-dashed border-zinc-700 p-4 text-center text-xs text-zinc-500 light:border-slate-300">
+                {trace
+                  ? "No nodes match the current search or filters."
+                  : "Make a move to give Sentio a position to search."}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Card className="border-amber-500/25 bg-amber-950/15 light:border-amber-300 light:bg-amber-50/70">
+          <CardContent className="p-3">
+            <div className="text-[10px] uppercase tracking-wider text-amber-300 light:text-amber-700">
+              {algorithm === "mcts" ? "Most visited line" : "Principal variation"}
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {principal.length > 0 ? (
+                principal.map((move, index) => (
+                  <Badge key={`${move}-${index}`} variant="accent" className="font-mono text-xs">
+                    {index + 1}. {move}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-xs text-zinc-500">
+                  Waiting for an AI turn.
+                </span>
+              )}
+            </div>
+            <div className="mt-3 text-xs text-zinc-300 light:text-slate-700">
+              {algorithm === "mcts" &&
+              trace?.selectedMove &&
+              "visits" in trace.selectedMove ? (
+                <span className="mr-2 text-cyan-200">
+                  {trace.selectedMove.visits} visits ·{" "}
+                  {(trace.selectedMove.winRate * 100).toFixed(0)}% win rate
+                </span>
+              ) : null}
+              Selected:{" "}
+              <strong className="font-mono text-amber-300 light:text-amber-700">
+                {trace?.selectedMove?.san ?? lastBotMove?.san ?? "—"}
+              </strong>
+              {trace?.selectedMove ? (
+                <span className="ml-2 text-zinc-500">
+                  evaluation {formatScore(trace.selectedMove.score)}
+                </span>
+              ) : null}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-zinc-800/80 bg-zinc-950/50 light:border-slate-300 light:bg-white/70">
+          <CardContent className="p-3">
+            <div className="mb-2 text-[10px] uppercase tracking-wider text-zinc-500">
+              Playback depth
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                aria-label={
+                  algorithm === "mcts" ? "MCTS rollout depth" : "Minimax depth"
+                }
+                type="range"
+                min="1"
+                max="6"
+                value={depth}
+                onChange={(event) => setDepth(Number(event.target.value))}
+                className="w-full accent-cyan-400"
+              />
+              <span className="w-7 text-right font-mono text-xs text-cyan-300">
+                {depth}
+              </span>
+            </div>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="text-[10px] text-zinc-500">
+                {algorithm === "mcts" ? "Rollout speed" : "Animation speed"}
+              </span>
+              {[0.5, 1, 2].map((value) => (
+                <Button
+                  key={value}
+                  variant={speed === value ? "accent" : "outline"}
+                  size="sm"
+                  className="text-[10px]"
+                  onClick={() => setSpeed(value)}
+                >
+                  {value}×
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

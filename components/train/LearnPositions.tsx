@@ -20,6 +20,9 @@ import {
   type Lesson,
 } from "@/lib/lessons";
 import type { PuzzleProgress } from "@/lib/puzzleProgress";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const Chessboard = dynamic(
   () => import("react-chessboard").then((mod) => mod.Chessboard),
@@ -86,29 +89,30 @@ export default function LearnPositions({
   return (
     <div className="flex min-h-0 flex-1 flex-col p-4">
       <div className="mb-3 flex items-center justify-between">
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="sm"
           onClick={onExit}
-          className="rounded-md border border-zinc-700/60 px-3 py-1 text-xs text-zinc-400 hover:text-zinc-200 light:border-slate-300 light:text-slate-600"
         >
           ← Back
-        </button>
+        </Button>
         <h2 className="font-mono text-lg font-bold train-accent-text">
           📖 Learn Positions
         </h2>
         <div className="flex gap-1 rounded-lg border border-zinc-800/80 bg-zinc-900/70 p-1 light:border-slate-300 light:bg-slate-100">
           {LESSON_CATEGORIES.map((c) => (
-            <button
+            <Button
               key={c.key}
-              type="button"
+              variant={category === c.key ? "accent" : "ghost"}
+              size="sm"
               onClick={() => {
                 setCategory(c.key);
                 setSelectedId(null);
               }}
-              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${category === c.key ? "bg-violet-500/20 text-violet-300 light:bg-violet-100 light:text-violet-700" : "text-zinc-500 hover:text-zinc-300 light:text-slate-500"}`}
+              className="px-2.5 py-1 text-[11px] font-semibold"
             >
               {c.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -117,20 +121,29 @@ export default function LearnPositions({
         /* Lesson list */
         <div className="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto pt-2 sm:grid-cols-2 xl:grid-cols-3">
           {(grouped[category] ?? []).map((l) => (
-            <button
+            <Card
               key={l.id}
-              type="button"
+              role="button"
+              tabIndex={0}
               onClick={() => {
                 setSelectedId(l.id);
                 setStepIndex(0);
                 setAutoPlaying(false);
               }}
-              className="train-panel train-accent-ring rounded-xl p-4 text-left transition-transform hover:scale-[1.01]"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelectedId(l.id);
+                  setStepIndex(0);
+                  setAutoPlaying(false);
+                }
+              }}
+              className="train-accent-ring cursor-pointer p-4 text-left transition-transform hover:scale-[1.01]"
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono text-sm font-bold">{l.title}</span>
                 {progress.lessonsCompleted.includes(l.id) && (
-                  <span className="text-emerald-400">✓</span>
+                  <Badge variant="success">✓</Badge>
                 )}
               </div>
               <p className="mt-2 line-clamp-2 text-xs text-zinc-400 light:text-slate-600">
@@ -139,7 +152,7 @@ export default function LearnPositions({
               <p className="mt-3 font-mono text-[10px] uppercase tracking-wider text-zinc-500">
                 {l.steps.length} steps
               </p>
-            </button>
+            </Card>
           ))}
         </div>
       ) : (
@@ -202,7 +215,7 @@ function StepperView({
         <Chessboard options={boardOptions} />
       </div>
       <div className="flex w-full shrink-0 flex-col gap-3 lg:w-80">
-        <div className="train-panel rounded-xl p-4">
+        <Card className="p-4">
           <h3 className="font-mono text-sm font-bold">{lesson.title}</h3>
           <p className="mt-2 max-h-28 overflow-y-auto text-xs leading-relaxed text-zinc-400 light:text-slate-600">
             {stepIndex === 0
@@ -211,67 +224,70 @@ function StepperView({
           </p>
           <div className="mt-3 flex flex-wrap gap-1">
             {lesson.steps.map((s, i) => (
-              <span
+              <Badge
                 key={`${s.san}-${i}`}
-                className={`rounded px-1.5 py-0.5 font-mono text-[10px] ${i < stepIndex ? "bg-violet-500/25 text-violet-200" : "bg-zinc-800/70 text-zinc-500"}`}
+                variant={i < stepIndex ? "accent" : "muted"}
+                className="font-mono text-[10px]"
               >
                 {s.san}
-              </span>
+              </Badge>
             ))}
           </div>
-        </div>
+        </Card>
 
         <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => onStep(Math.max(0, stepIndex - 1))}
             disabled={stepIndex === 0}
-            className="flex-1 rounded-md border border-zinc-700/60 px-2 py-1.5 text-xs text-zinc-300 disabled:opacity-40 light:border-slate-300 light:text-slate-700"
+            className="flex-1"
           >
             ◀ Prev
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={onReplay}
-            className="rounded-md border border-zinc-700/60 px-2 py-1.5 text-xs text-zinc-300 light:border-slate-300 light:text-slate-700"
           >
             ▶ Replay
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => onStep(Math.min(lesson.steps.length, stepIndex + 1))}
             disabled={atEnd}
-            className="flex-1 rounded-md border border-zinc-700/60 px-2 py-1.5 text-xs text-zinc-300 disabled:opacity-40 light:border-slate-300 light:text-slate-700"
+            className="flex-1"
           >
             Next ▶
-          </button>
+          </Button>
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant={completed ? "outline" : "default"}
           onClick={onComplete}
-          className={`w-full rounded-lg px-3 py-2 text-xs font-semibold ${completed ? "border border-emerald-500/40 text-emerald-400" : "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"}`}
+          className={`w-full text-xs ${completed ? "border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10" : "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"}`}
         >
           {completed ? "✓ Completed" : "Mark complete (+40 XP)"}
-        </button>
+        </Button>
 
         {!terminal && (
-          <button
-            type="button"
+          <Button
+            variant="default"
             onClick={() => onPlayFromPosition(fen)}
-            className="w-full rounded-lg bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 px-3 py-2 text-xs font-semibold text-violet-200 hover:from-violet-500/45"
+            className="w-full bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 text-xs font-semibold text-violet-200 hover:from-violet-500/45"
           >
             ♟ Play it out vs Sentio
-          </button>
+          </Button>
         )}
 
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={onBackToList}
-          className="text-center text-[11px] text-zinc-500 hover:text-zinc-300"
+          className="text-center text-[11px]"
         >
           ← All lessons
-        </button>
+        </Button>
       </div>
     </div>
   );
