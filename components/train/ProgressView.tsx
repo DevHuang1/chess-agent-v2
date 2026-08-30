@@ -82,6 +82,30 @@ export default function ProgressView({
   };
 
   const verdict = useMemo(() => improvementVerdict(history), [history]);
+  const quizAccuracy =
+    progress.quizTotals.attempted > 0
+      ? Math.round(
+          (progress.quizTotals.solved / progress.quizTotals.attempted) * 100,
+        )
+      : 0;
+  const firstTryRate =
+    progress.quizTotals.solved > 0
+      ? Math.round(
+          (progress.quizTotals.firstTrySolved / progress.quizTotals.solved) *
+            100,
+        )
+      : 0;
+  const themeRows = Object.entries(progress.themeStats)
+    .map(([theme, stats]) => ({
+      theme,
+      attempts: stats.solved + stats.failed,
+      accuracy:
+        stats.solved + stats.failed > 0
+          ? Math.round((stats.solved / (stats.solved + stats.failed)) * 100)
+          : 0,
+    }))
+    .sort((a, b) => b.attempts - a.attempts)
+    .slice(0, 6);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -96,6 +120,40 @@ export default function ProgressView({
           {progress.gamesAnalyzed} analyzed
         </Badge>
       </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <MetricCard label="Quiz accuracy" value={`${quizAccuracy}%`} detail={`${progress.quizTotals.solved}/${progress.quizTotals.attempted} solved`} />
+        <MetricCard label="First-try recall" value={`${firstTryRate}%`} detail={`${progress.quizTotals.hintsUsed} hints used`} />
+        <MetricCard label="Positions mastered" value={String(progress.lessonsCompleted.length)} detail={`${Object.keys(progress.lessonMastery).length} attempted`} />
+        <MetricCard label="Review queue" value={String(progress.reviewLessonIds.length)} detail="Missed or hinted" />
+      </div>
+
+      {themeRows.length > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono text-sm font-bold">Tactical theme accuracy</h3>
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500">Puzzle attempts</span>
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {themeRows.map((row) => (
+                <div key={row.theme}>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="capitalize">{humanizeTheme(row.theme)}</span>
+                    <span className="font-mono text-zinc-400">{row.accuracy}%</span>
+                  </div>
+                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-800 light:bg-slate-200">
+                    <div
+                      className="h-full bg-cyan-400"
+                      style={{ width: `${row.accuracy}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Unanalyzed games */}
       {queue.length > 0 && (
@@ -231,6 +289,30 @@ export default function ProgressView({
       </Card>
     </div>
   );
+}
+
+function MetricCard({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <div className="text-[10px] uppercase tracking-wider text-zinc-500">{label}</div>
+        <div className="mt-1 font-mono text-2xl font-bold train-accent-text">{value}</div>
+        <div className="mt-1 text-[10px] text-zinc-500">{detail}</div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function humanizeTheme(theme: string): string {
+  return theme.replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
 /** Minimal SVG line chart matching the mono aesthetic. */

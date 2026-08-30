@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { looksLikeBurmese } from "@/lib/burmese";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/audio/transcriptions";
 // whisper-large-v3-turbo handles Burmese acceptably; the non-turbo
@@ -232,6 +233,105 @@ async function transcribeWithGemini(audioFile: Blob): Promise<string | null> {
   return text || null;
 }
 
+// ---------------------------------------------------------------------------
+// Burmese transcription chain
+//
+// The local Whisper fine-tune can hallucinate replacement-character soup or a
+// non-Burmese script (Thai, Devanagari, Han) while reporting HTTP 200, and
+// whisper-large on Groq struggles with Burmese tonality the same way. Every
+// tier is therefore gated on `looksLikeBurmese` and the chain keeps trying
+// providers until one actually returns Myanmar script text (or a short chess
+// token such as "O-O"). ElevenLabs Scribe with `language_code: mya` is the
+// most reliable recorded Burmese engine, so it leads the default chain; the
+// offline local model is always the last resort and its garbage can never
+// shadow a working cloud tier.
+// ---------------------------------------------------------------------------
+
+type BurmeseTier = {
+  name: string;
+  run: () => Promise<string | null>;
+};
+
+function buildBurmeseTiers(
+  audioFile: Blob,
+  preferred?: string,
+): BurmeseTier[] {
+  const tiers: BurmeseTier[] = [];
+  const push = (
+    name: string,
+    available: boolean,
+    run: () => Promise<string | null>,
+  ) => {
+    if (available) tiers.push({ name, run });
+  };
+  const pref = preferred?.toLowerCase();
+
+  // The provider explicitly picked in the Speech tab leads the chain.
+  if (pref === "elevenlabs") {
+    push("elevenlabs", Boolean(ELEVENLABS_API_KEY), () =>
+      transcribeWithElevenLabs(audioFile),
+    );
+  }
+  if (pref === "assemblyai") {
+    push("assemblyai", Boolean(ASSEMBLYAI_API_KEY), () =>
+      transcribeWithAssemblyAI(audioFile, "my"),
+    );
+  }
+  if (pref === "groq") {
+    push("groq", Boolean(GROQ_API_KEY), () =>
+      transcribeWithGroq(audioFile, "my", BURMESE_STT_PROMPT),
+    );
+  }
+
+  // Default quality chain (also follows an explicit preference so a failing
+  // or garbage tier falls through to better options).
+  if (pref !== "elevenlabs") {
+    push("elevenlabs", Boolean(ELEVENLABS_API_KEY), () =>
+      transcribeWithElevenLabs(audioFile),
+    );
+  }
+  if (pref !== "gemini") {
+    push("gemini", Boolean(GEMINI_API_KEY), () =>
+      transcribeWithGemini(audioFile),
+    );
+  }
+  if (pref !== "groq") {
+    push("groq", Boolean(GROQ_API_KEY), () =>
+      transcribeWithGroq(audioFile, "my", BURMESE_STT_PROMPT),
+    );
+  }
+  if (pref !== "assemblyai") {
+    push("assemblyai", Boolean(ASSEMBLYAI_API_KEY), () =>
+      transcribeWithAssemblyAI(audioFile, "my"),
+    );
+  }
+
+  // Offline last resort.
+  push("local", true, () => transcribeWithLocalBackend(audioFile));
+  return tiers;
+}
+
+async function transcribeBurmese(
+  audioFile: Blob,
+  preferred?: string,
+): Promise<string | null> {
+  for (const tier of buildBurmeseTiers(audioFile, preferred)) {
+    try {
+      const text = await tier.run();
+      if (text && looksLikeBurmese(text)) return text;
+      if (text) {
+        console.warn(
+          `[transcribe] ${tier.name} tier returned unusable Burmese output ` +
+            `(${JSON.stringify(text.slice(0, 80))}) — trying the next tier.`,
+        );
+      }
+    } catch (error) {
+      console.warn(`[transcribe] ${tier.name} tier failed:`, error);
+    }
+  }
+  return null;
+}
+
 export async function POST(request: Request) {
   let formData: FormData;
   try {
@@ -257,6 +357,20 @@ export async function POST(request: Request) {
 
   const language = formData.get("language")?.toString() || undefined;
   const provider = formData.get("provider")?.toString() || undefined;
+
+  // Burmese path: quality-ordered, garbage-gated tier chain. The explicitly
+  // selected provider leads; otherwise ElevenLabs Scribe (mya) is tried
+  // first, then Gemini, Groq Whisper, AssemblyAI, and finally the offline
+  // local model. Each result must actually contain Burmese content — a
+  // failing engine can no longer shadow a working one.
+  if (language === "my") {
+    const text = await transcribeBurmese(audioFile, provider);
+    if (text) return NextResponse.json({ text });
+    return NextResponse.json(
+      { detail: "All Burmese transcription tiers failed." },
+      { status: 502 },
+    );
+  }
 
   if (provider === "assemblyai") {
     if (ASSEMBLYAI_API_KEY) {
@@ -291,50 +405,6 @@ export async function POST(request: Request) {
     if (localText) return NextResponse.json({ text: localText });
     return NextResponse.json(
       { detail: "ElevenLabs and local transcription both failed." },
-      { status: 502 },
-    );
-  }
-
-  if (language === "my") {
-    const localText = await transcribeWithLocalBackend(audioFile);
-    if (localText) return NextResponse.json({ text: localText });
-
-    // Whisper tier: fast and cheap; the vocabulary prompt biases decoding
-    // toward chess piece words and Burmese phonetics of square names.
-    if (GROQ_API_KEY) {
-      try {
-        const groqText = await transcribeWithGroq(
-          audioFile,
-          language,
-          BURMESE_STT_PROMPT,
-        );
-        if (groqText) return NextResponse.json({ text: groqText });
-      } catch (error) {
-        console.error("Groq Burmese transcription failed:", error);
-      }
-    }
-
-    if (ELEVENLABS_API_KEY) {
-      try {
-        const elevenLabsText = await transcribeWithElevenLabs(audioFile);
-        if (elevenLabsText) return NextResponse.json({ text: elevenLabsText });
-      } catch (error) {
-        // Fall through to the final fallback if ElevenLabs is unavailable.
-        console.error("ElevenLabs Burmese transcription failed:", error);
-      }
-    }
-
-    if (GEMINI_API_KEY) {
-      try {
-        const geminiText = await transcribeWithGemini(audioFile);
-        if (geminiText) return NextResponse.json({ text: geminiText });
-      } catch (error) {
-        // Fall through to the final fallback if Gemini is unavailable.
-        console.error("Gemini transcription failed:", error);
-      }
-    }
-    return NextResponse.json(
-      { detail: "All Burmese transcription tiers failed." },
       { status: 502 },
     );
   }

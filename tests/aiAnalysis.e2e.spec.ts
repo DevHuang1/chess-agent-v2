@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { chooseCustomOption } from "./helpers/customSelect";
 
 test("opens the full-width live AI Lab workspace", async ({ page }) => {
+  // This journey covers the controller, the AI Lab flight recorder, graph
+  // views, benchmarks, and replay — give it room beyond the 30s default.
+  test.setTimeout(120_000);
   await page.goto("/?e2e=1");
   await page.waitForLoadState("domcontentloaded");
   await page.waitForTimeout(1200);
@@ -13,24 +17,23 @@ test("opens the full-width live AI Lab workspace", async ({ page }) => {
   await page.getByRole("button", { name: "Collapse game controller" }).click();
   await expect(page.getByRole("button", { name: "Expand game controller" })).toBeVisible();
   await page.getByRole("button", { name: "Expand game controller" }).click();
-  await expect(page.getByRole("button", { name: "Split sidebar view" })).toBeVisible();
-  await page.getByRole("button", { name: "Split sidebar view" }).click();
-  await expect(page.getByLabel("Split sidebar component")).toHaveValue("benchmarks");
-  await expect(page.getByText("side-by-side", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Use single sidebar view" }).click();
 
-  await expect(page.getByRole("button", { name: "Float sidebar" })).toBeVisible();
-  await page.getByRole("button", { name: "Float sidebar" }).click();
+  // Float and re-dock the controller sidebar via the overflow menu.
+  await page.getByRole("button", { name: "More actions" }).click();
+  await page.getByRole("menuitem", { name: "Float sidebar" }).click();
   await expect(page.locator('aside[data-controller-detached="true"]')).toBeVisible();
-  await page.getByRole("button", { name: "Dock sidebar" }).click();
+  await page.getByRole("button", { name: "More actions" }).click();
+  await page.getByRole("menuitem", { name: "Dock sidebar" }).click();
   await expect(page.locator('aside[data-controller-detached="false"]')).toBeVisible();
 
-  await expect(page.getByRole("button", { name: "Use compact game controller" })).toBeVisible();
+  // The wide-panel preference persists across reloads.
+  await page.getByRole("button", { name: "More actions" }).click();
+  await page.getByRole("menuitem", { name: "Wide panel" }).click();
+  await expect(page.locator('aside[data-controller-wide="true"]')).toBeVisible();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("sentio-sidebar-preferences-v1") ?? "{}").wide)).toBe(true);
   await page.reload();
   await page.waitForLoadState("domcontentloaded");
-  await expect(page.getByRole("button", { name: "Use compact game controller" })).toBeVisible();
-  await page.getByRole("button", { name: "Use compact game controller" }).click();
+  await expect(page.locator('aside[data-controller-wide="true"]')).toBeVisible();
 
   await page.getByRole("button", { name: "AI Lab", exact: true }).click();
   await expect(page.getByRole("region", { name: "Full-width AI Lab workspace" })).toBeVisible();
@@ -56,7 +59,7 @@ test("opens the full-width live AI Lab workspace", async ({ page }) => {
   await expect(page.getByLabel("Graph node depth")).toBeVisible();
   await page.getByLabel("Search graph nodes").fill("e4");
   await expect(page.getByText(/matching nodes/)).toBeVisible();
-  await page.getByLabel("Graph node status").selectOption("principal");
+  await chooseCustomOption(page.getByLabel("Graph node status"), "Principal");
   await expect(page.getByText(/matching nodes/)).toBeVisible();
   await page.getByRole("button", { name: "Clear filters" }).click();
   await expect(page.getByLabel("Search graph nodes")).toHaveValue("");
@@ -89,13 +92,12 @@ test("opens the full-width live AI Lab workspace", async ({ page }) => {
   await expect(page.getByText("3D MCTS rollout graph", { exact: true })).toBeVisible();
 
   await page.getByRole("navigation", { name: "Workspace navigation" }).getByRole("button", { name: "Board", exact: true }).click();
-  await page.getByRole("button", { name: "Benchmarks", exact: true }).click();
+  await page.getByRole("button", { name: "Analysis", exact: true }).click();
   await expect(page.getByText("Search Benchmarks", { exact: true })).toBeVisible();
   await expect(page.getByText("Depth scaling", { exact: true })).toBeVisible();
   await expect(page.getByText("Minimax avg", { exact: true })).toBeVisible();
   await expect(page.getByText("MCTS avg", { exact: true })).toBeVisible();
-  await page.getByLabel("Metric").selectOption("workUnitsPerSecond");
-  await expect(page.getByLabel("Metric")).toHaveValue("workUnitsPerSecond");
+  await chooseCustomOption(page.getByRole("combobox", { name: "Metric" }), "Search throughput");
 
   await page.getByRole("button", { name: "Replay", exact: true }).click();
   await expect(page.getByText("3D Arena Active", { exact: false })).toBeVisible();

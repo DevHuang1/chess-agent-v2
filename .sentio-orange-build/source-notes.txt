@@ -1,0 +1,28 @@
+Primary content source:
+/Users/yuza/Downloads/Sentio_AI_Features_Prolog_Light_Ember (1).pptx
+
+Visual template and sole decorative asset source:
+/Users/yuza/Downloads/Orange Beige Retro Illustration Night Chess Presentation.pdf
+
+Current-project update sources:
+/Users/yuza/chess-agent-v2/app/page.tsx
+/Users/yuza/chess-agent-v2/components/AILabWorkspace.tsx
+/Users/yuza/chess-agent-v2/components/AIAnalysisTab.tsx
+/Users/yuza/chess-agent-v2/components/BenchmarkTab.tsx
+/Users/yuza/chess-agent-v2/components/ControllerPanel.tsx
+/Users/yuza/chess-agent-v2/components/LogicianPanel.tsx
+/Users/yuza/chess-agent-v2/components/TopBar.tsx
+/Users/yuza/chess-agent-v2/components/train/TrainingWorkspace.tsx
+/Users/yuza/chess-agent-v2/components/train/PuzzleRush.tsx
+/Users/yuza/chess-agent-v2/components/train/LearnPositions.tsx
+/Users/yuza/chess-agent-v2/components/train/ProgressView.tsx
+/Users/yuza/chess-agent-v2/lib/puzzleProgress.ts
+/Users/yuza/chess-agent-v2/lib/gameAnalysis.ts
+/Users/yuza/chess-agent-v2/benchmarks/search-benchmark.json
+/Users/yuza/chess-agent-v2/prolog/ai_system.pl
+/Users/yuza/chess-agent-v2/backend/main.py
+/Users/yuza/chess-agent-v2/app/api/prolog/route.ts
+
+Verification performed on 2026-08-29:
+npm run test -> 15 test files passed, 145 tests passed.
+

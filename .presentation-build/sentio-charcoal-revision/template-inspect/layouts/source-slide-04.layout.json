@@ -1,0 +1,1512 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/jyx0ra1s",
+    "id": "jyx0ra1s",
+    "slide": 4,
+    "layoutId": "/ppt/slideLayouts/slideLayout1.xml",
+    "layoutName": "DEFAULT",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+    "backgroundImage": {
+      "assetId": "/ppt/media/Slide-4-image-1.jpeg",
+      "contentType": "image/jpeg",
+      "byteLength": 86223
+    },
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Office",
+    "colors": {
+      "accent1": "#4472C4",
+      "accent2": "#ED7D31",
+      "accent3": "#A5A5A5",
+      "accent4": "#FFC000",
+      "accent5": "#5B9BD5",
+      "accent6": "#70AD47",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#44546A",
+      "lt2": "#E7E6E6",
+      "hlink": "#0563C1",
+      "folHlink": "#954F72"
+    },
+    "fontScheme": {
+      "name": "Office",
+      "majorFont": {
+        "latinTypeface": "Calibri Light"
+      },
+      "minorFont": {
+        "latinTypeface": "Calibri"
+      }
+    },
+    "typefaces": [
+      "Calibri",
+      "Calibri Light",
+      "Cambria"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "/ppt/slideLayouts/slideLayout1.xml",
+      "name": "DEFAULT",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1cj2d8b6",
+      "id": "2",
+      "name": "Text 0",
+      "bbox": [
+        59.52,
+        44.16,
+        1160.93,
+        24.96
+      ],
+      "geometry": "rect",
+      "text": "WHY THIS PROJECT EXISTS",
+      "textPreview": "WHY THIS PROJECT EXISTS",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "WHY THIS PROJECT EXISTS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "WHY THIS PROJECT EXISTS",
+          "runs": [
+            {
+              "index": 1,
+              "text": "WHY THIS PROJECT EXISTS",
+              "fontSize": 14.67,
+              "typeface": "Calibri",
+              "color": "#F2705A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0ba143al",
+      "id": "3",
+      "name": "Text 1",
+      "bbox": [
+        59.52,
+        71.04,
+        1160.93,
+        57.6
+      ],
+      "geometry": "rect",
+      "text": "Problem Statement",
+      "textPreview": "Problem Statement",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Problem Statement"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Problem Statement",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Problem Statement",
+              "fontSize": 41.33,
+              "typeface": "Cambria",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rm1k7yt4",
+      "id": "4",
+      "name": "Shape 2",
+      "bbox": [
+        59.52,
+        187.2,
+        363.94,
+        182.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(59, 64, 72, 0.86)",
+      "lineColor": "#596069",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ql8jytsj",
+      "id": "5",
+      "name": "Shape 3",
+      "bbox": [
+        84.48,
+        210.24,
+        44.16,
+        44.16
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#F2705A",
+      "lineColor": "#F2705A",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/doj29oba",
+      "id": "6",
+      "name": "Text 4",
+      "bbox": [
+        84.48,
+        210.24,
+        44.16,
+        44.16
+      ],
+      "geometry": "rect",
+      "text": "✕",
+      "textPreview": "✕",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✕"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✕",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "✕",
+              "fontSize": 17.33,
+              "typeface": "Calibri",
+              "color": "#23262B",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sna103ap",
+      "id": "7",
+      "name": "Text 5",
+      "bbox": [
+        144,
+        208.32,
+        258.34,
+        26.88
+      ],
+      "geometry": "rect",
+      "text": "Fixed difficulty",
+      "textPreview": "Fixed difficulty",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Fixed difficulty"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Fixed difficulty",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Fixed difficulty",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ihk3et8",
+      "id": "8",
+      "name": "Text 6",
+      "bbox": [
+        144,
+        237.12,
+        258.34,
+        119.04
+      ],
+      "geometry": "rect",
+      "text": "Engines play at one strength, chosen manually before the game starts, and it never changes.",
+      "textPreview": "Engines play at one strength, chosen manually before the game starts, and it never changes.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Engines play at one strength, chosen"
+          },
+          {
+            "index": 2,
+            "text": "manually before the game starts, and"
+          },
+          {
+            "index": 3,
+            "text": "it never changes."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Engines play at one strength, chosen manually before the game starts, and it never changes.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Engines play at one strength, chosen manually before the game starts, and it never changes.",
+              "fontSize": 15.33,
+              "typeface": "Calibri",
+              "color": "#B4B9C0"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ih8ju9sn",
+      "id": "9",
+      "name": "Shape 7",
+      "bbox": [
+        458.02,
+        187.2,
+        363.94,
+        182.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(59, 64, 72, 0.86)",
+      "lineColor": "#596069",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kbm987y5",
+      "id": "10",
+      "name": "Shape 8",
+      "bbox": [
+        482.98,
+        210.24,
+        44.16,
+        44.16
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#FF8A3D",
+      "lineColor": "#FF8A3D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5cva1cfq",
+      "id": "11",
+      "name": "Text 9",
+      "bbox": [
+        482.98,
+        210.24,
+        44.16,
+        44.16
+      ],
+      "geometry": "rect",
+      "text": "✕",
+      "textPreview": "✕",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✕"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✕",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "✕",
+              "fontSize": 17.33,
+              "typeface": "Calibri",
+              "color": "#23262B",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i94r6xgz",
+      "id": "12",
+      "name": "Text 10",
+      "bbox": [
+        542.5,
+        208.32,
+        258.34,
+        26.88
+      ],
+      "geometry": "rect",
+      "text": "Beginners give up",
+      "textPreview": "Beginners give up",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Beginners give up"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Beginners give up",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Beginners give up",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/jadsz2xk",
+      "id": "13",
+      "name": "Text 11",
+      "bbox": [
+        542.5,
+        237.12,
+        258.34,
+        119.04
+      ],
+      "geometry": "rect",
+      "text": "Weak players get crushed and lose motivation; strong players get bored at the same setting.",
+      "textPreview": "Weak players get crushed and lose motivation; strong players get bored at the same setting.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Weak players get crushed and lose"
+          },
+          {
+            "index": 2,
+            "text": "motivation; strong players get bored"
+          },
+          {
+            "index": 3,
+            "text": "at the same setting."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Weak players get crushed and lose motivation; strong players get bored at the same setting.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Weak players get crushed and lose motivation; strong players get bored at the same setting.",
+              "fontSize": 15.33,
+              "typeface": "Calibri",
+              "color": "#B4B9C0"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/w72947yt",
+      "id": "14",
+      "name": "Shape 12",
+      "bbox": [
+        856.51,
+        187.2,
+        363.94,
+        182.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(59, 64, 72, 0.86)",
+      "lineColor": "#596069",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/x8vaxsfe",
+      "id": "15",
+      "name": "Shape 13",
+      "bbox": [
+        881.47,
+        210.24,
+        44.16,
+        44.16
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#FFC24B",
+      "lineColor": "#FFC24B",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a5kr2xg3",
+      "id": "16",
+      "name": "Text 14",
+      "bbox": [
+        881.47,
+        210.24,
+        44.16,
+        44.16
+      ],
+      "geometry": "rect",
+      "text": "✕",
+      "textPreview": "✕",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✕"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✕",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "✕",
+              "fontSize": 17.33,
+              "typeface": "Calibri",
+              "color": "#23262B",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/v6tsv2xo",
+      "id": "17",
+      "name": "Text 15",
+      "bbox": [
+        940.99,
+        208.32,
+        258.34,
+        26.88
+      ],
+      "geometry": "rect",
+      "text": "Feelings are ignored",
+      "textPreview": "Feelings are ignored",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Feelings are ignored"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Feelings are ignored",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Feelings are ignored",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/g36tgryd",
+      "id": "18",
+      "name": "Text 16",
+      "bbox": [
+        940.99,
+        237.12,
+        258.34,
+        119.04
+      ],
+      "geometry": "rect",
+      "text": "No engine notices that the player is stressed, tilted, or completely focused.",
+      "textPreview": "No engine notices that the player is stressed, tilted, or completely focused.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "No engine notices that the player is"
+          },
+          {
+            "index": 2,
+            "text": "stressed, tilted, or completely"
+          },
+          {
+            "index": 3,
+            "text": "focused."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "No engine notices that the player is stressed, tilted, or completely focused.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "No engine notices that the player is stressed, tilted, or completely focused.",
+              "fontSize": 15.33,
+              "typeface": "Calibri",
+              "color": "#B4B9C0"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h4fa9wfy",
+      "id": "19",
+      "name": "Shape 17",
+      "bbox": [
+        59.52,
+        404.16,
+        363.94,
+        182.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(59, 64, 72, 0.86)",
+      "lineColor": "#596069",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p0batw72",
+      "id": "20",
+      "name": "Shape 18",
+      "bbox": [
+        84.48,
+        427.2,
+        44.16,
+        44.16
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#D9663D",
+      "lineColor": "#D9663D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/oz29krqh",
+      "id": "21",
+      "name": "Text 19",
+      "bbox": [
+        84.48,
+        427.2,
+        44.16,
+        44.16
+      ],
+      "geometry": "rect",
+      "text": "✕",
+      "textPreview": "✕",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✕"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✕",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "✕",
+              "fontSize": 17.33,
+              "typeface": "Calibri",
+              "color": "#23262B",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ytsrmpw",
+      "id": "22",
+      "name": "Text 20",
+      "bbox": [
+        144,
+        425.28,
+        258.34,
+        26.88
+      ],
+      "geometry": "rect",
+      "text": "No encouragement",
+      "textPreview": "No encouragement",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "No encouragement"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "No encouragement",
+          "runs": [
+            {
+              "index": 1,
+              "text": "No encouragement",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2xkrih8b",
+      "id": "23",
+      "name": "Text 21",
+      "bbox": [
+        144,
+        454.08,
+        258.34,
+        119.04
+      ],
+      "geometry": "rect",
+      "text": "A frustrated player receives no support — only another losing position.",
+      "textPreview": "A frustrated player receives no support — only another losing position.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "A frustrated player receives no"
+          },
+          {
+            "index": 2,
+            "text": "support — only another losing"
+          },
+          {
+            "index": 3,
+            "text": "position."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "A frustrated player receives no support — only another losing position.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "A frustrated player receives no support — only another losing position.",
+              "fontSize": 15.33,
+              "typeface": "Calibri",
+              "color": "#B4B9C0"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1wbapc7q",
+      "id": "24",
+      "name": "Shape 22",
+      "bbox": [
+        458.02,
+        404.16,
+        363.94,
+        182.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(59, 64, 72, 0.86)",
+      "lineColor": "#596069",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gv29g7q5",
+      "id": "25",
+      "name": "Shape 23",
+      "bbox": [
+        482.98,
+        427.2,
+        44.16,
+        44.16
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#8FA6C4",
+      "lineColor": "#8FA6C4",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fu9sn2p0",
+      "id": "26",
+      "name": "Text 24",
+      "bbox": [
+        482.98,
+        427.2,
+        44.16,
+        44.16
+      ],
+      "geometry": "rect",
+      "text": "✕",
+      "textPreview": "✕",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✕"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✕",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "✕",
+              "fontSize": 17.33,
+              "typeface": "Calibri",
+              "color": "#23262B",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/et0reh8f",
+      "id": "27",
+      "name": "Text 25",
+      "bbox": [
+        542.5,
+        425.28,
+        258.34,
+        26.88
+      ],
+      "geometry": "rect",
+      "text": "Language barrier",
+      "textPreview": "Language barrier",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Language barrier"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Language barrier",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Language barrier",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tsrqlc7u",
+      "id": "28",
+      "name": "Text 26",
+      "bbox": [
+        542.5,
+        454.08,
+        258.34,
+        119.04
+      ],
+      "geometry": "rect",
+      "text": "Chess coaching tools are English-only, closing them off to many local players.",
+      "textPreview": "Chess coaching tools are English-only, closing them off to many local players.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Chess coaching tools are"
+          },
+          {
+            "index": 2,
+            "text": "English-only, closing them off to"
+          },
+          {
+            "index": 3,
+            "text": "many local players."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Chess coaching tools are English-only, closing them off to many local players.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Chess coaching tools are English-only, closing them off to many local players.",
+              "fontSize": 15.33,
+              "typeface": "Calibri",
+              "color": "#B4B9C0"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sri9s7q9",
+      "id": "29",
+      "name": "Shape 27",
+      "bbox": [
+        856.51,
+        404.16,
+        363.94,
+        182.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFC24B",
+      "lineColor": "#FFC24B",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ilwf69kv",
+      "id": "30",
+      "name": "Text 28",
+      "bbox": [
+        887.23,
+        404.16,
+        302.5,
+        182.4
+      ],
+      "geometry": "rect",
+      "text": "The engine should adapt to the player — not the other way around.",
+      "textPreview": "The engine should adapt to the player — not the other way around.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "The engine should adapt to the"
+          },
+          {
+            "index": 2,
+            "text": "player — not the other way"
+          },
+          {
+            "index": 3,
+            "text": "around."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "The engine should adapt to the player — not the other way around.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "The engine should adapt to the player — not the other way around.",
+              "fontSize": 20,
+              "typeface": "Calibri",
+              "color": "#23262B",
+              "bold": true,
+              "italic": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/jm5gze1g",
+      "id": "31",
+      "name": "Text 29",
+      "bbox": [
+        59.52,
+        670.08,
+        249.6,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "SENTIO",
+      "textPreview": "SENTIO",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SENTIO"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SENTIO",
+          "runs": [
+            {
+              "index": 1,
+              "text": "SENTIO",
+              "fontSize": 12,
+              "typeface": "Calibri",
+              "color": "#7E858E",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/knex8j21",
+      "id": "32",
+      "name": "Text 30",
+      "bbox": [
+        1124.45,
+        670.08,
+        96,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "4",
+      "textPreview": "4",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "4"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "4",
+          "resolvedTextStyle": {
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "4",
+              "fontSize": 14.67,
+              "typeface": "Calibri",
+              "color": "#FFC24B",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    }
+  ],
+  "composeRuns": []
+}

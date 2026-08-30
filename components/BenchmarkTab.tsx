@@ -88,7 +88,7 @@ export default function BenchmarkTab({ report }: BenchmarkTabProps) {
           <div className="flex min-w-[150px] flex-1 flex-col gap-1">
             <label className="text-[10px] uppercase tracking-wider text-zinc-500">Position</label>
             <Select value={position} onValueChange={setPosition}>
-              <SelectTrigger className="h-8 text-xs">
+              <SelectTrigger className="h-8 text-xs" aria-label="Position">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -103,7 +103,7 @@ export default function BenchmarkTab({ report }: BenchmarkTabProps) {
           <div className="flex min-w-[180px] flex-1 flex-col gap-1">
             <label className="text-[10px] uppercase tracking-wider text-zinc-500">Metric</label>
             <Select value={metric} onValueChange={(v) => setMetric(v as MetricKey)}>
-              <SelectTrigger className="h-8 text-xs">
+              <SelectTrigger className="h-8 text-xs" aria-label="Metric">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

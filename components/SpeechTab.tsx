@@ -351,9 +351,7 @@ export default function SpeechTab({
             setMode("groq");
           }
         }}>
-          <SelectTrigger className="flex-1 h-8 text-sm">
-            <span>{langEntry.label}</span>
-          </SelectTrigger>
+          <SelectTrigger className="flex-1 h-8 text-sm" aria-label="Speech language" />
           <SelectContent>
             {LANGUAGES.map((l) => (
               <SelectItem key={l.code} value={l.code}>

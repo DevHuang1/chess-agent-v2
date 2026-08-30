@@ -1,0 +1,4 @@
+Slides 1-18: intentional palette restyle from dark Ember to light Ember. Geometry, copy, typography, and narrative are unchanged.
+Slides 12, 13, and 15: replaced dark-mode application screenshots with verified light-mode captures from the running local Sentio demo.
+Slides 10 and 18: changed dark brown Prolog emphasis panels to warm ivory so they remain legible on the light canvas.
+Slides 12, 13, and 15: added small background-matched cover elements inside the screenshot frames to remove the development-only "1 Issue" notification badge requested in review.

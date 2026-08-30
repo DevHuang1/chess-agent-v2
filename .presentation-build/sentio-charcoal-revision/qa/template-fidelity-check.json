@@ -1,0 +1,13 @@
+{
+  "status": "pass",
+  "checkedAt": "2026-08-30T13:05:03.212Z",
+  "workspace": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision",
+  "finalPptx": "/Users/yuza/chess-agent-v2/Sentio_AI_Project_Charcoal_Revised.pptx",
+  "starterPptx": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter.pptx",
+  "mapPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-frame-map.json",
+  "starterLayoutDir": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout",
+  "finalLayoutDir": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/final-layout/final",
+  "editDir": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision",
+  "issueCount": 0,
+  "issues": []
+}

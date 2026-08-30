@@ -246,18 +246,22 @@ Set up one of the transcription providers for `/api/transcribe` (server-side key
 
 | Provider    | Setup                                                          |
 | ----------- | -------------------------------------------------------------- |
-| **Local Whisper** | Run `scripts/convert_burmese_to_ct2.py` to build the CT2 model; zero cost, fully offline, no key. Tried first in the Burmese chain. |
-| **Gemini**  | `GEMINI_API_KEY` — must be a real API key (`AIza…`), not an OAuth token (`AQ…`) |
-| **ElevenLabs** | `ELEVENLABS_API_KEY` (STT model `scribe_v2`, `language_code: mya`). Tried before Gemini in the Burmese chain. |
+| **ElevenLabs** | `ELEVENLABS_API_KEY` (STT model `scribe_v2`, `language_code: mya`). Best recorded Burmese accuracy — leads the chain and returns native Myanmar script. |
+| **Gemini**  | `GEMINI_API_KEY` — must be a real API key (`AIza…`), not an OAuth token (`AQ…`). Prompted to write Myanmar script. |
+| **Groq**    | `GROQ_API_KEY` (Whisper large-v3 with a Burmese chess vocabulary prompt) |
 | **AssemblyAI** | `ASSEMBLYAI_API_KEY`                                        |
+| **Local Whisper** | Run `scripts/convert_burmese_to_ct2.py` to build the CT2 model; zero cost, fully offline, no key. Always the last resort in the Burmese chain. |
 
-> **Known limitation (ElevenLabs STT):** Scribe returns **romanized** Burmese
-> (e.g. `မြင်း f3 ကို` → `"Mang F3Q SRP"`) rather than Myanmar script. This is
-> fine for **Voice Coach** (the LLM reads transliteration), but for **Voice
-> Move** the romanized piece word is ambiguous and may parse as a *different,
-> legal* move (e.g. `Kf3` instead of knight f3). Prefer local Whisper or Gemini
-> for reliable move parsing; both return native script. The editable transcript
-> in Voice Coach lets you correct any transcription before asking.
+> **Transcription quality note:** Whisper-family engines (local and Groq) can
+> hallucinate replacement-character soup or a non-Burmese script (Thai,
+> Devanagari, Han) while returning HTTP 200. `/api/transcribe` therefore
+> **gates every Burmese tier** — a result is accepted only when it actually
+> contains Myanmar script (or a short chess token such as `O-O`) — and tries
+> providers in quality order (ElevenLabs Scribe `mya` → Gemini → Groq →
+> AssemblyAI → local Whisper), with the provider you pick in the Speech tab
+> leading the chain. This stops one failing engine from shadowing a working
+> one and keeps garbage out of the transcript box. The editable transcript in
+> Voice Coach lets you correct any residual transcription error before asking.
 
 ### Configuring Burmese text-to-speech (TTS)
 

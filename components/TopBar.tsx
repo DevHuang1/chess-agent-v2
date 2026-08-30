@@ -15,8 +15,8 @@ import type { PuzzleProgress } from "@/lib/puzzleProgress";
 import { levelFromXp, tierForLevel } from "@/lib/puzzleProgress";
 
 export interface TopBarProps {
-  workspaceTab: "board" | "aiLab" | "train";
-  setWorkspaceTab: (tab: "board" | "aiLab" | "train") => void;
+  workspaceTab: "board" | "train";
+  setWorkspaceTab: (tab: "board" | "train") => void;
   emotionMode: "auto" | "manual";
   setEmotionMode: (mode: "auto" | "manual") => void;
   emotion: EmotionLabel;
@@ -68,7 +68,7 @@ export default function TopBar({
           variant={workspaceTab === "board" ? "accent" : "ghost"}
           size="sm"
           aria-current={workspaceTab === "board" ? "page" : undefined}
-          onClick={() => setWorkspaceTab("board")}
+                    onClick={() => setWorkspaceTab("board")}
         >
           Board
         </Button>

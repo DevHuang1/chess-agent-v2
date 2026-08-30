@@ -17,8 +17,11 @@ export type LessonStep = {
 export type Lesson = {
   id: string;
   title: string;
-  category: "openings" | "endgames" | "attacks";
+  category: "openings" | "endgames" | "attacks" | "ready";
   intro: string;
+  difficulty?: 1 | 2 | 3;
+  tags?: string[];
+  estimatedMinutes?: number;
   /** Defaults to the standard starting position. */
   startFen?: string;
   steps: LessonStep[];
@@ -28,6 +31,7 @@ export const LESSON_CATEGORIES = [
   { key: "openings", label: "Openings & Traps" },
   { key: "endgames", label: "Endgame Technique" },
   { key: "attacks", label: "Classic Attacks" },
+  { key: "ready", label: "Ready Mating Nets" },
 ] as const;
 
 let cache: Lesson[] | null = null;
@@ -63,6 +67,20 @@ export function validateLesson(lesson: Lesson): void {
       );
     }
   }
+  if (!LESSON_CATEGORIES.some((category) => category.key === lesson.category)) {
+    throw new Error(`Unknown category "${lesson.category}" in lesson ${lesson.id}`);
+  }
+}
+
+export function difficultyForLesson(lesson: Lesson): 1 | 2 | 3 {
+  if (lesson.difficulty) return lesson.difficulty;
+  if (lesson.steps.length <= 3) return 1;
+  if (lesson.steps.length <= 8) return 2;
+  return 3;
+}
+
+export function estimatedMinutesForLesson(lesson: Lesson): number {
+  return lesson.estimatedMinutes ?? Math.max(2, Math.ceil(lesson.steps.length / 2));
 }
 
 /** FEN after applying the first `upTo` steps of a lesson. */

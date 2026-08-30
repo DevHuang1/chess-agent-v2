@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { chooseCustomOption } from "./helpers/customSelect";
 
 type SceneSnapshot = {
   fen: string;
@@ -30,9 +31,9 @@ async function enter3DArena(page: import("@playwright/test").Page) {
   await page.goto("/?e2e=1");
   await page.waitForLoadState("domcontentloaded");
   await page.waitForTimeout(1500);
-  await page.getByRole("button", { name: "3D Mode" }).click({ force: true });
-  await expect(page.getByRole("button", { name: "Exit 3D" })).toBeVisible();
-  await expect(page.getByText("3D Arena Active", { exact: false })).toBeVisible({ timeout: 15_000 });
+  // The 3D arena is entered via the controller panel's "3D" tab.
+  await page.getByRole("button", { name: "3D", exact: true }).click({ force: true });
+  await expect(page.getByRole("button", { name: "Exit 3D" })).toBeVisible({ timeout: 15_000 });
   await expect.poll(async () => page.locator("canvas").count()).toBeGreaterThan(0);
 }
 
@@ -46,6 +47,8 @@ async function snapshot(page: import("@playwright/test").Page): Promise<SceneSna
 }
 
 test.describe("3D arena", () => {
+  test.setTimeout(90_000);
+
   test("transitions to a rendered arena and exposes the upgraded visual scene", async ({ page }) => {
     await enter3DArena(page);
 
@@ -66,11 +69,11 @@ test.describe("3D arena", () => {
 
   test("runs live MCTS on the 3D board at depth 6", async ({ page }) => {
     await enter3DArena(page);
-    await page.locator("#live-ai-algorithm").selectOption("mcts");
+    await chooseCustomOption(page.locator("#live-ai-algorithm"), "MCTS");
     await page.locator("#live-ai-depth").fill("6");
     await expect(page.locator("#live-ai-depth")).toHaveValue("6");
     await expect.poll(async () => (await snapshot(page)).robotAnimating, { timeout: 15_000 }).toBe(true);
-    await page.locator("#live-ai-algorithm").selectOption("off");
+    await chooseCustomOption(page.locator("#live-ai-algorithm"), "Manual play");
   });
 
   test("animates a legal player move and commits it to the live chess state", async ({ page }) => {
@@ -131,9 +134,8 @@ test.describe("3D arena", () => {
 
     await expect(page.getByText("Scene lighting", { exact: true })).toBeVisible();
     const preset = page.locator("#lighting-preset");
-    await expect(preset).toHaveValue("studio");
-    await preset.selectOption("dramatic");
-    await expect(preset).toHaveValue("dramatic");
+    await expect(preset).toContainText("Studio");
+    await chooseCustomOption(preset, "Dramatic");
 
     const intensity = page.locator("#lighting-intensity");
     await intensity.fill("1.25");

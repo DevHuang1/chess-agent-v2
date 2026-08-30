@@ -251,6 +251,7 @@ function PuzzleRushRun({
   const solvedIdsRef = useRef<Set<string>>(
     new Set(progress.solvedIds), // Persisted dedup: no instant re-seen puzzles.
   );
+  const failedThisPuzzleRef = useRef(false);
   const stepRef = useRef(0); // index into playerMovesUci
   const boardChessRef = useRef(new Chess());
   const [boardFen, setBoardFen] = useState("");
@@ -292,6 +293,7 @@ function PuzzleRushRun({
         setBoardFen(chess.fen());
         setHintRevealed(false);
         setUsedHintThisPuzzle(false);
+        failedThisPuzzleRef.current = false;
       } catch {
         solvedIdsRef.current.add(next.id);
         tryLoad(attempts + 1);
@@ -370,7 +372,8 @@ function PuzzleRushRun({
     setShake(true);
     window.setTimeout(() => setShake(false), 450);
     // Only the FIRST wrong move counts the attempt as failed for stats.
-    if (current && stepRef.current === 0) {
+    if (current && !failedThisPuzzleRef.current) {
+      failedThisPuzzleRef.current = true;
       const outcome = applySolveResult(progressRef.current, {
         rating: current.rating,
         solved: false,
@@ -389,6 +392,25 @@ function PuzzleRushRun({
     }
   }, [current, mode, onProgressUpdate, usedHintThisPuzzle]);
 
+  const handleSkip = useCallback(() => {
+    if (!current || finished) return;
+    if (!failedThisPuzzleRef.current) {
+      failedThisPuzzleRef.current = true;
+      const outcome = applySolveResult(progressRef.current, {
+        rating: current.rating,
+        solved: false,
+        usedHint: usedHintThisPuzzle,
+        theme: current.primaryTheme,
+      });
+      progressRef.current = outcome.progress;
+      onProgressUpdate(outcome.progress);
+    }
+    // Keep it out of the current run, but allow it to return in a later session
+    // as lightweight spaced repetition.
+    solvedIdsRef.current.add(current.id);
+    loadNext();
+  }, [current, finished, loadNext, onProgressUpdate, usedHintThisPuzzle]);
+
   const onDrop = useCallback(
     (sourceSquare: string, targetSquare: string): boolean => {
       if (!current || finished) return false;
@@ -400,7 +422,7 @@ function PuzzleRushRun({
         applied = chess.move({
           from: sourceSquare,
           to: targetSquare,
-          promotion: "q",
+          promotion: expectedUci.length === 5 ? expectedUci[4] : "q",
         });
       } catch {
         return false; // Illegal — react-chessboard snaps back.
@@ -464,11 +486,11 @@ function PuzzleRushRun({
         setHintRevealed(true);
         setUsedHintThisPuzzle(true);
       }
-      if (e.key === "Enter") loadNext();
+      if (e.key === "Enter") handleSkip();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [finished, loadNext]);
+  }, [finished, handleSkip]);
 
   if (finished) {
     return (
@@ -607,7 +629,7 @@ function PuzzleRushRun({
                 variant="outline"
                 size="sm"
                 className="flex-1"
-                onClick={loadNext}
+                onClick={handleSkip}
                 title="Skip this puzzle (Enter)"
               >
                 Skip
@@ -664,4 +686,3 @@ function PuzzleRushRun({
     </div>
   );
 }
-

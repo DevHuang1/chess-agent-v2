@@ -102,14 +102,17 @@ function boosted(scores: EmotionScores, label: EmotionLabel, amount: number) {
 
 /**
  * Fuse facial emotion scores with gameplay telemetry and return the final
- * label plus adjusted scores (useful for UI bars).
+ * label plus adjusted scores (useful for UI bars). The returned `notes`
+ * describe every boost that fired, so the UI can explain why game context
+ * pushed the reading ("long think → focused +0.35").
  */
 export function fuseEmotion(
   facialScores: EmotionScores,
   rawSignals: Partial<GameSignals> | null | undefined,
-): { emotion: EmotionLabel; scores: EmotionScores } {
+): { emotion: EmotionLabel; scores: EmotionScores; notes: string[] } {
   const s = normalizeGameSignals(rawSignals);
   const scores: EmotionScores = { ...facialScores };
+  const notes: string[] = [];
 
   // Long deliberation over an unharmed position reads as concentration.
   const tookLongThink =
@@ -119,6 +122,9 @@ export function fuseEmotion(
     s.lastMoveEvalLossCp < FUSION_WEIGHTS.setbackCp;
   if (tookLongThink && lastMoveWasSound && scores.focused > 0.02) {
     boosted(scores, "focused", FUSION_WEIGHTS.focusThinkBoost);
+    notes.push(
+      `long think (${(s.thinkTimeMs! / 1000).toFixed(0)}s) on a sound position → focused +${FUSION_WEIGHTS.focusThinkBoost.toFixed(2)}`,
+    );
   }
 
   // Adversity erodes the "nothing is happening" neutral signal: after
@@ -139,18 +145,18 @@ export function fuseEmotion(
     s.recentSetbacks > 0 &&
     scores.stressed + scores.frustrated > 0.05
   ) {
-    boosted(
-      scores,
-      "stressed",
-      Math.min(
-        FUSION_WEIGHTS.maxStressBoost,
-        FUSION_WEIGHTS.stressPerSetback * s.recentSetbacks,
-      ),
+    const stressBoost = Math.min(
+      FUSION_WEIGHTS.maxStressBoost,
+      FUSION_WEIGHTS.stressPerSetback * s.recentSetbacks,
     );
+    boosted(scores, "stressed", stressBoost);
     boosted(
       scores,
       "frustrated",
       FUSION_WEIGHTS.frustrationPerSetback * Math.min(s.recentSetbacks, 3),
+    );
+    notes.push(
+      `${s.recentSetbacks} recent setback${s.recentSetbacks === 1 ? "" : "s"} → stressed +${stressBoost.toFixed(2)}, frustrated +${(FUSION_WEIGHTS.frustrationPerSetback * Math.min(s.recentSetbacks, 3)).toFixed(2)}`,
     );
   }
 
@@ -159,6 +165,9 @@ export function fuseEmotion(
     s.playerEvalCp !== null && s.playerEvalCp >= FUSION_WEIGHTS.comfortCp;
   if (comfortablyAhead && scores.confident > 0.05) {
     boosted(scores, "confident", FUSION_WEIGHTS.confidentComfortBoost);
+    notes.push(
+      `comfortable advantage (+${(s.playerEvalCp! / 100).toFixed(1)}) → confident +${FUSION_WEIGHTS.confidentComfortBoost.toFixed(2)}`,
+    );
   }
 
   // A quiet face in a stable game settles into calm — but not when the
@@ -170,7 +179,10 @@ export function fuseEmotion(
     s.recentSetbacks === 0
   ) {
     boosted(scores, "calm", FUSION_WEIGHTS.calmUnhurriedBoost);
+    notes.push(
+      `settled, unhurried game → calm +${FUSION_WEIGHTS.calmUnhurriedBoost.toFixed(2)}`,
+    );
   }
 
-  return { emotion: pickEmotion(scores), scores };
+  return { emotion: pickEmotion(scores), scores, notes };
 }

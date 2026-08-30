@@ -1,0 +1,211 @@
+{
+  "sourcePptx": "/Users/yuza/Downloads/Sentio_AI_Project_Charcoal.pptx",
+  "mapPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-frame-map.json",
+  "output": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter.pptx",
+  "outputBytes": 807561,
+  "sourceSlideCount": 16,
+  "slideCount": 18,
+  "previewDir": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview",
+  "layoutDir": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout",
+  "contactSheet": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-contact-sheet.png",
+  "slides": [
+    {
+      "outputSlide": 1,
+      "sourceSlide": 1,
+      "narrativeRole": "opening title",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 12,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-01.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-01.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-01.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-01.layout.json"
+    },
+    {
+      "outputSlide": 2,
+      "sourceSlide": 2,
+      "narrativeRole": "team ownership and responsibilities",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 37,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-02.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-02.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-02.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-02.layout.json"
+    },
+    {
+      "outputSlide": 3,
+      "sourceSlide": 3,
+      "narrativeRole": "presentation roadmap",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 44,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-03.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-03.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-03.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-03.layout.json"
+    },
+    {
+      "outputSlide": 4,
+      "sourceSlide": 13,
+      "narrativeRole": "What Sentio is and how the product works",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 117,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-04.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-04.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-04.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-04.layout.json"
+    },
+    {
+      "outputSlide": 5,
+      "sourceSlide": 4,
+      "narrativeRole": "problem and audience need",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 31,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-05.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-05.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-05.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-05.layout.json"
+    },
+    {
+      "outputSlide": 6,
+      "sourceSlide": 5,
+      "narrativeRole": "system objectives",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 24,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-06.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-06.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-06.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-06.layout.json"
+    },
+    {
+      "outputSlide": 7,
+      "sourceSlide": 6,
+      "narrativeRole": "functional requirements",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 34,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-07.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-07.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-07.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-07.layout.json"
+    },
+    {
+      "outputSlide": 8,
+      "sourceSlide": 7,
+      "narrativeRole": "system architecture",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 42,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-08.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-08.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-08.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-08.layout.json"
+    },
+    {
+      "outputSlide": 9,
+      "sourceSlide": 8,
+      "narrativeRole": "emotion detection method",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 35,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-09.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-09.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-09.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-09.layout.json"
+    },
+    {
+      "outputSlide": 10,
+      "sourceSlide": 9,
+      "narrativeRole": "emotion to engine adaptation",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 69,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-10.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-10.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-10.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-10.layout.json"
+    },
+    {
+      "outputSlide": 11,
+      "sourceSlide": 10,
+      "narrativeRole": "Stockfish and Prolog reasoning",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 34,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-11.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-11.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-11.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-11.layout.json"
+    },
+    {
+      "outputSlide": 12,
+      "sourceSlide": 11,
+      "narrativeRole": "voice coach and voice moves",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 33,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-12.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-12.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-12.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-12.layout.json"
+    },
+    {
+      "outputSlide": 13,
+      "sourceSlide": 12,
+      "narrativeRole": "implementation example",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 17,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-13.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-13.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-13.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-13.layout.json"
+    },
+    {
+      "outputSlide": 14,
+      "sourceSlide": 13,
+      "narrativeRole": "real system UI evidence",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 117,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-14.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-14.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-14.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-14.layout.json"
+    },
+    {
+      "outputSlide": 15,
+      "sourceSlide": 14,
+      "narrativeRole": "benefits and limitations",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 48,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-15.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-15.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-15.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-15.layout.json"
+    },
+    {
+      "outputSlide": 16,
+      "sourceSlide": 15,
+      "narrativeRole": "future work",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 30,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-16.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-16.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-16.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-16.layout.json"
+    },
+    {
+      "outputSlide": 17,
+      "sourceSlide": 16,
+      "narrativeRole": "conclusion",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 30,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-17.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-17.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-17.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-17.layout.json"
+    },
+    {
+      "outputSlide": 18,
+      "sourceSlide": 1,
+      "narrativeRole": "standalone thank you closing",
+      "reuseMode": "duplicate-slide",
+      "editTargetCount": 12,
+      "previewPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-preview/starter-slide-18.png",
+      "previewRelativePath": "template-starter-preview/starter-slide-18.png",
+      "layoutPath": "/Users/yuza/chess-agent-v2/.presentation-build/sentio-charcoal-revision/template-starter-layout/starter-slide-18.layout.json",
+      "layoutRelativePath": "template-starter-layout/starter-slide-18.layout.json"
+    }
+  ]
+}

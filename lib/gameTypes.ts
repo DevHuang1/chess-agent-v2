@@ -23,3 +23,23 @@ export type CoachLlmConnection =
   | "disconnected"
   | "disabled";
 export type LiveAiMode = "off" | "minimax" | "mcts";
+
+/**
+ * Structured timing/identity metadata returned by the move endpoint that the
+ * client attaches to each bot move's provenance. No secrets are ever sent.
+ */
+export type EngineDiagnostics = {
+  engineId?: string;
+  engineName?: string;
+  engineVersion?: string;
+  algorithm?: string;
+  requestedDepth?: number;
+  completedDepth?: number;
+  timeBudgetMs?: number;
+  searchTimeMs?: number;
+  nodesVisited?: number;
+  cacheHit?: boolean;
+  cancelled?: boolean;
+  timeout?: boolean;
+  fallbackUsed?: boolean;
+};

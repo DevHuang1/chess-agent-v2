@@ -1,0 +1,1496 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/90e1hl",
+    "id": "90e1hl",
+    "slide": 13,
+    "layoutId": "/ppt/slideLayouts/slideLayout1.xml",
+    "layoutName": "DEFAULT",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+    "backgroundImage": {
+      "assetId": "/ppt/media/Slide-12-image-1.jpeg",
+      "contentType": "image/jpeg",
+      "byteLength": 86223
+    },
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Office",
+    "colors": {
+      "accent1": "#4472C4",
+      "accent2": "#ED7D31",
+      "accent3": "#A5A5A5",
+      "accent4": "#FFC000",
+      "accent5": "#5B9BD5",
+      "accent6": "#70AD47",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#44546A",
+      "lt2": "#E7E6E6",
+      "hlink": "#0563C1",
+      "folHlink": "#954F72"
+    },
+    "fontScheme": {
+      "name": "Office",
+      "majorFont": {
+        "latinTypeface": "Calibri Light"
+      },
+      "minorFont": {
+        "latinTypeface": "Calibri"
+      }
+    },
+    "typefaces": [
+      "Calibri",
+      "Calibri Light",
+      "Cambria",
+      "Courier New"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "/ppt/slideLayouts/slideLayout1.xml",
+      "name": "DEFAULT",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0nu5cjud",
+      "id": "2",
+      "name": "Text 0",
+      "bbox": [
+        59.52,
+        44.16,
+        1160.93,
+        24.96
+      ],
+      "geometry": "rect",
+      "text": "THE MAPPING, IN TWO LANGUAGES",
+      "textPreview": "THE MAPPING, IN TWO LANGUAGES",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "THE MAPPING, IN TWO LANGUAGES"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "THE MAPPING, IN TWO LANGUAGES",
+          "runs": [
+            {
+              "index": 1,
+              "text": "THE MAPPING, IN TWO LANGUAGES",
+              "fontSize": 14.67,
+              "typeface": "Calibri",
+              "color": "#FF8A3D",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1o36loby",
+      "id": "3",
+      "name": "Text 1",
+      "bbox": [
+        59.52,
+        71.04,
+        1160.93,
+        57.6
+      ],
+      "geometry": "rect",
+      "text": "Code Example",
+      "textPreview": "Code Example",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Code Example"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Code Example",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Code Example",
+              "fontSize": 41.33,
+              "typeface": "Cambria",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qhsn69cb",
+      "id": "4",
+      "name": "Shape 2",
+      "bbox": [
+        59.52,
+        178.56,
+        595.2,
+        436.8
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#23262B",
+      "lineColor": "#FF8A3D",
+      "lineWidth": 1.67
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ri1ofetw",
+      "id": "5",
+      "name": "Shape 3",
+      "bbox": [
+        86.4,
+        199.68,
+        12.48,
+        12.48
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#F2705A",
+      "lineColor": "#F2705A",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sju58ju1",
+      "id": "6",
+      "name": "Shape 4",
+      "bbox": [
+        109.44,
+        199.68,
+        12.48,
+        12.48
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#FFC24B",
+      "lineColor": "#FFC24B",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dk36hobm",
+      "id": "7",
+      "name": "Shape 5",
+      "bbox": [
+        132.48,
+        199.68,
+        12.48,
+        12.48
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#9BD17E",
+      "lineColor": "#9BD17E",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/itsn29cz",
+      "id": "8",
+      "name": "Text 6",
+      "bbox": [
+        165.12,
+        192,
+        470.4,
+        26.88
+      ],
+      "geometry": "rect",
+      "text": "lib/engineProfiles.ts",
+      "textPreview": "lib/engineProfiles.ts",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "lib/engineProfiles.ts"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "lib/engineProfiles.ts",
+          "runs": [
+            {
+              "index": 1,
+              "text": "lib/engineProfiles.ts",
+              "fontSize": 14,
+              "typeface": "Courier New",
+              "color": "#9198A1"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3e1obetk",
+      "id": "9",
+      "name": "Text 7",
+      "bbox": [
+        88.32,
+        220.8,
+        537.6,
+        379.2
+      ],
+      "geometry": "rect",
+      "text": "export const EMOTION_PROFILES = {\n  stressed:   { depth: 1, skill: 1, elo: 1320 },\n  frustrated: { depth: 2, skill: 3, elo: 1320 },\n  calm:       { depth: 4, skill: 6, elo: 1600 },\n  neutral:    { depth: 6, skill: 10, elo: 2000 },\n  focused:    { depth: 8, skill: 15, elo: 2600 },\n  confident:  { depth: 10, skill: 20, elo: 3190 },\n};\n\nexport function clampElo(elo: number) {\n  return Math.max(1320, Math.min(3190, elo));\n}",
+      "textPreview": "export const EMOTION_PROFILES = { |   stressed:   { depth: 1, skill: 1, elo: 1320 }, |   frustrated: { depth: 2, skill: 3, elo: 1320 }, |...",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 12,
+        "lines": [
+          {
+            "index": 1,
+            "text": "export const EMOTION_PROFILES = {"
+          },
+          {
+            "index": 2,
+            "text": "  stressed:   { depth: 1, skill: 1, elo: 1320 },"
+          },
+          {
+            "index": 3,
+            "text": "  frustrated: { depth: 2, skill: 3, elo: 1320 },"
+          },
+          {
+            "index": 4,
+            "text": "  calm:       { depth: 4, skill: 6, elo: 1600 },"
+          },
+          {
+            "index": 5,
+            "text": "  neutral:    { depth: 6, skill: 10, elo: 2000 },"
+          },
+          {
+            "index": 6,
+            "text": "  focused:    { depth: 8, skill: 15, elo: 2600 },"
+          },
+          {
+            "index": 7,
+            "text": "  confident:  { depth: 10, skill: 20, elo: 3190 },"
+          },
+          {
+            "index": 8,
+            "text": "};"
+          },
+          {
+            "index": 9,
+            "text": ""
+          },
+          {
+            "index": 10,
+            "text": "export function clampElo(elo: number) {"
+          },
+          {
+            "index": 11,
+            "text": "  return Math.max(1320, Math.min(3190, elo));"
+          },
+          {
+            "index": 12,
+            "text": "}"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "export const EMOTION_PROFILES = {",
+          "runs": [
+            {
+              "index": 1,
+              "text": "export const ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFB061"
+            },
+            {
+              "index": 2,
+              "text": "EMOTION_PROFILES",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFDA7B"
+            },
+            {
+              "index": 3,
+              "text": " = {",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "  stressed:   { depth: 1, skill: 1, elo: 1320 },",
+          "runs": [
+            {
+              "index": 1,
+              "text": "  stressed:   { depth: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 2,
+              "text": "1",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 3,
+              "text": ", skill: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 4,
+              "text": "1",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 5,
+              "text": ", elo: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 6,
+              "text": "1320",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 7,
+              "text": " },",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "  frustrated: { depth: 2, skill: 3, elo: 1320 },",
+          "runs": [
+            {
+              "index": 1,
+              "text": "  frustrated: { depth: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 2,
+              "text": "2",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 3,
+              "text": ", skill: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 4,
+              "text": "3",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 5,
+              "text": ", elo: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 6,
+              "text": "1320",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 7,
+              "text": " },",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "  calm:       { depth: 4, skill: 6, elo: 1600 },",
+          "runs": [
+            {
+              "index": 1,
+              "text": "  calm:       { depth: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 2,
+              "text": "4",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 3,
+              "text": ", skill: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 4,
+              "text": "6",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 5,
+              "text": ", elo: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 6,
+              "text": "1600",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 7,
+              "text": " },",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "  neutral:    { depth: 6, skill: 10, elo: 2000 },",
+          "runs": [
+            {
+              "index": 1,
+              "text": "  neutral:    { depth: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 2,
+              "text": "6",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 3,
+              "text": ", skill: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 4,
+              "text": "10",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 5,
+              "text": ", elo: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 6,
+              "text": "2000",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 7,
+              "text": " },",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 6,
+          "text": "  focused:    { depth: 8, skill: 15, elo: 2600 },",
+          "runs": [
+            {
+              "index": 1,
+              "text": "  focused:    { depth: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 2,
+              "text": "8",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 3,
+              "text": ", skill: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 4,
+              "text": "15",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 5,
+              "text": ", elo: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 6,
+              "text": "2600",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 7,
+              "text": " },",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 7,
+          "text": "  confident:  { depth: 10, skill: 20, elo: 3190 },",
+          "runs": [
+            {
+              "index": 1,
+              "text": "  confident:  { depth: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 2,
+              "text": "10",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 3,
+              "text": ", skill: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 4,
+              "text": "20",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 5,
+              "text": ", elo: ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 6,
+              "text": "3190",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            },
+            {
+              "index": 7,
+              "text": " },",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 8,
+          "text": "};",
+          "runs": [
+            {
+              "index": 1,
+              "text": "};",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 10,
+          "text": "export function clampElo(elo: number) {",
+          "runs": [
+            {
+              "index": 1,
+              "text": "export function ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFB061"
+            },
+            {
+              "index": 2,
+              "text": "clampElo",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFDA7B"
+            },
+            {
+              "index": 3,
+              "text": "(elo: number) {",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 11,
+          "text": "  return Math.max(1320, Math.min(3190, elo));",
+          "runs": [
+            {
+              "index": 1,
+              "text": "  return",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFB061"
+            },
+            {
+              "index": 2,
+              "text": " Math.max(1320, Math.min(3190, elo));",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 12,
+          "text": "}",
+          "runs": [
+            {
+              "index": 1,
+              "text": "}",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z65kbul4",
+      "id": "10",
+      "name": "Shape 8",
+      "bbox": [
+        683.52,
+        178.56,
+        536.64,
+        436.8
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#23262B",
+      "lineColor": "#F2705A",
+      "lineWidth": 1.67
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/e5wj2p4j",
+      "id": "11",
+      "name": "Shape 9",
+      "bbox": [
+        710.4,
+        199.68,
+        12.48,
+        12.48
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#F2705A",
+      "lineColor": "#F2705A",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1872dk3a",
+      "id": "12",
+      "name": "Shape 10",
+      "bbox": [
+        733.44,
+        199.68,
+        12.48,
+        12.48
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#FFC24B",
+      "lineColor": "#FFC24B",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/07e14z2p",
+      "id": "13",
+      "name": "Shape 11",
+      "bbox": [
+        756.48,
+        199.68,
+        12.48,
+        12.48
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#9BD17E",
+      "lineColor": "#9BD17E",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/napkfulg",
+      "id": "14",
+      "name": "Text 12",
+      "bbox": [
+        789.12,
+        192,
+        411.84,
+        26.88
+      ],
+      "geometry": "rect",
+      "text": "prolog/ai_system.pl",
+      "textPreview": "prolog/ai_system.pl",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "prolog/ai_system.pl"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "prolog/ai_system.pl",
+          "runs": [
+            {
+              "index": 1,
+              "text": "prolog/ai_system.pl",
+              "fontSize": 14,
+              "typeface": "Courier New",
+              "color": "#9198A1"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m9gj6pkv",
+      "id": "15",
+      "name": "Text 13",
+      "bbox": [
+        712.32,
+        220.8,
+        479.04,
+        379.2
+      ],
+      "geometry": "rect",
+      "text": "% emotion to engine strength\nprofile(stressed,    1,  1, 1320).\nprofile(frustrated,  2,  3, 1320).\nprofile(calm,        4,  6, 1600).\nprofile(confident,  10, 20, 3190).\n\n% face to emotion\nexpression(happy, confident).\nexpression(angry, frustrated).\n\n% join the two together\nengine_for(Expr, D, S, E) :-\n    expression(Expr, Emo),\n    profile(Emo, D, S, E).",
+      "textPreview": "% emotion to engine strength | profile(stressed,    1,  1, 1320). | profile(frustrated,  2,  3, 1320). | profile(calm,        4,  6, 1600...",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 14,
+        "lines": [
+          {
+            "index": 1,
+            "text": "% emotion to engine strength"
+          },
+          {
+            "index": 2,
+            "text": "profile(stressed,    1,  1, 1320)."
+          },
+          {
+            "index": 3,
+            "text": "profile(frustrated,  2,  3, 1320)."
+          },
+          {
+            "index": 4,
+            "text": "profile(calm,        4,  6, 1600)."
+          },
+          {
+            "index": 5,
+            "text": "profile(confident,  10, 20, 3190)."
+          },
+          {
+            "index": 6,
+            "text": ""
+          },
+          {
+            "index": 7,
+            "text": "% face to emotion"
+          },
+          {
+            "index": 8,
+            "text": "expression(happy, confident)."
+          },
+          {
+            "index": 9,
+            "text": "expression(angry, frustrated)."
+          },
+          {
+            "index": 10,
+            "text": ""
+          },
+          {
+            "index": 11,
+            "text": "% join the two together"
+          },
+          {
+            "index": 12,
+            "text": "engine_for(Expr, D, S, E) :-"
+          },
+          {
+            "index": 13,
+            "text": "    expression(Expr, Emo),"
+          },
+          {
+            "index": 14,
+            "text": "    profile(Emo, D, S, E)."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "% emotion to engine strength",
+          "runs": [
+            {
+              "index": 1,
+              "text": "% emotion to engine strength",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#8C939C"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "profile(stressed,    1,  1, 1320).",
+          "runs": [
+            {
+              "index": 1,
+              "text": "profile",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFDA7B"
+            },
+            {
+              "index": 2,
+              "text": "(stressed,    1,  1, 1320).",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "profile(frustrated,  2,  3, 1320).",
+          "runs": [
+            {
+              "index": 1,
+              "text": "profile",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFDA7B"
+            },
+            {
+              "index": 2,
+              "text": "(frustrated,  2,  3, 1320).",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "profile(calm,        4,  6, 1600).",
+          "runs": [
+            {
+              "index": 1,
+              "text": "profile",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFDA7B"
+            },
+            {
+              "index": 2,
+              "text": "(calm,        4,  6, 1600).",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "profile(confident,  10, 20, 3190).",
+          "runs": [
+            {
+              "index": 1,
+              "text": "profile",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFDA7B"
+            },
+            {
+              "index": 2,
+              "text": "(confident,  10, 20, 3190).",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 7,
+          "text": "% face to emotion",
+          "runs": [
+            {
+              "index": 1,
+              "text": "% face to emotion",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#8C939C"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 8,
+          "text": "expression(happy, confident).",
+          "runs": [
+            {
+              "index": 1,
+              "text": "expression",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFDA7B"
+            },
+            {
+              "index": 2,
+              "text": "(happy, confident).",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 9,
+          "text": "expression(angry, frustrated).",
+          "runs": [
+            {
+              "index": 1,
+              "text": "expression",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFDA7B"
+            },
+            {
+              "index": 2,
+              "text": "(angry, frustrated).",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 11,
+          "text": "% join the two together",
+          "runs": [
+            {
+              "index": 1,
+              "text": "% join the two together",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#8C939C"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 12,
+          "text": "engine_for(Expr, D, S, E) :-",
+          "runs": [
+            {
+              "index": 1,
+              "text": "engine_for",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#FFB061"
+            },
+            {
+              "index": 2,
+              "text": "(Expr, D, S, E) ",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 3,
+              "text": ":-",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#F2907A"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 13,
+          "text": "    expression(Expr, Emo),",
+          "runs": [
+            {
+              "index": 1,
+              "text": "    expression",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 2,
+              "text": "(Expr, Emo),",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 14,
+          "text": "    profile(Emo, D, S, E).",
+          "runs": [
+            {
+              "index": 1,
+              "text": "    profile",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            },
+            {
+              "index": 2,
+              "text": "(Emo, D, S, E).",
+              "fontSize": 15.33,
+              "typeface": "Courier New",
+              "color": "#DCD9D3"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9w72h43m",
+      "id": "16",
+      "name": "Text 14",
+      "bbox": [
+        59.52,
+        635.52,
+        1160.93,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "One source of truth in TypeScript; the same knowledge as declarative facts in Prolog.",
+      "textPreview": "One source of truth in TypeScript; the same knowledge as declarative facts in Prolog.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "One source of truth in TypeScript; the same knowledge as declarative facts in Prolog."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "One source of truth in TypeScript; the same knowledge as declarative facts in Prolog.",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "One source of truth in TypeScript; the same knowledge as declarative facts in Prolog.",
+              "fontSize": 15.33,
+              "typeface": "Calibri",
+              "color": "#8C939C"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/oby18z21",
+      "id": "17",
+      "name": "Text 15",
+      "bbox": [
+        59.52,
+        670.08,
+        249.6,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "SENTIO",
+      "textPreview": "SENTIO",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SENTIO"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SENTIO",
+          "runs": [
+            {
+              "index": 1,
+              "text": "SENTIO",
+              "fontSize": 12,
+              "typeface": "Calibri",
+              "color": "#7E858E",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3elk3alw",
+      "id": "18",
+      "name": "Text 16",
+      "bbox": [
+        1124.45,
+        670.08,
+        96,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "12",
+      "textPreview": "12",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "12"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "12",
+          "resolvedTextStyle": {
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "12",
+              "fontSize": 14.67,
+              "typeface": "Calibri",
+              "color": "#FFC24B",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    }
+  ],
+  "composeRuns": []
+}

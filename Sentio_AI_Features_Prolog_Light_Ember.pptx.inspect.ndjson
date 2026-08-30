@@ -1,0 +1,483 @@
+{"kind":"deck","id":"pr/modhrj","name":"Deck"}
+{"kind":"layout","layoutId":"96756605-88ee-4bca-8bb0-049a69e160b8","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"b445fc00-9ce1-43a3-8ace-1a5fbbf7ce96","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/vu352b","slide":1,"title":"SENTIO","textShapes":11}
+{"kind":"shape","id":"sh/hg3up4fy","slide":1,"bbox":[820,0,460,460]}
+{"kind":"shape","id":"sh/udsbupg7","slide":1,"bbox":[900,300,380,380]}
+{"kind":"textbox","id":"sh/fe1cnuxs","slide":1,"text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[60,52,320,28]}
+{"kind":"textbox","id":"sh/4jut0jy9","slide":1,"text":"Emotion-adaptive\nchess intelligence","textPreview":"Emotion-adaptive | chess intelligence","textChars":35,"textLines":2,"bbox":[58,150,790,170]}
+{"kind":"textbox","id":"sh/p43utofu","slide":1,"text":"A hybrid AI system combining perception, game search, symbolic reasoning, and natural-language coaching.","textPreview":"A hybrid AI system combining perception, game search, symbolic reasoning, and natural-language coaching.","textChars":104,"textLines":1,"bbox":[62,348,680,84]}
+{"kind":"shape","id":"sh/2hcby9gj","slide":1,"bbox":[62,474,210,5]}
+{"kind":"textbox","id":"sh/3ilcrex4","slide":1,"text":"PROLOG SPOTLIGHT","textPreview":"PROLOG SPOTLIGHT","textChars":16,"textLines":1,"bbox":[62,496,260,24]}
+{"kind":"textbox","id":"sh/knqtofy5","slide":1,"text":"How live chess positions become transparent, prioritized advice.","textPreview":"How live chess positions become transparent, prioritized advice.","textChars":64,"textLines":1,"bbox":[62,532,580,54]}
+{"kind":"textbox","id":"sh/5ojahkzq","slide":1,"text":"AI FEATURES · TECHNICAL PRESENTATION","textPreview":"AI FEATURES · TECHNICAL PRESENTATION","textChars":36,"textLines":1,"bbox":[62,646,460,20]}
+{"kind":"shape","id":"sh/pw3yxw72","slide":1,"bbox":[815,118,350,420]}
+{"kind":"textbox","id":"sh/ovuh4r6h","slide":1,"text":"♞","textPreview":"♞","textChars":1,"textLines":1,"bbox":[890,168,200,180]}
+{"kind":"textbox","id":"sh/3ulgvmpw","slide":1,"text":"PERCEIVE","textPreview":"PERCEIVE","textChars":8,"textLines":1,"bbox":[860,382,120,22]}
+{"kind":"textbox","id":"sh/2tcz2hob","slide":1,"text":"SEARCH","textPreview":"SEARCH","textChars":6,"textLines":1,"bbox":[1018,382,100,22]}
+{"kind":"textbox","id":"sh/d0ni1g7y","slide":1,"text":"REASON","textPreview":"REASON","textChars":6,"textLines":1,"bbox":[860,432,120,22]}
+{"kind":"textbox","id":"sh/czuh8b6d","slide":1,"text":"EXPLAIN","textPreview":"EXPLAIN","textChars":7,"textLines":1,"bbox":[1018,432,100,22]}
+{"kind":"notes","id":"nt/vu352b","slide":1,"text":"Open with the core idea: Sentio does not use one model. It coordinates several forms of intelligence around a live chess game.\n\n[Sources]\n- Local repository: README.md\n- Local repository: AI_SYSTEM.txt\n- Local repository: app/globals.css"}
+{"kind":"slide","id":"sl/ft8sdb","slide":2,"title":"SENTIO / AI SYSTEM","textShapes":17}
+{"kind":"textbox","id":"sh/9szedsv6","slide":2,"text":"SENTIO / AI SYSTEM","textPreview":"SENTIO / AI SYSTEM","textChars":18,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/mpov2dcf","slide":2,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/7qxwbid0","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/kn6d03u9","slide":2,"text":"The opponent adapts to the human—not only the board","textPreview":"The opponent adapts to the human—not only the board","textChars":51,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"textbox","id":"sh/lofu98vu","slide":2,"text":"Sentio treats emotional state as a live game signal, then changes challenge and communication.","textPreview":"Sentio treats emotional state as a live game signal, then changes challenge and communication.","textChars":94,"textLines":1,"bbox":[60,140,1110,42]}
+{"kind":"shape","id":"sh/ylovydcj","slide":2,"bbox":[60,230,260,300]}
+{"kind":"textbox","id":"sh/zmxc7ydo","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[80,250,50,24]}
+{"kind":"textbox","id":"sh/czmdw3ud","slide":2,"text":"Observe","textPreview":"Observe","textChars":7,"textLines":1,"bbox":[80,296,220,38]}
+{"kind":"shape","id":"sh/x0fu58vy","slide":2,"bbox":[80,350,56,3]}
+{"kind":"textbox","id":"sh/to7qdofq","slide":2,"text":"Face blendshapes + game telemetry","textPreview":"Face blendshapes + game telemetry","textChars":33,"textLines":1,"bbox":[80,380,220,96]}
+{"kind":"shape","id":"sh/snep4jy5","slide":2,"bbox":[360,230,260,300]}
+{"kind":"textbox","id":"sh/rm58bexk","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[380,250,50,24]}
+{"kind":"textbox","id":"sh/6lw729gz","slide":2,"text":"Interpret","textPreview":"Interpret","textChars":9,"textLines":1,"bbox":[380,296,220,38]}
+{"kind":"shape","id":"sh/5knq94fu","slide":2,"bbox":[380,350,56,3]}
+{"kind":"textbox","id":"sh/4jep0zy9","slide":2,"text":"Six game-relevant emotion states","textPreview":"Six game-relevant emotion states","textChars":32,"textLines":1,"bbox":[380,380,220,96]}
+{"kind":"shape","id":"sh/ji587uxo","slide":2,"bbox":[660,230,260,300]}
+{"kind":"textbox","id":"sh/ixw7ypg3","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[680,250,50,24]}
+{"kind":"textbox","id":"sh/hw3q5kfi","slide":2,"text":"Adapt","textPreview":"Adapt","textChars":5,"textLines":1,"bbox":[680,296,220,38]}
+{"kind":"shape","id":"sh/wvupwzyx","slide":2,"bbox":[680,350,56,3]}
+{"kind":"textbox","id":"sh/8zy9cz6t","slide":2,"text":"Depth, skill level, and ELO","textPreview":"Depth, skill level, and ELO","textChars":27,"textLines":1,"bbox":[680,380,220,96]}
+{"kind":"shape","id":"sh/907ql4ne","slide":2,"bbox":[960,230,260,300]}
+{"kind":"textbox","id":"sh/mxg7apon","slide":2,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[980,250,50,24]}
+{"kind":"textbox","id":"sh/nyp8ju58","slide":2,"text":"Explain","textPreview":"Explain","textChars":7,"textLines":1,"bbox":[980,296,220,38]}
+{"kind":"shape","id":"sh/0byp8f6x","slide":2,"bbox":[980,350,56,3]}
+{"kind":"textbox","id":"sh/lc7qhkni","slide":2,"text":"Coach language + Prolog advice","textPreview":"Coach language + Prolog advice","textChars":30,"textLines":1,"bbox":[980,380,220,96]}
+{"kind":"textbox","id":"sh/y9w76por","slide":2,"text":"Goal: sustain flow—reduce friction when the player struggles, raise challenge when confidence grows.","textPreview":"Goal: sustain flow—reduce friction when the player struggles, raise challenge when confidence grows.","textChars":100,"textLines":1,"bbox":[62,585,1120,50]}
+{"kind":"notes","id":"nt/ft8sdb","slide":2,"text":"Frame Sentio as a closed adaptive loop. The project responds to both chess position and player state.\n\n[Sources]\n- Local repository: README.md\n- Local repository: AI_SYSTEM.txt\n- Local repository: lib/emotionFusion.ts"}
+{"kind":"slide","id":"sl/m7pkjz","slide":3,"title":"SENTIO / AI SYSTEM","textShapes":18}
+{"kind":"textbox","id":"sh/do7atgzu","slide":3,"text":"SENTIO / AI SYSTEM","textPreview":"SENTIO / AI SYSTEM","textChars":18,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/qlwry1g3","slide":3,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/rm5sr6ho","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/4je9wryd","slide":3,"text":"Five intelligence layers cooperate in one experience","textPreview":"Five intelligence layers cooperate in one experience","textChars":52,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"textbox","id":"sh/pknapwzy","slide":3,"text":"PERCEPTION","textPreview":"PERCEPTION","textChars":10,"textLines":1,"bbox":[64,190,230,30]}
+{"kind":"shape","id":"sh/2hwruhg7","slide":3,"bbox":[298,192,5,52]}
+{"kind":"textbox","id":"sh/3i5snmhs","slide":3,"text":"MediaPipe / face models","textPreview":"MediaPipe / face models","textChars":23,"textLines":1,"bbox":[332,188,320,32]}
+{"kind":"textbox","id":"sh/ofyt8vyh","slide":3,"text":"Valence, arousal, expressions","textPreview":"Valence, arousal, expressions","textChars":29,"textLines":1,"bbox":[690,191,470,44]}
+{"kind":"textbox","id":"sh/9gra10z2","slide":3,"text":"ADAPTATION","textPreview":"ADAPTATION","textChars":10,"textLines":1,"bbox":[64,278,230,30]}
+{"kind":"shape","id":"sh/pwvel8n6","slide":3,"bbox":[298,280,5,52]}
+{"kind":"textbox","id":"sh/4v2dc36l","slide":3,"text":"Emotion fusion","textPreview":"Emotion fusion","textChars":14,"textLines":1,"bbox":[332,276,320,32]}
+{"kind":"textbox","id":"sh/3utwji50","slide":3,"text":"Player state → engine profile","textPreview":"Player state → engine profile","textChars":29,"textLines":1,"bbox":[690,279,470,44]}
+{"kind":"textbox","id":"sh/2tkvadof","slide":3,"text":"SEARCH","textPreview":"SEARCH","textChars":6,"textLines":1,"bbox":[64,366,230,30]}
+{"kind":"shape","id":"sh/hsbeh8nu","slide":3,"bbox":[298,368,5,52]}
+{"kind":"textbox","id":"sh/gr2d8369","slide":3,"text":"Stockfish + Minimax / MCTS","textPreview":"Stockfish + Minimax / MCTS","textChars":26,"textLines":1,"bbox":[332,364,320,32]}
+{"kind":"textbox","id":"sh/fqtwfy54","slide":3,"text":"Moves, scores, decision traces","textPreview":"Moves, scores, decision traces","textChars":30,"textLines":1,"bbox":[690,367,470,44]}
+{"kind":"textbox","id":"sh/upkv6toj","slide":3,"text":"SYMBOLIC LOGIC","textPreview":"SYMBOLIC LOGIC","textChars":14,"textLines":1,"bbox":[64,454,230,30]}
+{"kind":"shape","id":"sh/1ofetsne","slide":3,"bbox":[298,456,5,52]}
+{"kind":"textbox","id":"sh/0n6xkn6t","slide":3,"text":"SWI-Prolog","textPreview":"SWI-Prolog","textChars":10,"textLines":1,"bbox":[332,452,320,32]}
+{"kind":"textbox","id":"sh/krexwbep","slide":3,"text":"Explainable prioritized advice","textPreview":"Explainable prioritized advice","textChars":30,"textLines":1,"bbox":[690,455,470,44]}
+{"kind":"textbox","id":"sh/lsnypgva","slide":3,"text":"LANGUAGE & VOICE","textPreview":"LANGUAGE & VOICE","textChars":16,"textLines":1,"bbox":[64,542,230,30]}
+{"kind":"shape","id":"sh/y5cfu1wz","slide":3,"bbox":[298,544,5,52]}
+{"kind":"textbox","id":"sh/zqlgn6dk","slide":3,"text":"LLM + STT / TTS","textPreview":"LLM + STT / TTS","textChars":15,"textLines":1,"bbox":[332,540,320,32]}
+{"kind":"textbox","id":"sh/c3uxsret","slide":3,"text":"Natural coaching and Burmese access","textPreview":"Natural coaching and Burmese access","textChars":35,"textLines":1,"bbox":[690,543,470,44]}
+{"kind":"notes","id":"nt/m7pkjz","slide":3,"text":"Emphasize that these are different AI paradigms. Their value comes from division of labor rather than forcing one model to do everything.\n\n[Sources]\n- Local repository: README.md\n- Local repository: AI_SYSTEM.txt\n- Local repository: lib/agents.ts\n- Local repository: prolog/ai_system.pl"}
+{"kind":"slide","id":"sl/efgmjy","slide":4,"title":"SENTIO / ARCHITECTURE","textShapes":18}
+{"kind":"textbox","id":"sh/g3ahsjux","slide":4,"text":"SENTIO / ARCHITECTURE","textPreview":"SENTIO / ARCHITECTURE","textChars":21,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/v210jedc","slide":4,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/u1szq9cr","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/5s3ipove","slide":4,"text":"Signals become moves, advice, and explanations through explicit boundaries","textPreview":"Signals become moves, advice, and explanations through explicit boundaries","textChars":74,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/4ruhwjut","slide":4,"bbox":[70,250,180,150]}
+{"kind":"textbox","id":"sh/3q10nyd8","slide":4,"text":"BROWSER","textPreview":"BROWSER","textChars":7,"textLines":1,"bbox":[84,274,152,28]}
+{"kind":"textbox","id":"sh/ipszutcn","slide":4,"text":"Webcam · board · voice","textPreview":"Webcam · board · voice","textChars":22,"textLines":1,"bbox":[84,320,152,50]}
+{"kind":"shape","id":"sh/dw3it8va","slide":4,"bbox":[330,250,180,150]}
+{"kind":"textbox","id":"sh/svu103u5","slide":4,"text":"NEXT.JS","textPreview":"NEXT.JS","textChars":7,"textLines":1,"bbox":[344,274,152,28]}
+{"kind":"textbox","id":"sh/q10ryl8n","slide":4,"text":"API routes · validation","textPreview":"API routes · validation","textChars":23,"textLines":1,"bbox":[344,320,152,50]}
+{"kind":"shape","id":"sh/r2987qp8","slide":4,"bbox":[590,250,180,150]}
+{"kind":"textbox","id":"sh/s3290vqt","slide":4,"text":"FASTAPI","textPreview":"FASTAPI","textChars":7,"textLines":1,"bbox":[604,274,152,28]}
+{"kind":"textbox","id":"sh/d4bqtg7e","slide":4,"text":"Engine pool · FEN bridge","textPreview":"Engine pool · FEN bridge","textChars":24,"textLines":1,"bbox":[604,320,152,50]}
+{"kind":"shape","id":"sh/e5kr2l8z","slide":4,"bbox":[850,250,180,150]}
+{"kind":"textbox","id":"sh/f6t8vqpk","slide":4,"text":"AI ENGINES","textPreview":"AI ENGINES","textChars":10,"textLines":1,"bbox":[864,274,152,28]}
+{"kind":"textbox","id":"sh/07294vqp","slide":4,"text":"Stockfish · Prolog","textPreview":"Stockfish · Prolog","textChars":18,"textLines":1,"bbox":[864,320,152,50]}
+{"kind":"shape","id":"sh/18bqx07a","slide":4,"bbox":[1080,250,180,150]}
+{"kind":"textbox","id":"sh/u9g7q18f","slide":4,"text":"OUTPUT","textPreview":"OUTPUT","textChars":6,"textLines":1,"bbox":[1094,274,152,28]}
+{"kind":"textbox","id":"sh/vap8z6p0","slide":4,"text":"Move · advice · coach","textPreview":"Move · advice · coach","textChars":21,"textLines":1,"bbox":[1094,320,152,50]}
+{"kind":"shape","id":"sh/je5or25s","slide":4,"bbox":[260,322,60,3]}
+{"kind":"shape","id":"sh/ydwnyxo7","slide":4,"bbox":[314,311,18,24]}
+{"kind":"shape","id":"sh/lgn6tcny","slide":4,"bbox":[520,322,60,3]}
+{"kind":"shape","id":"sh/kfe5076d","slide":4,"bbox":[574,311,18,24]}
+{"kind":"shape","id":"sh/bal4ni5w","slide":4,"bbox":[780,322,60,3]}
+{"kind":"shape","id":"sh/apcnudob","slide":4,"bbox":[834,311,18,24]}
+{"kind":"shape","id":"sh/xcn6psn2","slide":4,"bbox":[1040,322,30,3]}
+{"kind":"shape","id":"sh/wbu5wn6h","slide":4,"bbox":[1064,311,18,24]}
+{"kind":"shape","id":"sh/v6pozm50","slide":4,"bbox":[352,448,170,28]}
+{"kind":"textbox","id":"sh/u5gn6hof","slide":4,"text":"/api/bot-move","textPreview":"/api/bot-move","textChars":13,"textLines":1,"bbox":[352,450,170,22]}
+{"kind":"shape","id":"sh/crql0jmx","slide":4,"bbox":[566,448,150,28]}
+{"kind":"textbox","id":"sh/dsz2to3i","slide":4,"text":"/api/prolog","textPreview":"/api/prolog","textChars":11,"textLines":1,"bbox":[566,450,150,22]}
+{"kind":"shape","id":"sh/qp83y94r","slide":4,"bbox":[762,448,145,28]}
+{"kind":"textbox","id":"sh/rqhkrelc","slide":4,"text":"/api/coach","textPreview":"/api/coach","textChars":10,"textLines":1,"bbox":[762,450,145,22]}
+{"kind":"shape","id":"sh/0val4jm9","slide":4,"bbox":[953,448,180,28]}
+{"kind":"textbox","id":"sh/1gj2xo3u","slide":4,"text":"/api/transcribe","textPreview":"/api/transcribe","textChars":15,"textLines":1,"bbox":[953,450,180,22]}
+{"kind":"textbox","id":"sh/ets32t43","slide":4,"text":"Every boundary has a fallback: the game stays playable even when Prolog, the LLM, or cloud speech is unavailable.","textPreview":"Every boundary has a fallback: the game stays playable even when Prolog, the LLM, or cloud speech is unavailable.","textChars":113,"textLines":1,"bbox":[100,570,1080,56]}
+{"kind":"notes","id":"nt/efgmjy","slide":4,"text":"Walk left to right. The architecture separates state capture, routing, engine execution, and audience-facing outputs.\n\n[Sources]\n- Local repository: README.md\n- Local repository: backend/main.py\n- Local repository: app/api/prolog/route.ts\n- Local repository: app/api/coach/route.ts\n- Local repository: app/api/transcribe/route.ts"}
+{"kind":"slide","id":"sl/or9gma","slide":5,"title":"SENTIO / PERCEPTION","textShapes":18}
+{"kind":"textbox","id":"sh/j6xcjil8","slide":5,"text":"SENTIO / PERCEPTION","textPreview":"SENTIO / PERCEPTION","textChars":19,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/47qdcn2t","slide":5,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/58zel83e","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/698vedkz","slide":5,"text":"Emotion estimation fuses anatomy with gameplay context","textPreview":"Emotion estimation fuses anatomy with gameplay context","textChars":54,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/rahwnilk","slide":5,"bbox":[70,200,500,360]}
+{"kind":"textbox","id":"sh/sbqdgn2p","slide":5,"text":"FACIAL SIGNAL","textPreview":"FACIAL SIGNAL","textChars":13,"textLines":1,"bbox":[95,225,200,24]}
+{"kind":"textbox","id":"sh/tczepsja","slide":5,"text":"52 blendshapes","textPreview":"52 blendshapes","textChars":14,"textLines":1,"bbox":[95,270,320,40]}
+{"kind":"textbox","id":"sh/md4v2tkf","slide":5,"text":"Smile, frown, brow, eye, jaw, and mouth motion are mixed into valence and arousal.","textPreview":"Smile, frown, brow, eye, jaw, and mouth motion are mixed into valence and arousal.","textChars":82,"textLines":1,"bbox":[95,330,410,80]}
+{"kind":"textbox","id":"sh/7edcbyl0","slide":5,"text":"valence  ↔  positive / negative","textPreview":"valence  ↔  positive / negative","textChars":31,"textLines":1,"bbox":[95,440,380,28]}
+{"kind":"textbox","id":"sh/fq98jqpk","slide":5,"text":"arousal  ↕  calm / activated","textPreview":"arousal  ↕  calm / activated","textChars":28,"textLines":1,"bbox":[95,480,380,28]}
+{"kind":"shape","id":"sh/e50ral8z","slide":5,"bbox":[650,200,560,360]}
+{"kind":"textbox","id":"sh/1srql07q","slide":5,"text":"GAME SIGNAL","textPreview":"GAME SIGNAL","textChars":11,"textLines":1,"bbox":[675,225,200,24]}
+{"kind":"textbox","id":"sh/gri9cvq5","slide":5,"text":"12s+ think time","textPreview":"12s+ think time","textChars":15,"textLines":1,"bbox":[680,278,210,26]}
+{"kind":"textbox","id":"sh/r2p8f698","slide":5,"text":"Focused / calm boost","textPreview":"Focused / calm boost","textChars":20,"textLines":1,"bbox":[915,278,250,28]}
+{"kind":"shape","id":"sh/61gr6l83","slide":5,"bbox":[680,316,480,1]}
+{"kind":"textbox","id":"sh/t4rqhgre","slide":5,"text":"150cp setback","textPreview":"150cp setback","textChars":13,"textLines":1,"bbox":[680,340,210,26]}
+{"kind":"textbox","id":"sh/s3y98bqt","slide":5,"text":"Stress evidence","textPreview":"Stress evidence","textChars":15,"textLines":1,"bbox":[915,340,250,28]}
+{"kind":"shape","id":"sh/jyp8b69c","slide":5,"bbox":[680,378,480,1]}
+{"kind":"textbox","id":"sh/ixgr218r","slide":5,"text":"Recent mistakes","textPreview":"Recent mistakes","textChars":15,"textLines":1,"bbox":[680,402,210,26]}
+{"kind":"textbox","id":"sh/mtwru1sj","slide":5,"text":"Neutral dampening","textPreview":"Neutral dampening","textChars":17,"textLines":1,"bbox":[915,402,250,28]}
+{"kind":"shape","id":"sh/7u5sn6t4","slide":5,"bbox":[680,440,480,1]}
+{"kind":"textbox","id":"sh/8ve9wbap","slide":5,"text":"+300cp advantage","textPreview":"+300cp advantage","textChars":16,"textLines":1,"bbox":[680,464,210,26]}
+{"kind":"textbox","id":"sh/9w7apwba","slide":5,"text":"Confidence reinforcement","textPreview":"Confidence reinforcement","textChars":24,"textLines":1,"bbox":[915,464,250,28]}
+{"kind":"shape","id":"sh/uxgry1sv","slide":5,"bbox":[680,502,480,1]}
+{"kind":"textbox","id":"sh/vypsr6tg","slide":5,"text":"Fusion adjusts soft scores; it does not blindly overwrite the face signal.","textPreview":"Fusion adjusts soft scores; it does not blindly overwrite the face signal.","textChars":74,"textLines":1,"bbox":[130,600,1020,38]}
+{"kind":"notes","id":"nt/or9gma","slide":5,"text":"Explain the design choice: a quiet face alone cannot reliably separate calm, neutral, and focused. Gameplay telemetry adds context.\n\n[Sources]\n- Local repository: lib/blendshapeEmotion.ts\n- Local repository: lib/emotionFusion.ts"}
+{"kind":"slide","id":"sl/shrqoz","slide":6,"title":"SENTIO / ADAPTATION","textShapes":26}
+{"kind":"textbox","id":"sh/netsnq1k","slide":6,"text":"SENTIO / ADAPTATION","textPreview":"SENTIO / ADAPTATION","textChars":19,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/of2tgv25","slide":6,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/pgvap0ja","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/epkbalkn","slide":6,"text":"Six emotion profiles reshape the engine’s challenge in real time","textPreview":"Six emotion profiles reshape the engine’s challenge in real time","textChars":64,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"textbox","id":"sh/fqtsjq18","slide":6,"text":"EMOTION","textPreview":"EMOTION","textChars":7,"textLines":1,"bbox":[65,190,180,24]}
+{"kind":"textbox","id":"sh/0r2tcb2t","slide":6,"text":"ELO","textPreview":"ELO","textChars":3,"textLines":1,"bbox":[275,190,90,24]}
+{"kind":"textbox","id":"sh/1sbalgje","slide":6,"text":"RELATIVE STRENGTH","textPreview":"RELATIVE STRENGTH","textChars":17,"textLines":1,"bbox":[410,190,520,24]}
+{"kind":"textbox","id":"sh/yl4bm5k7","slide":6,"text":"DEPTH / SKILL","textPreview":"DEPTH / SKILL","textChars":13,"textLines":1,"bbox":[1010,190,180,24]}
+{"kind":"textbox","id":"sh/zmdcva1s","slide":6,"text":"Stressed","textPreview":"Stressed","textChars":8,"textLines":1,"bbox":[65,230,180,30]}
+{"kind":"textbox","id":"sh/7e9k3yxo","slide":6,"text":"1320","textPreview":"1320","textChars":4,"textLines":1,"bbox":[275,230,90,30]}
+{"kind":"shape","id":"sh/6d03utg3","slide":6,"bbox":[410,234,520,18]}
+{"kind":"shape","id":"sh/tgr258fu","slide":6,"bbox":[410,234,215.17,18]}
+{"kind":"textbox","id":"sh/sfilw3y9","slide":6,"text":"1 / 1","textPreview":"1 / 1","textChars":5,"textLines":1,"bbox":[1030,230,120,28]}
+{"kind":"textbox","id":"sh/fi947ixk","slide":6,"text":"Frustrated","textPreview":"Frustrated","textChars":10,"textLines":1,"bbox":[65,295,180,30]}
+{"kind":"textbox","id":"sh/uh03ydgz","slide":6,"text":"1320","textPreview":"1320","textChars":4,"textLines":1,"bbox":[275,295,90,30]}
+{"kind":"shape","id":"sh/h4rm9sfq","slide":6,"bbox":[410,299,520,18]}
+{"kind":"shape","id":"sh/g3il0ny5","slide":6,"bbox":[410,299,215.17,18]}
+{"kind":"textbox","id":"sh/36t4bixw","slide":6,"text":"2 / 3","textPreview":"2 / 3","textChars":5,"textLines":1,"bbox":[1030,295,120,28]}
+{"kind":"textbox","id":"sh/25k32dgb","slide":6,"text":"Calm","textPreview":"Calm","textChars":4,"textLines":1,"bbox":[65,360,180,30]}
+{"kind":"textbox","id":"sh/e14nuh0j","slide":6,"text":"1600","textPreview":"1600","textChars":4,"textLines":1,"bbox":[275,360,90,30]}
+{"kind":"shape","id":"sh/z2do3mh4","slide":6,"bbox":[410,364,520,18]}
+{"kind":"shape","id":"sh/03m5wrip","slide":6,"bbox":[410,364,260.82,18]}
+{"kind":"textbox","id":"sh/14f65wzu","slide":6,"text":"4 / 6","textPreview":"4 / 6","textChars":5,"textLines":1,"bbox":[1030,360,120,28]}
+{"kind":"textbox","id":"sh/qx4nqh07","slide":6,"text":"Neutral","textPreview":"Neutral","textChars":7,"textLines":1,"bbox":[65,425,180,30]}
+{"kind":"textbox","id":"sh/rydozmhs","slide":6,"text":"2000","textPreview":"2000","textChars":4,"textLines":1,"bbox":[275,425,90,30]}
+{"kind":"shape","id":"sh/czm5srid","slide":6,"bbox":[410,429,520,18]}
+{"kind":"shape","id":"sh/d0v61czy","slide":6,"bbox":[410,429,326.02,18]}
+{"kind":"textbox","id":"sh/ato721gr","slide":6,"text":"6 / 10","textPreview":"6 / 10","textChars":6,"textLines":1,"bbox":[1030,425,120,28]}
+{"kind":"textbox","id":"sh/buxob6hc","slide":6,"text":"Focused","textPreview":"Focused","textChars":7,"textLines":1,"bbox":[65,490,180,30]}
+{"kind":"textbox","id":"sh/5ojq10je","slide":6,"text":"2600","textPreview":"2600","textChars":4,"textLines":1,"bbox":[275,490,90,30]}
+{"kind":"shape","id":"sh/kna9sf2t","slide":6,"bbox":[410,494,520,18]}
+{"kind":"shape","id":"sh/j2h8za18","slide":6,"bbox":[410,494,423.82,18]}
+{"kind":"textbox","id":"sh/i18rq5kn","slide":6,"text":"8 / 15","textPreview":"8 / 15","textChars":6,"textLines":1,"bbox":[1030,490,120,28]}
+{"kind":"textbox","id":"sh/x0zqx0j2","slide":6,"text":"Confident","textPreview":"Confident","textChars":9,"textLines":1,"bbox":[65,555,180,30]}
+{"kind":"textbox","id":"sh/wzq9ov2x","slide":6,"text":"3190","textPreview":"3190","textChars":4,"textLines":1,"bbox":[275,555,90,30]}
+{"kind":"shape","id":"sh/byh8vq1c","slide":6,"bbox":[410,559,520,18]}
+{"kind":"shape","id":"sh/ax8rmlkr","slide":6,"bbox":[410,559,520,18]}
+{"kind":"textbox","id":"sh/hw3a9kjm","slide":6,"text":"10 / 20","textPreview":"10 / 20","textChars":7,"textLines":1,"bbox":[1030,555,120,28]}
+{"kind":"textbox","id":"sh/gvu90zi1","slide":6,"text":"Hints deliberately bypass adaptation and use a stronger fixed profile for quality.","textPreview":"Hints deliberately bypass adaptation and use a stronger fixed profile for quality.","textChars":82,"textLines":1,"bbox":[66,635,1100,30]}
+{"kind":"notes","id":"nt/shrqoz","slide":6,"text":"Call out the three levers: depth, Stockfish Skill Level, and UCI ELO limiting. Prolog mirrors the same static profiles as declarative facts.\n\n[Sources]\n- Local repository: backend/main.py\n- Local repository: prolog/ai_system.pl\n- Local repository: README.md"}
+{"kind":"slide","id":"sl/ynav9k","slide":7,"title":"SENTIO / PROLOG SPOTLIGHT","textShapes":10}
+{"kind":"textbox","id":"sh/m9c3yl4r","slide":7,"text":"SENTIO / PROLOG SPOTLIGHT","textPreview":"SENTIO / PROLOG SPOTLIGHT","textChars":25,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/9c32tgni","slide":7,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/8bul0bmx","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/z6lkn650","slide":7,"text":"Search finds strong moves; Prolog makes reasoning inspectable","textPreview":"Search finds strong moves; Prolog makes reasoning inspectable","textChars":61,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"textbox","id":"sh/y5c3u1ov","slide":7,"text":"Stockfish answers:","textPreview":"Stockfish answers:","textChars":18,"textLines":1,"bbox":[80,220,380,34]}
+{"kind":"textbox","id":"sh/l832pgn6","slide":7,"text":"“What move scores best?”","textPreview":"“What move scores best?”","textChars":24,"textLines":1,"bbox":[80,275,450,60]}
+{"kind":"textbox","id":"sh/07ulwb6l","slide":7,"text":"Deep search is powerful, but its evaluation is not automatically a clear explanation for a learner.","textPreview":"Deep search is powerful, but its evaluation is not automatically a clear explanation for a learner.","textChars":99,"textLines":1,"bbox":[80,370,450,100]}
+{"kind":"shape","id":"sh/j254za5k","slide":7,"bbox":[620,190,3,380]}
+{"kind":"textbox","id":"sh/i1w3654z","slide":7,"text":"The Logician answers:","textPreview":"The Logician answers:","textChars":21,"textLines":1,"bbox":[700,220,400,34]}
+{"kind":"textbox","id":"sh/8ry98zet","slide":7,"text":"“Which rule applies—and why now?”","textPreview":"“Which rule applies—and why now?”","textChars":33,"textLines":1,"bbox":[700,275,480,80]}
+{"kind":"textbox","id":"sh/ts7qh4ve","slide":7,"text":"Advice is traceable to explicit facts and rules: check safety, hanging pieces, free captures, castling, development, center control, and king activation.","textPreview":"Advice is traceable to explicit facts and rules: check safety, hanging pieces, free captures, castling, development, center control, and ...","textChars":153,"textLines":1,"bbox":[700,390,450,115]}
+{"kind":"shape","id":"sh/6pgr69wn","slide":7,"bbox":[493,590,180,28]}
+{"kind":"textbox","id":"sh/7qp8fud8","slide":7,"text":"SYMBOLIC AI","textPreview":"SYMBOLIC AI","textChars":11,"textLines":1,"bbox":[493,592,180,22]}
+{"kind":"notes","id":"nt/ynav9k","slide":7,"text":"Introduce Prolog as complementary, not competitive. It is an explainability layer and a teaching layer alongside search.\n\n[Sources]\n- Local repository: prolog/ai_system.pl\n- Local repository: components/LogicianPanel.tsx"}
+{"kind":"slide","id":"sl/bxah1x","slide":8,"title":"SENTIO / PROLOG SPOTLIGHT","textShapes":22}
+{"kind":"textbox","id":"sh/szmhsbmd","slide":8,"text":"SENTIO / PROLOG SPOTLIGHT","textPreview":"SENTIO / PROLOG SPOTLIGHT","textChars":25,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/ryd0z65s","slide":8,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/qx4zq147","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/5wvyxwnm","slide":8,"text":"The knowledge base separates observable facts from reusable rules","textPreview":"The knowledge base separates observable facts from reusable rules","textChars":65,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/4vmhorm1","slide":8,"bbox":[60,200,350,390]}
+{"kind":"textbox","id":"sh/3atgvm5g","slide":8,"text":"DYNAMIC FACTS","textPreview":"DYNAMIC FACTS","textChars":13,"textLines":1,"bbox":[84,226,302,30]}
+{"kind":"shape","id":"sh/i9kzmh4b","slide":8,"bbox":[84,270,70,3]}
+{"kind":"textbox","id":"sh/h8bytcnq","slide":8,"text":"piece(e4, white, pawn)","textPreview":"piece(e4, white, pawn)","textChars":22,"textLines":1,"bbox":[84,306,302,30]}
+{"kind":"textbox","id":"sh/g72hk765","slide":8,"text":"turn(white)","textPreview":"turn(white)","textChars":11,"textLines":1,"bbox":[84,358,302,30]}
+{"kind":"textbox","id":"sh/25wnml0b","slide":8,"text":"move_number(7)","textPreview":"move_number(7)","textChars":14,"textLines":1,"bbox":[84,410,302,30]}
+{"kind":"textbox","id":"sh/n65ovqhw","slide":8,"text":"attacked_by(c3, black)","textPreview":"attacked_by(c3, black)","textChars":22,"textLines":1,"bbox":[84,462,302,30]}
+{"kind":"textbox","id":"sh/o7epobih","slide":8,"text":"defended_by(c3, white)","textPreview":"defended_by(c3, white)","textChars":22,"textLines":1,"bbox":[84,514,302,30]}
+{"kind":"shape","id":"sh/p8n6xgz2","slide":8,"bbox":[465,200,350,390]}
+{"kind":"textbox","id":"sh/e1cni10f","slide":8,"text":"DERIVED CONCEPTS","textPreview":"DERIVED CONCEPTS","textChars":16,"textLines":1,"bbox":[489,226,302,30]}
+{"kind":"shape","id":"sh/f2lor6h0","slide":8,"bbox":[489,270,70,3]}
+{"kind":"textbox","id":"sh/03e5kbi5","slide":8,"text":"hanging_mine/2","textPreview":"hanging_mine/2","textChars":14,"textLines":1,"bbox":[489,306,302,30]}
+{"kind":"textbox","id":"sh/14n6tgzq","slide":8,"text":"free_capture/2","textPreview":"free_capture/2","textChars":14,"textLines":1,"bbox":[489,358,302,30]}
+{"kind":"textbox","id":"sh/qdcne103","slide":8,"text":"undeveloped_minor/2","textPreview":"undeveloped_minor/2","textChars":19,"textLines":1,"bbox":[489,410,302,30]}
+{"kind":"textbox","id":"sh/relon6ho","slide":8,"text":"needs_castling/0","textPreview":"needs_castling/0","textChars":16,"textLines":1,"bbox":[489,462,302,30]}
+{"kind":"textbox","id":"sh/vihkv2xg","slide":8,"text":"no_center_presence/0","textPreview":"no_center_presence/0","textChars":20,"textLines":1,"bbox":[489,514,302,30]}
+{"kind":"shape","id":"sh/uh83mxgv","slide":8,"bbox":[870,200,350,390]}
+{"kind":"textbox","id":"sh/hkjmxsfm","slide":8,"text":"PRIORITIZED ADVICE","textPreview":"PRIORITIZED ADVICE","textChars":18,"textLines":1,"bbox":[894,226,302,30]}
+{"kind":"shape","id":"sh/gjqlo7y1","slide":8,"bbox":[894,270,70,3]}
+{"kind":"textbox","id":"sh/3m14z2xs","slide":8,"text":"99  safety / check","textPreview":"99  safety / check","textChars":18,"textLines":1,"bbox":[894,306,302,30]}
+{"kind":"textbox","id":"sh/ils3qxg7","slide":8,"text":"95  tactics / hanging","textPreview":"95  tactics / hanging","textChars":21,"textLines":1,"bbox":[894,358,302,30]}
+{"kind":"textbox","id":"sh/58jm1cfi","slide":8,"text":"90  tactics / free capture","textPreview":"90  tactics / free capture","textChars":26,"textLines":1,"bbox":[894,410,302,30]}
+{"kind":"textbox","id":"sh/47als7yx","slide":8,"text":"85  opening / castle","textPreview":"85  opening / castle","textChars":20,"textLines":1,"bbox":[894,462,302,30]}
+{"kind":"textbox","id":"sh/jqxknix8","slide":8,"text":"60  endgame / activate king","textPreview":"60  endgame / activate king","textChars":27,"textLines":1,"bbox":[894,514,302,30]}
+{"kind":"textbox","id":"sh/ypo3edgn","slide":8,"text":"Priority is data—not hidden model behavior—so the UI can sort advice deterministically.","textPreview":"Priority is data—not hidden model behavior—so the UI can sort advice deterministically.","textChars":87,"textLines":1,"bbox":[90,625,1100,34]}
+{"kind":"notes","id":"nt/bxah1x","slide":8,"text":"Distinguish three levels. Python supplies facts. Prolog derives concepts. Advice rules convert those concepts into ranked human-readable guidance.\n\n[Sources]\n- Local repository: prolog/ai_system.pl"}
+{"kind":"slide","id":"sl/9ki5vy","slide":9,"title":"SENTIO / PROLOG BRIDGE","textShapes":24}
+{"kind":"textbox","id":"sh/bi9knyp0","slide":9,"text":"SENTIO / PROLOG BRIDGE","textPreview":"SENTIO / PROLOG BRIDGE","textChars":22,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/cji1w36l","slide":9,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/dkb2p87q","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/ylk3ydob","slide":9,"text":"The bridge converts an imperative board state into declarative logic","textPreview":"The bridge converts an imperative board state into declarative logic","textChars":68,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/z6tkripw","slide":9,"bbox":[55,245,165,190]}
+{"kind":"textbox","id":"sh/072l0n6h","slide":9,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[70,260,30,26]}
+{"kind":"textbox","id":"sh/l8b2ts72","slide":9,"text":"FEN","textPreview":"FEN","textChars":3,"textLines":1,"bbox":[70,302,135,48]}
+{"kind":"textbox","id":"sh/epgjm987","slide":9,"text":"r1bqk… w KQ","textPreview":"r1bqk… w KQ","textChars":11,"textLines":1,"bbox":[67,367,141,38]}
+{"kind":"shape","id":"sh/fqpkfeps","slide":9,"bbox":[229,325,22,32]}
+{"kind":"shape","id":"sh/r2x4z6ps","slide":9,"bbox":[257,245,165,190]}
+{"kind":"textbox","id":"sh/q1on6187","slide":9,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[272,260,30,26]}
+{"kind":"textbox","id":"sh/d4fm1g7y","slide":9,"text":"python-chess","textPreview":"python-chess","textChars":12,"textLines":1,"bbox":[272,302,135,48]}
+{"kind":"textbox","id":"sh/s3658bqd","slide":9,"text":"parse board","textPreview":"parse board","textChars":11,"textLines":1,"bbox":[269,367,141,38]}
+{"kind":"shape","id":"sh/3yx4vmpg","slide":9,"bbox":[431,325,22,32]}
+{"kind":"shape","id":"sh/ix4n2h8v","slide":9,"bbox":[459,245,165,190]}
+{"kind":"textbox","id":"sh/50fmxw7m","slide":9,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[474,260,30,26]}
+{"kind":"textbox","id":"sh/4z654rq1","slide":9,"text":"FACT ASSERTION","textPreview":"FACT ASSERTION","textChars":14,"textLines":1,"bbox":[474,302,135,48]}
+{"kind":"textbox","id":"sh/vad4rmpk","slide":9,"text":"piece · turn · attacks","textPreview":"piece · turn · attacks","textChars":22,"textLines":1,"bbox":[471,367,141,38]}
+{"kind":"shape","id":"sh/u94nyh8z","slide":9,"bbox":[633,325,22,32]}
+{"kind":"shape","id":"sh/y5knahsr","slide":9,"bbox":[661,245,165,190]}
+{"kind":"textbox","id":"sh/j6to3mtc","slide":9,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[676,260,30,26]}
+{"kind":"textbox","id":"sh/k7m5crax","slide":9,"text":"PROLOG QUERY","textPreview":"PROLOG QUERY","textChars":12,"textLines":1,"bbox":[676,302,135,48]}
+{"kind":"textbox","id":"sh/l8v65cbi","slide":9,"text":"advice(P,C,T)","textPreview":"advice(P,C,T)","textChars":13,"textLines":1,"bbox":[673,367,141,38]}
+{"kind":"shape","id":"sh/694nehs3","slide":9,"bbox":[835,325,22,32]}
+{"kind":"shape","id":"sh/7udo7mto","slide":9,"bbox":[863,245,165,190]}
+{"kind":"textbox","id":"sh/8vm5grat","slide":9,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[878,260,30,26]}
+{"kind":"textbox","id":"sh/twv69wbe","slide":9,"text":"JSON","textPreview":"JSON","textChars":4,"textLines":1,"bbox":[878,302,135,48]}
+{"kind":"textbox","id":"sh/ux47i1sz","slide":9,"text":"top 6 sorted","textPreview":"top 6 sorted","textChars":12,"textLines":1,"bbox":[875,367,141,38]}
+{"kind":"shape","id":"sh/vyxob6tk","slide":9,"bbox":[1037,325,22,32]}
+{"kind":"shape","id":"sh/5szqh0vm","slide":9,"bbox":[1065,245,165,190]}
+{"kind":"textbox","id":"sh/4rq98vu1","slide":9,"text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[1080,260,30,26]}
+{"kind":"textbox","id":"sh/3qh8fqdw","slide":9,"text":"LOGICIAN UI","textPreview":"LOGICIAN UI","textChars":11,"textLines":1,"bbox":[1080,302,135,48]}
+{"kind":"textbox","id":"sh/ipor6lcb","slide":9,"text":"category + reason","textPreview":"category + reason","textChars":17,"textLines":1,"bbox":[1077,367,141,38]}
+{"kind":"textbox","id":"sh/dwzql0vy","slide":9,"text":"Concurrency safeguard","textPreview":"Concurrency safeguard","textChars":21,"textLines":1,"bbox":[70,510,270,30]}
+{"kind":"textbox","id":"sh/svq9cfud","slide":9,"text":"A lock protects the shared Prolog instance while old facts are retracted, new facts are asserted, and the query runs.","textPreview":"A lock protects the shared Prolog instance while old facts are retracted, new facts are asserted, and the query runs.","textChars":117,"textLines":1,"bbox":[340,510,820,66]}
+{"kind":"textbox","id":"sh/ruh8jads","slide":9,"text":"Prolog remains observational: it never executes a chess move.","textPreview":"Prolog remains observational: it never executes a chess move.","textChars":61,"textLines":1,"bbox":[70,618,1100,32]}
+{"kind":"notes","id":"nt/9ki5vy","slide":9,"text":"This is the key bridge slide. Explain the representation change: FEN is compact state; Prolog needs explicit relational facts.\n\n[Sources]\n- Local repository: backend/main.py\n- Local repository: app/api/prolog/route.ts\n- Local repository: components/LogicianPanel.tsx"}
+{"kind":"slide","id":"sl/ivi77p","slide":10,"title":"SENTIO / PROLOG EXAMPLE","textShapes":13}
+{"kind":"textbox","id":"sh/yx8zmh4f","slide":10,"text":"SENTIO / PROLOG EXAMPLE","textPreview":"SENTIO / PROLOG EXAMPLE","textChars":23,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/l0zihc36","slide":10,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/kzq187ml","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/7210jmlw","slide":10,"text":"A hanging piece becomes a transparent priority-95 recommendation","textPreview":"A hanging piece becomes a transparent priority-95 recommendation","textChars":64,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/618jah4r","slide":10,"bbox":[60,200,500,410]}
+{"kind":"textbox","id":"sh/t4jilw32","slide":10,"text":"ASSERTED FACTS","textPreview":"ASSERTED FACTS","textChars":14,"textLines":1,"bbox":[88,225,220,24]}
+{"kind":"textbox","id":"sh/83a1crmh","slide":10,"text":"turn(white).","textPreview":"turn(white).","textChars":12,"textLines":1,"bbox":[90,275,420,30]}
+{"kind":"textbox","id":"sh/fq10n6l8","slide":10,"text":"piece(c3, white, bishop).","textPreview":"piece(c3, white, bishop).","textChars":25,"textLines":1,"bbox":[90,321,420,30]}
+{"kind":"textbox","id":"sh/upsje14n","slide":10,"text":"attacked_by(c3, black).","textPreview":"attacked_by(c3, black).","textChars":23,"textLines":1,"bbox":[90,367,420,30]}
+{"kind":"textbox","id":"sh/4jixczed","slide":10,"text":"% no defended_by(c3, white)","textPreview":"% no defended_by(c3, white)","textChars":27,"textLines":1,"bbox":[90,413,420,30]}
+{"kind":"shape","id":"sh/pkry54fy","slide":10,"bbox":[90,459,420,30]}
+{"kind":"textbox","id":"sh/ih0fa9w7","slide":10,"text":"hanging_mine(c3, bishop).","textPreview":"hanging_mine(c3, bishop).","textChars":25,"textLines":1,"bbox":[90,505,420,30]}
+{"kind":"shape","id":"sh/3i9g3uxs","slide":10,"bbox":[590,365,58,70]}
+{"kind":"shape","id":"sh/cn2hgjep","slide":10,"bbox":[690,200,530,410]}
+{"kind":"shape","id":"sh/doby9ofu","slide":10,"bbox":[730,238,230,28]}
+{"kind":"textbox","id":"sh/qlkfe9wj","slide":10,"text":"TACTICS · PRIORITY 95","textPreview":"TACTICS · PRIORITY 95","textChars":21,"textLines":1,"bbox":[730,240,230,22]}
+{"kind":"textbox","id":"sh/rmtg7ex4","slide":10,"text":"Your bishop on c3 is attacked and undefended—defend it or move it.","textPreview":"Your bishop on c3 is attacked and undefended—defend it or move it.","textChars":66,"textLines":1,"bbox":[730,310,430,150]}
+{"kind":"textbox","id":"sh/0b2hkjel","slide":10,"text":"Why this is explainable","textPreview":"Why this is explainable","textChars":23,"textLines":1,"bbox":[730,500,240,28]}
+{"kind":"textbox","id":"sh/1cbydof6","slide":10,"text":"Every phrase is grounded in a visible predicate and a named rule.","textPreview":"Every phrase is grounded in a visible predicate and a named rule.","textChars":65,"textLines":1,"bbox":[730,540,420,55]}
+{"kind":"notes","id":"nt/ivi77p","slide":10,"text":"Use this as the concrete demonstration. The absence of defended_by is meaningful through negation-as-failure, triggering hanging_mine and advice priority 95.\n\n[Sources]\n- Local repository: prolog/ai_system.pl\n- Local repository: backend/main.py"}
+{"kind":"slide","id":"sl/c28nd3","slide":11,"title":"SENTIO / HYBRID AI","textShapes":31}
+{"kind":"textbox","id":"sh/cfatcz6t","slide":11,"text":"SENTIO / HYBRID AI","textPreview":"SENTIO / HYBRID AI","textChars":18,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/be1s3u5o","slide":11,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/qdsrapo3","slide":11,"text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/l43a9onq","slide":11,"text":"Each engine owns the job it can do best","textPreview":"Each engine owns the job it can do best","textChars":39,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/03utgj65","slide":11,"bbox":[60,200,360,390]}
+{"kind":"textbox","id":"sh/z2ls7e5k","slide":11,"text":"STOCKFISH","textPreview":"STOCKFISH","textChars":9,"textLines":1,"bbox":[84,225,310,30]}
+{"kind":"shape","id":"sh/yhcbe9oz","slide":11,"bbox":[460,200,360,390]}
+{"kind":"textbox","id":"sh/h8jaxkn6","slide":11,"text":"PROLOG","textPreview":"PROLOG","textChars":6,"textLines":1,"bbox":[484,225,310,30]}
+{"kind":"shape","id":"sh/g7q94f6l","slide":11,"bbox":[860,200,360,390]}
+{"kind":"textbox","id":"sh/25knihsn","slide":11,"text":"LLM COACH","textPreview":"LLM COACH","textChars":9,"textLines":1,"bbox":[884,225,310,30]}
+{"kind":"textbox","id":"sh/36tobm98","slide":11,"text":"Role","textPreview":"Role","textChars":4,"textLines":1,"bbox":[84,285,90,22]}
+{"kind":"textbox","id":"sh/o725krat","slide":11,"text":"Search and evaluation","textPreview":"Search and evaluation","textChars":21,"textLines":1,"bbox":[84,309,285,30]}
+{"kind":"textbox","id":"sh/p8v6dwre","slide":11,"text":"Output","textPreview":"Output","textChars":6,"textLines":1,"bbox":[84,355,90,22]}
+{"kind":"textbox","id":"sh/q94nm1sz","slide":11,"text":"Best move · score","textPreview":"Best move · score","textChars":17,"textLines":1,"bbox":[84,379,285,30]}
+{"kind":"textbox","id":"sh/badof694","slide":11,"text":"Strength","textPreview":"Strength","textChars":8,"textLines":1,"bbox":[84,425,90,22]}
+{"kind":"textbox","id":"sh/cbm5obap","slide":11,"text":"Tactical depth","textPreview":"Tactical depth","textChars":14,"textLines":1,"bbox":[84,449,285,30]}
+{"kind":"textbox","id":"sh/dwv6hgra","slide":11,"text":"Limit","textPreview":"Limit","textChars":5,"textLines":1,"bbox":[84,495,90,22]}
+{"kind":"textbox","id":"sh/yx4nq1sv","slide":11,"text":"Hard to narrate directly","textPreview":"Hard to narrate directly","textChars":24,"textLines":1,"bbox":[84,519,285,30]}
+{"kind":"textbox","id":"sh/zydoj69g","slide":11,"text":"Role","textPreview":"Role","textChars":4,"textLines":1,"bbox":[484,285,90,22]}
+{"kind":"textbox","id":"sh/v2x476po","slide":11,"text":"Rules and explanation","textPreview":"Rules and explanation","textChars":21,"textLines":1,"bbox":[484,309,285,30]}
+{"kind":"textbox","id":"sh/a1onelo3","slide":11,"text":"Output","textPreview":"Output","textChars":6,"textLines":1,"bbox":[484,355,90,22]}
+{"kind":"textbox","id":"sh/x4fm9g7e","slide":11,"text":"Ranked advice","textPreview":"Ranked advice","textChars":13,"textLines":1,"bbox":[484,379,285,30]}
+{"kind":"textbox","id":"sh/w365gb6t","slide":11,"text":"Strength","textPreview":"Strength","textChars":8,"textLines":1,"bbox":[484,425,90,22]}
+{"kind":"textbox","id":"sh/nyd436pc","slide":11,"text":"Transparent logic","textPreview":"Transparent logic","textChars":17,"textLines":1,"bbox":[484,449,285,30]}
+{"kind":"textbox","id":"sh/md4na18r","slide":11,"text":"Limit","textPreview":"Limit","textChars":5,"textLines":1,"bbox":[484,495,90,22]}
+{"kind":"textbox","id":"sh/90fm5g7i","slide":11,"text":"Narrow encoded knowledge","textPreview":"Narrow encoded knowledge","textChars":24,"textLines":1,"bbox":[484,519,285,30]}
+{"kind":"textbox","id":"sh/8z65cbqx","slide":11,"text":"Role","textPreview":"Role","textChars":4,"textLines":1,"bbox":[884,285,90,22]}
+{"kind":"textbox","id":"sh/zad4zmpg","slide":11,"text":"Dialogue and language","textPreview":"Dialogue and language","textChars":21,"textLines":1,"bbox":[884,309,285,30]}
+{"kind":"textbox","id":"sh/y943618v","slide":11,"text":"Output","textPreview":"Output","textChars":6,"textLines":1,"bbox":[884,355,90,22]}
+{"kind":"textbox","id":"sh/43itk32h","slide":11,"text":"Natural coaching","textPreview":"Natural coaching","textChars":16,"textLines":1,"bbox":[884,379,285,30]}
+{"kind":"textbox","id":"sh/54rat8j2","slide":11,"text":"Strength","textPreview":"Strength","textChars":8,"textLines":1,"bbox":[884,425,90,22]}
+{"kind":"textbox","id":"sh/i1gbitkb","slide":11,"text":"Flexible communication","textPreview":"Flexible communication","textChars":22,"textLines":1,"bbox":[884,449,285,30]}
+{"kind":"textbox","id":"sh/32psry1w","slide":11,"text":"Limit","textPreview":"Limit","textChars":5,"textLines":1,"bbox":[884,495,90,22]}
+{"kind":"textbox","id":"sh/c7ito3id","slide":11,"text":"Needs grounding + fallback","textPreview":"Needs grounding + fallback","textChars":26,"textLines":1,"bbox":[884,519,285,30]}
+{"kind":"textbox","id":"sh/d8rax8jy","slide":11,"text":"Hybrid design turns one opaque ‘AI’ into accountable, composable capabilities.","textPreview":"Hybrid design turns one opaque ‘AI’ into accountable, composable capabilities.","textChars":78,"textLines":1,"bbox":[95,630,1090,34]}
+{"kind":"notes","id":"nt/c28nd3","slide":11,"text":"Avoid claiming that one paradigm is universally superior. The system is robust because responsibilities are explicit.\n\n[Sources]\n- Local repository: backend/main.py\n- Local repository: prolog/ai_system.pl\n- Local repository: app/api/coach/route.ts"}
+{"kind":"slide","id":"sl/hau1pw","slide":12,"title":"SENTIO / SEARCH LAB","textShapes":12}
+{"kind":"textbox","id":"sh/ah4fex8b","slide":12,"text":"SENTIO / SEARCH LAB","textPreview":"SENTIO / SEARCH LAB","textChars":19,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/xkveps72","slide":12,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/cjmxgnqh","slide":12,"text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/nutwjipk","slide":12,"text":"Four agents reveal how evaluation priorities change a search tree","textPreview":"Four agents reveal how evaluation priorities change a search tree","textChars":65,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/pgvels7q","slide":12,"bbox":[60,579,82,36]}
+{"kind":"shape","id":"sh/of2xcnq5","slide":12,"bbox":[820,211,6,42]}
+{"kind":"textbox","id":"sh/fqtwfypo","slide":12,"text":"Materialist","textPreview":"Materialist","textChars":11,"textLines":1,"bbox":[846,205,310,28]}
+{"kind":"textbox","id":"sh/epkv6d83","slide":12,"text":"1.8× material","textPreview":"1.8× material","textChars":13,"textLines":1,"bbox":[846,239,310,26]}
+{"kind":"shape","id":"sh/8ba5kf2l","slide":12,"bbox":[820,297,6,42]}
+{"kind":"textbox","id":"sh/tcj6dk36","slide":12,"text":"Positional","textPreview":"Positional","textChars":10,"textLines":1,"bbox":[846,291,310,28]}
+{"kind":"textbox","id":"sh/698nipkv","slide":12,"text":"1.8× activity","textPreview":"1.8× activity","textChars":13,"textLines":1,"bbox":[846,325,310,26]}
+{"kind":"shape","id":"sh/7ahobalg","slide":12,"bbox":[820,383,6,42]}
+{"kind":"textbox","id":"sh/k7q5gf2p","slide":12,"text":"Defender","textPreview":"Defender","textChars":8,"textLines":1,"bbox":[846,377,310,28]}
+{"kind":"textbox","id":"sh/l8z69k3a","slide":12,"text":"2.1× king safety","textPreview":"2.1× king safety","textChars":16,"textLines":1,"bbox":[846,411,310,26]}
+{"kind":"shape","id":"sh/yl8ne5kj","slide":12,"bbox":[820,469,6,42]}
+{"kind":"textbox","id":"sh/jmho7al4","slide":12,"text":"Tactician","textPreview":"Tactician","textChars":9,"textLines":1,"bbox":[846,463,310,28]}
+{"kind":"textbox","id":"sh/43upcz2t","slide":12,"text":"deeper forcing lines","textPreview":"deeper forcing lines","textChars":20,"textLines":1,"bbox":[846,497,310,26]}
+{"kind":"textbox","id":"sh/p436l43e","slide":12,"text":"Same FEN. Different heuristic weights. Selectable Minimax or MCTS traces.","textPreview":"Same FEN. Different heuristic weights. Selectable Minimax or MCTS traces.","textChars":73,"textLines":1,"bbox":[820,565,345,70]}
+{"kind":"image","id":"im/3yl8zil4","slide":12,"name":"","geometry":"roundRect","alt":"Sentio 3D arena in light mode with AI decision controls","bbox":[60,185,710,430]}
+{"kind":"notes","id":"nt/hau1pw","slide":12,"text":"The four agents are an analysis and visualization feature. They expose tradeoffs rather than replacing the production Stockfish opponent.\n\n[Sources]\n- Local repository: lib/agents.ts\n- Local repository: lib/minimax.ts\n- Local repository: lib/mcts.ts\n- Local repository: components/AgentsGraph3D.tsx\n- Local repository: Local light-mode screenshot: .presentation-light/assets/sentio-light-3d.png"}
+{"kind":"slide","id":"sl/xv0evb","slide":13,"title":"SENTIO / LANGUAGE AI","textShapes":12}
+{"kind":"textbox","id":"sh/l8zm507m","slide":13,"text":"SENTIO / LANGUAGE AI","textPreview":"SENTIO / LANGUAGE AI","textChars":20,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/y5o3u5ov","slide":13,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/j6x43qpg","slide":13,"text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/8vq50f6x","slide":13,"text":"The coach grounds natural language in the live position","textPreview":"The coach grounds natural language in the live position","textChars":55,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/6t8ny5o7","slide":13,"bbox":[55,584,86,36]}
+{"kind":"textbox","id":"sh/7uh47a5c","slide":13,"text":"INPUT","textPreview":"INPUT","textChars":5,"textLines":1,"bbox":[835,190,150,24]}
+{"kind":"textbox","id":"sh/oz6lob6t","slide":13,"text":"FEN · emotion · question","textPreview":"FEN · emotion · question","textChars":24,"textLines":1,"bbox":[835,222,340,38]}
+{"kind":"shape","id":"sh/90fmxg7e","slide":13,"bbox":[835,267,300,1]}
+{"kind":"textbox","id":"sh/xgfm1oru","slide":13,"text":"GROUNDING","textPreview":"GROUNDING","textChars":9,"textLines":1,"bbox":[835,288,150,24]}
+{"kind":"textbox","id":"sh/cf65s3a9","slide":13,"text":"legal moves · best move","textPreview":"legal moves · best move","textChars":23,"textLines":1,"bbox":[835,320,340,38]}
+{"kind":"shape","id":"sh/bed4zy9o","slide":13,"bbox":[835,365,300,1]}
+{"kind":"textbox","id":"sh/qd43qts3","slide":13,"text":"GENERATION","textPreview":"GENERATION","textChars":10,"textLines":1,"bbox":[835,386,150,24]}
+{"kind":"textbox","id":"sh/lkfm58rq","slide":13,"text":"Groq or local LLM","textPreview":"Groq or local LLM","textChars":17,"textLines":1,"bbox":[835,418,340,38]}
+{"kind":"shape","id":"sh/kj65w3a5","slide":13,"bbox":[835,463,300,1]}
+{"kind":"textbox","id":"sh/zix43y90","slide":13,"text":"FALLBACK","textPreview":"FALLBACK","textChars":8,"textLines":1,"bbox":[835,484,150,24]}
+{"kind":"textbox","id":"sh/yhonutsf","slide":13,"text":"structured chess advice","textPreview":"structured chess advice","textChars":23,"textLines":1,"bbox":[835,516,340,38]}
+{"kind":"textbox","id":"sh/98zm98r2","slide":13,"text":"The interface can offer a playable move, but chess.js validation remains the authority.","textPreview":"The interface can offer a playable move, but chess.js validation remains the authority.","textChars":87,"textLines":1,"bbox":[835,590,350,64]}
+{"kind":"image","id":"im/k3u9kzyh","slide":13,"name":"","geometry":"roundRect","alt":"Sentio AI Coach and Burmese voice coach interface in light mode","bbox":[55,180,730,440]}
+{"kind":"notes","id":"nt/xv0evb","slide":13,"text":"Explain graceful fallback: the route builds structured advice first, then enhances it with an LLM when available.\n\n[Sources]\n- Local repository: app/api/coach/route.ts\n- Local repository: lib/coachPrompt.ts\n- Local repository: components/AIAnalysisTab.tsx\n- Local repository: Local light-mode screenshot: .presentation-light/assets/sentio-light-main.png"}
+{"kind":"slide","id":"sl/fewtr1","slide":14,"title":"SENTIO / VOICE AI","textShapes":14}
+{"kind":"textbox","id":"sh/3mls7a9k","slide":14,"text":"SENTIO / VOICE AI","textPreview":"SENTIO / VOICE AI","textChars":17,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/onutgfq5","slide":14,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/po3a90rq","slide":14,"text":"14","textPreview":"14","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/qpcbi58b","slide":14,"text":"Burmese voice supports two separate—and safer—interaction paths","textPreview":"Burmese voice supports two separate—and safer—interaction paths","textChars":63,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/bqlsba9g","slide":14,"bbox":[60,205,545,380]}
+{"kind":"textbox","id":"sh/crutkfq1","slide":14,"text":"VOICE MOVE","textPreview":"VOICE MOVE","textChars":10,"textLines":1,"bbox":[90,232,220,26]}
+{"kind":"textbox","id":"sh/dsnadkrm","slide":14,"text":"Audio → transcript → parseChessMove() → legal move validation → board","textPreview":"Audio → transcript → parseChessMove() → legal move validation → board","textChars":69,"textLines":1,"bbox":[90,286,450,110]}
+{"kind":"textbox","id":"sh/6tsr6lsr","slide":14,"text":"A command executes only after it resolves to a legal move.","textPreview":"A command executes only after it resolves to a legal move.","textChars":58,"textLines":1,"bbox":[90,470,430,60]}
+{"kind":"shape","id":"sh/ru1szq9c","slide":14,"bbox":[675,205,545,380]}
+{"kind":"textbox","id":"sh/nepgza50","slide":14,"text":"VOICE COACH","textPreview":"VOICE COACH","textChars":11,"textLines":1,"bbox":[705,232,220,26]}
+{"kind":"textbox","id":"sh/mdgf654f","slide":14,"text":"Audio → transcript → editable text → /api/coach → Burmese answer → optional TTS","textPreview":"Audio → transcript → editable text → /api/coach → Burmese answer → optional TTS","textChars":79,"textLines":1,"bbox":[705,286,450,125]}
+{"kind":"textbox","id":"sh/9gry10n6","slide":14,"text":"Asking a question never auto-plays a move.","textPreview":"Asking a question never auto-plays a move.","textChars":42,"textLines":1,"bbox":[705,470,430,60]}
+{"kind":"shape","id":"sh/8fix8vml","slide":14,"bbox":[155,620,170,28]}
+{"kind":"textbox","id":"sh/zqpgvq54","slide":14,"text":"LOCAL WHISPER","textPreview":"LOCAL WHISPER","textChars":13,"textLines":1,"bbox":[155,622,170,22]}
+{"kind":"shape","id":"sh/ypgf2loj","slide":14,"bbox":[370,620,110,28]}
+{"kind":"textbox","id":"sh/lc7yx0na","slide":14,"text":"GROQ","textPreview":"GROQ","textChars":4,"textLines":1,"bbox":[370,622,110,22]}
+{"kind":"shape","id":"sh/0byx4v6p","slide":14,"bbox":[650,620,170,28]}
+{"kind":"textbox","id":"sh/bm5wrq5s","slide":14,"text":"ELEVENLABS","textPreview":"ELEVENLABS","textChars":10,"textLines":1,"bbox":[650,622,170,22]}
+{"kind":"shape","id":"sh/qlwfylo7","slide":14,"bbox":[865,620,120,28]}
+{"kind":"textbox","id":"sh/ehwza18f","slide":14,"text":"GEMINI","textPreview":"GEMINI","textChars":6,"textLines":1,"bbox":[865,622,120,22]}
+{"kind":"shape","id":"sh/fi5gj6p0","slide":14,"bbox":[1030,620,160,28]}
+{"kind":"textbox","id":"sh/gjehcbq5","slide":14,"text":"ASSEMBLYAI","textPreview":"ASSEMBLYAI","textChars":10,"textLines":1,"bbox":[1030,622,160,22]}
+{"kind":"notes","id":"nt/fewtr1","slide":14,"text":"Stress the separation of intent. Speech-to-move is command execution with validation; speech-to-coach is an editable conversational path.\n\n[Sources]\n- Local repository: README.md\n- Local repository: app/api/transcribe/route.ts\n- Local repository: lib/speechParser.ts\n- Local repository: components/VoiceCoachControl.tsx"}
+{"kind":"slide","id":"sl/hjj0rq","slide":15,"title":"SENTIO / PRODUCT SURFACE","textShapes":12}
+{"kind":"textbox","id":"sh/t8ni5szy","slide":15,"text":"SENTIO / PRODUCT SURFACE","textPreview":"SENTIO / PRODUCT SURFACE","textChars":24,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/6lwjad0n","slide":15,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/76503ih8","slide":15,"text":"15","textPreview":"15","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/kjeh8nih","slide":15,"text":"The AI remains visible, controllable, and inspectable during play","textPreview":"The AI remains visible, controllable, and inspectable during play","textChars":65,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/yhcz6d0b","slide":15,"bbox":[45,607,104,41]}
+{"kind":"textbox","id":"sh/ji50zi1w","slide":15,"text":"LIVE EVAL","textPreview":"LIVE EVAL","textChars":9,"textLines":1,"bbox":[935,180,260,24]}
+{"kind":"textbox","id":"sh/4fy1k7il","slide":15,"text":"Stockfish score","textPreview":"Stockfish score","textChars":15,"textLines":1,"bbox":[935,214,260,48]}
+{"kind":"textbox","id":"sh/5g7idcz6","slide":15,"text":"EMOTION TELEMETRY","textPreview":"EMOTION TELEMETRY","textChars":17,"textLines":1,"bbox":[935,285,260,24]}
+{"kind":"textbox","id":"sh/dgnipc76","slide":15,"text":"soft evidence over time","textPreview":"soft evidence over time","textChars":23,"textLines":1,"bbox":[935,319,260,48]}
+{"kind":"textbox","id":"sh/sfe1w7ql","slide":15,"text":"BOT PROFILE","textPreview":"BOT PROFILE","textChars":11,"textLines":1,"bbox":[935,390,260,24]}
+{"kind":"textbox","id":"sh/re50n2p0","slide":15,"text":"ELO · depth · skill","textPreview":"ELO · depth · skill","textChars":19,"textLines":1,"bbox":[935,424,260,48]}
+{"kind":"textbox","id":"sh/6dwjuh8f","slide":15,"text":"AI TABS","textPreview":"AI TABS","textChars":7,"textLines":1,"bbox":[935,495,260,24]}
+{"kind":"textbox","id":"sh/5c3ilc7u","slide":15,"text":"coach · logic · analysis","textPreview":"coach · logic · analysis","textChars":24,"textLines":1,"bbox":[935,529,260,48]}
+{"kind":"textbox","id":"sh/4bu1s7q9","slide":15,"text":"Manual emotion override keeps the human in control.","textPreview":"Manual emotion override keeps the human in control.","textChars":51,"textLines":1,"bbox":[935,590,280,56]}
+{"kind":"image","id":"im/8n6twj2h","slide":15,"name":"","geometry":"roundRect","alt":"Sentio analysis workspace with chessboard and controller in light mode","bbox":[45,168,850,480]}
+{"kind":"notes","id":"nt/hjj0rq","slide":15,"text":"Show that the adaptive system exposes its current state: emotion, engine profile, evaluation, and analysis tools.\n\n[Sources]\n- Local repository: components/BoardWorkspace.tsx\n- Local repository: components/ControllerPanel.tsx\n- Local repository: components/EmotionMonitor.tsx\n- Local repository: Local light-mode screenshot: .presentation-light/assets/sentio-light-analysis.png"}
+{"kind":"slide","id":"sl/ddb8f7","slide":16,"title":"SENTIO / RELIABILITY","textShapes":14}
+{"kind":"textbox","id":"sh/hwfi9g7q","slide":16,"text":"SENTIO / RELIABILITY","textPreview":"SENTIO / RELIABILITY","textChars":20,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/utoze1oz","slide":16,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/vuxg76pk","slide":16,"text":"16","textPreview":"16","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/8rmhcb6t","slide":16,"text":"Graceful degradation keeps the core game available","textPreview":"Graceful degradation keeps the core game available","textChars":50,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"shape","id":"sh/9svy5g7e","slide":16,"bbox":[60,190,1160,64]}
+{"kind":"shape","id":"sh/mp4za1o3","slide":16,"bbox":[60,190,8,64]}
+{"kind":"textbox","id":"sh/7qdg36po","slide":16,"text":"PROLOG UNAVAILABLE","textPreview":"PROLOG UNAVAILABLE","textChars":18,"textLines":1,"bbox":[88,207,260,26]}
+{"kind":"textbox","id":"sh/snqhov6d","slide":16,"text":"Logician shows setup guidance; game logic is unaffected","textPreview":"Logician shows setup guidance; game logic is unaffected","textChars":55,"textLines":1,"bbox":[365,205,805,34]}
+{"kind":"shape","id":"sh/tozih07y","slide":16,"bbox":[60,276,1160,64]}
+{"kind":"shape","id":"sh/pcbqhsnm","slide":16,"bbox":[60,276,8,64]}
+{"kind":"textbox","id":"sh/ob2pon61","slide":16,"text":"LLM UNAVAILABLE","textPreview":"LLM UNAVAILABLE","textChars":15,"textLines":1,"bbox":[88,293,260,26]}
+{"kind":"textbox","id":"sh/nq98fi5g","slide":16,"text":"Structured fallback coach still returns position-aware advice","textPreview":"Structured fallback coach still returns position-aware advice","textChars":61,"textLines":1,"bbox":[365,291,805,34]}
+{"kind":"shape","id":"sh/2p07mdov","slide":16,"bbox":[60,362,1160,64]}
+{"kind":"shape","id":"sh/1orqd8na","slide":16,"bbox":[60,362,8,64]}
+{"kind":"textbox","id":"sh/0nipk365","slide":16,"text":"CLOUD STT UNAVAILABLE","textPreview":"CLOUD STT UNAVAILABLE","textChars":21,"textLines":1,"bbox":[88,379,260,26]}
+{"kind":"textbox","id":"sh/fm98by5k","slide":16,"text":"Local Whisper or another configured provider can take over","textPreview":"Local Whisper or another configured provider can take over","textChars":58,"textLines":1,"bbox":[365,377,805,34]}
+{"kind":"shape","id":"sh/el07itoz","slide":16,"bbox":[60,448,1160,64]}
+{"kind":"shape","id":"sh/lkvqpcnu","slide":16,"bbox":[60,448,8,64]}
+{"kind":"textbox","id":"sh/kjm9g769","slide":16,"text":"STOCKFISH BUSY","textPreview":"STOCKFISH BUSY","textChars":14,"textLines":1,"bbox":[88,465,260,26]}
+{"kind":"textbox","id":"sh/4zu18fyh","slide":16,"text":"Bounded engine pool returns an explicit 503 instead of corrupt state","textPreview":"Bounded engine pool returns an explicit 503 instead of corrupt state","textChars":68,"textLines":1,"bbox":[365,463,805,34]}
+{"kind":"shape","id":"sh/50n210z2","slide":16,"bbox":[60,534,1160,64]}
+{"kind":"shape","id":"sh/ixcj65gr","slide":16,"bbox":[60,534,8,64]}
+{"kind":"textbox","id":"sh/3ylkzahw","slide":16,"text":"STALE UI RESPONSE","textPreview":"STALE UI RESPONSE","textChars":17,"textLines":1,"bbox":[88,551,260,26]}
+{"kind":"textbox","id":"sh/gvu14vyl","slide":16,"text":"Sequence checks ignore obsolete Logician requests","textPreview":"Sequence checks ignore obsolete Logician requests","textChars":49,"textLines":1,"bbox":[365,549,805,34]}
+{"kind":"textbox","id":"sh/hw32x0z6","slide":16,"text":"A robust AI product is defined as much by its boundaries as by its models.","textPreview":"A robust AI product is defined as much by its boundaries as by its models.","textChars":74,"textLines":1,"bbox":[85,640,1110,30]}
+{"kind":"notes","id":"nt/ddb8f7","slide":16,"text":"This slide is useful for technical evaluation: each optional AI service fails independently and reports a meaningful state.\n\n[Sources]\n- Local repository: backend/main.py\n- Local repository: app/api/prolog/route.ts\n- Local repository: app/api/coach/route.ts\n- Local repository: app/api/transcribe/route.ts\n- Local repository: components/LogicianPanel.tsx"}
+{"kind":"slide","id":"sl/lv4apc","slide":17,"title":"SENTIO / TEAM HANDOFF","textShapes":20}
+{"kind":"textbox","id":"sh/u5g7el8v","slide":17,"text":"SENTIO / TEAM HANDOFF","textPreview":"SENTIO / TEAM HANDOFF","textChars":21,"textLines":1,"bbox":[58,28,430,24]}
+{"kind":"shape","id":"sh/hsrq9g7m","slide":17,"bbox":[58,58,52,3]}
+{"kind":"textbox","id":"sh/g7ypgbq1","slide":17,"text":"17","textPreview":"17","textChars":2,"textLines":1,"bbox":[1182,28,42,22]}
+{"kind":"textbox","id":"sh/72po36p4","slide":17,"text":"Five presenters can tell one connected AI story","textPreview":"Five presenters can tell one connected AI story","textChars":47,"textLines":1,"bbox":[58,78,1164,58]}
+{"kind":"textbox","id":"sh/61g7a18z","slide":17,"text":"MEMBER 1","textPreview":"MEMBER 1","textChars":8,"textLines":1,"bbox":[65,180,145,24]}
+{"kind":"textbox","id":"sh/t4765g7a","slide":17,"text":"Problem + architecture","textPreview":"Problem + architecture","textChars":22,"textLines":1,"bbox":[240,177,580,32]}
+{"kind":"shape","id":"sh/s3ypcbqp","slide":17,"bbox":[965,178,190,28]}
+{"kind":"textbox","id":"sh/jy5ozmp8","slide":17,"text":"Slides 1–4","textPreview":"Slides 1–4","textChars":10,"textLines":1,"bbox":[965,180,190,22]}
+{"kind":"shape","id":"sh/ixw7618n","slide":17,"bbox":[65,235,1100,1]}
+{"kind":"textbox","id":"sh/s3edofed","slide":17,"text":"MEMBER 2","textPreview":"MEMBER 2","textChars":8,"textLines":1,"bbox":[65,272,145,24]}
+{"kind":"textbox","id":"sh/t4nexkvy","slide":17,"text":"Emotion perception + adaptation","textPreview":"Emotion perception + adaptation","textChars":31,"textLines":1,"bbox":[240,269,580,32]}
+{"kind":"shape","id":"sh/61cvmpwn","slide":17,"bbox":[965,270,190,28]}
+{"kind":"textbox","id":"sh/725wvud8","slide":17,"text":"Slides 5–6","textPreview":"Slides 5–6","textChars":10,"textLines":1,"bbox":[965,272,190,22]}
+{"kind":"shape","id":"sh/kfudkfeh","slide":17,"bbox":[65,327,1100,1]}
+{"kind":"textbox","id":"sh/5g3etkv2","slide":17,"text":"MEMBER 3","textPreview":"MEMBER 3","textChars":8,"textLines":1,"bbox":[65,364,145,24]}
+{"kind":"textbox","id":"sh/idcvi5wb","slide":17,"text":"Prolog deep dive + bridge","textPreview":"Prolog deep dive + bridge","textChars":25,"textLines":1,"bbox":[240,361,580,32]}
+{"kind":"shape","id":"sh/jelwradw","slide":17,"bbox":[965,362,190,28]}
+{"kind":"textbox","id":"sh/4byxwzel","slide":17,"text":"Slides 7–10","textPreview":"Slides 7–10","textChars":11,"textLines":1,"bbox":[965,364,190,22]}
+{"kind":"shape","id":"sh/pw7e54v6","slide":17,"bbox":[65,419,1100,1]}
+{"kind":"textbox","id":"sh/ds3e94na","slide":17,"text":"MEMBER 4","textPreview":"MEMBER 4","textChars":8,"textLines":1,"bbox":[65,456,145,24]}
+{"kind":"textbox","id":"sh/crudgz6p","slide":17,"text":"Hybrid search + agents + coach","textPreview":"Hybrid search + agents + coach","textChars":30,"textLines":1,"bbox":[240,453,580,32]}
+{"kind":"shape","id":"sh/bqlw7u5k","slide":17,"bbox":[965,454,190,28]}
+{"kind":"textbox","id":"sh/qpcve9oz","slide":17,"text":"Slides 11–13","textPreview":"Slides 11–13","textChars":12,"textLines":1,"bbox":[965,456,190,22]}
+{"kind":"shape","id":"sh/po3e54ne","slide":17,"bbox":[65,511,1100,1]}
+{"kind":"textbox","id":"sh/onadcz6t","slide":17,"text":"MEMBER 5","textPreview":"MEMBER 5","textChars":8,"textLines":1,"bbox":[65,548,145,24]}
+{"kind":"textbox","id":"sh/3m1w3u58","slide":17,"text":"Voice + product + reliability + close","textPreview":"Voice + product + reliability + close","textChars":37,"textLines":1,"bbox":[240,545,580,32]}
+{"kind":"shape","id":"sh/2lsvapon","slide":17,"bbox":[965,546,190,28]}
+{"kind":"textbox","id":"sh/10je1kn2","slide":17,"text":"Slides 14–18","textPreview":"Slides 14–18","textChars":12,"textLines":1,"bbox":[965,548,190,22]}
+{"kind":"textbox","id":"sh/gzad8f6h","slide":17,"text":"Transition phrase","textPreview":"Transition phrase","textChars":17,"textLines":1,"bbox":[65,642,180,24]}
+{"kind":"textbox","id":"sh/658bil4f","slide":17,"text":"“That layer creates the signal the next layer needs.”","textPreview":"“That layer creates the signal the next layer needs.”","textChars":53,"textLines":1,"bbox":[250,638,850,34]}
+{"kind":"notes","id":"nt/lv4apc","slide":17,"text":"Use this ownership split as a rehearsal guide. Member 3 gets the largest technical Prolog sequence, matching the requested emphasis.\n\n[Sources]\n- Local repository: .presentation-build/slide-plan.txt"}
+{"kind":"slide","id":"sl/rhehvs","slide":18,"title":"SENTIO / SYNTHESIS","textShapes":13}
+{"kind":"textbox","id":"sh/2tgjqdsr","slide":18,"text":"SENTIO / SYNTHESIS","textPreview":"SENTIO / SYNTHESIS","textChars":18,"textLines":1,"bbox":[60,44,350,24]}
+{"kind":"textbox","id":"sh/pw721sr2","slide":18,"text":"One adaptive loop.\nFour forms of intelligence.","textPreview":"One adaptive loop. | Four forms of intelligence.","textChars":46,"textLines":2,"bbox":[60,130,780,130]}
+{"kind":"shape","id":"sh/ovy1snah","slide":18,"bbox":[62,340,62,4]}
+{"kind":"textbox","id":"sh/by9k3298","slide":18,"text":"PERCEPTION","textPreview":"PERCEPTION","textChars":10,"textLines":1,"bbox":[62,365,240,24]}
+{"kind":"textbox","id":"sh/ax0juxsn","slide":18,"text":"reads the player","textPreview":"reads the player","textChars":16,"textLines":1,"bbox":[62,410,240,46]}
+{"kind":"shape","id":"sh/x0r25sre","slide":18,"bbox":[357,340,62,4]}
+{"kind":"textbox","id":"sh/czi1w7at","slide":18,"text":"SEARCH","textPreview":"SEARCH","textChars":6,"textLines":1,"bbox":[357,365,240,24]}
+{"kind":"textbox","id":"sh/zm9k7294","slide":18,"text":"reads the board","textPreview":"reads the board","textChars":15,"textLines":1,"bbox":[357,410,240,46]}
+{"kind":"shape","id":"sh/yl0jyxsz","slide":18,"bbox":[652,340,62,4]}
+{"kind":"textbox","id":"sh/kbmp8jip","slide":18,"text":"PROLOG","textPreview":"PROLOG","textChars":6,"textLines":1,"bbox":[652,365,240,24]}
+{"kind":"textbox","id":"sh/lcvqhoja","slide":18,"text":"makes rules visible","textPreview":"makes rules visible","textChars":19,"textLines":1,"bbox":[652,410,240,46]}
+{"kind":"shape","id":"sh/y9k7690j","slide":18,"bbox":[947,340,62,4]}
+{"kind":"textbox","id":"sh/jad8fe14","slide":18,"text":"LANGUAGE","textPreview":"LANGUAGE","textChars":8,"textLines":1,"bbox":[947,365,240,24]}
+{"kind":"textbox","id":"sh/8fmpc3i1","slide":18,"text":"makes guidance usable","textPreview":"makes guidance usable","textChars":21,"textLines":1,"bbox":[947,410,240,46]}
+{"kind":"shape","id":"sh/tgvqloj6","slide":18,"bbox":[840,105,340,170]}
+{"kind":"textbox","id":"sh/6d47at0v","slide":18,"text":"PROLOG’S BRIDGE","textPreview":"PROLOG’S BRIDGE","textChars":15,"textLines":1,"bbox":[875,135,270,24]}
+{"kind":"textbox","id":"sh/7ed8jy1g","slide":18,"text":"position state → explicit facts → prioritized explanation","textPreview":"position state → explicit facts → prioritized explanation","textChars":57,"textLines":1,"bbox":[875,182,270,75]}
+{"kind":"textbox","id":"sh/gj6pg3ix","slide":18,"text":"Sentio demonstrates that trustworthy AI is not one model—it is a well-designed conversation between models, rules, state, and people.","textPreview":"Sentio demonstrates that trustworthy AI is not one model—it is a well-designed conversation between models, rules, state, and people.","textChars":133,"textLines":1,"bbox":[120,550,1040,82]}
+{"kind":"notes","id":"nt/rhehvs","slide":18,"text":"Close by resolving the opening. Prolog is the bridge that turns machine-readable board state into inspectable human reasoning, inside a broader adaptive loop.\n\n[Sources]\n- Local repository: README.md\n- Local repository: AI_SYSTEM.txt\n- Local repository: prolog/ai_system.pl"}

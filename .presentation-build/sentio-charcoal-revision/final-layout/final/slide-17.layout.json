@@ -1,0 +1,1296 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/14bup87q",
+    "id": "14bup87q",
+    "slide": 17,
+    "layoutId": "/ppt/slideLayouts/slideLayout1.xml",
+    "layoutName": "DEFAULT",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+    "backgroundImage": {
+      "assetId": "/ppt/media/image16.jpeg",
+      "contentType": "image/jpeg",
+      "byteLength": 117450
+    },
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Office",
+    "colors": {
+      "accent1": "#4472C4",
+      "accent2": "#ED7D31",
+      "accent3": "#A5A5A5",
+      "accent4": "#FFC000",
+      "accent5": "#5B9BD5",
+      "accent6": "#70AD47",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#44546A",
+      "lt2": "#E7E6E6",
+      "hlink": "#0563C1",
+      "folHlink": "#954F72"
+    },
+    "fontScheme": {
+      "name": "Office",
+      "majorFont": {
+        "latinTypeface": "Calibri Light"
+      },
+      "minorFont": {
+        "latinTypeface": "Calibri"
+      }
+    },
+    "typefaces": [
+      "Calibri",
+      "Calibri Light",
+      "Cambria",
+      "Courier New"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "/ppt/slideLayouts/slideLayout1.xml",
+      "name": "DEFAULT",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1c7e50ni",
+      "id": "2",
+      "name": "Text 0",
+      "bbox": [
+        59.52,
+        132,
+        1160.93,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Sentio brings four AI experiences together",
+      "textPreview": "Sentio brings four AI experiences together",
+      "resolvedFontSize": 18.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 18.67,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Sentio brings four AI experiences together"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Sentio brings four AI experiences together",
+          "resolvedTextStyle": {
+            "fontSize": 18.67,
+            "typeface": "Calibri",
+            "color": "#FFC24B",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Sentio brings four AI experiences together",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#F7F4EE",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gbedwfmx",
+      "id": "3",
+      "name": "Text 1",
+      "bbox": [
+        59.52,
+        70,
+        1160.93,
+        58
+      ],
+      "geometry": "rect",
+      "text": "Conclusion & References",
+      "textPreview": "Conclusion & References",
+      "resolvedFontSize": 41.33,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 41.33,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Conclusion & References"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Conclusion & References",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Conclusion & References",
+              "fontSize": 41.33,
+              "typeface": "Cambria",
+              "color": "#F7F4EE",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rm5czq50",
+      "id": "4",
+      "name": "Shape 2",
+      "bbox": [
+        59.52,
+        178.56,
+        1160.93,
+        65.28
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.1)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6lwvql4v",
+      "id": "5",
+      "name": "Shape 3",
+      "bbox": [
+        90.24,
+        201.6,
+        19.2,
+        19.2
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#FFC24B",
+      "lineColor": "#FFC24B",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/t8ne10n6",
+      "id": "6",
+      "name": "Text 4",
+      "bbox": [
+        128.64,
+        192,
+        1055.33,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "Computer vision senses the player's current state.",
+      "textPreview": "Computer vision senses the player's current state.",
+      "resolvedFontSize": 18.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 18.67,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Computer vision senses the player's current state."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Computer vision senses the player's current state.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Computer vision senses the player's current state.",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#F7F4EE",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/snedsvml",
+      "id": "7",
+      "name": "Shape 5",
+      "bbox": [
+        59.52,
+        253.44,
+        1160.93,
+        65.28
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.1)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/jilcvq54",
+      "id": "8",
+      "name": "Shape 6",
+      "bbox": [
+        90.24,
+        276.48,
+        19.2,
+        19.2
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#FFC24B",
+      "lineColor": "#FFC24B",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ihcvml4j",
+      "id": "9",
+      "name": "Text 7",
+      "bbox": [
+        128.64,
+        266.88,
+        1055.33,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "Stockfish adapts difficulty automatically.",
+      "textPreview": "Stockfish adapts difficulty automatically.",
+      "resolvedFontSize": 18.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 18.67,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Stockfish adapts difficulty automatically."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Stockfish adapts difficulty automatically.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Stockfish adapts difficulty automatically.",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#F7F4EE",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4by9or6l",
+      "id": "10",
+      "name": "Shape 8",
+      "bbox": [
+        59.52,
+        328.32,
+        1160.93,
+        65.28
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.1)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pc7qhwn6",
+      "id": "11",
+      "name": "Shape 9",
+      "bbox": [
+        90.24,
+        351.36,
+        19.2,
+        19.2
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#FFC24B",
+      "lineColor": "#FFC24B",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/29grm1of",
+      "id": "12",
+      "name": "Text 10",
+      "bbox": [
+        128.64,
+        341.76,
+        1055.33,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "Prolog explains rules; the LLM provides natural-language coaching.",
+      "textPreview": "Prolog explains rules; the LLM provides natural-language coaching.",
+      "resolvedFontSize": 18.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 18.67,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Prolog explains rules; the LLM provides natural-language coaching."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Prolog explains rules; the LLM provides natural-language coaching.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Prolog explains rules; the LLM provides natural-language coaching.",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#F7F4EE",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ap8fm50",
+      "id": "13",
+      "name": "Shape 11",
+      "bbox": [
+        59.52,
+        403.2,
+        1160.93,
+        65.28
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.1)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gnepkr69",
+      "id": "14",
+      "name": "Shape 12",
+      "bbox": [
+        90.24,
+        426.24,
+        19.2,
+        19.2
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#FFC24B",
+      "lineColor": "#FFC24B",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/honqdwnu",
+      "id": "15",
+      "name": "Text 13",
+      "bbox": [
+        128.64,
+        416.64,
+        1055.33,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "Burmese voice and 3D hand tracking expand how players interact.",
+      "textPreview": "Burmese voice and 3D hand tracking expand how players interact.",
+      "resolvedFontSize": 18.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 18.67,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Burmese voice and 3D hand tracking expand how players interact."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Burmese voice and 3D hand tracking expand how players interact.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Burmese voice and 3D hand tracking expand how players interact.",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#F7F4EE",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ulw7ihoj",
+      "id": "16",
+      "name": "Text 14",
+      "bbox": [
+        59.52,
+        493.44,
+        1160.93,
+        26.88
+      ],
+      "geometry": "rect",
+      "text": "REFERENCES",
+      "textPreview": "REFERENCES",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "REFERENCES"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "REFERENCES",
+          "runs": [
+            {
+              "index": 1,
+              "text": "REFERENCES",
+              "fontSize": 14,
+              "typeface": "Calibri",
+              "color": "#F7F4EE",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fm58bm54",
+      "id": "17",
+      "name": "Shape 15",
+      "bbox": [
+        59.52,
+        528,
+        371.62,
+        38.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.08)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0ji9wb6t",
+      "id": "18",
+      "name": "Text 16",
+      "bbox": [
+        76.8,
+        528,
+        337.06,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "stockfishchess.org",
+      "textPreview": "stockfishchess.org",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "stockfishchess.org"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "stockfishchess.org",
+          "runs": [
+            {
+              "index": 1,
+              "text": "stockfishchess.org",
+              "fontSize": 14,
+              "typeface": "Courier New",
+              "color": "#F7F4EE"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/14rqpgne",
+      "id": "19",
+      "name": "Shape 17",
+      "bbox": [
+        454.18,
+        528,
+        371.62,
+        38.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.08)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/90nq9gfi",
+      "id": "20",
+      "name": "Text 18",
+      "bbox": [
+        471.46,
+        528,
+        337.06,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "github.com/vladmandic/face-api",
+      "textPreview": "github.com/vladmandic/face-api",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "github.com/vladmandic/face-api"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "github.com/vladmandic/face-api",
+          "runs": [
+            {
+              "index": 1,
+              "text": "github.com/vladmandic/face-api",
+              "fontSize": 14,
+              "typeface": "Courier New",
+              "color": "#F7F4EE"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8ze9gbyx",
+      "id": "21",
+      "name": "Shape 19",
+      "bbox": [
+        848.83,
+        528,
+        371.62,
+        38.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.08)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ny5876xc",
+      "id": "22",
+      "name": "Text 20",
+      "bbox": [
+        866.11,
+        528,
+        337.06,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "swi-prolog.org",
+      "textPreview": "swi-prolog.org",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "swi-prolog.org"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "swi-prolog.org",
+          "runs": [
+            {
+              "index": 1,
+              "text": "swi-prolog.org",
+              "fontSize": 14,
+              "typeface": "Courier New",
+              "color": "#F7F4EE"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mxw7e1gr",
+      "id": "23",
+      "name": "Shape 21",
+      "bbox": [
+        59.52,
+        576,
+        371.62,
+        38.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.08)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lwnq5gf6",
+      "id": "24",
+      "name": "Text 22",
+      "bbox": [
+        76.8,
+        576,
+        337.06,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "github.com/SYSTRAN/faster-whisper",
+      "textPreview": "github.com/SYSTRAN/faster-whisper",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "github.com/SYSTRAN/faster-whisper"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "github.com/SYSTRAN/faster-whisper",
+          "runs": [
+            {
+              "index": 1,
+              "text": "github.com/SYSTRAN/faster-whisper",
+              "fontSize": 14,
+              "typeface": "Courier New",
+              "color": "#F7F4EE"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0vepcbyl",
+      "id": "25",
+      "name": "Shape 23",
+      "bbox": [
+        454.18,
+        576,
+        371.62,
+        38.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.08)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zul836xg",
+      "id": "26",
+      "name": "Text 24",
+      "bbox": [
+        471.46,
+        576,
+        337.06,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "github.com/jhlywa/chess.js",
+      "textPreview": "github.com/jhlywa/chess.js",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "github.com/jhlywa/chess.js"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "github.com/jhlywa/chess.js",
+          "runs": [
+            {
+              "index": 1,
+              "text": "github.com/jhlywa/chess.js",
+              "fontSize": 14,
+              "typeface": "Courier New",
+              "color": "#F7F4EE"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ytc7a1gv",
+      "id": "27",
+      "name": "Shape 25",
+      "bbox": [
+        848.83,
+        576,
+        371.62,
+        38.4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "rgba(255, 255, 255, 0.08)",
+      "lineColor": "#9A8C78",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d83q1wfa",
+      "id": "28",
+      "name": "Text 26",
+      "bbox": [
+        866.11,
+        576,
+        337.06,
+        38.4
+      ],
+      "geometry": "rect",
+      "text": "nextjs.org/docs",
+      "textPreview": "nextjs.org/docs",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "nextjs.org/docs"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "nextjs.org/docs",
+          "runs": [
+            {
+              "index": 1,
+              "text": "nextjs.org/docs",
+              "fontSize": 14,
+              "typeface": "Courier New",
+              "color": "#F7F4EE"
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/c7up8ryp",
+      "id": "29",
+      "name": "Text 27",
+      "bbox": [
+        59.52,
+        635.52,
+        1160.93,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "One connected system: adaptive, explainable, multilingual, and playable.",
+      "textPreview": "One connected system: adaptive, explainable, multilingual, and playable.",
+      "resolvedFontSize": 18.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 18.67,
+        "typeface": "Calibri",
+        "color": "#F7F4EE",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "One connected system: adaptive, explainable, multilingual, and playable."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "One connected system: adaptive, explainable, multilingual, and playable.",
+          "resolvedTextStyle": {
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "One connected system: adaptive, explainable, multilingual, and playable.",
+              "fontSize": 18.67,
+              "typeface": "Calibri",
+              "color": "#F7F4EE",
+              "bold": true,
+              "italic": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2dsn2xwn",
+      "id": "30",
+      "name": "Text 28",
+      "bbox": [
+        59.52,
+        670.08,
+        249.6,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "SENTIO",
+      "textPreview": "SENTIO",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#E3DFD7",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SENTIO"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SENTIO",
+          "runs": [
+            {
+              "index": 1,
+              "text": "SENTIO",
+              "fontSize": 12,
+              "typeface": "Calibri",
+              "color": "#E3DFD7",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3e1ob2d8",
+      "id": "31",
+      "name": "Text 29",
+      "bbox": [
+        1124.45,
+        670.08,
+        96,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "17",
+      "textPreview": "17",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "#FFC24B",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "17"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "17",
+          "resolvedTextStyle": {
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "17",
+              "fontSize": 14.67,
+              "typeface": "Calibri",
+              "color": "#FFC24B",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ]
+    }
+  ],
+  "composeRuns": []
+}

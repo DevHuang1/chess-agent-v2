@@ -442,9 +442,7 @@ export default function AIAnalysisTab({
               className="min-w-0 text-[11px]"
             />
             <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
-              <SelectTrigger className="h-9 text-[11px]">
-                <span>Status</span>
-              </SelectTrigger>
+              <SelectTrigger className="h-9 text-[11px]" aria-label="Graph node status" />
               <SelectContent>
                 <SelectItem value="all">All statuses</SelectItem>
                 <SelectItem value="principal">Principal</SelectItem>
@@ -454,9 +452,7 @@ export default function AIAnalysisTab({
               </SelectContent>
             </Select>
             <Select value={depthFilter} onValueChange={(v) => setDepthFilter(v as typeof depthFilter)}>
-              <SelectTrigger className="h-9 text-[11px]">
-                <span>Depth</span>
-              </SelectTrigger>
+              <SelectTrigger className="h-9 text-[11px]" aria-label="Graph node depth" />
               <SelectContent>
                 <SelectItem value="all">All depths</SelectItem>
                 {availableDepths.map((value) => (

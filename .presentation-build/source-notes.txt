@@ -1,0 +1,4 @@
+All non-trivial technical claims and screenshots are sourced from the local Sentio repository at /Users/yuza/chess-agent-v2, inspected on 2026-08-28.
+Primary files: README.md; AI_SYSTEM.txt; backend/main.py; prolog/ai_system.pl; app/api/prolog/route.ts; app/api/coach/route.ts; app/api/transcribe/route.ts; lib/emotionFusion.ts; lib/blendshapeEmotion.ts; lib/agents.ts; components/LogicianPanel.tsx; app/globals.css.
+Screenshots: local running application at http://localhost:3000, captured on 2026-08-28 into .presentation-build/assets/.
+No external web claims or externally sourced visual assets are used.

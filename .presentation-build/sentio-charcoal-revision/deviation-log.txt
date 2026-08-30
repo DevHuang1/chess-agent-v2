@@ -1,0 +1,6 @@
+Slide 2: team responsibility text updated from placeholders using the user's ownership details.
+Slide 3: contents rewritten to match the revised narrative.
+Slide 4: source slide 13 repurposed for a concise product definition and authentic Analysis screenshot.
+Slide 14: inherited pseudo UI removed and replaced by three authentic product screenshots.
+Slide 18: source title slide repurposed as a dedicated thank-you slide.
+All slides: low-contrast body copy brightened while retaining the charcoal/ember palette.

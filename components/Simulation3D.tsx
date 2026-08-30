@@ -8,6 +8,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import GameInfo from "@/components/GameInfo";
 import { FilesetResolver, GestureRecognizer } from "@mediapipe/tasks-vision";
 import { validateDropTarget } from "@/lib/dropValidation";
+import type { MoveProvenance } from "@/lib/provenance";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -1117,6 +1118,7 @@ export type ReplayMove = {
   color: "w" | "b";
   flags: string;
   promotion?: string;
+  provenance?: MoveProvenance;
 };
 
 export type ReplayGame = {

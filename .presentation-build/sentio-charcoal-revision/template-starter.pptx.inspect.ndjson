@@ -1,0 +1,803 @@
+{"kind":"deck","id":"pr/sjcwpd","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"","type":"master"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"DEFAULT"}
+{"kind":"slide","id":"sl/cr14n1","slide":1,"title":"AI PROJECT  ·  2026","textShapes":9}
+{"kind":"shape","id":"sh/2dsrm943","slide":1,"name":"Shape 0","bbox":[59.52,155.52,240,40.32]}
+{"kind":"textbox","id":"sh/3e18fe5o","slide":1,"name":"Text 1","text":"AI PROJECT  ·  2026","textPreview":"AI PROJECT  ·  2026","textChars":19,"textLines":1,"bbox":[59.52,155.52,240,40.32]}
+{"kind":"textbox","id":"sh/c3u9sjm5","slide":1,"name":"Text 2","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,211.2,902.4,110.4]}
+{"kind":"textbox","id":"sh/d43alonq","slide":1,"name":"Text 3","text":"An Emotion-Adaptive Chess AI Agent","textPreview":"An Emotion-Adaptive Chess AI Agent","textChars":34,"textLines":1,"bbox":[59.52,322.56,902.4,52.8]}
+{"kind":"textbox","id":"sh/q1srq94z","slide":1,"name":"Text 4","text":"Latin for \"I feel\" — a chess engine that reads your emotions and adapts in real time.","textPreview":"Latin for \"I feel\" — a chess engine that reads your emotions and adapts in real time.","textChars":85,"textLines":1,"bbox":[59.52,389.76,806.4,38.4]}
+{"kind":"shape","id":"sh/r2lsje5k","slide":1,"name":"Shape 5","bbox":[59.52,458.88,307.2,0]}
+{"kind":"textbox","id":"sh/07u9w3m1","slide":1,"name":"Text 6","text":"Presented by  Group-X   ·   Section-C","textPreview":"Presented by  Group-X   ·   Section-C","textChars":37,"textLines":1,"bbox":[59.52,480,672,32.64]}
+{"kind":"textbox","id":"sh/183aponm","slide":1,"name":"Text 7","text":"University of Information Technology","textPreview":"University of Information Technology","textChars":36,"textLines":1,"bbox":[59.52,514.56,672,28.8]}
+{"kind":"shape","id":"sh/5cvapkby","slide":1,"name":"Shape 8","bbox":[936,187.2,288,288]}
+{"kind":"textbox","id":"sh/kbm9wfud","slide":1,"name":"Text 9","text":"♞","textPreview":"♞","textChars":1,"textLines":1,"bbox":[936,187.2,288,288]}
+{"kind":"textbox","id":"sh/jadsnats","slide":1,"name":"Text 10","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/i94ru5c7","slide":1,"name":"Text 11","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/cr14n1","slide":1,"text":""}
+{"kind":"slide","id":"sl/egqomu","slide":2,"title":"GROUP-X  ·  SECTION-C","textShapes":25}
+{"kind":"textbox","id":"sh/zulgv6x8","slide":2,"name":"Text 0","text":"GROUP-X  ·  SECTION-C","textPreview":"GROUP-X  ·  SECTION-C","textChars":21,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/ytcz21gn","slide":2,"name":"Text 1","text":"Team & Responsibilities","textPreview":"Team & Responsibilities","textChars":23,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/xs3ytwfi","slide":2,"name":"Shape 2","bbox":[57.26,182.4,266.88,388.8]}
+{"kind":"shape","id":"sh/cruh0ryx","slide":2,"name":"Shape 3","bbox":[142.7,211.2,96,96]}
+{"kind":"textbox","id":"sh/bq1grmxc","slide":2,"name":"Text 4","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[142.7,211.2,96,96]}
+{"kind":"textbox","id":"sh/apszy1gr","slide":2,"name":"Text 5","text":"Member Name 1","textPreview":"Member Name 1","textChars":13,"textLines":1,"bbox":[68.78,324.48,243.84,32.64]}
+{"kind":"textbox","id":"sh/honi50fm","slide":2,"name":"Text 6","text":"TNT - 0000","textPreview":"TNT - 0000","textChars":10,"textLines":1,"bbox":[68.78,359.04,243.84,28.8]}
+{"kind":"shape","id":"sh/wnehcve1","slide":2,"name":"Shape 7","bbox":[124.46,401.28,132.48,0]}
+{"kind":"textbox","id":"sh/ax4re1on","slide":2,"name":"Text 8","text":"System development\nEmotion detection module","textPreview":"System development | Emotion detection module","textChars":43,"textLines":2,"bbox":[76.46,416.64,228.48,91.2]}
+{"kind":"textbox","id":"sh/bids7658","slide":2,"name":"Text 9","text":"Presenter","textPreview":"Presenter","textChars":9,"textLines":1,"bbox":[68.78,522.24,243.84,26.88]}
+{"kind":"shape","id":"sh/wjm9gb6t","slide":2,"name":"Shape 10","bbox":[356.78,182.4,266.88,388.8]}
+{"kind":"shape","id":"sh/xkfa9gny","slide":2,"name":"Shape 11","bbox":[442.22,211.2,96,96]}
+{"kind":"textbox","id":"sh/mt4ra1ob","slide":2,"name":"Text 12","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[442.22,211.2,96,96]}
+{"kind":"textbox","id":"sh/nuds36pw","slide":2,"name":"Text 13","text":"Member Name 2","textPreview":"Member Name 2","textChars":13,"textLines":1,"bbox":[368.3,324.48,243.84,32.64]}
+{"kind":"textbox","id":"sh/ovm9cb6h","slide":2,"name":"Text 14","text":"TNT - 0000","textPreview":"TNT - 0000","textChars":10,"textLines":1,"bbox":[368.3,359.04,243.84,28.8]}
+{"kind":"shape","id":"sh/9wva5g72","slide":2,"name":"Shape 15","bbox":[423.98,401.28,132.48,0]}
+{"kind":"textbox","id":"sh/6pobmlov","slide":2,"name":"Text 16","text":"Backend development\nStockfish integration","textPreview":"Backend development | Stockfish integration","textChars":41,"textLines":2,"bbox":[375.98,416.64,228.48,91.2]}
+{"kind":"textbox","id":"sh/7qxsfq5g","slide":2,"name":"Text 17","text":"Presenter","textPreview":"Presenter","textChars":9,"textLines":1,"bbox":[368.3,522.24,243.84,26.88]}
+{"kind":"shape","id":"sh/3u9o7i5s","slide":2,"name":"Shape 18","bbox":[656.3,182.4,266.88,388.8]}
+{"kind":"shape","id":"sh/it07ed47","slide":2,"name":"Shape 19","bbox":[741.74,211.2,96,96]}
+{"kind":"textbox","id":"sh/5wr69sny","slide":2,"name":"Text 20","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[741.74,211.2,96,96]}
+{"kind":"textbox","id":"sh/4vipgnmd","slide":2,"name":"Text 21","text":"Member Name 3","textPreview":"Member Name 3","textChars":13,"textLines":1,"bbox":[667.82,324.48,243.84,32.64]}
+{"kind":"textbox","id":"sh/ry98b25o","slide":2,"name":"Text 22","text":"TNT - 0000","textPreview":"TNT - 0000","textChars":10,"textLines":1,"bbox":[667.82,359.04,243.84,28.8]}
+{"kind":"shape","id":"sh/qx07ix43","slide":2,"name":"Shape 23","bbox":[723.5,401.28,132.48,0]}
+{"kind":"textbox","id":"sh/d0bqdc3u","slide":2,"name":"Text 24","text":"Prolog knowledge base\nLogician panel","textPreview":"Prolog knowledge base | Logician panel","textChars":36,"textLines":2,"bbox":[675.5,416.64,228.48,91.2]}
+{"kind":"textbox","id":"sh/szipk7m9","slide":2,"name":"Text 25","text":"Presenter","textPreview":"Presenter","textChars":9,"textLines":1,"bbox":[667.82,522.24,243.84,26.88]}
+{"kind":"shape","id":"sh/z2t8f2l0","slide":2,"name":"Shape 26","bbox":[955.82,182.4,266.88,388.8]}
+{"kind":"shape","id":"sh/e1k7mh4f","slide":2,"name":"Shape 27","bbox":[1041.26,211.2,96,96]}
+{"kind":"textbox","id":"sh/wr2pc72d","slide":2,"name":"Text 28","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[1041.26,211.2,96,96]}
+{"kind":"textbox","id":"sh/xsv65cjy","slide":2,"name":"Text 29","text":"Member Name 4","textPreview":"Member Name 4","textChars":13,"textLines":1,"bbox":[967.34,324.48,243.84,32.64]}
+{"kind":"textbox","id":"sh/a5knahkn","slide":2,"name":"Text 30","text":"TNT - 0000","textPreview":"TNT - 0000","textChars":10,"textLines":1,"bbox":[967.34,359.04,243.84,28.8]}
+{"kind":"shape","id":"sh/bqto3m1s","slide":2,"name":"Shape 31","bbox":[1023.02,401.28,132.48,0]}
+{"kind":"textbox","id":"sh/o325872h","slide":2,"name":"Text 32","text":"Frontend UI · voice module\nDocumentation","textPreview":"Frontend UI · voice module | Documentation","textChars":40,"textLines":2,"bbox":[975.02,416.64,228.48,91.2]}
+{"kind":"textbox","id":"sh/94b61cj2","slide":2,"name":"Text 33","text":"Presenter","textPreview":"Presenter","textChars":9,"textLines":1,"bbox":[967.34,522.24,243.84,26.88]}
+{"kind":"textbox","id":"sh/m1kn6xkb","slide":2,"name":"Text 34","text":"Replace the placeholder names and roll numbers before presenting.","textPreview":"Replace the placeholder names and roll numbers before presenting.","textChars":65,"textLines":1,"bbox":[59.52,589.44,1160.93,28.8]}
+{"kind":"textbox","id":"sh/n2toz21w","slide":2,"name":"Text 35","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/0zi54n25","slide":2,"name":"Text 36","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/egqomu","slide":2,"text":""}
+{"kind":"slide","id":"sl/bxjbl3","slide":3,"title":"WHAT WE WILL COVER","textShapes":24}
+{"kind":"textbox","id":"sh/4fax4f69","slide":3,"name":"Text 0","text":"WHAT WE WILL COVER","textPreview":"WHAT WE WILL COVER","textChars":18,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/5gjexkne","slide":3,"name":"Text 1","text":"Contents","textPreview":"Contents","textChars":8,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/qhsf6poz","slide":3,"name":"Shape 2","bbox":[59.52,192,556.46,71.04]}
+{"kind":"shape","id":"sh/rilgzu5k","slide":3,"name":"Shape 3","bbox":[80.64,206.4,42.24,42.24]}
+{"kind":"textbox","id":"sh/sjux8z65","slide":3,"name":"Text 4","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[80.64,206.4,42.24,42.24]}
+{"kind":"textbox","id":"sh/dk3y14nq","slide":3,"name":"Text 5","text":"Problem Statement","textPreview":"Problem Statement","textChars":17,"textLines":1,"bbox":[138.24,211.2,460.46,32.64]}
+{"kind":"shape","id":"sh/e5cfa9ob","slide":3,"name":"Shape 6","bbox":[663.98,192,556.46,71.04]}
+{"kind":"shape","id":"sh/z6lg3e5w","slide":3,"name":"Shape 7","bbox":[685.1,206.4,42.24,42.24]}
+{"kind":"textbox","id":"sh/n2583eh4","slide":3,"name":"Text 8","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[685.1,206.4,42.24,42.24]}
+{"kind":"textbox","id":"sh/m1wru9gj","slide":3,"name":"Text 9","text":"System Objectives","textPreview":"System Objectives","textChars":17,"textLines":1,"bbox":[742.7,211.2,460.46,32.64]}
+{"kind":"shape","id":"sh/9onq5ozu","slide":3,"name":"Shape 10","bbox":[59.52,280.32,556.46,71.04]}
+{"kind":"shape","id":"sh/one9wjy9","slide":3,"name":"Shape 11","bbox":[80.64,294.72,42.24,42.24]}
+{"kind":"textbox","id":"sh/zy58zehs","slide":3,"name":"Text 12","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[80.64,294.72,42.24,42.24]}
+{"kind":"textbox","id":"sh/excrq9g7","slide":3,"name":"Text 13","text":"Functional Requirements","textPreview":"Functional Requirements","textChars":23,"textLines":1,"bbox":[138.24,299.52,460.46,32.64]}
+{"kind":"shape","id":"sh/10nq14zy","slide":3,"name":"Shape 14","bbox":[663.98,280.32,556.46,71.04]}
+{"kind":"shape","id":"sh/0ze9sjyd","slide":3,"name":"Shape 15","bbox":[685.1,294.72,42.24,42.24]}
+{"kind":"textbox","id":"sh/jupsbyhc","slide":3,"name":"Text 16","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[685.1,294.72,42.24,42.24]}
+{"kind":"textbox","id":"sh/ytgr2tgr","slide":3,"name":"Text 17","text":"System Architecture","textPreview":"System Architecture","textChars":19,"textLines":1,"bbox":[742.7,299.52,460.46,32.64]}
+{"kind":"shape","id":"sh/upkbux0z","slide":3,"name":"Shape 18","bbox":[59.52,368.64,556.46,71.04]}
+{"kind":"shape","id":"sh/vqtc321k","slide":3,"name":"Shape 19","bbox":[80.64,383.04,42.24,42.24]}
+{"kind":"textbox","id":"sh/gr2tw7ip","slide":3,"name":"Text 20","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[80.64,383.04,42.24,42.24]}
+{"kind":"textbox","id":"sh/hsbu5cja","slide":3,"name":"Text 21","text":"Methodology","textPreview":"Methodology","textChars":11,"textLines":1,"bbox":[138.24,387.84,460.46,32.64]}
+{"kind":"shape","id":"sh/idkbyh0v","slide":3,"name":"Shape 22","bbox":[663.98,368.64,556.46,71.04]}
+{"kind":"shape","id":"sh/3etc7m1g","slide":3,"name":"Shape 23","bbox":[685.1,383.04,42.24,42.24]}
+{"kind":"textbox","id":"sh/4f2t07i1","slide":3,"name":"Text 24","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[685.1,383.04,42.24,42.24]}
+{"kind":"textbox","id":"sh/pgvu9cjm","slide":3,"name":"Text 25","text":"Code Example","textPreview":"Code Example","textChars":12,"textLines":1,"bbox":[742.7,387.84,460.46,32.64]}
+{"kind":"shape","id":"sh/yhgbmd0r","slide":3,"name":"Shape 26","bbox":[59.52,456.96,556.46,71.04]}
+{"kind":"shape","id":"sh/ji9cvi1c","slide":3,"name":"Shape 27","bbox":[80.64,471.36,42.24,42.24]}
+{"kind":"textbox","id":"sh/1cfe1g3u","slide":3,"name":"Text 28","text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[80.64,471.36,42.24,42.24]}
+{"kind":"textbox","id":"sh/0b6x8b29","slide":3,"name":"Text 29","text":"System UI","textPreview":"System UI","textChars":9,"textLines":1,"bbox":[138.24,476.16,460.46,32.64]}
+{"kind":"shape","id":"sh/zaxwzqlo","slide":3,"name":"Shape 30","bbox":[663.98,456.96,556.46,71.04]}
+{"kind":"shape","id":"sh/e9of6lk3","slide":3,"name":"Shape 31","bbox":[685.1,471.36,42.24,42.24]}
+{"kind":"textbox","id":"sh/9gze50jq","slide":3,"name":"Text 32","text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[685.1,471.36,42.24,42.24]}
+{"kind":"textbox","id":"sh/of6xcv25","slide":3,"name":"Text 33","text":"Benefits & Limitations","textPreview":"Benefits & Limitations","textChars":22,"textLines":1,"bbox":[742.7,476.16,460.46,32.64]}
+{"kind":"shape","id":"sh/nexw3qlk","slide":3,"name":"Shape 34","bbox":[59.52,545.28,556.46,71.04]}
+{"kind":"shape","id":"sh/mdofalkf","slide":3,"name":"Shape 35","bbox":[80.64,559.68,42.24,42.24]}
+{"kind":"textbox","id":"sh/pkvetw3m","slide":3,"name":"Text 36","text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[80.64,559.68,42.24,42.24]}
+{"kind":"textbox","id":"sh/4jmd0r21","slide":3,"name":"Text 37","text":"Future Work","textPreview":"Future Work","textChars":11,"textLines":1,"bbox":[138.24,564.48,460.46,32.64]}
+{"kind":"shape","id":"sh/sbu9o3ql","slide":3,"name":"Shape 38","bbox":[663.98,545.28,556.46,71.04]}
+{"kind":"shape","id":"sh/tcnqx8r6","slide":3,"name":"Shape 39","bbox":[685.1,559.68,42.24,42.24]}
+{"kind":"textbox","id":"sh/69crmt8v","slide":3,"name":"Text 40","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[685.1,559.68,42.24,42.24]}
+{"kind":"textbox","id":"sh/7al8vy9g","slide":3,"name":"Text 41","text":"Conclusion & References","textPreview":"Conclusion & References","textChars":23,"textLines":1,"bbox":[742.7,564.48,460.46,32.64]}
+{"kind":"textbox","id":"sh/knu9kjqp","slide":3,"name":"Text 42","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/583qtora","slide":3,"name":"Text 43","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/bxjbl3","slide":3,"text":""}
+{"kind":"slide","id":"sl/0km1c6","slide":4,"title":"THE INTERFACE IN USE","textShapes":29}
+{"kind":"textbox","id":"sh/3ylsj214","slide":4,"name":"Text 0","text":"THE INTERFACE IN USE","textPreview":"THE INTERFACE IN USE","textChars":20,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/2xsbqxkj","slide":4,"name":"Text 1","text":"System UI","textPreview":"System UI","textChars":9,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/do3upcj6","slide":4,"name":"Shape 2","bbox":[59.52,184.32,720,427.2]}
+{"kind":"shape","id":"sh/cnutwr2l","slide":4,"name":"Shape 3","bbox":[59.52,184.32,720,40.32]}
+{"kind":"textbox","id":"sh/b2lcnm10","slide":4,"name":"Text 4","text":"Sentio  —  localhost:3000","textPreview":"Sentio  —  localhost:3000","textChars":25,"textLines":1,"bbox":[88.32,184.32,384,40.32]}
+{"kind":"shape","id":"sh/q1cbuhkf","slide":4,"name":"Shape 5","bbox":[86.4,251.52,15.36,316.8]}
+{"kind":"shape","id":"sh/tsjadsj2","slide":4,"name":"Shape 6","bbox":[86.4,251.52,15.36,136.32]}
+{"kind":"shape","id":"sh/sratkn2h","slide":4,"name":"Shape 7","bbox":[119.04,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/6hczuxw3","slide":4,"name":"Shape 8","bbox":[158.59,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/7il0n2xo","slide":4,"name":"Shape 9","bbox":[198.14,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/8juhw7e9","slide":4,"name":"Shape 10","bbox":[237.7,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/tknipcfu","slide":4,"name":"Shape 11","bbox":[277.25,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/ulwzyhwf","slide":4,"name":"Shape 12","bbox":[316.8,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/fm50rmxk","slide":4,"name":"Shape 13","bbox":[356.35,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/gneh0re5","slide":4,"name":"Shape 14","bbox":[395.9,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/h8nitcfq","slide":4,"name":"Shape 15","bbox":[119.04,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/29wz2hwb","slide":4,"name":"Shape 16","bbox":[158.59,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/3a50vmdw","slide":4,"name":"Shape 17","bbox":[198.14,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/zepgjmt4","slide":4,"name":"Shape 18","bbox":[237.7,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/edgzahcj","slide":4,"name":"Shape 19","bbox":[277.25,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/1g7ylwbu","slide":4,"name":"Shape 20","bbox":[316.8,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/0fyhcrup","slide":4,"name":"Shape 21","bbox":[356.35,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/ra5gfmts","slide":4,"name":"Shape 22","bbox":[395.9,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/qpwf6hc7","slide":4,"name":"Shape 23","bbox":[119.04,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/dc7yhwby","slide":4,"name":"Shape 24","bbox":[158.59,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/cbyh8rud","slide":4,"name":"Shape 25","bbox":[198.14,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/3m5gb2tw","slide":4,"name":"Shape 26","bbox":[237.7,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/2lwf2xcb","slide":4,"name":"Shape 27","bbox":[277.25,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/8radc3a9","slide":4,"name":"Shape 28","bbox":[316.8,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/ts3el8ru","slide":4,"name":"Shape 29","bbox":[356.35,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/6psvads3","slide":4,"name":"Shape 30","bbox":[395.9,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/7q1wjy9o","slide":4,"name":"Shape 31","bbox":[119.04,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/gvudgna5","slide":4,"name":"Shape 32","bbox":[158.59,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/hg3epsrq","slide":4,"name":"Shape 33","bbox":[198.14,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/utcvedsz","slide":4,"name":"Shape 34","bbox":[237.7,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/vulwni9k","slide":4,"name":"Shape 35","bbox":[277.25,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/wzqd4ja1","slide":4,"name":"Shape 36","bbox":[316.8,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/xkjudorm","slide":4,"name":"Shape 37","bbox":[356.35,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/pgvmdorq","slide":4,"name":"Shape 38","bbox":[395.9,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/4f25kja5","slide":4,"name":"Shape 39","bbox":[119.04,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/3et4be9k","slide":4,"name":"Shape 40","bbox":[158.59,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/2dkni9sz","slide":4,"name":"Shape 41","bbox":[198.14,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/hcbm9oru","slide":4,"name":"Shape 42","bbox":[237.7,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/gr25gja9","slide":4,"name":"Shape 43","bbox":[277.25,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/fqt47e9o","slide":4,"name":"Shape 44","bbox":[316.8,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/upkne9s3","slide":4,"name":"Shape 45","bbox":[356.35,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/tobm54ri","slide":4,"name":"Shape 46","bbox":[395.9,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/sni5czax","slide":4,"name":"Shape 47","bbox":[119.04,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/itgjm58v","slide":4,"name":"Shape 48","bbox":[158.59,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/jupkfapg","slide":4,"name":"Shape 49","bbox":[198.14,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/kvylofq1","slide":4,"name":"Shape 50","bbox":[237.7,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/5w72hk7m","slide":4,"name":"Shape 51","bbox":[277.25,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/apgji58z","slide":4,"name":"Shape 52","bbox":[316.8,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/vqpkbqp4","slide":4,"name":"Shape 53","bbox":[356.35,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/wry1kvqp","slide":4,"name":"Shape 54","bbox":[395.9,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/xs72d07a","slide":4,"name":"Shape 55","bbox":[119.04,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/m1wjel8n","slide":4,"name":"Shape 56","bbox":[158.59,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/n25k7qp8","slide":4,"name":"Shape 57","bbox":[198.14,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/b6lgfm50","slide":4,"name":"Shape 58","bbox":[237.7,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/q5sz6hof","slide":4,"name":"Shape 59","bbox":[277.25,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/d83ihwn6","slide":4,"name":"Shape 60","bbox":[316.8,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/c7uh8r6l","slide":4,"name":"Shape 61","bbox":[356.35,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/zul0j65w","slide":4,"name":"Shape 62","bbox":[395.9,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/ytcza1or","slide":4,"name":"Shape 63","bbox":[119.04,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/lw3ilwn2","slide":4,"name":"Shape 64","bbox":[158.59,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/0vuhcr6h","slide":4,"name":"Shape 65","bbox":[198.14,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/fyhg72ps","slide":4,"name":"Shape 66","bbox":[237.7,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/ux8zyxo7","slide":4,"name":"Shape 67","bbox":[277.25,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/k36d83m5","slide":4,"name":"Shape 68","bbox":[316.8,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/54feh8nq","slide":4,"name":"Shape 69","bbox":[356.35,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/ihov6t4z","slide":4,"name":"Shape 70","bbox":[395.9,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/jixwfy5k","slide":4,"name":"Shape 71","bbox":[277.25,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/wf6d4jm9","slide":4,"name":"Shape 72","bbox":[356.35,409.73,39.55,39.55]}
+{"kind":"textbox","id":"sh/xgfedone","slide":4,"name":"Text 73","text":"♜","textPreview":"♜","textChars":1,"textLines":1,"bbox":[119.04,251.52,39.55,39.55]}
+{"kind":"textbox","id":"sh/ad4v2t43","slide":4,"name":"Text 74","text":"♞","textPreview":"♞","textChars":1,"textLines":1,"bbox":[198.14,251.52,39.55,39.55]}
+{"kind":"textbox","id":"sh/vedwby5o","slide":4,"name":"Text 75","text":"♚","textPreview":"♚","textChars":1,"textLines":1,"bbox":[277.25,251.52,39.55,39.55]}
+{"kind":"textbox","id":"sh/gbqxgnmd","slide":4,"name":"Text 76","text":"♟","textPreview":"♟","textChars":1,"textLines":1,"bbox":[237.7,291.07,39.55,39.55]}
+{"kind":"textbox","id":"sh/1czeps3y","slide":4,"name":"Text 77","text":"♙","textPreview":"♙","textChars":1,"textLines":1,"bbox":[237.7,488.83,39.55,39.55]}
+{"kind":"textbox","id":"sh/pcjap4v2","slide":4,"name":"Text 78","text":"♗","textPreview":"♗","textChars":1,"textLines":1,"bbox":[198.14,528.38,39.55,39.55]}
+{"kind":"textbox","id":"sh/oba9gzeh","slide":4,"name":"Text 79","text":"♔","textPreview":"♔","textChars":1,"textLines":1,"bbox":[277.25,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/na1snudc","slide":4,"name":"Shape 80","bbox":[460.42,251.52,91.65,34.56]}
+{"kind":"textbox","id":"sh/29srepwr","slide":4,"name":"Text 81","text":"Coach","textPreview":"Coach","textChars":5,"textLines":1,"bbox":[460.42,251.52,91.65,34.56]}
+{"kind":"shape","id":"sh/xg3at4ve","slide":4,"name":"Shape 82","bbox":[557.82,251.52,91.65,34.56]}
+{"kind":"textbox","id":"sh/cfu9kzet","slide":4,"name":"Text 83","text":"Logician","textPreview":"Logician","textChars":8,"textLines":1,"bbox":[557.82,251.52,91.65,34.56]}
+{"kind":"shape","id":"sh/belsrud8","slide":4,"name":"Shape 84","bbox":[655.23,251.52,91.65,34.56]}
+{"kind":"textbox","id":"sh/adcripwn","slide":4,"name":"Text 85","text":"Speech","textPreview":"Speech","textChars":6,"textLines":1,"bbox":[655.23,251.52,91.65,34.56]}
+{"kind":"shape","id":"sh/dkzahkvu","slide":4,"name":"Shape 86","bbox":[460.42,297.6,292.22,59.52]}
+{"kind":"textbox","id":"sh/sjq98fep","slide":4,"name":"Text 87","text":"Emotion:  focused\nELO 2600  ·  depth 8","textPreview":"Emotion:  focused | ELO 2600  ·  depth 8","textChars":38,"textLines":2,"bbox":[473.86,297.6,265.34,59.52]}
+{"kind":"shape","id":"sh/ipo7ilc7","slide":4,"name":"Shape 88","bbox":[460.42,370.56,292.22,30.72]}
+{"kind":"shape","id":"sh/3qxob6ts","slide":4,"name":"Shape 89","bbox":[460.42,410.88,244.22,30.72]}
+{"kind":"shape","id":"sh/4r6pkbud","slide":4,"name":"Shape 90","bbox":[460.42,451.2,292.22,30.72]}
+{"kind":"shape","id":"sh/5sf6dgby","slide":4,"name":"Shape 91","bbox":[460.42,491.52,244.22,30.72]}
+{"kind":"shape","id":"sh/qto7mlcj","slide":4,"name":"Shape 92","bbox":[460.42,531.84,292.22,30.72]}
+{"kind":"textbox","id":"sh/rehofqt4","slide":4,"name":"Text 93","text":"Ruy Lopez (C60)","textPreview":"Ruy Lopez (C60)","textChars":15,"textLines":1,"bbox":[471.94,573.12,292.22,24.96]}
+{"kind":"shape","id":"sh/sfqpovu9","slide":4,"name":"Shape 94","bbox":[816,184.32,404.45,101.76]}
+{"kind":"shape","id":"sh/dgzqh0bu","slide":4,"name":"Shape 95","bbox":[840.96,203.52,44.16,44.16]}
+{"kind":"textbox","id":"sh/mx47a1cz","slide":4,"name":"Text 96","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[840.96,203.52,44.16,44.16]}
+{"kind":"textbox","id":"sh/7ido3mtk","slide":4,"name":"Text 97","text":"Interactive board","textPreview":"Interactive board","textChars":17,"textLines":1,"bbox":[900.48,203.52,298.85,26.88]}
+{"kind":"textbox","id":"sh/wr29o3e5","slide":4,"name":"Text 98","text":"Legal-move highlighting, promotion picker and undo.","textPreview":"Legal-move highlighting, promotion picker and undo.","textChars":51,"textLines":1,"bbox":[900.48,232.32,298.85,38.4]}
+{"kind":"shape","id":"sh/xsvqx8vq","slide":4,"name":"Shape 99","bbox":[816,294.72,404.45,101.76]}
+{"kind":"shape","id":"sh/a5krmtwz","slide":4,"name":"Shape 100","bbox":[840.96,313.92,44.16,44.16]}
+{"kind":"textbox","id":"sh/b6t8vydk","slide":4,"name":"Text 101","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[840.96,313.92,44.16,44.16]}
+{"kind":"textbox","id":"sh/kvm9s3e1","slide":4,"name":"Text 102","text":"Emotion monitor","textPreview":"Emotion monitor","textChars":15,"textLines":1,"bbox":[900.48,313.92,298.85,26.88]}
+{"kind":"textbox","id":"sh/lwvq18vm","slide":4,"name":"Text 103","text":"Shows the detected state and the engine profile in use.","textPreview":"Shows the detected state and the engine profile in use.","textChars":55,"textLines":1,"bbox":[900.48,342.72,298.85,38.4]}
+{"kind":"shape","id":"sh/yt4rqdwv","slide":4,"name":"Shape 104","bbox":[816,405.12,404.45,101.76]}
+{"kind":"shape","id":"sh/jud8zidg","slide":4,"name":"Shape 105","bbox":[840.96,424.32,44.16,44.16]}
+{"kind":"textbox","id":"sh/8zm9wned","slide":4,"name":"Text 106","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[840.96,424.32,44.16,44.16]}
+{"kind":"textbox","id":"sh/t0fq5svi","slide":4,"name":"Text 107","text":"Evaluation bar","textPreview":"Evaluation bar","textChars":14,"textLines":1,"bbox":[900.48,424.32,298.85,26.88]}
+{"kind":"textbox","id":"sh/3uhcvmx0","slide":4,"name":"Text 108","text":"Live engine assessment beside the board.","textPreview":"Live engine assessment beside the board.","textChars":40,"textLines":1,"bbox":[900.48,453.12,298.85,38.4]}
+{"kind":"shape","id":"sh/2t8b2hgf","slide":4,"name":"Shape 109","bbox":[816,515.52,404.45,101.76]}
+{"kind":"shape","id":"sh/pgzuxwfq","slide":4,"name":"Shape 110","bbox":[840.96,534.72,44.16,44.16]}
+{"kind":"textbox","id":"sh/4vqt4ryl","slide":4,"name":"Text 111","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[840.96,534.72,44.16,44.16]}
+{"kind":"textbox","id":"sh/fqxsr2xo","slide":4,"name":"Text 112","text":"Tabbed panel","textPreview":"Tabbed panel","textChars":12,"textLines":1,"bbox":[900.48,534.72,298.85,26.88]}
+{"kind":"textbox","id":"sh/upobyhg3","slide":4,"name":"Text 113","text":"Coach, Logician, Speech, Benchmark and Training.","textPreview":"Coach, Logician, Speech, Benchmark and Training.","textChars":48,"textLines":1,"bbox":[900.48,563.52,298.85,38.4]}
+{"kind":"textbox","id":"sh/hszutcfu","slide":4,"name":"Text 114","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/grqt07y9","slide":4,"name":"Text 115","text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/0km1c6","slide":4,"text":""}
+{"kind":"slide","id":"sl/gidvsc","slide":5,"title":"WHY THIS PROJECT EXISTS","textShapes":20}
+{"kind":"textbox","id":"sh/lkjyp0v2","slide":5,"name":"Text 0","text":"WHY THIS PROJECT EXISTS","textPreview":"WHY THIS PROJECT EXISTS","textChars":23,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/kzaxwveh","slide":5,"name":"Text 1","text":"Problem Statement","textPreview":"Problem Statement","textChars":17,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/7m1grad8","slide":5,"name":"Shape 2","bbox":[59.52,187.2,363.94,182.4]}
+{"kind":"shape","id":"sh/mlsfy5wn","slide":5,"name":"Shape 3","bbox":[84.48,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/9ojytkve","slide":5,"name":"Text 4","text":"✕","textPreview":"✕","textChars":1,"textLines":1,"bbox":[84.48,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/8nax0fut","slide":5,"name":"Text 5","text":"Fixed difficulty","textPreview":"Fixed difficulty","textChars":16,"textLines":1,"bbox":[144,208.32,258.34,26.88]}
+{"kind":"textbox","id":"sh/vqlgvad4","slide":5,"name":"Text 6","text":"Engines play at one strength, chosen manually before the game starts, and it never changes.","textPreview":"Engines play at one strength, chosen manually before the game starts, and it never changes.","textChars":91,"textLines":1,"bbox":[144,237.12,258.34,119.04]}
+{"kind":"shape","id":"sh/upcz25cj","slide":5,"name":"Shape 7","bbox":[458.02,187.2,363.94,182.4]}
+{"kind":"shape","id":"sh/c7yt47eh","slide":5,"name":"Shape 8","bbox":[482.98,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/d87axcf2","slide":5,"name":"Text 9","text":"✕","textPreview":"✕","textChars":1,"textLines":1,"bbox":[482.98,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/qlgb2xwb","slide":5,"name":"Text 10","text":"Beginners give up","textPreview":"Beginners give up","textChars":17,"textLines":1,"bbox":[542.5,208.32,258.34,26.88]}
+{"kind":"textbox","id":"sh/b6psv2xw","slide":5,"name":"Text 11","text":"Weak players get crushed and lose motivation; strong players get bored at the same setting.","textPreview":"Weak players get crushed and lose motivation; strong players get bored at the same setting.","textChars":91,"textLines":1,"bbox":[542.5,237.12,258.34,119.04]}
+{"kind":"shape","id":"sh/0byt87et","slide":5,"name":"Shape 12","bbox":[856.51,187.2,363.94,182.4]}
+{"kind":"shape","id":"sh/lcru1cfy","slide":5,"name":"Shape 13","bbox":[881.47,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/y9gb6xwn","slide":5,"name":"Text 14","text":"✕","textPreview":"✕","textChars":1,"textLines":1,"bbox":[881.47,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/zapcz2x8","slide":5,"name":"Text 15","text":"Feelings are ignored","textPreview":"Feelings are ignored","textChars":20,"textLines":1,"bbox":[940.99,208.32,258.34,26.88]}
+{"kind":"textbox","id":"sh/8fitcrep","slide":5,"name":"Text 16","text":"No engine notices that the player is stressed, tilted, or completely focused.","textPreview":"No engine notices that the player is stressed, tilted, or completely focused.","textChars":77,"textLines":1,"bbox":[940.99,237.12,258.34,119.04]}
+{"kind":"shape","id":"sh/9gru5wfa","slide":5,"name":"Shape 17","bbox":[59.52,404.16,363.94,182.4]}
+{"kind":"shape","id":"sh/hwnapc7e","slide":5,"name":"Shape 18","bbox":[84.48,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/gvetwr6t","slide":5,"name":"Text 19","text":"✕","textPreview":"✕","textChars":1,"textLines":1,"bbox":[84.48,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/vu5snmp8","slide":5,"name":"Text 20","text":"No encouragement","textPreview":"No encouragement","textChars":16,"textLines":1,"bbox":[144,425.28,258.34,26.88]}
+{"kind":"textbox","id":"sh/utwbuhon","slide":5,"name":"Text 21","text":"A frustrated player receives no support — only another losing position.","textPreview":"A frustrated player receives no support — only another losing position.","textChars":71,"textLines":1,"bbox":[144,454.08,258.34,119.04]}
+{"kind":"shape","id":"sh/507utw7a","slide":5,"name":"Shape 22","bbox":[458.02,404.16,363.94,182.4]}
+{"kind":"shape","id":"sh/4zyt0r65","slide":5,"name":"Shape 23","bbox":[482.98,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/3y5srmpk","slide":5,"name":"Text 24","text":"✕","textPreview":"✕","textChars":1,"textLines":1,"bbox":[482.98,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/ixwbyhoz","slide":5,"name":"Text 25","text":"Language barrier","textPreview":"Language barrier","textChars":16,"textLines":1,"bbox":[542.5,425.28,258.34,26.88]}
+{"kind":"textbox","id":"sh/l43ahs76","slide":5,"name":"Text 26","text":"Chess coaching tools are English-only, closing them off to many local players.","textPreview":"Chess coaching tools are English-only, closing them off to many local players.","textChars":78,"textLines":1,"bbox":[542.5,454.08,258.34,119.04]}
+{"kind":"shape","id":"sh/k3uton6l","slide":5,"name":"Shape 27","bbox":[856.51,404.16,363.94,182.4]}
+{"kind":"textbox","id":"sh/a9s7it4j","slide":5,"name":"Text 28","text":"The engine should adapt to the player — not the other way around.","textPreview":"The engine should adapt to the player — not the other way around.","textChars":65,"textLines":1,"bbox":[887.23,404.16,302.5,182.4]}
+{"kind":"textbox","id":"sh/ba18ry54","slide":5,"name":"Text 29","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/cbapk3mp","slide":5,"name":"Text 30","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/gidvsc","slide":5,"text":""}
+{"kind":"slide","id":"sl/bbxn8u","slide":6,"title":"WHAT WE SET OUT TO BUILD","textShapes":14}
+{"kind":"textbox","id":"sh/a5c7mt0r","slide":6,"name":"Text 0","text":"WHAT WE SET OUT TO BUILD","textPreview":"WHAT WE SET OUT TO BUILD","textChars":24,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/b6l8fyhc","slide":6,"name":"Text 1","text":"System Objectives","textPreview":"System Objectives","textChars":17,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/kve9s3i9","slide":6,"name":"Shape 2","bbox":[59.52,187.2,1160.93,82.56]}
+{"kind":"shape","id":"sh/lwnql8ze","slide":6,"name":"Shape 3","bbox":[59.52,187.2,13.44,82.56]}
+{"kind":"textbox","id":"sh/y9wrqd03","slide":6,"name":"Text 4","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[99.84,208.32,67.2,42.24]}
+{"kind":"textbox","id":"sh/za58jiho","slide":6,"name":"Text 5","text":"Detect emotion in real time from the player's webcam","textPreview":"Detect emotion in real time from the player's webcam","textChars":52,"textLines":1,"bbox":[178.56,206.4,1007.33,46.08]}
+{"kind":"shape","id":"sh/0fapgjip","slide":6,"name":"Shape 6","bbox":[59.52,281.28,1160.93,82.56]}
+{"kind":"shape","id":"sh/10jq9oza","slide":6,"name":"Shape 7","bbox":[59.52,281.28,13.44,82.56]}
+{"kind":"textbox","id":"sh/14jqdgvq","slide":6,"name":"Text 8","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[99.84,302.4,67.2,42.24]}
+{"kind":"textbox","id":"sh/g3ap4bu5","slide":6,"name":"Text 9","text":"Adapt engine strength automatically to that emotional state","textPreview":"Adapt engine strength automatically to that emotional state","textChars":59,"textLines":1,"bbox":[178.56,300.48,1007.33,46.08]}
+{"kind":"shape","id":"sh/f2h8b6dk","slide":6,"name":"Shape 10","bbox":[59.52,375.36,1160.93,82.56]}
+{"kind":"shape","id":"sh/e18721cz","slide":6,"name":"Shape 11","bbox":[59.52,375.36,13.44,82.56]}
+{"kind":"textbox","id":"sh/p8jqhgvm","slide":6,"name":"Text 12","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[99.84,396.48,67.2,42.24]}
+{"kind":"textbox","id":"sh/o7ap8bu1","slide":6,"name":"Text 13","text":"Give natural-language coaching through a large language model","textPreview":"Give natural-language coaching through a large language model","textChars":61,"textLines":1,"bbox":[178.56,394.56,1007.33,46.08]}
+{"kind":"shape","id":"sh/3618f6dw","slide":6,"name":"Shape 14","bbox":[59.52,469.44,1160.93,82.56]}
+{"kind":"shape","id":"sh/25s76lcb","slide":6,"name":"Shape 15","bbox":[59.52,469.44,13.44,82.56]}
+{"kind":"textbox","id":"sh/dc3ql0vy","slide":6,"name":"Text 16","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[99.84,490.56,67.2,42.24]}
+{"kind":"textbox","id":"sh/cbupcvud","slide":6,"name":"Text 17","text":"Give explainable, rule-based advice from a Prolog knowledge base","textPreview":"Give explainable, rule-based advice from a Prolog knowledge base","textChars":64,"textLines":1,"bbox":[178.56,488.64,1007.33,46.08]}
+{"kind":"shape","id":"sh/wf298z29","slide":6,"name":"Shape 18","bbox":[59.52,563.52,1160.93,82.56]}
+{"kind":"shape","id":"sh/xgbah4ju","slide":6,"name":"Shape 19","bbox":[59.52,563.52,13.44,82.56]}
+{"kind":"textbox","id":"sh/ad0r6pkj","slide":6,"name":"Text 20","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[99.84,584.64,67.2,42.24]}
+{"kind":"textbox","id":"sh/betsfu14","slide":6,"name":"Text 21","text":"Accept Burmese voice input for both moves and coaching questions","textPreview":"Accept Burmese voice input for both moves and coaching questions","textChars":64,"textLines":1,"bbox":[178.56,582.72,1007.33,46.08]}
+{"kind":"textbox","id":"sh/kj2tcj2l","slide":6,"name":"Text 22","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/l4baloj6","slide":6,"name":"Text 23","text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/bbxn8u","slide":6,"text":""}
+{"kind":"slide","id":"sl/hf13s6","slide":7,"title":"WHAT THE SYSTEM MUST DO","textShapes":22}
+{"kind":"textbox","id":"sh/s7m5kfat","slide":7,"name":"Text 0","text":"WHAT THE SYSTEM MUST DO","textPreview":"WHAT THE SYSTEM MUST DO","textChars":23,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/d8f6dkre","slide":7,"name":"Text 1","text":"Functional Requirements","textPreview":"Functional Requirements","textChars":23,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/ih4ne5sr","slide":7,"name":"Shape 2","bbox":[59.52,187.2,363.94,182.4]}
+{"kind":"shape","id":"sh/3id47atc","slide":7,"name":"Shape 3","bbox":[84.48,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/43m5gfax","slide":7,"name":"Text 4","text":"♟","textPreview":"♟","textChars":1,"textLines":1,"bbox":[84.48,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/54vm9kri","slide":7,"name":"Text 5","text":"Full legal chess","textPreview":"Full legal chess","textChars":16,"textLines":1,"bbox":[144,208.32,258.34,26.88]}
+{"kind":"textbox","id":"sh/2donq9sb","slide":7,"name":"Text 6","text":"Move validation, promotion picker, undo and PGN export.","textPreview":"Move validation, promotion picker, undo and PGN export.","textChars":55,"textLines":1,"bbox":[144,237.12,258.34,119.04]}
+{"kind":"shape","id":"sh/nyxoju9g","slide":7,"name":"Shape 7","bbox":[458.02,187.2,363.94,182.4]}
+{"kind":"shape","id":"sh/zm5sj6l0","slide":7,"name":"Shape 8","bbox":[482.98,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/elwra14f","slide":7,"name":"Text 9","text":"◉","textPreview":"◉","textChars":1,"textLines":1,"bbox":[482.98,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/1onalw3q","slide":7,"name":"Text 10","text":"Emotion capture","textPreview":"Emotion capture","textChars":15,"textLines":1,"bbox":[542.5,208.32,258.34,26.88]}
+{"kind":"textbox","id":"sh/0ne9crm5","slide":7,"name":"Text 11","text":"Read webcam frames and classify them into six emotion labels.","textPreview":"Read webcam frames and classify them into six emotion labels.","textChars":61,"textLines":1,"bbox":[542.5,237.12,258.34,119.04]}
+{"kind":"shape","id":"sh/nqpsn6lw","slide":7,"name":"Shape 12","bbox":[856.51,187.2,363.94,182.4]}
+{"kind":"shape","id":"sh/mpwre14b","slide":7,"name":"Shape 13","bbox":[881.47,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/9s7apg32","slide":7,"name":"Text 14","text":"⚙","textPreview":"⚙","textChars":1,"textLines":1,"bbox":[881.47,210.24,44.16,44.16]}
+{"kind":"textbox","id":"sh/ory9gbmh","slide":7,"name":"Text 15","text":"Strength mapping","textPreview":"Strength mapping","textChars":16,"textLines":1,"bbox":[940.99,208.32,258.34,26.88]}
+{"kind":"textbox","id":"sh/bupsrqls","slide":7,"name":"Text 16","text":"Turn the emotion into engine depth, skill level and ELO.","textPreview":"Turn the emotion into engine depth, skill level and ELO.","textChars":56,"textLines":1,"bbox":[940.99,237.12,258.34,119.04]}
+{"kind":"shape","id":"sh/atgbil4n","slide":7,"name":"Shape 17","bbox":[59.52,404.16,363.94,182.4]}
+{"kind":"shape","id":"sh/6lk369sr","slide":7,"name":"Shape 18","bbox":[84.48,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/rmt4ze9c","slide":7,"name":"Text 19","text":"⚑","textPreview":"⚑","textChars":1,"textLines":1,"bbox":[84.48,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/snml8jax","slide":7,"name":"Text 20","text":"Coach chat","textPreview":"Coach chat","textChars":10,"textLines":1,"bbox":[144,425.28,258.34,26.88]}
+{"kind":"textbox","id":"sh/tovm1ori","slide":7,"name":"Text 21","text":"Answer position questions in the AI Coach panel.","textPreview":"Answer position questions in the AI Coach panel.","textChars":48,"textLines":1,"bbox":[144,454.08,258.34,119.04]}
+{"kind":"shape","id":"sh/ixk329sv","slide":7,"name":"Shape 22","bbox":[458.02,404.16,363.94,182.4]}
+{"kind":"shape","id":"sh/jyt4ve9g","slide":7,"name":"Shape 23","bbox":[482.98,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/4z2l4za1","slide":7,"name":"Text 24","text":"▶","textPreview":"▶","textChars":1,"textLines":1,"bbox":[482.98,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/50bmx4r6","slide":7,"name":"Text 25","text":"Voice moves","textPreview":"Voice moves","textChars":11,"textLines":1,"bbox":[542.5,425.28,258.34,26.88]}
+{"kind":"textbox","id":"sh/2t4netsz","slide":7,"name":"Text 26","text":"Accept spoken moves in Burmese and in English.","textPreview":"Accept spoken moves in Burmese and in English.","textChars":46,"textLines":1,"bbox":[542.5,454.08,258.34,119.04]}
+{"kind":"shape","id":"sh/3ux47y9k","slide":7,"name":"Shape 27","bbox":[856.51,404.16,363.94,182.4]}
+{"kind":"shape","id":"sh/doz6dsbm","slide":7,"name":"Shape 28","bbox":[881.47,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/cnqp4nu1","slide":7,"name":"Text 29","text":"▦","textPreview":"▦","textChars":1,"textLines":1,"bbox":[881.47,427.2,44.16,44.16]}
+{"kind":"textbox","id":"sh/bmhobitw","slide":7,"name":"Text 30","text":"Live feedback","textPreview":"Live feedback","textChars":13,"textLines":1,"bbox":[940.99,425.28,258.34,26.88]}
+{"kind":"textbox","id":"sh/qlo72xcb","slide":7,"name":"Text 31","text":"Evaluation bar, opening names and move hints on demand.","textPreview":"Evaluation bar, opening names and move hints on demand.","textChars":55,"textLines":1,"bbox":[940.99,454.08,258.34,119.04]}
+{"kind":"textbox","id":"sh/pkf69sbq","slide":7,"name":"Text 32","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/oj6p0nu5","slide":7,"name":"Text 33","text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/hf13s6","slide":7,"text":""}
+{"kind":"slide","id":"sl/lvi99x","slide":8,"title":"HOW THE PIECES FIT TOGETHER","textShapes":22}
+{"kind":"textbox","id":"sh/6dojupsj","slide":8,"name":"Text 0","text":"HOW THE PIECES FIT TOGETHER","textPreview":"HOW THE PIECES FIT TOGETHER","textChars":27,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/7ex0nu94","slide":8,"name":"Text 1","text":"System Architecture & Stack","textPreview":"System Architecture & Stack","textChars":27,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/g3q10zal","slide":8,"name":"Shape 2","bbox":[59.52,178.56,1160.93,122.88]}
+{"kind":"shape","id":"sh/h4z2t4r6","slide":8,"name":"Shape 3","bbox":[78.72,199.68,225.6,80.64]}
+{"kind":"textbox","id":"sh/u1ojypsf","slide":8,"name":"Text 4","text":"BROWSER","textPreview":"BROWSER","textChars":7,"textLines":1,"bbox":[78.72,199.68,225.6,80.64]}
+{"kind":"shape","id":"sh/v2hkru90","slide":8,"name":"Shape 5","bbox":[331.2,203.52,196.8,72.96]}
+{"kind":"textbox","id":"sh/47q14zqx","slide":8,"name":"Text 6","text":"React chessboard","textPreview":"React chessboard","textChars":16,"textLines":1,"bbox":[338.88,203.52,181.44,72.96]}
+{"kind":"shape","id":"sh/58z2x4r2","slide":8,"name":"Shape 7","bbox":[549.12,203.52,196.8,72.96]}
+{"kind":"textbox","id":"sh/1srmt032","slide":8,"name":"Text 8","text":"face-api.js emotion","textPreview":"face-api.js emotion","textChars":19,"textLines":1,"bbox":[556.8,203.52,181.44,72.96]}
+{"kind":"shape","id":"sh/0rilkvmh","slide":8,"name":"Shape 9","bbox":[767.04,203.52,196.8,72.96]}
+{"kind":"textbox","id":"sh/zq94rqlw","slide":8,"name":"Text 10","text":"Coach chat panel","textPreview":"Coach chat panel","textChars":16,"textLines":1,"bbox":[774.72,203.52,181.44,72.96]}
+{"kind":"shape","id":"sh/epg3il4r","slide":8,"name":"Shape 11","bbox":[984.96,203.52,196.8,72.96]}
+{"kind":"textbox","id":"sh/9wrmx03e","slide":8,"name":"Text 12","text":"Three.js 3D board","textPreview":"Three.js 3D board","textChars":17,"textLines":1,"bbox":[992.64,203.52,181.44,72.96]}
+{"kind":"shape","id":"sh/ovi5ofmt","slide":8,"name":"Shape 13","bbox":[626.54,303.36,26.88,26.88]}
+{"kind":"textbox","id":"sh/nu94val8","slide":8,"name":"Text 14","text":"HTTP / JSON","textPreview":"HTTP / JSON","textChars":11,"textLines":1,"bbox":[663.02,304.32,153.6,24.96]}
+{"kind":"shape","id":"sh/mt03m54n","slide":8,"name":"Shape 15","bbox":[59.52,334.08,1160.93,122.88]}
+{"kind":"shape","id":"sh/p07mlg3u","slide":8,"name":"Shape 16","bbox":[78.72,355.2,225.6,80.64]}
+{"kind":"textbox","id":"sh/4zylcbm9","slide":8,"name":"Text 17","text":"NEXT.JS SERVER","textPreview":"NEXT.JS SERVER","textChars":14,"textLines":1,"bbox":[78.72,355.2,225.6,80.64]}
+{"kind":"shape","id":"sh/gf2dofyh","slide":8,"name":"Shape 18","bbox":[331.2,359.04,196.8,72.96]}
+{"kind":"textbox","id":"sh/hgbuhkf2","slide":8,"name":"Text 19","text":"/api/bot-move","textPreview":"/api/bot-move","textChars":13,"textLines":1,"bbox":[338.88,359.04,181.44,72.96]}
+{"kind":"shape","id":"sh/utkvm5gb","slide":8,"name":"Shape 20","bbox":[549.12,359.04,196.8,72.96]}
+{"kind":"textbox","id":"sh/fetcfaxw","slide":8,"name":"Text 21","text":"/api/coach","textPreview":"/api/coach","textChars":10,"textLines":1,"bbox":[556.8,359.04,181.44,72.96]}
+{"kind":"shape","id":"sh/4jmdsfyt","slide":8,"name":"Shape 22","bbox":[767.04,359.04,196.8,72.96]}
+{"kind":"textbox","id":"sh/pkvelkfy","slide":8,"name":"Text 23","text":"/api/transcribe","textPreview":"/api/transcribe","textChars":15,"textLines":1,"bbox":[774.72,359.04,181.44,72.96]}
+{"kind":"shape","id":"sh/2h4vq5gn","slide":8,"name":"Shape 24","bbox":[984.96,359.04,196.8,72.96]}
+{"kind":"textbox","id":"sh/3idwjax8","slide":8,"name":"Text 25","text":"/api/tts","textPreview":"/api/tts","textChars":8,"textLines":1,"bbox":[992.64,359.04,181.44,72.96]}
+{"kind":"shape","id":"sh/cnmdwzyp","slide":8,"name":"Shape 26","bbox":[626.54,458.88,26.88,26.88]}
+{"kind":"textbox","id":"sh/dofep4fa","slide":8,"name":"Text 27","text":"HTTP / JSON","textPreview":"HTTP / JSON","textChars":11,"textLines":1,"bbox":[663.02,459.84,153.6,24.96]}
+{"kind":"shape","id":"sh/nihgvyhc","slide":8,"name":"Shape 28","bbox":[59.52,489.6,1160.93,122.88]}
+{"kind":"shape","id":"sh/mh8fmt0r","slide":8,"name":"Shape 29","bbox":[78.72,510.72,225.6,80.64]}
+{"kind":"textbox","id":"sh/94zyx8zi","slide":8,"name":"Text 30","text":"PYTHON BACKEND","textPreview":"PYTHON BACKEND","textChars":14,"textLines":1,"bbox":[78.72,510.72,225.6,80.64]}
+{"kind":"shape","id":"sh/ojqxo3ix","slide":8,"name":"Shape 31","bbox":[331.2,514.56,196.8,72.96]}
+{"kind":"textbox","id":"sh/zexgrehg","slide":8,"name":"Text 32","text":"Stockfish pool","textPreview":"Stockfish pool","textChars":14,"textLines":1,"bbox":[338.88,514.56,181.44,72.96]}
+{"kind":"shape","id":"sh/edofi90v","slide":8,"name":"Shape 33","bbox":[549.12,514.56,196.8,72.96]}
+{"kind":"textbox","id":"sh/1gzytoz6","slide":8,"name":"Text 34","text":"faster-whisper STT","textPreview":"faster-whisper STT","textChars":18,"textLines":1,"bbox":[556.8,514.56,181.44,72.96]}
+{"kind":"shape","id":"sh/0f6xkji1","slide":8,"name":"Shape 35","bbox":[767.04,514.56,196.8,72.96]}
+{"kind":"textbox","id":"sh/ja1g3ihk","slide":8,"name":"Text 36","text":"SWI-Prolog + pyswip","textPreview":"SWI-Prolog + pyswip","textChars":19,"textLines":1,"bbox":[774.72,514.56,181.44,72.96]}
+{"kind":"shape","id":"sh/y9szud0z","slide":8,"name":"Shape 37","bbox":[984.96,514.56,196.8,72.96]}
+{"kind":"textbox","id":"sh/6h8jixw3","slide":8,"name":"Text 38","text":"FastAPI + Uvicorn","textPreview":"FastAPI + Uvicorn","textChars":17,"textLines":1,"bbox":[992.64,514.56,181.44,72.96]}
+{"kind":"textbox","id":"sh/rihkr2do","slide":8,"name":"Text 39","text":"Next.js  ·  React  ·  TypeScript  ·  Tailwind  ·  chess.js  ·  Python  ·  FastAPI  ·  Stockfish  ·  SWI-Prolog  ·  Groq LLM  ·  Whisper  ·  Three.js","textPreview":"Next.js  ·  React  ·  TypeScript  ·  Tailwind  ·  chess.js  ·  Python  ·  FastAPI  ·  Stockfish  ·  SWI-Prolog  ·  Groq LLM  ·  Whisper  ...","textChars":148,"textLines":1,"bbox":[59.52,641.28,1160.93,28.8]}
+{"kind":"textbox","id":"sh/sjq1k7e9","slide":8,"name":"Text 40","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/tkz2tcvu","slide":8,"name":"Text 41","text":"7","textPreview":"7","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/lvi99x","slide":8,"text":""}
+{"kind":"slide","id":"sl/bw6zbh","slide":9,"title":"HOW THE SYSTEM READS THE PLAYER","textShapes":20}
+{"kind":"textbox","id":"sh/u14bads3","slide":9,"name":"Text 0","text":"HOW THE SYSTEM READS THE PLAYER","textPreview":"HOW THE SYSTEM READS THE PLAYER","textChars":31,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/f2ds3i9o","slide":9,"name":"Text 1","text":"Methodology 1 — Emotion Detection","textPreview":"Methodology 1 — Emotion Detection","textChars":33,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/476tgnql","slide":9,"name":"Shape 2","bbox":[55.34,206.4,209.28,273.6]}
+{"kind":"shape","id":"sh/p8fa9srq","slide":9,"name":"Shape 3","bbox":[121.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/25obex8f","slide":9,"name":"Text 4","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[121.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/36xs7i90","slide":9,"name":"Text 5","text":"Capture","textPreview":"Capture","textChars":7,"textLines":1,"bbox":[64.94,341.76,190.08,30.72]}
+{"kind":"textbox","id":"sh/kb2t43a1","slide":9,"name":"Text 6","text":"A webcam frame every 2.2 seconds","textPreview":"A webcam frame every 2.2 seconds","textChars":32,"textLines":1,"bbox":[72.62,380.16,174.72,86.4]}
+{"kind":"shape","id":"sh/5cbax8rm","slide":9,"name":"Shape 7","bbox":[270.38,336,19.2,19.2]}
+{"kind":"shape","id":"sh/hgvqpcvi","slide":9,"name":"Shape 8","bbox":[295.34,206.4,209.28,273.6]}
+{"kind":"shape","id":"sh/gvm9wrex","slide":9,"name":"Shape 9","bbox":[361.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/fud8nmdc","slide":9,"name":"Text 10","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[361.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/ut47uhw7","slide":9,"name":"Text 11","text":"Detect","textPreview":"Detect","textChars":6,"textLines":1,"bbox":[304.94,341.76,190.08,30.72]}
+{"kind":"textbox","id":"sh/pkfqtwvu","slide":9,"name":"Text 12","text":"TinyFaceDetector locates the face","textPreview":"TinyFaceDetector locates the face","textChars":33,"textLines":1,"bbox":[312.62,380.16,174.72,86.4]}
+{"kind":"shape","id":"sh/4jm90re9","slide":9,"name":"Shape 13","bbox":[510.38,336,19.2,19.2]}
+{"kind":"shape","id":"sh/3id8rmdo","slide":9,"name":"Shape 14","bbox":[535.34,206.4,209.28,273.6]}
+{"kind":"shape","id":"sh/2h4ryhw3","slide":9,"name":"Shape 15","bbox":[601.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/dofqxwvq","slide":9,"name":"Text 16","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[601.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/cn69obe5","slide":9,"name":"Text 17","text":"Classify","textPreview":"Classify","textChars":8,"textLines":1,"bbox":[544.94,341.76,190.08,30.72]}
+{"kind":"textbox","id":"sh/w3y1gzqt","slide":9,"name":"Text 18","text":"FaceExpressionNet returns 7 expressions","textPreview":"FaceExpressionNet returns 7 expressions","textChars":39,"textLines":1,"bbox":[552.62,380.16,174.72,86.4]}
+{"kind":"shape","id":"sh/x472947y","slide":9,"name":"Shape 19","bbox":[750.38,336,19.2,19.2]}
+{"kind":"shape","id":"sh/a1gje98n","slide":9,"name":"Shape 20","bbox":[775.34,206.4,209.28,273.6]}
+{"kind":"shape","id":"sh/b2pk7ep8","slide":9,"name":"Shape 21","bbox":[841.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/k7y1kjqp","slide":9,"name":"Text 22","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[841.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/l872do7a","slide":9,"name":"Text 23","text":"Buffer","textPreview":"Buffer","textChars":6,"textLines":1,"bbox":[784.94,341.76,190.08,30.72]}
+{"kind":"textbox","id":"sh/y5gji98j","slide":9,"name":"Text 24","text":"The last 3 readings are stored","textPreview":"The last 3 readings are stored","textChars":30,"textLines":1,"bbox":[792.62,380.16,174.72,86.4]}
+{"kind":"shape","id":"sh/j6pkbep4","slide":9,"name":"Shape 25","bbox":[990.38,336,19.2,19.2]}
+{"kind":"shape","id":"sh/0be18fql","slide":9,"name":"Shape 26","bbox":[1015.34,206.4,209.28,273.6]}
+{"kind":"shape","id":"sh/1cni1k76","slide":9,"name":"Shape 27","bbox":[1081.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/3qt4ni9o","slide":9,"name":"Text 28","text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[1081.58,238.08,76.8,76.8]}
+{"kind":"textbox","id":"sh/2pknexs3","slide":9,"name":"Text 29","text":"Decide","textPreview":"Decide","textChars":6,"textLines":1,"bbox":[1024.94,341.76,190.08,30.72]}
+{"kind":"textbox","id":"sh/psvmpsre","slide":9,"name":"Text 30","text":"Majority label becomes the emotion","textPreview":"Majority label becomes the emotion","textChars":34,"textLines":1,"bbox":[1032.62,380.16,174.72,86.4]}
+{"kind":"shape","id":"sh/4r25gnat","slide":9,"name":"Shape 31","bbox":[59.52,514.56,1160.93,78.72]}
+{"kind":"textbox","id":"sh/f2t4ji9c","slide":9,"name":"Text 32","text":"If two labels tie, the previous emotion is kept — this stops the engine strength from flickering mid-game.","textPreview":"If two labels tie, the previous emotion is kept — this stops the engine strength from flickering mid-game.","textChars":106,"textLines":1,"bbox":[92.16,514.56,1095.65,78.72]}
+{"kind":"textbox","id":"sh/u1knadsr","slide":9,"name":"Text 33","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/hobmlsri","slide":9,"name":"Text 34","text":"8","textPreview":"8","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/bw6zbh","slide":9,"text":""}
+{"kind":"slide","id":"sl/gcw83i","slide":10,"title":"THE CORE OF THE SYSTEM","textShapes":33}
+{"kind":"textbox","id":"sh/6h87elwn","slide":10,"name":"Text 0","text":"THE CORE OF THE SYSTEM","textPreview":"THE CORE OF THE SYSTEM","textChars":22,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/7ihonqx8","slide":10,"name":"Text 1","text":"Methodology 2 — Emotion to Engine Mapping","textPreview":"Methodology 2 — Emotion to Engine Mapping","textChars":41,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"textbox","id":"sh/kfqpcveh","slide":10,"name":"Text 2","text":"EMOTION","textPreview":"EMOTION","textChars":7,"textLines":1,"bbox":[88.32,170.88,115.2,24.96]}
+{"kind":"textbox","id":"sh/lgz6l0f2","slide":10,"name":"Text 3","text":"DEPTH","textPreview":"DEPTH","textChars":5,"textLines":1,"bbox":[264.96,170.88,115.2,24.96]}
+{"kind":"textbox","id":"sh/ydo7alwb","slide":10,"name":"Text 4","text":"SKILL","textPreview":"SKILL","textChars":5,"textLines":1,"bbox":[360.96,170.88,115.2,24.96]}
+{"kind":"textbox","id":"sh/zexojqxw","slide":10,"name":"Text 5","text":"ELO RATING","textPreview":"ELO RATING","textChars":10,"textLines":1,"bbox":[457.92,170.88,288,24.96]}
+{"kind":"shape","id":"sh/4bapofe1","slide":10,"name":"Shape 6","bbox":[59.52,193.92,1160.93,67.2]}
+{"kind":"shape","id":"sh/5cjqxkv6","slide":10,"name":"Shape 7","bbox":[59.52,193.92,13.44,67.2]}
+{"kind":"textbox","id":"sh/hkzytgbq","slide":10,"name":"Text 8","text":"Stressed","textPreview":"Stressed","textChars":8,"textLines":1,"bbox":[88.32,212.16,172.8,30.72]}
+{"kind":"shape","id":"sh/gj6x0bu5","slide":10,"name":"Shape 9","bbox":[292.8,210.24,59.52,34.56]}
+{"kind":"textbox","id":"sh/fixgr6tk","slide":10,"name":"Text 10","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[292.8,210.24,59.52,34.56]}
+{"kind":"shape","id":"sh/uxofy1cz","slide":10,"name":"Shape 11","bbox":[388.8,210.24,59.52,34.56]}
+{"kind":"textbox","id":"sh/twfypgbu","slide":10,"name":"Text 12","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[388.8,210.24,59.52,34.56]}
+{"kind":"shape","id":"sh/sv6xwbu9","slide":10,"name":"Shape 13","bbox":[457.92,213.12,710.4,28.8]}
+{"kind":"shape","id":"sh/7uxgn6to","slide":10,"name":"Shape 14","bbox":[457.92,213.12,133.05,28.8]}
+{"kind":"textbox","id":"sh/6tofu1c3","slide":10,"name":"Text 15","text":"1320","textPreview":"1320","textChars":4,"textLines":1,"bbox":[499.77,213.12,81.6,28.8]}
+{"kind":"shape","id":"sh/dsjy10by","slide":10,"name":"Shape 16","bbox":[59.52,264.96,1160.93,67.2]}
+{"kind":"shape","id":"sh/crah8vud","slide":10,"name":"Shape 17","bbox":[59.52,264.96,13.44,67.2]}
+{"kind":"textbox","id":"sh/w7i9k3ml","slide":10,"name":"Text 18","text":"Frustrated","textPreview":"Frustrated","textChars":10,"textLines":1,"bbox":[88.32,283.2,172.8,30.72]}
+{"kind":"shape","id":"sh/x8bat8n6","slide":10,"name":"Shape 19","bbox":[292.8,281.28,59.52,34.56]}
+{"kind":"textbox","id":"sh/a50rit4v","slide":10,"name":"Text 20","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[292.8,281.28,59.52,34.56]}
+{"kind":"shape","id":"sh/v698ry5g","slide":10,"name":"Shape 21","bbox":[388.8,281.28,59.52,34.56]}
+{"kind":"textbox","id":"sh/83i9gjmp","slide":10,"name":"Text 22","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[388.8,281.28,59.52,34.56]}
+{"kind":"shape","id":"sh/94rqpona","slide":10,"name":"Shape 23","bbox":[457.92,284.16,710.4,28.8]}
+{"kind":"shape","id":"sh/m10ret4j","slide":10,"name":"Shape 24","bbox":[457.92,284.16,133.05,28.8]}
+{"kind":"textbox","id":"sh/n298ny54","slide":10,"name":"Text 25","text":"1320","textPreview":"1320","textChars":4,"textLines":1,"bbox":[499.77,284.16,81.6,28.8]}
+{"kind":"shape","id":"sh/0fy9cj6t","slide":10,"name":"Shape 26","bbox":[59.52,336,1160.93,67.2]}
+{"kind":"shape","id":"sh/l07qlony","slide":10,"name":"Shape 27","bbox":[59.52,336,13.44,67.2]}
+{"kind":"textbox","id":"sh/3apsvep0","slide":10,"name":"Text 28","text":"Calm","textPreview":"Calm","textChars":4,"textLines":1,"bbox":[88.32,354.24,172.8,30.72]}
+{"kind":"shape","id":"sh/29wr298f","slide":10,"name":"Shape 29","bbox":[292.8,352.32,59.52,34.56]}
+{"kind":"textbox","id":"sh/pc7axo76","slide":10,"name":"Text 30","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[292.8,352.32,59.52,34.56]}
+{"kind":"shape","id":"sh/4by9ojql","slide":10,"name":"Shape 31","bbox":[388.8,352.32,59.52,34.56]}
+{"kind":"textbox","id":"sh/rypszepw","slide":10,"name":"Text 32","text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[388.8,352.32,59.52,34.56]}
+{"kind":"shape","id":"sh/qdgrqt8r","slide":10,"name":"Shape 33","bbox":[457.92,355.2,710.4,28.8]}
+{"kind":"shape","id":"sh/d07a1o72","slide":10,"name":"Shape 34","bbox":[457.92,355.2,219.5,28.8]}
+{"kind":"textbox","id":"sh/czytsjqh","slide":10,"name":"Text 35","text":"1600","textPreview":"1600","textChars":4,"textLines":1,"bbox":[586.22,355.2,81.6,28.8]}
+{"kind":"shape","id":"sh/z29s3yp8","slide":10,"name":"Shape 36","bbox":[59.52,407.04,1160.93,67.2]}
+{"kind":"shape","id":"sh/y10but8n","slide":10,"name":"Shape 37","bbox":[59.52,407.04,13.44,67.2]}
+{"kind":"textbox","id":"sh/y58v6xwz","slide":10,"name":"Text 38","text":"Neutral","textPreview":"Neutral","textChars":7,"textLines":1,"bbox":[88.32,425.28,172.8,30.72]}
+{"kind":"shape","id":"sh/j6hcz2x4","slide":10,"name":"Shape 39","bbox":[292.8,423.36,59.52,34.56]}
+{"kind":"textbox","id":"sh/k7qd87ep","slide":10,"name":"Text 40","text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[292.8,423.36,59.52,34.56]}
+{"kind":"shape","id":"sh/l8zu1cfa","slide":10,"name":"Shape 41","bbox":[388.8,423.36,59.52,34.56]}
+{"kind":"textbox","id":"sh/698vahwv","slide":10,"name":"Text 42","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[388.8,423.36,59.52,34.56]}
+{"kind":"shape","id":"sh/7ahc3mxg","slide":10,"name":"Shape 43","bbox":[457.92,426.24,710.4,28.8]}
+{"kind":"shape","id":"sh/8bqdcre1","slide":10,"name":"Shape 44","bbox":[457.92,426.24,342.99,28.8]}
+{"kind":"textbox","id":"sh/tczu5cfm","slide":10,"name":"Text 45","text":"2000","textPreview":"2000","textChars":4,"textLines":1,"bbox":[709.71,426.24,81.6,28.8]}
+{"kind":"shape","id":"sh/md4bydgr","slide":10,"name":"Shape 46","bbox":[59.52,478.08,1160.93,67.2]}
+{"kind":"shape","id":"sh/nexcrixc","slide":10,"name":"Shape 47","bbox":[59.52,478.08,13.44,67.2]}
+{"kind":"textbox","id":"sh/583yxgzu","slide":10,"name":"Text 48","text":"Focused","textPreview":"Focused","textChars":7,"textLines":1,"bbox":[88.32,496.32,172.8,30.72]}
+{"kind":"shape","id":"sh/47ux4vy9","slide":10,"name":"Shape 49","bbox":[292.8,494.4,59.52,34.56]}
+{"kind":"textbox","id":"sh/36lwvqho","slide":10,"name":"Text 50","text":"8","textPreview":"8","textChars":1,"textLines":1,"bbox":[292.8,494.4,59.52,34.56]}
+{"kind":"shape","id":"sh/i5cf2lg3","slide":10,"name":"Shape 51","bbox":[388.8,494.4,59.52,34.56]}
+{"kind":"textbox","id":"sh/dwny10zq","slide":10,"name":"Text 52","text":"15","textPreview":"15","textChars":2,"textLines":1,"bbox":[388.8,494.4,59.52,34.56]}
+{"kind":"shape","id":"sh/svux8vy5","slide":10,"name":"Shape 53","bbox":[457.92,497.28,710.4,28.8]}
+{"kind":"shape","id":"sh/ralgzqhk","slide":10,"name":"Shape 54","bbox":[457.92,497.28,528.24,28.8]}
+{"kind":"textbox","id":"sh/q9cf6lgf","slide":10,"name":"Text 55","text":"2600","textPreview":"2600","textChars":4,"textLines":1,"bbox":[894.96,497.28,81.6,28.8]}
+{"kind":"shape","id":"sh/t0jepwzm","slide":10,"name":"Shape 56","bbox":[59.52,549.12,1160.93,67.2]}
+{"kind":"shape","id":"sh/8zaxwri1","slide":10,"name":"Shape 57","bbox":[59.52,549.12,13.44,67.2]}
+{"kind":"textbox","id":"sh/kvypsvu9","slide":10,"name":"Text 58","text":"Confident","textPreview":"Confident","textChars":9,"textLines":1,"bbox":[88.32,567.36,172.8,30.72]}
+{"kind":"shape","id":"sh/lw7610be","slide":10,"name":"Shape 59","bbox":[292.8,565.44,59.52,34.56]}
+{"kind":"textbox","id":"sh/ytwnqlc3","slide":10,"name":"Text 60","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[292.8,565.44,59.52,34.56]}
+{"kind":"shape","id":"sh/ju5ozqto","slide":10,"name":"Shape 61","bbox":[388.8,565.44,59.52,34.56]}
+{"kind":"textbox","id":"sh/8zypwfu5","slide":10,"name":"Text 62","text":"20","textPreview":"20","textChars":2,"textLines":1,"bbox":[388.8,565.44,59.52,34.56]}
+{"kind":"shape","id":"sh/t0765kbq","slide":10,"name":"Shape 63","bbox":[457.92,568.32,710.4,28.8]}
+{"kind":"shape","id":"sh/6xg7u5cz","slide":10,"name":"Shape 64","bbox":[457.92,568.32,710.4,28.8]}
+{"kind":"textbox","id":"sh/7ypo3atk","slide":10,"name":"Text 65","text":"3190","textPreview":"3190","textChars":4,"textLines":1,"bbox":[1077.12,568.32,81.6,28.8]}
+{"kind":"textbox","id":"sh/gnip0fu1","slide":10,"name":"Text 66","text":"Stockfish accepts a UCI_Elo between 1320 and 3190 — the full supported range is used.","textPreview":"Stockfish accepts a UCI_Elo between 1320 and 3190 — the full supported range is used.","textChars":85,"textLines":1,"bbox":[59.52,629.76,1160.93,28.8]}
+{"kind":"textbox","id":"sh/hor69kbm","slide":10,"name":"Text 67","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/ritszed4","slide":10,"name":"Text 68","text":"9","textPreview":"9","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/gcw83i","slide":10,"text":""}
+{"kind":"slide","id":"sl/pp6pjc","slide":11,"title":"MOVE GENERATION AND EXPLAINABLE ADVICE","textShapes":18}
+{"kind":"textbox","id":"sh/ex83ex0v","slide":11,"name":"Text 0","text":"MOVE GENERATION AND EXPLAINABLE ADVICE","textPreview":"MOVE GENERATION AND EXPLAINABLE ADVICE","textChars":38,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/fyhk7ihg","slide":11,"name":"Text 1","text":"Methodology 3 — Stockfish & The Logician","textPreview":"Methodology 3 — Stockfish & The Logician","textChars":40,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"textbox","id":"sh/o3alk7ix","slide":11,"name":"Text 2","text":"Stockfish engine","textPreview":"Stockfish engine","textChars":16,"textLines":1,"bbox":[59.52,165.12,576,30.72]}
+{"kind":"shape","id":"sh/poj2dczi","slide":11,"name":"Shape 3","bbox":[59.52,203.52,576,206.4]}
+{"kind":"shape","id":"sh/21s3ix07","slide":11,"name":"Shape 4","bbox":[86.4,220.8,522.24,36.48]}
+{"kind":"textbox","id":"sh/n21kb2hc","slide":11,"name":"Text 5","text":"fen + emotion","textPreview":"fen + emotion","textChars":13,"textLines":1,"bbox":[101.76,220.8,489.6,36.48]}
+{"kind":"shape","id":"sh/476183it","slide":11,"name":"Shape 6","bbox":[338.88,259.2,17.28,11.52]}
+{"kind":"shape","id":"sh/5sf218ze","slide":11,"name":"Shape 7","bbox":[86.4,270.72,522.24,36.48]}
+{"kind":"textbox","id":"sh/54vupsji","slide":11,"name":"Text 8","text":"resolve_strength_profile()","textPreview":"resolve_strength_profile()","textChars":26,"textLines":1,"bbox":[101.76,270.72,489.6,36.48]}
+{"kind":"shape","id":"sh/k3mtgn2x","slide":11,"name":"Shape 9","bbox":[338.88,309.12,17.28,11.52]}
+{"kind":"shape","id":"sh/j2dcni1c","slide":11,"name":"Shape 10","bbox":[86.4,320.64,522.24,36.48]}
+{"kind":"textbox","id":"sh/i14bedkr","slide":11,"name":"Text 11","text":"Stockfish engine pool","textPreview":"Stockfish engine pool","textChars":21,"textLines":1,"bbox":[101.76,320.64,489.6,36.48]}
+{"kind":"shape","id":"sh/tsvutsju","slide":11,"name":"Shape 12","bbox":[338.88,359.04,17.28,11.52]}
+{"kind":"shape","id":"sh/s7mdkn29","slide":11,"name":"Shape 13","bbox":[86.4,370.56,522.24,36.48]}
+{"kind":"textbox","id":"sh/76dcri1o","slide":11,"name":"Text 14","text":"botMove returned","textPreview":"botMove returned","textChars":16,"textLines":1,"bbox":[101.76,370.56,489.6,36.48]}
+{"kind":"textbox","id":"sh/654vixk3","slide":11,"name":"Text 15","text":"A pool of persistent engine instances keeps replies fast.\nEach request sets UCI_Elo, skill level and depth from the profile.","textPreview":"A pool of persistent engine instances keeps replies fast. | Each request sets UCI_Elo, skill level and depth from the profile.","textChars":124,"textLines":2,"bbox":[69.12,424.32,556.8,96]}
+{"kind":"textbox","id":"sh/hwfuxcjq","slide":11,"name":"Text 16","text":"The Logician — Prolog reasoning","textPreview":"The Logician — Prolog reasoning","textChars":31,"textLines":1,"bbox":[672,165.12,548.45,30.72]}
+{"kind":"shape","id":"sh/gv6do725","slide":11,"name":"Shape 17","bbox":[672,203.52,548.45,274.56]}
+{"kind":"shape","id":"sh/0by5gfut","slide":11,"name":"Shape 18","bbox":[696.96,222.72,498.53,74.88]}
+{"kind":"shape","id":"sh/lc769kvy","slide":11,"name":"Shape 19","bbox":[712.32,246.72,82.56,26.88]}
+{"kind":"textbox","id":"sh/ypwne5cn","slide":11,"name":"Text 20","text":"HIGH","textPreview":"HIGH","textChars":4,"textLines":1,"bbox":[712.32,246.72,82.56,26.88]}
+{"kind":"textbox","id":"sh/zapo7ad8","slide":11,"name":"Text 21","text":"Your knight on f6 is hanging — attacked and undefended.","textPreview":"Your knight on f6 is hanging — attacked and undefended.","textChars":55,"textLines":1,"bbox":[804.48,222.72,385.25,74.88]}
+{"kind":"shape","id":"sh/8fy5kfup","slide":11,"name":"Shape 22","bbox":[696.96,309.12,498.53,74.88]}
+{"kind":"shape","id":"sh/9g76dkva","slide":11,"name":"Shape 23","bbox":[712.32,333.12,82.56,26.88]}
+{"kind":"textbox","id":"sh/mdgni5cj","slide":11,"name":"Text 24","text":"MEDIUM","textPreview":"MEDIUM","textChars":6,"textLines":1,"bbox":[712.32,333.12,82.56,26.88]}
+{"kind":"textbox","id":"sh/nepobad4","slide":11,"name":"Text 25","text":"You have not castled; your king is still in the centre.","textPreview":"You have not castled; your king is still in the centre.","textChars":55,"textLines":1,"bbox":[804.48,309.12,385.25,74.88]}
+{"kind":"shape","id":"sh/4je58vel","slide":11,"name":"Shape 26","bbox":[696.96,395.52,498.53,74.88]}
+{"kind":"shape","id":"sh/pknm10vq","slide":11,"name":"Shape 27","bbox":[712.32,419.52,82.56,26.88]}
+{"kind":"textbox","id":"sh/7et87yxo","slide":11,"name":"Text 28","text":"LOW","textPreview":"LOW","textChars":3,"textLines":1,"bbox":[712.32,419.52,82.56,26.88]}
+{"kind":"textbox","id":"sh/6dkretw3","slide":11,"name":"Text 29","text":"Black controls d4 and e5 — good central presence.","textPreview":"Black controls d4 and e5 — good central presence.","textChars":49,"textLines":1,"bbox":[804.48,395.52,385.25,74.88]}
+{"kind":"shape","id":"sh/t0bq9ofe","slide":11,"name":"Shape 30","bbox":[672,491.52,548.45,92.16]}
+{"kind":"textbox","id":"sh/sf29g3et","slide":11,"name":"Text 31","text":"Every conclusion traces back to the exact rule that produced it — the advice is explainable, not a black box.","textPreview":"Every conclusion traces back to the exact rule that produced it — the advice is explainable, not a black box.","textChars":109,"textLines":1,"bbox":[700.8,491.52,490.85,92.16]}
+{"kind":"textbox","id":"sh/jat83exc","slide":11,"name":"Text 32","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/i9k7a9wr","slide":11,"name":"Text 33","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/pp6pjc","slide":11,"text":""}
+{"kind":"slide","id":"sl/pfticn","slide":12,"title":"TALKING WITH THE ENGINE","textShapes":21}
+{"kind":"textbox","id":"sh/507u50rq","slide":12,"name":"Text 0","text":"TALKING WITH THE ENGINE","textPreview":"TALKING WITH THE ENGINE","textChars":23,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/4zydwval","slide":12,"name":"Text 1","text":"Methodology 4 — Coach & Burmese Voice","textPreview":"Methodology 4 — Coach & Burmese Voice","textChars":37,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"textbox","id":"sh/r2pc7q9w","slide":12,"name":"Text 2","text":"LLM Coach","textPreview":"LLM Coach","textChars":9,"textLines":1,"bbox":[59.52,165.12,576,30.72]}
+{"kind":"textbox","id":"sh/61gvylsb","slide":12,"name":"Text 3","text":"Receives the current FEN, the detected emotion and the question.\nProduces position analysis in plain language.\nSuggested moves appear as clickable “Play” buttons.\nTone follows emotion — encouragement or a challenge.","textPreview":"Receives the current FEN, the detected emotion and the question. | Produces position analysis in plain language. | Suggested moves appear...","textChars":215,"textLines":4,"bbox":[69.12,207.36,556.8,182.4]}
+{"kind":"shape","id":"sh/t4ru90r2","slide":12,"name":"Shape 4","bbox":[59.52,393.6,576,211.2]}
+{"kind":"textbox","id":"sh/s3id0vah","slide":12,"name":"Text 5","text":"AI COACH","textPreview":"AI COACH","textChars":8,"textLines":1,"bbox":[86.4,408.96,288,24.96]}
+{"kind":"shape","id":"sh/n65cv69s","slide":12,"name":"Shape 6","bbox":[481.92,405.12,124.8,28.8]}
+{"kind":"textbox","id":"sh/m5wbm1s7","slide":12,"name":"Text 7","text":"focused","textPreview":"focused","textChars":7,"textLines":1,"bbox":[481.92,405.12,124.8,28.8]}
+{"kind":"shape","id":"sh/g3a1sby1","slide":12,"name":"Shape 8","bbox":[263.04,447.36,345.6,59.52]}
+{"kind":"textbox","id":"sh/h4jilgzm","slide":12,"name":"Text 9","text":"What is the best plan here?","textPreview":"What is the best plan here?","textChars":27,"textLines":1,"bbox":[278.4,447.36,314.88,59.52]}
+{"kind":"shape","id":"sh/uhszqlgv","slide":12,"name":"Shape 10","bbox":[86.4,516.48,489.6,59.52]}
+{"kind":"textbox","id":"sh/fi10j6hg","slide":12,"name":"Text 11","text":"Castle short first, then push d4 to open the centre.","textPreview":"Castle short first, then push d4 to open the centre.","textChars":52,"textLines":1,"bbox":[101.76,516.48,458.88,59.52]}
+{"kind":"textbox","id":"sh/47u1wvyx","slide":12,"name":"Text 12","text":"Burmese voice interface","textPreview":"Burmese voice interface","textChars":23,"textLines":1,"bbox":[672,165.12,548.45,30.72]}
+{"kind":"shape","id":"sh/p83ip0zi","slide":12,"name":"Shape 13","bbox":[672,205.44,548.45,90.24]}
+{"kind":"shape","id":"sh/25sjulgr","slide":12,"name":"Shape 14","bbox":[696.96,224.64,44.16,44.16]}
+{"kind":"textbox","id":"sh/3610nqhc","slide":12,"name":"Text 15","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[696.96,224.64,44.16,44.16]}
+{"kind":"textbox","id":"sh/kbqhkryt","slide":12,"name":"Text 16","text":"Record","textPreview":"Record","textChars":6,"textLines":1,"bbox":[756.48,224.64,442.85,26.88]}
+{"kind":"textbox","id":"sh/5czidwze","slide":12,"name":"Text 17","text":"Push-to-talk in the browser","textPreview":"Push-to-talk in the browser","textChars":27,"textLines":1,"bbox":[756.48,253.44,442.85,26.88]}
+{"kind":"shape","id":"sh/l8ryhsr2","slide":12,"name":"Shape 18","bbox":[672,305.28,548.45,90.24]}
+{"kind":"shape","id":"sh/k7ixonqh","slide":12,"name":"Shape 19","bbox":[696.96,324.48,44.16,44.16]}
+{"kind":"textbox","id":"sh/z69gfi9w","slide":12,"name":"Text 20","text":"◆","textPreview":"◆","textChars":1,"textLines":1,"bbox":[696.96,324.48,44.16,44.16]}
+{"kind":"textbox","id":"sh/y50fmdsb","slide":12,"name":"Text 21","text":"Transcribe","textPreview":"Transcribe","textChars":10,"textLines":1,"bbox":[756.48,324.48,442.85,26.88]}
+{"kind":"textbox","id":"sh/9wbylsry","slide":12,"name":"Text 22","text":"Local Whisper first, cloud as fallback","textPreview":"Local Whisper first, cloud as fallback","textChars":38,"textLines":1,"bbox":[756.48,353.28,442.85,26.88]}
+{"kind":"shape","id":"sh/8b2hs7qt","slide":12,"name":"Shape 23","bbox":[672,407.04,259.82,197.76]}
+{"kind":"shape","id":"sh/7a9gj298","slide":12,"name":"Shape 24","bbox":[672,407.04,259.82,49.92]}
+{"kind":"textbox","id":"sh/m90fqx8n","slide":12,"name":"Text 25","text":"Voice Moves","textPreview":"Voice Moves","textChars":11,"textLines":1,"bbox":[695.04,407.04,221.42,49.92]}
+{"kind":"textbox","id":"sh/h0bypcra","slide":12,"name":"Text 26","text":"Parsed by speechParser.ts\nBurmese chess vocabulary\nOnly legal moves are played","textPreview":"Parsed by speechParser.ts | Burmese chess vocabulary | Only legal moves are played","textChars":78,"textLines":3,"bbox":[698.88,474.24,206.06,124.8]}
+{"kind":"shape","id":"sh/wz2hw7qp","slide":12,"name":"Shape 27","bbox":[960.62,407.04,259.82,197.76]}
+{"kind":"shape","id":"sh/u9c3u54v","slide":12,"name":"Shape 28","bbox":[960.62,407.04,259.82,49.92]}
+{"kind":"textbox","id":"sh/fal43alg","slide":12,"name":"Text 29","text":"Voice Coach","textPreview":"Voice Coach","textChars":11,"textLines":1,"bbox":[983.66,407.04,221.42,49.92]}
+{"kind":"textbox","id":"sh/gvulwf21","slide":12,"name":"Text 30","text":"Sent to /api/coach\nAnswered in Burmese\nRead aloud by Burmese TTS","textPreview":"Sent to /api/coach | Answered in Burmese | Read aloud by Burmese TTS","textChars":64,"textLines":3,"bbox":[987.5,474.24,206.06,124.8]}
+{"kind":"textbox","id":"sh/hw3m5k3m","slide":12,"name":"Text 31","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/2xcnypk7","slide":12,"name":"Text 32","text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/pfticn","slide":12,"text":""}
+{"kind":"slide","id":"sl/90e1hl","slide":13,"title":"THE MAPPING, IN TWO LANGUAGES","textShapes":9}
+{"kind":"textbox","id":"sh/0nu5cjud","slide":13,"name":"Text 0","text":"THE MAPPING, IN TWO LANGUAGES","textPreview":"THE MAPPING, IN TWO LANGUAGES","textChars":29,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/1o36loby","slide":13,"name":"Text 1","text":"Code Example","textPreview":"Code Example","textChars":12,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/qhsn69cb","slide":13,"name":"Shape 2","bbox":[59.52,178.56,595.2,436.8]}
+{"kind":"shape","id":"sh/ri1ofetw","slide":13,"name":"Shape 3","bbox":[86.4,199.68,12.48,12.48]}
+{"kind":"shape","id":"sh/sju58ju1","slide":13,"name":"Shape 4","bbox":[109.44,199.68,12.48,12.48]}
+{"kind":"shape","id":"sh/dk36hobm","slide":13,"name":"Shape 5","bbox":[132.48,199.68,12.48,12.48]}
+{"kind":"textbox","id":"sh/itsn29cz","slide":13,"name":"Text 6","text":"lib/engineProfiles.ts","textPreview":"lib/engineProfiles.ts","textChars":21,"textLines":1,"bbox":[165.12,192,470.4,26.88]}
+{"kind":"textbox","id":"sh/3e1obetk","slide":13,"name":"Text 7","text":"export const EMOTION_PROFILES = {\n  stressed:   { depth: 1, skill: 1, elo: 1320 },\n  frustrated: { depth: 2, skill: 3, elo: 1320 },\n  calm:       { depth: 4, skill: 6, elo: 1600 },\n  neutral:    { depth: 6, skill: 10, elo: 2000 },\n  focused:    { depth: 8, skill: 15, elo: 2600 },\n  confident:  { depth: 10, skill: 20, elo: 3190 },\n};\n\nexport function clampElo(elo: number) {\n  return Math.max(1320, Math.min(3190, elo));\n}","textPreview":"export const EMOTION_PROFILES = { |   stressed:   { depth: 1, skill: 1, elo: 1320 }, |   frustrated: { depth: 2, skill: 3, elo: 1320 }, |...","textChars":423,"textLines":12,"bbox":[88.32,220.8,537.6,379.2]}
+{"kind":"shape","id":"sh/z65kbul4","slide":13,"name":"Shape 8","bbox":[683.52,178.56,536.64,436.8]}
+{"kind":"shape","id":"sh/e5wj2p4j","slide":13,"name":"Shape 9","bbox":[710.4,199.68,12.48,12.48]}
+{"kind":"shape","id":"sh/1872dk3a","slide":13,"name":"Shape 10","bbox":[733.44,199.68,12.48,12.48]}
+{"kind":"shape","id":"sh/07e14z2p","slide":13,"name":"Shape 11","bbox":[756.48,199.68,12.48,12.48]}
+{"kind":"textbox","id":"sh/napkfulg","slide":13,"name":"Text 12","text":"prolog/ai_system.pl","textPreview":"prolog/ai_system.pl","textChars":19,"textLines":1,"bbox":[789.12,192,411.84,26.88]}
+{"kind":"textbox","id":"sh/m9gj6pkv","slide":13,"name":"Text 13","text":"% emotion to engine strength\nprofile(stressed,    1,  1, 1320).\nprofile(frustrated,  2,  3, 1320).\nprofile(calm,        4,  6, 1600).\nprofile(confident,  10, 20, 3190).\n\n% face to emotion\nexpression(happy, confident).\nexpression(angry, frustrated).\n\n% join the two together\nengine_for(Expr, D, S, E) :-\n    expression(Expr, Emo),\n    profile(Emo, D, S, E).","textPreview":"% emotion to engine strength | profile(stressed,    1,  1, 1320). | profile(frustrated,  2,  3, 1320). | profile(calm,        4,  6, 1600...","textChars":356,"textLines":14,"bbox":[712.32,220.8,479.04,379.2]}
+{"kind":"textbox","id":"sh/9w72h43m","slide":13,"name":"Text 14","text":"One source of truth in TypeScript; the same knowledge as declarative facts in Prolog.","textPreview":"One source of truth in TypeScript; the same knowledge as declarative facts in Prolog.","textChars":85,"textLines":1,"bbox":[59.52,635.52,1160.93,28.8]}
+{"kind":"textbox","id":"sh/oby18z21","slide":13,"name":"Text 15","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/3elk3alw","slide":13,"name":"Text 16","text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/90e1hl","slide":13,"text":""}
+{"kind":"slide","id":"sl/57mqj4","slide":14,"title":"THE INTERFACE IN USE","textShapes":29}
+{"kind":"textbox","id":"sh/5c7m9srq","slide":14,"name":"Text 0","text":"THE INTERFACE IN USE","textPreview":"THE INTERFACE IN USE","textChars":20,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/4by5gna5","slide":14,"name":"Text 1","text":"System UI","textPreview":"System UI","textChars":9,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/vm543y9o","slide":14,"name":"Shape 2","bbox":[59.52,184.32,720,427.2]}
+{"kind":"shape","id":"sh/ulwnats3","slide":14,"name":"Shape 3","bbox":[59.52,184.32,720,40.32]}
+{"kind":"textbox","id":"sh/honm58ru","slide":14,"name":"Text 4","text":"Sentio  —  localhost:3000","textPreview":"Sentio  —  localhost:3000","textChars":25,"textLines":1,"bbox":[88.32,184.32,384,40.32]}
+{"kind":"shape","id":"sh/wne5c3a9","slide":14,"name":"Shape 5","bbox":[86.4,251.52,15.36,316.8]}
+{"kind":"shape","id":"sh/7il4zyts","slide":14,"name":"Shape 6","bbox":[86.4,251.52,15.36,136.32]}
+{"kind":"shape","id":"sh/mhcn6ts7","slide":14,"name":"Shape 7","bbox":[119.04,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/0bepw7ih","slide":14,"name":"Shape 8","bbox":[158.59,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/1cn65cz2","slide":14,"name":"Shape 9","bbox":[198.14,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/epw7ux0b","slide":14,"name":"Shape 10","bbox":[237.7,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/fa5o32hw","slide":14,"name":"Shape 11","bbox":[277.25,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/snepsni5","slide":14,"name":"Shape 12","bbox":[316.8,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/don61szq","slide":14,"name":"Shape 13","bbox":[356.35,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/qlw7qx0f","slide":14,"name":"Shape 14","bbox":[395.9,251.52,39.55,39.55]}
+{"kind":"shape","id":"sh/rm5oz210","slide":14,"name":"Shape 15","bbox":[119.04,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/wjyp4rip","slide":14,"name":"Shape 16","bbox":[158.59,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/xkrqdwza","slide":14,"name":"Shape 17","bbox":[198.14,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/50n6hwre","slide":14,"name":"Shape 18","bbox":[237.7,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/kzeporat","slide":14,"name":"Shape 19","bbox":[277.25,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/jylofm98","slide":14,"name":"Shape 20","bbox":[316.8,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/ixc7mhsn","slide":14,"name":"Shape 21","bbox":[356.35,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/xw36dcr2","slide":14,"name":"Shape 22","bbox":[395.9,291.07,39.55,39.55]}
+{"kind":"shape","id":"sh/wvupk7ah","slide":14,"name":"Shape 23","bbox":[119.04,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/vulob29c","slide":14,"name":"Shape 24","bbox":[158.59,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/a9c7ihsr","slide":14,"name":"Shape 25","bbox":[198.14,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/98369cr6","slide":14,"name":"Shape 26","bbox":[237.7,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/87a5g7al","slide":14,"name":"Shape 27","bbox":[277.25,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/e1ovu947","slide":14,"name":"Shape 28","bbox":[316.8,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/f2xc3els","slide":14,"name":"Shape 29","bbox":[356.35,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/03qdwjmd","slide":14,"name":"Shape 30","bbox":[395.9,330.62,39.55,39.55]}
+{"kind":"shape","id":"sh/14zu5o3i","slide":14,"name":"Shape 31","bbox":[119.04,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/qxovq94v","slide":14,"name":"Shape 32","bbox":[158.59,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/ryxczulg","slide":14,"name":"Shape 33","bbox":[198.14,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/sz6dszm1","slide":14,"name":"Shape 34","bbox":[237.7,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/d0fu143m","slide":14,"name":"Shape 35","bbox":[277.25,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/it4vmp4z","slide":14,"name":"Shape 36","bbox":[316.8,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/3udcvulk","slide":14,"name":"Shape 37","bbox":[356.35,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/vmx87qpg","slide":14,"name":"Shape 38","bbox":[395.9,370.18,39.55,39.55]}
+{"kind":"shape","id":"sh/ulory58v","slide":14,"name":"Shape 39","bbox":[119.04,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/hoza9076","slide":14,"name":"Shape 40","bbox":[158.59,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/wn690vql","slide":14,"name":"Shape 41","bbox":[198.14,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/7ix83qp4","slide":14,"name":"Shape 42","bbox":[237.7,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/mhorul8j","slide":14,"name":"Shape 43","bbox":[277.25,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/9kfq507a","slide":14,"name":"Shape 44","bbox":[316.8,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/8j69wvqp","slide":14,"name":"Shape 45","bbox":[356.35,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/zud8z6p8","slide":14,"name":"Shape 46","bbox":[395.9,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/yt4rql8n","slide":14,"name":"Shape 47","bbox":[119.04,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/oz25076l","slide":14,"name":"Shape 48","bbox":[158.59,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/p0b69cnq","slide":14,"name":"Shape 49","bbox":[198.14,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/2xknyhof","slide":14,"name":"Shape 50","bbox":[237.7,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/nyto7250","slide":14,"name":"Shape 51","bbox":[277.25,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/cn2p4r6h","slide":14,"name":"Shape 52","bbox":[316.8,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/xob6dwn2","slide":14,"name":"Shape 53","bbox":[356.35,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/a1k72hob","slide":14,"name":"Shape 54","bbox":[395.9,449.28,39.55,39.55]}
+{"kind":"shape","id":"sh/b2tobm5w","slide":14,"name":"Shape 55","bbox":[119.04,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/sri5sn6d","slide":14,"name":"Shape 56","bbox":[158.59,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/tsr61sni","slide":14,"name":"Shape 57","bbox":[198.14,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/tojmpozm","slide":14,"name":"Shape 58","bbox":[237.7,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/8nalwjy1","slide":14,"name":"Shape 59","bbox":[277.25,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/7m14nehg","slide":14,"name":"Shape 60","bbox":[316.8,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/6l83u9gv","slide":14,"name":"Shape 61","bbox":[356.35,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/hsjmtofi","slide":14,"name":"Shape 62","bbox":[395.9,488.83,39.55,39.55]}
+{"kind":"shape","id":"sh/gral03yx","slide":14,"name":"Shape 63","bbox":[119.04,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/vq14ryxs","slide":14,"name":"Shape 64","bbox":[158.59,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/ups3ytg7","slide":14,"name":"Shape 65","bbox":[198.14,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/5g3mx8fu","slide":14,"name":"Shape 66","bbox":[237.7,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/4vu543y9","slide":14,"name":"Shape 67","bbox":[277.25,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/2pkr21sf","slide":14,"name":"Shape 68","bbox":[316.8,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/nqdsb6t0","slide":14,"name":"Shape 69","bbox":[356.35,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/orm94bal","slide":14,"name":"Shape 70","bbox":[395.9,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/psvadgb6","slide":14,"name":"Shape 71","bbox":[277.25,409.73,39.55,39.55]}
+{"kind":"shape","id":"sh/at4r6lsb","slide":14,"name":"Shape 72","bbox":[356.35,409.73,39.55,39.55]}
+{"kind":"textbox","id":"sh/budsfq9w","slide":14,"name":"Text 73","text":"♜","textPreview":"♜","textChars":1,"textLines":1,"bbox":[119.04,251.52,39.55,39.55]}
+{"kind":"textbox","id":"sh/cfmt8vah","slide":14,"name":"Text 74","text":"♞","textPreview":"♞","textChars":1,"textLines":1,"bbox":[198.14,251.52,39.55,39.55]}
+{"kind":"textbox","id":"sh/xgvah0r2","slide":14,"name":"Text 75","text":"♚","textPreview":"♚","textChars":1,"textLines":1,"bbox":[277.25,251.52,39.55,39.55]}
+{"kind":"textbox","id":"sh/yhobalsn","slide":14,"name":"Text 76","text":"♟","textPreview":"♟","textChars":1,"textLines":1,"bbox":[237.7,291.07,39.55,39.55]}
+{"kind":"textbox","id":"sh/zixsjq98","slide":14,"name":"Text 77","text":"♙","textPreview":"♙","textChars":1,"textLines":1,"bbox":[237.7,488.83,39.55,39.55]}
+{"kind":"textbox","id":"sh/jatof2do","slide":14,"name":"Text 78","text":"♗","textPreview":"♗","textChars":1,"textLines":1,"bbox":[198.14,528.38,39.55,39.55]}
+{"kind":"textbox","id":"sh/i9kn6xw3","slide":14,"name":"Text 79","text":"♔","textPreview":"♔","textChars":1,"textLines":1,"bbox":[277.25,528.38,39.55,39.55]}
+{"kind":"shape","id":"sh/5cv6hsve","slide":14,"name":"Shape 80","bbox":[460.42,251.52,91.65,34.56]}
+{"kind":"textbox","id":"sh/kbmp87e9","slide":14,"name":"Text 81","text":"Coach","textPreview":"Coach","textChars":5,"textLines":1,"bbox":[460.42,251.52,91.65,34.56]}
+{"kind":"shape","id":"sh/7edoj2dk","slide":14,"name":"Shape 82","bbox":[557.82,251.52,91.65,34.56]}
+{"kind":"textbox","id":"sh/6d47axwz","slide":14,"name":"Text 83","text":"Logician","textPreview":"Logician","textChars":8,"textLines":1,"bbox":[557.82,251.52,91.65,34.56]}
+{"kind":"shape","id":"sh/tgv6lcvq","slide":14,"name":"Shape 84","bbox":[655.23,251.52,91.65,34.56]}
+{"kind":"textbox","id":"sh/sfmpc7e5","slide":14,"name":"Text 85","text":"Speech","textPreview":"Speech","textChars":6,"textLines":1,"bbox":[655.23,251.52,91.65,34.56]}
+{"kind":"shape","id":"sh/f2xonmdw","slide":14,"name":"Shape 86","bbox":[460.42,297.6,292.22,59.52]}
+{"kind":"textbox","id":"sh/uh47ehwb","slide":14,"name":"Text 87","text":"Emotion:  focused\nELO 2600  ·  depth 8","textPreview":"Emotion:  focused | ELO 2600  ·  depth 8","textChars":38,"textLines":2,"bbox":[473.86,297.6,265.34,59.52]}
+{"kind":"shape","id":"sh/c7654ra9","slide":14,"name":"Shape 88","bbox":[460.42,370.56,292.22,30.72]}
+{"kind":"shape","id":"sh/d8f6dwbu","slide":14,"name":"Shape 89","bbox":[460.42,410.88,244.22,30.72]}
+{"kind":"shape","id":"sh/q5on2hs3","slide":14,"name":"Shape 90","bbox":[460.42,451.2,292.22,30.72]}
+{"kind":"shape","id":"sh/b6xobmto","slide":14,"name":"Shape 91","bbox":[460.42,491.52,244.22,30.72]}
+{"kind":"shape","id":"sh/oj6507ud","slide":14,"name":"Shape 92","bbox":[460.42,531.84,292.22,30.72]}
+{"kind":"textbox","id":"sh/p4f69cby","slide":14,"name":"Text 93","text":"Ruy Lopez (C60)","textPreview":"Ruy Lopez (C60)","textChars":15,"textLines":1,"bbox":[471.94,573.12,292.22,24.96]}
+{"kind":"shape","id":"sh/2h4nyxc7","slide":14,"name":"Shape 94","bbox":[816,184.32,404.45,101.76]}
+{"kind":"shape","id":"sh/3ix472ts","slide":14,"name":"Shape 95","bbox":[840.96,203.52,44.16,44.16]}
+{"kind":"textbox","id":"sh/gfm5w7u1","slide":14,"name":"Text 96","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[840.96,203.52,44.16,44.16]}
+{"kind":"textbox","id":"sh/hgvm5cbm","slide":14,"name":"Text 97","text":"Interactive board","textPreview":"Interactive board","textChars":17,"textLines":1,"bbox":[900.48,203.52,298.85,26.88]}
+{"kind":"textbox","id":"sh/uhs365sv","slide":14,"name":"Text 98","text":"Legal-move highlighting, promotion picker and undo.","textPreview":"Legal-move highlighting, promotion picker and undo.","textChars":51,"textLines":1,"bbox":[900.48,232.32,298.85,38.4]}
+{"kind":"shape","id":"sh/fi14fa9g","slide":14,"name":"Shape 99","bbox":[816,294.72,404.45,101.76]}
+{"kind":"shape","id":"sh/gju58fa1","slide":14,"name":"Shape 100","bbox":[840.96,313.92,44.16,44.16]}
+{"kind":"textbox","id":"sh/hk3mhkrm","slide":14,"name":"Text 101","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[840.96,313.92,44.16,44.16]}
+{"kind":"textbox","id":"sh/6ts325sz","slide":14,"name":"Text 102","text":"Emotion monitor","textPreview":"Emotion monitor","textChars":15,"textLines":1,"bbox":[900.48,313.92,298.85,26.88]}
+{"kind":"textbox","id":"sh/7u14ba9k","slide":14,"name":"Text 103","text":"Shows the detected state and the engine profile in use.","textPreview":"Shows the detected state and the engine profile in use.","textChars":55,"textLines":1,"bbox":[900.48,342.72,298.85,38.4]}
+{"kind":"shape","id":"sh/sval4vap","slide":14,"name":"Shape 104","bbox":[816,405.12,404.45,101.76]}
+{"kind":"shape","id":"sh/tgjmd0ra","slide":14,"name":"Shape 105","bbox":[840.96,424.32,44.16,44.16]}
+{"kind":"textbox","id":"sh/qpcneps3","slide":14,"name":"Text 106","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[840.96,424.32,44.16,44.16]}
+{"kind":"textbox","id":"sh/rq54nu9o","slide":14,"name":"Text 107","text":"Evaluation bar","textPreview":"Evaluation bar","textChars":14,"textLines":1,"bbox":[900.48,424.32,298.85,26.88]}
+{"kind":"textbox","id":"sh/1k76dobq","slide":14,"name":"Text 108","text":"Live engine assessment beside the board.","textPreview":"Live engine assessment beside the board.","textChars":40,"textLines":1,"bbox":[900.48,453.12,298.85,38.4]}
+{"kind":"shape","id":"sh/0jyp4ju5","slide":14,"name":"Shape 109","bbox":[816,515.52,404.45,101.76]}
+{"kind":"shape","id":"sh/zipobyt0","slide":14,"name":"Shape 110","bbox":[840.96,534.72,44.16,44.16]}
+{"kind":"textbox","id":"sh/ehw72tcf","slide":14,"name":"Text 111","text":"●","textPreview":"●","textChars":1,"textLines":1,"bbox":[840.96,534.72,44.16,44.16]}
+{"kind":"textbox","id":"sh/dgn69obu","slide":14,"name":"Text 112","text":"Tabbed panel","textPreview":"Tabbed panel","textChars":12,"textLines":1,"bbox":[900.48,534.72,298.85,26.88]}
+{"kind":"textbox","id":"sh/cfep0ju9","slide":14,"name":"Text 113","text":"Coach, Logician, Speech, Benchmark and Training.","textPreview":"Coach, Logician, Speech, Benchmark and Training.","textChars":48,"textLines":1,"bbox":[900.48,563.52,298.85,38.4]}
+{"kind":"textbox","id":"sh/re5o7eto","slide":14,"name":"Text 114","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/qdw7y9c3","slide":14,"name":"Text 115","text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/57mqj4","slide":14,"text":""}
+{"kind":"slide","id":"sl/fzeang","slide":15,"title":"AN HONEST ASSESSMENT","textShapes":30}
+{"kind":"textbox","id":"sh/ads7ipwj","slide":15,"name":"Text 0","text":"AN HONEST ASSESSMENT","textPreview":"AN HONEST ASSESSMENT","textChars":20,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/vel8rud4","slide":15,"name":"Text 1","text":"Benefits & Limitations","textPreview":"Benefits & Limitations","textChars":22,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/8bapgfed","slide":15,"name":"Shape 2","bbox":[59.52,172.8,561.26,48]}
+{"kind":"textbox","id":"sh/9cj6pkvy","slide":15,"name":"Text 3","text":"BENEFITS","textPreview":"BENEFITS","textChars":8,"textLines":1,"bbox":[86.4,172.8,513.26,48]}
+{"kind":"shape","id":"sh/m9s7e5wn","slide":15,"name":"Shape 4","bbox":[59.52,234.24,561.26,97.92]}
+{"kind":"shape","id":"sh/na1onads","slide":15,"name":"Shape 5","bbox":[84.48,253.44,44.16,44.16]}
+{"kind":"textbox","id":"sh/07apcfeh","slide":15,"name":"Text 6","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[84.48,253.44,44.16,44.16]}
+{"kind":"textbox","id":"sh/l8j6lkv2","slide":15,"name":"Text 7","text":"Always the right challenge","textPreview":"Always the right challenge","textChars":26,"textLines":1,"bbox":[144,253.44,455.66,26.88]}
+{"kind":"textbox","id":"sh/t4byd4fi","slide":15,"name":"Text 8","text":"Difficulty follows the player, so the game stays winnable.","textPreview":"Difficulty follows the player, so the game stays winnable.","textChars":58,"textLines":1,"bbox":[144,282.24,455.66,34.56]}
+{"kind":"shape","id":"sh/832xkzex","slide":15,"name":"Shape 9","bbox":[59.52,341.76,561.26,97.92]}
+{"kind":"shape","id":"sh/729gbuxc","slide":15,"name":"Shape 10","bbox":[84.48,360.96,44.16,44.16]}
+{"kind":"textbox","id":"sh/6h0fipwr","slide":15,"name":"Text 11","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[84.48,360.96,44.16,44.16]}
+{"kind":"textbox","id":"sh/lgry9kf6","slide":15,"name":"Text 12","text":"Beginners stay motivated","textPreview":"Beginners stay motivated","textChars":24,"textLines":1,"bbox":[144,360.96,455.66,26.88]}
+{"kind":"textbox","id":"sh/kfixgzel","slide":15,"name":"Text 13","text":"Emotion-aware feedback supports players through hard positions.","textPreview":"Emotion-aware feedback supports players through hard positions.","textChars":63,"textLines":1,"bbox":[144,389.76,455.66,34.56]}
+{"kind":"shape","id":"sh/je9g7ux0","slide":15,"name":"Shape 14","bbox":[59.52,449.28,561.26,97.92]}
+{"kind":"shape","id":"sh/yd0fepwv","slide":15,"name":"Shape 15","bbox":[84.48,468.48,44.16,44.16]}
+{"kind":"textbox","id":"sh/xcry5kfa","slide":15,"name":"Text 16","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[84.48,468.48,44.16,44.16]}
+{"kind":"textbox","id":"sh/wbyxcfep","slide":15,"name":"Text 17","text":"Explainable advice","textPreview":"Explainable advice","textChars":18,"textLines":1,"bbox":[144,468.48,455.66,26.88]}
+{"kind":"textbox","id":"sh/o7mp8jqh","slide":15,"name":"Text 18","text":"Prolog shows why a move is suggested, not just that it is.","textPreview":"Prolog shows why a move is suggested, not just that it is.","textChars":58,"textLines":1,"bbox":[144,497.28,455.66,34.56]}
+{"kind":"shape","id":"sh/9svqhor2","slide":15,"name":"Shape 19","bbox":[59.52,556.8,561.26,97.92]}
+{"kind":"shape","id":"sh/m547698r","slide":15,"name":"Shape 20","bbox":[84.48,576,44.16,44.16]}
+{"kind":"textbox","id":"sh/n6dofe9c","slide":15,"name":"Text 21","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[84.48,576,44.16,44.16]}
+{"kind":"textbox","id":"sh/03mp4zql","slide":15,"name":"Text 22","text":"Accessible in Burmese","textPreview":"Accessible in Burmese","textChars":21,"textLines":1,"bbox":[144,576,455.66,26.88]}
+{"kind":"textbox","id":"sh/14v6d4r6","slide":15,"name":"Text 23","text":"Voice moves and coaching remove the English-only barrier.","textPreview":"Voice moves and coaching remove the English-only barrier.","textChars":57,"textLines":1,"bbox":[144,604.8,455.66,34.56]}
+{"kind":"shape","id":"sh/e1k72p8f","slide":15,"name":"Shape 24","bbox":[659.18,172.8,561.26,48]}
+{"kind":"textbox","id":"sh/z2tobu90","slide":15,"name":"Text 25","text":"LIMITATIONS","textPreview":"LIMITATIONS","textChars":11,"textLines":1,"bbox":[686.06,172.8,513.26,48]}
+{"kind":"shape","id":"sh/kz6pg3qp","slide":15,"name":"Shape 26","bbox":[659.18,234.24,561.26,97.92]}
+{"kind":"shape","id":"sh/l0fqp8ra","slide":15,"name":"Shape 27","bbox":[684.14,253.44,44.16,44.16]}
+{"kind":"textbox","id":"sh/vu1sf2ts","slide":15,"name":"Text 28","text":"!","textPreview":"!","textChars":1,"textLines":1,"bbox":[684.14,253.44,44.16,44.16]}
+{"kind":"textbox","id":"sh/ut8r6xs7","slide":15,"name":"Text 29","text":"Expression ≠ emotion","textPreview":"Expression ≠ emotion","textChars":20,"textLines":1,"bbox":[743.66,253.44,455.66,26.88]}
+{"kind":"textbox","id":"sh/hwjahcbi","slide":15,"name":"Text 30","text":"A face is only an approximation of what a player feels.","textPreview":"A face is only an approximation of what a player feels.","textChars":55,"textLines":1,"bbox":[743.66,282.24,455.66,34.56]}
+{"kind":"shape","id":"sh/gvat87ax","slide":15,"name":"Shape 31","bbox":[659.18,341.76,561.26,97.92]}
+{"kind":"shape","id":"sh/3i1sj2to","slide":15,"name":"Shape 32","bbox":[684.14,360.96,44.16,44.16]}
+{"kind":"textbox","id":"sh/ixsbaxs3","slide":15,"name":"Text 33","text":"!","textPreview":"!","textChars":1,"textLines":1,"bbox":[684.14,360.96,44.16,44.16]}
+{"kind":"textbox","id":"sh/5kjalcbu","slide":15,"name":"Text 34","text":"Environment sensitive","textPreview":"Environment sensitive","textChars":21,"textLines":1,"bbox":[743.66,360.96,455.66,26.88]}
+{"kind":"textbox","id":"sh/4jatc7a9","slide":15,"name":"Text 35","text":"Accuracy drops with poor lighting or a turned head.","textPreview":"Accuracy drops with poor lighting or a turned head.","textChars":51,"textLines":1,"bbox":[743.66,389.76,455.66,34.56]}
+{"kind":"shape","id":"sh/jmhs7itk","slide":15,"name":"Shape 36","bbox":[659.18,449.28,561.26,97.92]}
+{"kind":"shape","id":"sh/y1oredsz","slide":15,"name":"Shape 37","bbox":[684.14,468.48,44.16,44.16]}
+{"kind":"textbox","id":"sh/a5sbud0v","slide":15,"name":"Text 38","text":"!","textPreview":"!","textChars":1,"textLines":1,"bbox":[684.14,468.48,44.16,44.16]}
+{"kind":"textbox","id":"sh/b61sni1g","slide":15,"name":"Text 39","text":"Privacy concerns","textPreview":"Privacy concerns","textChars":16,"textLines":1,"bbox":[743.66,468.48,455.66,26.88]}
+{"kind":"textbox","id":"sh/c7utwnil","slide":15,"name":"Text 40","text":"The webcam requirement will not suit every setting.","textPreview":"The webcam requirement will not suit every setting.","textChars":51,"textLines":1,"bbox":[743.66,497.28,455.66,34.56]}
+{"kind":"shape","id":"sh/x83apsj6","slide":15,"name":"Shape 41","bbox":[659.18,556.8,561.26,97.92]}
+{"kind":"shape","id":"sh/y9cbyx0r","slide":15,"name":"Shape 42","bbox":[684.14,576,44.16,44.16]}
+{"kind":"textbox","id":"sh/zalsri1c","slide":15,"name":"Text 43","text":"!","textPreview":"!","textChars":1,"textLines":1,"bbox":[684.14,576,44.16,44.16]}
+{"kind":"textbox","id":"sh/kbut0nix","slide":15,"name":"Text 44","text":"Heavy on resources","textPreview":"Heavy on resources","textChars":18,"textLines":1,"bbox":[743.66,576,455.66,26.88]}
+{"kind":"textbox","id":"sh/lc3atsji","slide":15,"name":"Text 45","text":"Local Whisper and Stockfish both need real memory and CPU.","textPreview":"Local Whisper and Stockfish both need real memory and CPU.","textChars":58,"textLines":1,"bbox":[743.66,604.8,455.66,34.56]}
+{"kind":"textbox","id":"sh/mdcb2x03","slide":15,"name":"Text 46","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/7ylsv218","slide":15,"name":"Text 47","text":"14","textPreview":"14","textChars":2,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/fzeang","slide":15,"text":""}
+{"kind":"slide","id":"sl/8av9a6","slide":16,"title":"WHERE IT GOES NEXT","textShapes":19}
+{"kind":"textbox","id":"sh/uto3q9cf","slide":16,"name":"Text 0","text":"WHERE IT GOES NEXT","textPreview":"WHERE IT GOES NEXT","textChars":18,"textLines":1,"bbox":[59.52,44.16,1160.93,24.96]}
+{"kind":"textbox","id":"sh/vux4jet0","slide":16,"name":"Text 1","text":"Future Work","textPreview":"Future Work","textChars":11,"textLines":1,"bbox":[59.52,71.04,1160.93,57.6]}
+{"kind":"shape","id":"sh/4j6lw3uh","slide":16,"name":"Shape 2","bbox":[161.9,274.56,956.16,0]}
+{"kind":"shape","id":"sh/pkfmp8b2","slide":16,"name":"Shape 3","bbox":[135.02,247.68,53.76,53.76]}
+{"kind":"textbox","id":"sh/iho3utcb","slide":16,"name":"Text 4","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[135.02,247.68,53.76,53.76]}
+{"kind":"shape","id":"sh/3ix4nytw","slide":16,"name":"Shape 5","bbox":[53.9,326.4,216,240]}
+{"kind":"textbox","id":"sh/cnql03ud","slide":16,"name":"Text 6","text":"Richer emotion signal","textPreview":"Richer emotion signal","textChars":21,"textLines":1,"bbox":[73.1,351.36,177.6,65.28]}
+{"kind":"textbox","id":"sh/dozmt8by","slide":16,"name":"Text 7","text":"Combine facial expression with move timing and blunder rate.","textPreview":"Combine facial expression with move timing and blunder rate.","textChars":60,"textLines":1,"bbox":[75.02,424.32,173.76,120]}
+{"kind":"shape","id":"sh/l0vylcza","slide":16,"name":"Shape 8","bbox":[374.06,247.68,53.76,53.76]}
+{"kind":"textbox","id":"sh/kzmxs7yp","slide":16,"name":"Text 9","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[374.06,247.68,53.76,53.76]}
+{"kind":"shape","id":"sh/zydgjmh4","slide":16,"name":"Shape 10","bbox":[292.94,326.4,216,240]}
+{"kind":"textbox","id":"sh/yx4fqhgj","slide":16,"name":"Text 11","text":"Better Burmese STT","textPreview":"Better Burmese STT","textChars":18,"textLines":1,"bbox":[312.14,351.36,177.6,65.28]}
+{"kind":"textbox","id":"sh/9ofypwz6","slide":16,"name":"Text 12","text":"Train a custom model to improve spoken-move recognition.","textPreview":"Train a custom model to improve spoken-move recognition.","textChars":56,"textLines":1,"bbox":[314.06,424.32,173.76,120]}
+{"kind":"shape","id":"sh/8n6xwryl","slide":16,"name":"Shape 13","bbox":[613.1,247.68,53.76,53.76]}
+{"kind":"textbox","id":"sh/7mdgnmh0","slide":16,"name":"Text 14","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[613.1,247.68,53.76,53.76]}
+{"kind":"shape","id":"sh/m14fuhgv","slide":16,"name":"Shape 15","bbox":[531.98,326.4,216,240]}
+{"kind":"textbox","id":"sh/psbydsz2","slide":16,"name":"Text 16","text":"Long-term player profile","textPreview":"Long-term player profile","textChars":24,"textLines":1,"bbox":[551.18,351.36,177.6,65.28]}
+{"kind":"textbox","id":"sh/or2xknyh","slide":16,"name":"Text 17","text":"Track progress and weaknesses across many sessions.","textPreview":"Track progress and weaknesses across many sessions.","textChars":51,"textLines":1,"bbox":[553.1,424.32,173.76,120]}
+{"kind":"shape","id":"sh/gb6x076d","slide":16,"name":"Shape 18","bbox":[852.14,247.68,53.76,53.76]}
+{"kind":"textbox","id":"sh/1cfy9s7y","slide":16,"name":"Text 19","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[852.14,247.68,53.76,53.76]}
+{"kind":"shape","id":"sh/e94fyxo7","slide":16,"name":"Shape 20","bbox":[771.02,326.4,216,240]}
+{"kind":"textbox","id":"sh/faxg72ps","slide":16,"name":"Text 21","text":"Deeper knowledge base","textPreview":"Deeper knowledge base","textChars":21,"textLines":1,"bbox":[790.22,351.36,177.6,65.28]}
+{"kind":"textbox","id":"sh/of6h4769","slide":16,"name":"Text 22","text":"Add tactical motifs and endgame theory to the Prolog rules.","textPreview":"Add tactical motifs and endgame theory to the Prolog rules.","textChars":59,"textLines":1,"bbox":[792.14,424.32,173.76,120]}
+{"kind":"shape","id":"sh/pgfydc7u","slide":16,"name":"Shape 23","bbox":[1091.18,247.68,53.76,53.76]}
+{"kind":"textbox","id":"sh/2dof2xoj","slide":16,"name":"Text 24","text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[1091.18,247.68,53.76,53.76]}
+{"kind":"shape","id":"sh/3exgb2po","slide":16,"name":"Shape 25","bbox":[1010.06,326.4,216,240]}
+{"kind":"textbox","id":"sh/c3qh8r6l","slide":16,"name":"Text 26","text":"Public deployment","textPreview":"Public deployment","textChars":17,"textLines":1,"bbox":[1029.26,351.36,177.6,65.28]}
+{"kind":"textbox","id":"sh/d4zyhc76","slide":16,"name":"Text 27","text":"Host the web app and ship an optional mobile version.","textPreview":"Host the web app and ship an optional mobile version.","textChars":53,"textLines":1,"bbox":[1031.18,424.32,173.76,120]}
+{"kind":"textbox","id":"sh/ny107q98","slide":16,"name":"Text 28","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/mxsjyl8n","slide":16,"name":"Text 29","text":"15","textPreview":"15","textChars":2,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/8av9a6","slide":16,"text":""}
+{"kind":"slide","id":"sl/m41h5r","slide":17,"title":"CONCLUSION","textShapes":16}
+{"kind":"textbox","id":"sh/8vet4bup","slide":17,"name":"Text 0","text":"CONCLUSION","textPreview":"CONCLUSION","textChars":10,"textLines":1,"bbox":[59.52,57.6,1160.93,28.8]}
+{"kind":"textbox","id":"sh/9wnaxwvu","slide":17,"name":"Text 1","text":"Three kinds of AI, one chessboard","textPreview":"Three kinds of AI, one chessboard","textChars":33,"textLines":1,"bbox":[59.52,88.32,912,65.28]}
+{"kind":"shape","id":"sh/axwb61cf","slide":17,"name":"Shape 2","bbox":[59.52,178.56,1160.93,65.28]}
+{"kind":"shape","id":"sh/vy5sz6d0","slide":17,"name":"Shape 3","bbox":[90.24,201.6,19.2,19.2]}
+{"kind":"textbox","id":"sh/wzet8bul","slide":17,"name":"Text 4","text":"Computer vision reads the player's emotional state in real time.","textPreview":"Computer vision reads the player's emotional state in real time.","textChars":64,"textLines":1,"bbox":[128.64,192,1055.33,38.4]}
+{"kind":"shape","id":"sh/x0na1gv6","slide":17,"name":"Shape 5","bbox":[59.52,253.44,1160.93,65.28]}
+{"kind":"shape","id":"sh/i1gbalcr","slide":17,"name":"Shape 6","bbox":[90.24,276.48,19.2,19.2]}
+{"kind":"textbox","id":"sh/j2pc3qdc","slide":17,"name":"Text 7","text":"Symbolic reasoning explains every piece of advice through Prolog.","textPreview":"Symbolic reasoning explains every piece of advice through Prolog.","textChars":65,"textLines":1,"bbox":[128.64,266.88,1055.33,38.4]}
+{"kind":"shape","id":"sh/rulo3y9s","slide":17,"name":"Shape 8","bbox":[59.52,328.32,1160.93,65.28]}
+{"kind":"shape","id":"sh/qtcnats7","slide":17,"name":"Shape 9","bbox":[90.24,351.36,19.2,19.2]}
+{"kind":"textbox","id":"sh/dw365ori","slide":17,"name":"Text 10","text":"Language models turn a raw position into usable coaching.","textPreview":"Language models turn a raw position into usable coaching.","textChars":57,"textLines":1,"bbox":[128.64,341.76,1055.33,38.4]}
+{"kind":"shape","id":"sh/cvupc3ad","slide":17,"name":"Shape 11","bbox":[59.52,403.2,1160.93,65.28]}
+{"kind":"shape","id":"sh/3qloze9g","slide":17,"name":"Shape 12","bbox":[90.24,426.24,19.2,19.2]}
+{"kind":"textbox","id":"sh/25sn69sv","slide":17,"name":"Text 13","text":"Burmese support removes the language barrier for local players.","textPreview":"Burmese support removes the language barrier for local players.","textChars":63,"textLines":1,"bbox":[128.64,416.64,1055.33,38.4]}
+{"kind":"textbox","id":"sh/ps361orm","slide":17,"name":"Text 14","text":"REFERENCES","textPreview":"REFERENCES","textChars":10,"textLines":1,"bbox":[59.52,493.44,1160.93,26.88]}
+{"kind":"shape","id":"sh/4ru58ja1","slide":17,"name":"Shape 15","bbox":[59.52,528,371.62,38.4]}
+{"kind":"textbox","id":"sh/nm5obi90","slide":17,"name":"Text 16","text":"stockfishchess.org","textPreview":"stockfishchess.org","textChars":18,"textLines":1,"bbox":[76.8,528,337.06,38.4]}
+{"kind":"shape","id":"sh/mlw7idsf","slide":17,"name":"Shape 17","bbox":[454.18,528,371.62,38.4]}
+{"kind":"textbox","id":"sh/it0zq1gz","slide":17,"name":"Text 18","text":"github.com/vladmandic/face-api","textPreview":"github.com/vladmandic/face-api","textChars":30,"textLines":1,"bbox":[471.46,528,337.06,38.4]}
+{"kind":"shape","id":"sh/jut0z6x4","slide":17,"name":"Shape 19","bbox":[848.83,528,371.62,38.4]}
+{"kind":"textbox","id":"sh/4v21sbyp","slide":17,"name":"Text 20","text":"swi-prolog.org","textPreview":"swi-prolog.org","textChars":14,"textLines":1,"bbox":[866.11,528,337.06,38.4]}
+{"kind":"shape","id":"sh/5wbi1gfa","slide":17,"name":"Shape 21","bbox":[59.52,576,371.62,38.4]}
+{"kind":"textbox","id":"sh/6xkjulgv","slide":17,"name":"Text 22","text":"github.com/SYSTRAN/faster-whisper","textPreview":"github.com/SYSTRAN/faster-whisper","textChars":33,"textLines":1,"bbox":[76.8,576,337.06,38.4]}
+{"kind":"shape","id":"sh/ryt03qxg","slide":17,"name":"Shape 23","bbox":[454.18,576,371.62,38.4]}
+{"kind":"textbox","id":"sh/sz21wvy1","slide":17,"name":"Text 24","text":"github.com/jhlywa/chess.js","textPreview":"github.com/jhlywa/chess.js","textChars":26,"textLines":1,"bbox":[471.46,576,337.06,38.4]}
+{"kind":"shape","id":"sh/t0bi5gfm","slide":17,"name":"Shape 25","bbox":[848.83,576,371.62,38.4]}
+{"kind":"textbox","id":"sh/m1gzihgr","slide":17,"name":"Text 26","text":"nextjs.org/docs","textPreview":"nextjs.org/docs","textChars":15,"textLines":1,"bbox":[866.11,576,337.06,38.4]}
+{"kind":"textbox","id":"sh/7290rmxw","slide":17,"name":"Text 27","text":"Thank you — questions are welcome.","textPreview":"Thank you — questions are welcome.","textChars":34,"textLines":1,"bbox":[59.52,635.52,1160.93,28.8]}
+{"kind":"textbox","id":"sh/pgf2xkzu","slide":17,"name":"Text 28","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/ov6lofi9","slide":17,"name":"Text 29","text":"16","textPreview":"16","textChars":2,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/m41h5r","slide":17,"text":""}
+{"kind":"slide","id":"sl/x28v1r","slide":18,"title":"AI PROJECT  ·  2026","textShapes":9}
+{"kind":"shape","id":"sh/crq9svqh","slide":18,"name":"Shape 0","bbox":[59.52,155.52,240,40.32]}
+{"kind":"textbox","id":"sh/dsja1gr2","slide":18,"name":"Text 1","text":"AI PROJECT  ·  2026","textPreview":"AI PROJECT  ·  2026","textChars":19,"textLines":1,"bbox":[59.52,155.52,240,40.32]}
+{"kind":"textbox","id":"sh/ydsrul8n","slide":18,"name":"Text 2","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,211.2,902.4,110.4]}
+{"kind":"textbox","id":"sh/ze1s3q98","slide":18,"name":"Text 3","text":"An Emotion-Adaptive Chess AI Agent","textPreview":"An Emotion-Adaptive Chess AI Agent","textChars":34,"textLines":1,"bbox":[59.52,322.56,902.4,52.8]}
+{"kind":"textbox","id":"sh/0fa9wvqt","slide":18,"name":"Text 4","text":"Latin for \"I feel\" — a chess engine that reads your emotions and adapts in real time.","textPreview":"Latin for \"I feel\" — a chess engine that reads your emotions and adapts in real time.","textChars":85,"textLines":1,"bbox":[59.52,389.76,806.4,38.4]}
+{"kind":"shape","id":"sh/lgja50ry","slide":18,"name":"Shape 5","bbox":[59.52,458.88,307.2,0]}
+{"kind":"textbox","id":"sh/ehori18j","slide":18,"name":"Text 6","text":"Presented by  Group-X   ·   Section-C","textPreview":"Presented by  Group-X   ·   Section-C","textChars":37,"textLines":1,"bbox":[59.52,480,672,32.64]}
+{"kind":"textbox","id":"sh/fix8r69o","slide":18,"name":"Text 7","text":"University of Information Technology","textPreview":"University of Information Technology","textChars":36,"textLines":1,"bbox":[59.52,514.56,672,28.8]}
+{"kind":"shape","id":"sh/f6183ytg","slide":18,"name":"Shape 8","bbox":[936,187.2,288,288]}
+{"kind":"textbox","id":"sh/e5s7atsv","slide":18,"name":"Text 9","text":"♞","textPreview":"♞","textChars":1,"textLines":1,"bbox":[936,187.2,288,288]}
+{"kind":"textbox","id":"sh/18jq5ob6","slide":18,"name":"Text 10","text":"SENTIO","textPreview":"SENTIO","textChars":6,"textLines":1,"bbox":[59.52,670.08,249.6,28.8]}
+{"kind":"textbox","id":"sh/07apc3a1","slide":18,"name":"Text 11","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[1124.45,670.08,96,28.8]}
+{"kind":"notes","id":"nt/x28v1r","slide":18,"text":""}

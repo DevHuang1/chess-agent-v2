@@ -1,14 +1,18 @@
 "use client";
 
-import { type RefObject } from "react";
+import { useState, type RefObject } from "react";
 import dynamic from "next/dynamic";
 import EvalBar from "@/components/EvalBar";
 import EmotionMonitor from "@/components/EmotionMonitor";
+import EmotionWhyCard from "@/components/EmotionWhyCard";
+import FaceOverlayCanvas from "@/components/FaceOverlayCanvas";
 import PromotionPicker from "@/components/PromotionPicker";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EMOTION_EMOJI, type EmotionScores } from "@/lib/emotionClassifier";
 import type { EmotionLabel } from "@/lib/engineProfiles";
 import type { EmotionTimelineEntry } from "@/hooks/useEmotionDetection";
+import type { FaceFrame } from "@/lib/faceExplain";
 import type { ChessboardOptions } from "react-chessboard";
 
 const Chessboard = dynamic(
@@ -40,6 +44,8 @@ interface BoardWorkspaceProps {
   emotionMode: "auto" | "manual";
   botRemark: string | null;
   handleBoardTouchEndCapture: (event: React.TouchEvent<HTMLDivElement>) => void;
+  latestFrame: FaceFrame | null;
+  latestFrameRef: RefObject<FaceFrame | null>;
 }
 
 export default function BoardWorkspace({
@@ -56,7 +62,13 @@ export default function BoardWorkspace({
   emotionMode,
   botRemark,
   handleBoardTouchEndCapture,
+  latestFrame,
+  latestFrameRef,
 }: BoardWorkspaceProps) {
+  // Face-marker overlay + "why this emotion" explanation toggles, rendered
+  // beside the camera feed.
+  const [showMarkers, setShowMarkers] = useState(false);
+  const [showWhy, setShowWhy] = useState(false);
   return (
     <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 overflow-y-auto p-4 xl:flex-row xl:gap-8 xl:overflow-hidden xl:p-6">
       <div className="hidden h-[75vh] max-h-full shrink-0 self-center xl:block">
@@ -93,25 +105,70 @@ export default function BoardWorkspace({
       </div>
 
       <div className="flex flex-col items-center gap-3">
-        <div className="relative w-64 h-72 shrink-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl group light:border-slate-300 light:bg-slate-200">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="h-full w-full scale-x-[-1] object-cover"
-          />
-          <div className="absolute inset-0 pointer-events-none border border-amber-500/10 rounded-2xl" />
-          <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
-            <Badge variant="muted" className="font-mono text-[10px] uppercase tracking-wider">
-              Camera Feed
-            </Badge>
-            <Badge variant="outline" className="font-mono text-[10px] text-emerald-300 font-semibold bg-zinc-950/80 backdrop-blur-md border border-zinc-800 px-2.5 py-1 light:bg-white/80 light:border-slate-300 light:text-emerald-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-              {EMOTION_EMOJI[emotion]} {emotion}
-            </Badge>
+        <div className="flex items-start gap-1.5">
+          <div className="relative w-64 h-72 shrink-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl group light:border-slate-300 light:bg-slate-200">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="h-full w-full scale-x-[-1] object-cover"
+            />
+            <FaceOverlayCanvas
+              frameRef={latestFrameRef}
+              emotion={emotion}
+              active={showMarkers}
+            />
+            <div className="absolute inset-0 pointer-events-none border border-amber-500/10 rounded-2xl" />
+            <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
+              <Badge variant="muted" className="font-mono text-[10px] uppercase tracking-wider">
+                Camera Feed
+              </Badge>
+              <Badge variant="outline" className="font-mono text-[10px] text-emerald-300 font-semibold bg-zinc-950/80 backdrop-blur-md border border-zinc-800 px-2.5 py-1 light:bg-white/80 light:border-slate-300 light:text-emerald-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                {EMOTION_EMOJI[emotion]} {emotion}
+              </Badge>
+            </div>
+            {showMarkers && !latestFrame && (
+              <div className="absolute bottom-2 left-2 right-2 pointer-events-none rounded-md bg-zinc-950/80 px-2 py-1 text-center font-mono text-[9px] text-zinc-400 backdrop-blur-sm light:bg-white/80 light:text-slate-600">
+                searching for a face…
+              </div>
+            )}
+          </div>
+
+          {/* Marker / explanation toggles beside the camera feed. */}
+          <div className="flex flex-col gap-1.5" role="group" aria-label="Camera overlay options">
+            <Button
+              variant={showMarkers ? "accent" : "outline"}
+              size="icon"
+              className="h-8 w-8"
+              title={showMarkers ? "Hide face markers" : "Show face markers (eyes, brows, lips)"}
+              aria-pressed={showMarkers}
+              onClick={() => setShowMarkers((prev) => !prev)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </Button>
+            <Button
+              variant={showWhy ? "accent" : "outline"}
+              size="icon"
+              className="h-8 w-8"
+              title={showWhy ? "Hide emotion explanation" : "Why this emotion?"}
+              aria-pressed={showWhy}
+              onClick={() => setShowWhy((prev) => !prev)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18h6" />
+                <path d="M10 22h4" />
+                <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2Z" />
+              </svg>
+            </Button>
           </div>
         </div>
+
+        {showWhy && <EmotionWhyCard frame={latestFrame} emotion={emotion} />}
 
         <EmotionMonitor
           scores={emotionScores}

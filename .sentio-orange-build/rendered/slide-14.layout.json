@@ -1,0 +1,1506 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/6qc41m",
+    "id": "6qc41m",
+    "slide": 14,
+    "layoutId": "6128ae78-efa5-4802-b21a-e8e03912f4e9",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "a08cdf30-6fa5-4341-a22e-7c6545872102",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#F2EBD3",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Orange Beige Retro",
+    "colors": {
+      "accent1": "#FF6B18",
+      "accent2": "#AF3F00",
+      "accent3": "#FBC313",
+      "accent4": "#F2D9DE",
+      "accent5": "#EDE4C9",
+      "accent6": "#715F52",
+      "bg1": "#F2EBD3",
+      "bg2": "#EDE4C9",
+      "tx1": "#12100E",
+      "tx2": "#3A2B2B",
+      "dk1": "#12100E",
+      "dk2": "#3A2B2B",
+      "lt1": "#FFF9ED",
+      "lt2": "#F2EBD3",
+      "hlink": "#FF6B18",
+      "folHlink": "#AF3F00"
+    },
+    "typefaces": [
+      "Futura Condensed ExtraBold",
+      "Helvetica Neue",
+      "SignPainter"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "6128ae78-efa5-4802-b21a-e8e03912f4e9",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "a08cdf30-6fa5-4341-a22e-7c6545872102",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "a08cdf30-6fa5-4341-a22e-7c6545872102",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/exoje58n",
+      "id": "1",
+      "name": "stripe-0",
+      "bbox": [
+        0,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/10f29k7e",
+      "id": "2",
+      "name": "stripe-1",
+      "bbox": [
+        150,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EFE6CC",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0z61gfqt",
+      "id": "3",
+      "name": "stripe-2",
+      "bbox": [
+        300,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/n2xkbupk",
+      "id": "4",
+      "name": "stripe-3",
+      "bbox": [
+        450,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EFE6CC",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m1ojip8z",
+      "id": "5",
+      "name": "stripe-4",
+      "bbox": [
+        600,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/94z2dk7a",
+      "id": "6",
+      "name": "stripe-5",
+      "bbox": [
+        750,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EFE6CC",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/o361kfq5",
+      "id": "7",
+      "name": "stripe-6",
+      "bbox": [
+        900,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/b6hkfupg",
+      "id": "8",
+      "name": "stripe-7",
+      "bbox": [
+        1050,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EFE6CC",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a583mp8v",
+      "id": "9",
+      "name": "stripe-8",
+      "bbox": [
+        1200,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4va14rm5",
+      "id": "10",
+      "name": "section",
+      "bbox": [
+        48,
+        26,
+        620,
+        24
+      ],
+      "geometry": "rect",
+      "text": "SENTIO / LANGUAGE + VOICE",
+      "textPreview": "SENTIO / LANGUAGE + VOICE",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "Helvetica Neue",
+        "color": "#FF6B18",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SENTIO / LANGUAGE + VOICE"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SENTIO / LANGUAGE + VOICE",
+          "lineSpacingPercent": 105000,
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Helvetica Neue",
+            "color": "#FF6B18",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 1.05
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "SENTIO / LANGUAGE + VOICE",
+              "fontSize": 12,
+              "typeface": "Helvetica Neue",
+              "color": "#FF6B18",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 1.05
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pwjixw3q",
+      "id": "11",
+      "name": "page-number",
+      "bbox": [
+        1168,
+        20,
+        64,
+        40
+      ],
+      "geometry": "rect",
+      "text": "14",
+      "textPreview": "14",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 28,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#AF3F00",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "14"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "14",
+          "lineSpacingPercent": 105000,
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#AF3F00",
+            "bold": true,
+            "alignment": "right",
+            "lineSpacing": 1.05
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "14",
+              "fontSize": 28,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#AF3F00",
+              "bold": true,
+              "alignment": "right",
+              "lineSpacing": 1.05
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2tsj2h4f",
+      "id": "12",
+      "name": "title-shadow",
+      "bbox": [
+        51,
+        68,
+        1080,
+        92
+      ],
+      "geometry": "rect",
+      "text": "LANGUAGE STAYS GROUNDED AND SAFE",
+      "textPreview": "LANGUAGE STAYS GROUNDED AND SAFE",
+      "resolvedFontSize": 43,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 43,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#12100E",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "LANGUAGE STAYS GROUNDED AND SAFE"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "LANGUAGE STAYS GROUNDED AND SAFE",
+          "lineSpacingPercent": 86000,
+          "resolvedTextStyle": {
+            "fontSize": 43,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#12100E",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.86
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "LANGUAGE STAYS GROUNDED AND SAFE",
+              "fontSize": 43,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#12100E",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.86
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3u10vmlk",
+      "id": "13",
+      "name": "title",
+      "bbox": [
+        48,
+        65,
+        1080,
+        92
+      ],
+      "geometry": "rect",
+      "text": "LANGUAGE STAYS GROUNDED AND SAFE",
+      "textPreview": "LANGUAGE STAYS GROUNDED AND SAFE",
+      "resolvedFontSize": 43,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 43,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#AF3F00",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "LANGUAGE STAYS GROUNDED AND SAFE"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "LANGUAGE STAYS GROUNDED AND SAFE",
+          "lineSpacingPercent": 86000,
+          "resolvedTextStyle": {
+            "fontSize": 43,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#AF3F00",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.86
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "LANGUAGE STAYS GROUNDED AND SAFE",
+              "fontSize": 43,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#AF3F00",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.86
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cju1sb2h",
+      "id": "14",
+      "name": "accent",
+      "bbox": [
+        52,
+        123,
+        650,
+        46
+      ],
+      "geometry": "rect",
+      "text": "Two voice paths, two different permissions",
+      "textPreview": "Two voice paths, two different permissions",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "SignPainter",
+        "color": "#FF6B18",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Two voice paths, two different permissions"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Two voice paths, two different permissions",
+          "lineSpacingPercent": 90000,
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "SignPainter",
+            "color": "#FF6B18",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.9
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Two voice paths, two different permissions",
+              "fontSize": 31,
+              "typeface": "SignPainter",
+              "color": "#FF6B18",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.9
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dk3i1g32",
+      "id": "15",
+      "name": "title-rule",
+      "bbox": [
+        48,
+        170,
+        1184,
+        3
+      ],
+      "geometry": "rect",
+      "fillColor": "#FF6B18",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qhsj61kb",
+      "id": "16",
+      "name": "coach-card",
+      "bbox": [
+        65,
+        230,
+        355,
+        330
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#AF3F00",
+      "lineColor": "#12100E",
+      "lineWidth": 1.5
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ril0z6lw",
+      "id": "17",
+      "name": "coach-heading",
+      "bbox": [
+        83,
+        246,
+        319,
+        44
+      ],
+      "geometry": "rect",
+      "text": "COACH",
+      "textPreview": "COACH",
+      "resolvedFontSize": 25,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 25,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#FFF9ED",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "COACH"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "COACH",
+          "lineSpacingPercent": 92000,
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#FFF9ED",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.92
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "COACH",
+              "fontSize": 25,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#FFF9ED",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.92
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0nu1wb2d",
+      "id": "18",
+      "name": "coach-body",
+      "bbox": [
+        83,
+        298,
+        319,
+        246
+      ],
+      "geometry": "rect",
+      "text": "FEN + emotion + question\n-> legal moves + best move\n-> Groq or local LLM\n-> structured fallback advice",
+      "textPreview": "FEN + emotion + question | -> legal moves + best move | -> Groq or local LLM | -> structured fallback advice",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 17,
+        "typeface": "Helvetica Neue",
+        "color": "#FFF9ED",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "FEN + emotion + question"
+          },
+          {
+            "index": 2,
+            "text": "-> legal moves + best move"
+          },
+          {
+            "index": 3,
+            "text": "-> Groq or local LLM"
+          },
+          {
+            "index": 4,
+            "text": "-> structured fallback advice"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "FEN + emotion + question",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "FEN + emotion + question",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "-> legal moves + best move",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> legal moves + best move",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "-> Groq or local LLM",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> Groq or local LLM",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "-> structured fallback advice",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> structured fallback advice",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1o3i5g3y",
+      "id": "19",
+      "name": "voice-move-card",
+      "bbox": [
+        463,
+        230,
+        355,
+        330
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FF6B18",
+      "lineColor": "#12100E",
+      "lineWidth": 1.5
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9szatcrq",
+      "id": "20",
+      "name": "voice-move-heading",
+      "bbox": [
+        481,
+        246,
+        319,
+        44
+      ],
+      "geometry": "rect",
+      "text": "VOICE MOVE",
+      "textPreview": "VOICE MOVE",
+      "resolvedFontSize": 25,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 25,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#FFF9ED",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "VOICE MOVE"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "VOICE MOVE",
+          "lineSpacingPercent": 92000,
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#FFF9ED",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.92
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "VOICE MOVE",
+              "fontSize": 25,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#FFF9ED",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.92
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/orq907q5",
+      "id": "21",
+      "name": "voice-move-body",
+      "bbox": [
+        481,
+        298,
+        319,
+        246
+      ],
+      "geometry": "rect",
+      "text": "Audio -> transcript\n-> parseChessMove()\n-> legal move validation\n-> board\n\nA command executes only after it resolves to a legal move.",
+      "textPreview": "Audio -> transcript | -> parseChessMove() | -> legal move validation | -> board |  | A command executes only after it resolves to a legal...",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 17,
+        "typeface": "Helvetica Neue",
+        "color": "#FFF9ED",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 7,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Audio -> transcript"
+          },
+          {
+            "index": 2,
+            "text": "-> parseChessMove()"
+          },
+          {
+            "index": 3,
+            "text": "-> legal move validation"
+          },
+          {
+            "index": 4,
+            "text": "-> board"
+          },
+          {
+            "index": 5,
+            "text": ""
+          },
+          {
+            "index": 6,
+            "text": "A command executes only after it"
+          },
+          {
+            "index": 7,
+            "text": "resolves to a legal move."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Audio -> transcript",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Audio -> transcript",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "-> parseChessMove()",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> parseChessMove()",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "-> legal move validation",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> legal move validation",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "-> board",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> board",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 6,
+          "text": "A command executes only after it resolves to a legal move.",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "A command executes only after it resolves to a legal move.",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nqxsrm90",
+      "id": "22",
+      "name": "voice-coach-card",
+      "bbox": [
+        861,
+        230,
+        355,
+        330
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#AF3F00",
+      "lineColor": "#12100E",
+      "lineWidth": 1.5
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m5oryh8f",
+      "id": "23",
+      "name": "voice-coach-heading",
+      "bbox": [
+        879,
+        246,
+        319,
+        44
+      ],
+      "geometry": "rect",
+      "text": "VOICE COACH",
+      "textPreview": "VOICE COACH",
+      "resolvedFontSize": 25,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 25,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#FFF9ED",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "VOICE COACH"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "VOICE COACH",
+          "lineSpacingPercent": 92000,
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#FFF9ED",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.92
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "VOICE COACH",
+              "fontSize": 25,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#FFF9ED",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.92
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xwzaxwr2",
+      "id": "24",
+      "name": "voice-coach-body",
+      "bbox": [
+        879,
+        298,
+        319,
+        246
+      ],
+      "geometry": "rect",
+      "text": "Audio -> transcript\n-> editable text\n-> /api/coach\n-> Burmese answer\n-> optional TTS\n\nA question never auto-plays a move.",
+      "textPreview": "Audio -> transcript | -> editable text | -> /api/coach | -> Burmese answer | -> optional TTS |  | A question never auto-plays a move.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 17,
+        "typeface": "Helvetica Neue",
+        "color": "#FFF9ED",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 7,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Audio -> transcript"
+          },
+          {
+            "index": 2,
+            "text": "-> editable text"
+          },
+          {
+            "index": 3,
+            "text": "-> /api/coach"
+          },
+          {
+            "index": 4,
+            "text": "-> Burmese answer"
+          },
+          {
+            "index": 5,
+            "text": "-> optional TTS"
+          },
+          {
+            "index": 6,
+            "text": ""
+          },
+          {
+            "index": 7,
+            "text": "A question never auto-plays a move."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Audio -> transcript",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Audio -> transcript",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "-> editable text",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> editable text",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "-> /api/coach",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> /api/coach",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "-> Burmese answer",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> Burmese answer",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "-> optional TTS",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-> optional TTS",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 7,
+          "text": "A question never auto-plays a move.",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "A question never auto-plays a move.",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wvq94rqh",
+      "id": "25",
+      "name": "footer",
+      "bbox": [
+        48,
+        684,
+        1184,
+        24
+      ],
+      "geometry": "rect",
+      "text": "CHESS.JS VALIDATION REMAINS THE AUTHORITY FOR EVERY PLAYABLE MOVE.",
+      "textPreview": "CHESS.JS VALIDATION REMAINS THE AUTHORITY FOR EVERY PLAYABLE MOVE.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "Helvetica Neue",
+        "color": "#715F52",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "CHESS.JS VALIDATION REMAINS THE AUTHORITY FOR EVERY PLAYABLE MOVE."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "CHESS.JS VALIDATION REMAINS THE AUTHORITY FOR EVERY PLAYABLE MOVE.",
+          "lineSpacingPercent": 105000,
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Helvetica Neue",
+            "color": "#715F52",
+            "bold": true,
+            "alignment": "center",
+            "lineSpacing": 1.05
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "CHESS.JS VALIDATION REMAINS THE AUTHORITY FOR EVERY PLAYABLE MOVE.",
+              "fontSize": 12,
+              "typeface": "Helvetica Neue",
+              "color": "#715F52",
+              "bold": true,
+              "alignment": "center",
+              "lineSpacing": 1.05
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

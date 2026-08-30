@@ -1,0 +1,22 @@
+Communication job: By the end, a technical project audience should understand how Sentio combines perception, search, symbolic reasoning, and language interfaces, with Prolog as the explainable bridge from raw chess state to human advice.
+
+01 Sentio title — Emotion-adaptive chess intelligence
+02 Core idea — AI changes with the player, not only the board
+03 AI stack — five cooperating intelligence layers
+04 End-to-end architecture — signals to decisions to explanations
+05 Perception — facial blendshapes plus gameplay telemetry
+06 Adaptation — emotion to Stockfish strength profiles
+07 Prolog spotlight — why symbolic AI is needed
+08 Prolog knowledge base — facts, derived concepts, prioritized advice
+09 The bridge — FEN to Python facts to Prolog query to UI
+10 Worked Prolog example — attacked, undefended bishop becomes priority 95 advice
+11 Hybrid intelligence — Prolog vs Stockfish vs LLM
+12 Multi-agent search lab — four strategies, Minimax or MCTS
+13 AI coach — grounded language with graceful fallback
+14 Burmese voice intelligence — speech-to-move and speech-to-coach paths
+15 Product surface — real Sentio workspace and emotion telemetry
+16 Reliability — isolated boundaries and graceful degradation
+17 Five-member presentation handoff — balanced ownership by AI layer
+18 Closing synthesis — perception, search, logic, language in one adaptive loop
+
+Visual direction: Ember style derived from app tokens: #080B12 background, #F59E0B accent, warm cream, olive chess green, restrained cyan/emerald/red for functional AI signals. Use Geist-like sans headings and monospace labels. Dark cinematic surfaces, large claim titles, thin amber rules, real product screenshots, sparse diagrams.

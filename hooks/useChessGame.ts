@@ -16,31 +16,71 @@ import { queueUnanalyzedGame } from "@/lib/gameAnalysis";
 import { COACH_AUTO_ENCOURAGEMENT, generateRemark } from "@/lib/remarks";
 import type {
   ChatMessage,
+  EngineDiagnostics,
   EngineProfile,
   GameOutcome,
   LiveAiMode,
 } from "@/lib/gameTypes";
 import type { ReplayGame, ReplayMove } from "@/components/Simulation3D";
+import type { MoveAlgorithm, MoveProvenance, ProvenancedMove } from "@/lib/provenance";
+import {
+  actorLabel,
+  playerMoveProvenance,
+  unknownMoveProvenance,
+} from "@/lib/provenance";
 
 const BOT_MOVE_API_URL = "/api/bot-move";
 
-function serializeReplayMoves(chess: Chess): ReplayMove[] {
-  return chess.history({ verbose: true }).map((move) => ({
+function serializeReplayMoves(moves: ProvenancedMove[]): ReplayMove[] {
+  return moves.map((move) => ({
     from: move.from,
     to: move.to,
     san: move.san,
     color: move.color,
     flags: move.flags,
     promotion: move.promotion,
+    provenance: move.provenance,
   }));
+}
+
+/** Build a ProvenancedMove from an applied chess.js Move, tagging it with provenance. */
+function toProvenancedMove(
+  move: { from: string; to: string; san: string; color: "w" | "b"; flags: string; promotion?: string },
+  fen: string,
+  provenance: MoveProvenance,
+): ProvenancedMove {
+  return {
+    from: move.from,
+    to: move.to,
+    san: move.san,
+    uci: `${move.from}${move.to}${move.promotion ?? ""}`,
+    color: move.color,
+    flags: move.flags,
+    promotion: move.promotion,
+    moveNumber: 0,
+    fen,
+    provenance,
+  };
+}
+
+/** Recompute each move's display move number from its position in history. */
+function computeMoveNumbers(history: ProvenancedMove[]): ProvenancedMove[] {
+  let count = 0;
+  return history.map((move) => {
+    count += 1;
+    return {
+      ...move,
+      moveNumber: move.color === "w" ? Math.floor((count + 1) / 2) : Math.floor(count / 2),
+    };
+  });
 }
 
 export function useChessGame(
   emotion: EmotionLabel,
   emotionMode: "auto" | "manual",
-  workspaceTab: "board" | "aiLab" | "train",
+  workspaceTab: "board" | "train",
   activeTab: string,
-  setWorkspaceTab: (tab: "board" | "aiLab" | "train") => void,
+  setWorkspaceTab: (tab: "board" | "train") => void,
   setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>,
   getGameSignals: () => Partial<GameSignals>,
   clearExternalTelemetry: () => void,
@@ -54,6 +94,7 @@ export function useChessGame(
   const [gamePosition, setGamePosition] = useState(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   );
+  const [moveHistory, setMoveHistory] = useState<ProvenancedMove[]>([]);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   const [legalMoveTargets, setLegalMoveTargets] = useState<
     { square: string; isCapture: boolean }[]
@@ -99,6 +140,39 @@ export function useChessGame(
     emotion,
     ...EMOTION_PROFILES[emotion],
   };
+
+  /** Append a played move to reactive history, tagging it with provenance. */
+  function appendHistoryMove(
+    appliedMove: {
+      from: string;
+      to: string;
+      san: string;
+      color: "w" | "b";
+      flags: string;
+      promotion?: string;
+    },
+    fen: string,
+    provenance: MoveProvenance,
+  ) {
+    setMoveHistory((previous) =>
+      computeMoveNumbers([
+        ...previous,
+        toProvenancedMove(appliedMove, fen, provenance),
+      ]),
+    );
+  }
+
+  /** Truncate history to `length` moves (used by undo). */
+  function truncateHistory(length: number) {
+    setMoveHistory((previous) =>
+      computeMoveNumbers(previous.slice(0, length)),
+    );
+  }
+
+  /** Replace the whole history (training start, reset, replay). */
+  function replaceHistory(moves: ProvenancedMove[]) {
+    setMoveHistory(computeMoveNumbers(moves));
+  }
 
   function updateGameOutcome(chess: Chess) {
     if (!chess.isGameOver()) {
@@ -187,6 +261,26 @@ export function useChessGame(
       fen: nextFen,
     });
     setGamePosition(nextFen);
+    const liveProvenance: MoveProvenance = {
+      actor: "sentio",
+      engineName: "Sentio",
+      algorithm: liveAiMode === "mcts" ? "mcts" : "minimax",
+      profile: backendEngineProfile?.emotion ?? emotion,
+      searchDepth: liveAiDepth,
+      nodesVisited: trace.nodes?.length,
+      playedAt: Date.now(),
+    };
+    appendHistoryMove(
+      {
+        from: applied.from,
+        to: applied.to,
+        color: applied.color,
+        flags: applied.flags,
+        promotion: applied.promotion,
+      },
+      nextFen,
+      liveProvenance,
+    );
     if (isCapture) playCaptureSound();
     else if (chess.inCheck()) playCheckSound();
     else playMoveSound();
@@ -262,22 +356,45 @@ export function useChessGame(
     let uciMove: string | null = null;
     let fallbackUsed = false;
     let fallbackReason = "";
+    const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const requestStart = performance.now();
+    let searchStartedAt = 0;
+    let searchTimeMs: number | undefined;
+    let engineId: string | undefined;
+    let engineName: string | undefined;
+    let engineVersion: string | undefined;
+    let algorithm: MoveAlgorithm | undefined;
+    let requestedDepth: number | undefined;
+    let completedDepth: number | undefined;
+    let nodesVisited: number | undefined;
+    let cacheHit = false;
+    let timeout = false;
     const controller = new AbortController();
     botRequestControllerRef.current = controller;
+    // Client-side budget bounds how long we wait before producing a legal
+    // move. Kept well below the server-side deadline so pooled Stockfish
+    // saturation surfaces as a fast fallback instead of a long freeze.
+    const botTimeBudgetMs = 8000;
     const timer = setTimeout(
-      () => controller.abort(new Error("Engine request timed out")),
-      20000,
+      () => {
+        timeout = true;
+        controller.abort(new Error("Engine request timed out"));
+      },
+      botTimeBudgetMs,
     );
     try {
+      searchStartedAt = performance.now();
       const response = await fetch(BOT_MOVE_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fen: currentFen,
           emotion,
+          requestId,
         }),
         signal: controller.signal,
       });
+      searchTimeMs = performance.now() - searchStartedAt;
 
       if (!response.ok) {
         const data = (await response.json().catch(() => null)) as {
@@ -290,11 +407,23 @@ export function useChessGame(
         botMove?: string | null;
         engineProfile?: EngineProfile;
         status?: string;
+        diagnostics?: EngineDiagnostics;
       };
 
       if (data.engineProfile) {
         setBackendEngineProfile(data.engineProfile);
       }
+
+      const diag = data.diagnostics;
+      engineId = diag?.engineId;
+      engineName = diag?.engineName;
+      engineVersion = diag?.engineVersion;
+      algorithm = diag?.algorithm;
+      requestedDepth = diag?.requestedDepth;
+      completedDepth = diag?.completedDepth;
+      nodesVisited = diag?.nodesVisited;
+      cacheHit = diag?.cacheHit ?? false;
+      if (diag?.searchTimeMs != null) searchTimeMs = diag.searchTimeMs;
 
       uciMove = data.botMove ?? null;
       if (!uciMove) {
@@ -306,16 +435,19 @@ export function useChessGame(
         setIsBotThinking(false);
         return;
       }
+      const wasAbort =
+        error instanceof Error && (error.name === "AbortError" || timeout);
       fallbackUsed = true;
-      fallbackReason =
-        error instanceof Error && error.name === "AbortError"
-          ? "Engine took too long to respond."
-          : error instanceof Error
-            ? error.message
-            : "Engine communication failure.";
+      fallbackReason = wasAbort
+        ? "Engine took too long to respond."
+        : error instanceof Error
+          ? error.message
+          : "Engine communication failure.";
       const m = localBotMove(chessRef.current);
       if (m) uciMove = m.from + m.to;
-      console.error("Communication failure with Stockfish engine:", error);
+      if (!wasAbort) {
+        console.error("Communication failure with Stockfish engine:", error);
+      }
     } finally {
       clearTimeout(timer);
       if (botRequestControllerRef.current === controller) {
@@ -328,6 +460,8 @@ export function useChessGame(
       return;
     }
 
+    const totalLatencyMs = performance.now() - requestStart;
+
     if (uciMove) {
       const chess = chessRef.current;
       const lower = uciMove.toLowerCase();
@@ -335,6 +469,9 @@ export function useChessGame(
       let isCapture = false;
       let appliedBotSan = "";
       let appliedBotUci = lower.substring(0, 4);
+      let appliedMoveMeta:
+        | { from: string; to: string; color: "w" | "b"; flags: string; promotion?: string }
+        | undefined;
       try {
         const from = lower.substring(0, 2);
         const to = lower.substring(2, 4);
@@ -351,6 +488,13 @@ export function useChessGame(
         if (appliedMove) {
           appliedBotSan = appliedMove.san;
           appliedBotUci = `${appliedMove.from}${appliedMove.to}${appliedMove.promotion ?? ""}`;
+          appliedMoveMeta = {
+            from: appliedMove.from,
+            to: appliedMove.to,
+            color: appliedMove.color,
+            flags: appliedMove.flags,
+            promotion: appliedMove.promotion,
+          };
         }
       } catch {
         fallbackUsed = true;
@@ -361,6 +505,13 @@ export function useChessGame(
           if (fallbackMove) {
             appliedBotSan = fallbackMove.san;
             appliedBotUci = `${fallbackMove.from}${fallbackMove.to}${fallbackMove.promotion ?? ""}`;
+            appliedMoveMeta = {
+              from: fallbackMove.from,
+              to: fallbackMove.to,
+              color: fallbackMove.color,
+              flags: fallbackMove.flags,
+              promotion: fallbackMove.promotion,
+            };
           }
         }
       }
@@ -372,7 +523,27 @@ export function useChessGame(
           : null,
       );
       botMoveAtRef.current = Date.now();
-      setGamePosition(nextFen);
+
+      const provenance: MoveProvenance = {
+        actor: "sentio",
+        engineId,
+        engineName: engineName ?? (fallbackUsed ? undefined : "Sentio"),
+        engineVersion,
+        algorithm: algorithm ?? (fallbackUsed ? "minimax" : undefined),
+        profile: backendEngineProfile?.emotion ?? emotion,
+        searchDepth: requestedDepth,
+        completedDepth,
+        searchTimeMs,
+        totalLatencyMs,
+        nodesVisited,
+        fallbackUsed,
+        requestId,
+        playedAt: Date.now(),
+      };
+      if (appliedMoveMeta) {
+        setGamePosition(nextFen);
+        appendHistoryMove(appliedMoveMeta, nextFen, provenance);
+      }
       if (isCapture) {
         playCaptureSound();
       } else if (chess.inCheck()) {
@@ -385,7 +556,9 @@ export function useChessGame(
         setStatusMessage(
           fallbackUsed
             ? `${fallbackReason} Used a local fallback move.`
-            : "Engine move completed.",
+            : cacheHit
+              ? "Engine move (cached)."
+              : "Engine move completed.",
         );
         const isCheck = chess.inCheck();
         setBotRemark(generateRemark(emotion, isCheck, isCapture));
@@ -445,6 +618,7 @@ export function useChessGame(
       setHintMove(null);
       setGamePosition(nextFen);
       setStatusMessage(`You played ${from}-${to}.`);
+      appendHistoryMove(move, nextFen, playerMoveProvenance(now));
 
       if (updateGameOutcome(chess)) {
         return true;
@@ -646,6 +820,23 @@ export function useChessGame(
       setHintMove(null);
       setGamePosition(nextFen);
       setStatusMessage(`Coach played ${move.from}-${move.to}.`);
+      appendHistoryMove(
+        {
+          from: move.from,
+          to: move.to,
+          color: move.color,
+          flags: move.flags,
+          promotion: move.promotion,
+        },
+        nextFen,
+        {
+          actor: "sentio",
+          engineName: "Sentio",
+          algorithm: "stockfish",
+          profile: backendEngineProfile?.emotion ?? emotion,
+          playedAt: now,
+        },
+      );
       if (updateGameOutcome(chess)) return;
       void triggerBotTurn(nextFen);
     } catch {

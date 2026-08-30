@@ -44,7 +44,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-screen antialiased overflow-hidden`}
     >
       <body
-        className={`${geistSans.className} h-full flex flex-col bg-[var(--background)] overflow-hidden`}
+        className={`${geistSans.className} font-myanmar h-full flex flex-col bg-[var(--background)] overflow-hidden`}
       >
         {children}
       </body>

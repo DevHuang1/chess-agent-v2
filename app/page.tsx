@@ -46,7 +46,7 @@ import Simulation3D, {
 import PromotionPicker from "@/components/PromotionPicker";
 import EvalBar from "@/components/EvalBar";
 import GameOverOverlay from "@/components/GameOverOverlay";
-import AILabWorkspace from "@/components/AILabWorkspace";
+import ControllerPanel from "@/components/ControllerPanel";
 import { PIECE_DESIGNS, PieceDesignKey } from "@/components/pieces";
 import type { ChessboardOptions } from "react-chessboard";
 import { setSoundMuted } from "@/lib/audio";
@@ -72,7 +72,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/u
 import type { ChatMessage } from "@/lib/gameTypes";
 import type { GameSignals } from "@/lib/emotionFusion";
 import type { Chess, Square } from "chess.js";
-import ControllerPanel from "@/components/ControllerPanel";
 import TopBar from "@/components/TopBar";
 import BoardWorkspace from "@/components/BoardWorkspace";
 
@@ -105,7 +104,7 @@ function serializeReplayMoves(chess: Chess): import("@/components/Simulation3D")
 
 export default function ChessPage() {
   const [emotionMode, setEmotionMode] = useState<"auto" | "manual">("auto");
-  const [workspaceTab, setWorkspaceTab] = useState<"board" | "aiLab" | "train">("board");
+    const [workspaceTab, setWorkspaceTab] = useState<"board" | "train">("board");
   const [activeTab, setActiveTab] = useState<SidebarTab>("coach");
 
   // --- UI state ---
@@ -199,6 +198,8 @@ export default function ChessPage() {
     emotionHistoryRef,
     emotionScores,
     emotionTimeline,
+    latestFrame,
+    latestFrameRef,
   } = useEmotionDetection({
     activeTab,
     auto: emotionMode === "auto",
@@ -386,7 +387,6 @@ export default function ChessPage() {
     targetIndex: number,
     animateMove: boolean,
   ) {
-    const { Chess } = require("chess.js") as typeof import("chess.js");
     const board = new Chess();
     const boundedIndex = Math.max(
       -1,
@@ -733,14 +733,6 @@ export default function ChessPage() {
               onPlayFromPosition={startTrainingGame}
             />
           </section>
-        ) : workspaceTab === "aiLab" ? (
-          <AILabWorkspace
-            gamePosition={gamePosition}
-            isBotThinking={isBotThinking}
-            lastBotMove={lastBotMove}
-            emotion={emotion}
-            activeTab={activeTab}
-          />
         ) : (
           <BoardWorkspace
             evaluation={evaluation}
@@ -756,6 +748,8 @@ export default function ChessPage() {
             emotionMode={emotionMode}
             botRemark={botRemark}
             handleBoardTouchEndCapture={handleBoardTouchEndCapture}
+            latestFrame={latestFrame}
+            latestFrameRef={latestFrameRef}
           />
         )}
       </section>

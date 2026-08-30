@@ -8,6 +8,12 @@ import {
 } from "@/lib/emotionClassifier";
 import { fuseEmotion, type GameSignals } from "@/lib/emotionFusion";
 import { classifyBlendshapes } from "@/lib/blendshapeEmotion";
+import {
+  blendshapeEvidence,
+  type FaceBox,
+  type FaceFrame,
+  type FacePoint,
+} from "@/lib/faceExplain";
 import type { EmotionLabel } from "@/lib/engineProfiles";
 
 type FaceApiModule = typeof import("@vladmandic/face-api");
@@ -41,6 +47,15 @@ export type DetectionOutcome = {
   scores: EmotionScores;
 };
 
+type DetectionResult = DetectionOutcome & { frame: FaceFrame | null };
+
+function fallbackResult(): DetectionResult {
+  return {
+    ...fallbackOutcome(),
+    frame: null,
+  };
+}
+
 /** One smoothed emotion sample with the time it became active. */
 export type EmotionTimelineEntry = {
   emotion: EmotionLabel;
@@ -58,29 +73,32 @@ function fallbackOutcome(): DetectionOutcome {
   return { emotion: "neutral", scores: classifyEmotion(null).scores };
 }
 
-/** face-api.js path: full expression distribution → composite classifier. */
+/** face-api.js path: landmarks + full expression distribution → classifier. */
 async function detectWithFaceApi(
   faceapi: FaceApiModule,
   videoElement: HTMLVideoElement | null,
-): Promise<DetectionOutcome> {
+): Promise<DetectionResult> {
   if (
     !videoElement ||
     videoElement.videoWidth === 0 ||
     videoElement.videoHeight === 0
   ) {
-    return fallbackOutcome();
+    return fallbackResult();
   }
 
   try {
+    // Landmarks + box feed the face-marker overlay; the expression channels
+    // drive the classifier exactly as before.
     const detection = await faceapi
       .detectSingleFace(
         videoElement,
         new faceapi.TinyFaceDetectorOptions({ inputSize: 320 }),
       )
+      .withFaceLandmarks()
       .withFaceExpressions();
 
     if (!detection?.expressions) {
-      return fallbackOutcome();
+      return fallbackResult();
     }
 
     // Pass every channel's probability to the classifier instead of argmax:
@@ -99,9 +117,42 @@ async function detectWithFaceApi(
       const value = raw[key];
       expressions[key] = typeof value === "number" ? value : 0;
     }
-    return classifyEmotion(expressions);
+    const outcome = classifyEmotion(expressions);
+
+    // Normalize landmarks and box into 0..1 video coordinates.
+    const vw = videoElement.videoWidth;
+    const vh = videoElement.videoHeight;
+    const landmarks: FacePoint[] = detection.landmarks.positions.map((p) => ({
+      x: p.x / vw,
+      y: p.y / vh,
+    }));
+    const rawBox = detection.detection.box;
+    const box: FaceBox = {
+      x: rawBox.x / vw,
+      y: rawBox.y / vh,
+      width: rawBox.width / vw,
+      height: rawBox.height / vh,
+    };
+    const channels = Object.entries(expressions)
+      .map(([name, score]) => ({ name, score }))
+      .sort((a, b) => b.score - a.score);
+
+    return {
+      ...outcome,
+      frame: {
+        at: Date.now(),
+        source: "face-api",
+        videoWidth: vw,
+        videoHeight: vh,
+        box,
+        landmarks,
+        evidence: { kind: "expressions", channels },
+        emotion: outcome.emotion,
+        fusionNotes: [],
+      },
+    };
   } catch {
-    return fallbackOutcome();
+    return fallbackResult();
   }
 }
 
@@ -109,31 +160,75 @@ async function detectWithFaceApi(
 function detectWithBlendshapes(
   landmarker: FaceLandmarkerInstance,
   videoElement: HTMLVideoElement | null,
-): DetectionOutcome {
+): DetectionResult {
   if (
     !videoElement ||
     videoElement.videoWidth === 0 ||
     videoElement.videoHeight === 0
   ) {
-    return fallbackOutcome();
+    return fallbackResult();
   }
 
   try {
     const result = landmarker.detectForVideo(videoElement, performance.now());
     const categories = result.faceBlendshapes?.[0]?.categories;
     if (!categories?.length) {
-      return fallbackOutcome();
+      return fallbackResult();
     }
-    const { emotion, scores } = classifyBlendshapes(
-      categories.map((c) => ({
-        categoryName: c.categoryName,
-        score: c.score,
-      })),
-    );
-    return { emotion, scores };
+    const plain = categories.map((c) => ({
+      categoryName: c.categoryName,
+      score: c.score,
+    }));
+    const { emotion, scores } = classifyBlendshapes(plain);
+
+    // FaceLandmarker always emits normalized landmarks alongside blendshapes,
+    // so the overlay costs nothing extra to feed.
+    const rawLandmarks = result.faceLandmarks?.[0];
+    const landmarks: FacePoint[] = rawLandmarks
+      ? rawLandmarks.map((p) => ({ x: p.x, y: p.y }))
+      : [];
+    const evidence = blendshapeEvidence(plain);
+    const box: FaceBox | null =
+      landmarks.length > 0 ? boxFromLandmarks(landmarks) : null;
+
+    return {
+      emotion,
+      scores,
+      frame: {
+        at: Date.now(),
+        source: "blendshapes",
+        videoWidth: videoElement.videoWidth,
+        videoHeight: videoElement.videoHeight,
+        box,
+        landmarks,
+        evidence: {
+          kind: "blendshapes",
+          contributions: evidence.contributions,
+          valence: evidence.valence,
+          arousal: evidence.arousal,
+        },
+        emotion,
+        fusionNotes: [],
+      },
+    };
   } catch {
-    return fallbackOutcome();
+    return fallbackResult();
   }
+}
+
+/** Tight bounding box around a set of normalized landmarks. */
+function boxFromLandmarks(landmarks: FacePoint[]): FaceBox {
+  let minX = 1;
+  let minY = 1;
+  let maxX = 0;
+  let maxY = 0;
+  for (const p of landmarks) {
+    if (p.x < minX) minX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y > maxY) maxY = p.y;
+  }
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
 }
 
 /**
@@ -190,6 +285,9 @@ export function useEmotionDetection(options: {
   const videoRef = useRef<HTMLVideoElement>(null);
   const faceapiRef = useRef<FaceApiModule | null>(null);
   const landmarkerRef = useRef<FaceLandmarkerInstance | null>(null);
+  // Latest raw detection snapshot for the face-marker overlay. Kept in a ref
+  // so the canvas can poll it at rAF cadence without re-rendering the tree.
+  const latestFrameRef = useRef<FaceFrame | null>(null);
   const emotionHistoryRef = useRef<EmotionLabel[]>([]);
   const emotionBufferRef = useRef<EmotionLabel[]>([]);
   const lastSmoothedRef = useRef<EmotionLabel>("neutral");
@@ -208,6 +306,9 @@ export function useEmotionDetection(options: {
   const [emotionTimeline, setEmotionTimeline] = useState<
     EmotionTimelineEntry[]
   >([]);
+  // State mirror of latestFrameRef for React consumers (the "why" card);
+  // updates once per detection cycle (~2.2s), not per animation frame.
+  const [latestFrame, setLatestFrame] = useState<FaceFrame | null>(null);
 
   // Camera + model lifecycle.
   useEffect(() => {
@@ -240,6 +341,9 @@ export function useEmotionDetection(options: {
           Promise.all([
             mod.nets.tinyFaceDetector.loadFromUri("/models"),
             mod.nets.faceExpressionNet.loadFromUri("/models"),
+            // FaceLandmark68Net is required for .withFaceLandmarks(), which
+            // feeds the face-marker overlay (box + 68 landmarks).
+            mod.nets.faceLandmark68Net.loadFromUri("/models"),
           ])
             .then(() => {
               if (cancelled) return;
@@ -324,22 +428,41 @@ export function useEmotionDetection(options: {
     }
 
     const intervalId = window.setInterval(async () => {
-      let outcome: DetectionOutcome;
+      let result: DetectionResult;
       if (EMOTION_BACKEND === "blendshapes") {
         const landmarker = landmarkerRef.current;
         if (!landmarker) return;
-        outcome = detectWithBlendshapes(landmarker, videoRef.current);
+        result = detectWithBlendshapes(landmarker, videoRef.current);
       } else {
         const faceapi = faceapiRef.current;
         if (!faceapi) return;
-        outcome = await detectWithFaceApi(faceapi, videoRef.current);
+        result = await detectWithFaceApi(faceapi, videoRef.current);
       }
 
       // Fuse with gameplay telemetry when a provider is wired up.
       const signals = gameSignalsRef.current?.();
       const fused = signals
-        ? fuseEmotion(outcome.scores, signals)
-        : { emotion: pickEmotion(outcome.scores), scores: outcome.scores };
+        ? fuseEmotion(result.scores, signals)
+        : {
+            emotion: pickEmotion(result.scores),
+            scores: result.scores,
+            notes: [] as string[],
+          };
+
+      // The frame (with fusion notes attached) feeds both the marker overlay
+      // (via ref, read at rAF cadence) and the "why" card (via state).
+      if (result.frame) {
+        const frame: FaceFrame = {
+          ...result.frame,
+          emotion: fused.emotion,
+          fusionNotes: fused.notes,
+        };
+        latestFrameRef.current = frame;
+        setLatestFrame(frame);
+      } else {
+        latestFrameRef.current = null;
+        setLatestFrame(null);
+      }
 
       const buffer = emotionBufferRef.current;
       buffer.push(fused.emotion);
@@ -376,6 +499,8 @@ export function useEmotionDetection(options: {
     emotionHistoryRef,
     emotionScores,
     emotionTimeline,
+    latestFrame,
+    latestFrameRef,
     emotionBackend: EMOTION_BACKEND,
   };
 }

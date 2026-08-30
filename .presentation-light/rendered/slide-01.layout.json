@@ -1,0 +1,866 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/vu352b",
+    "id": "vu352b",
+    "slide": 1,
+    "layoutId": "b445fc00-9ce1-43a3-8ace-1a5fbbf7ce96",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "96756605-88ee-4bca-8bb0-049a69e160b8",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#F7F4EE",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "+mn-lt"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "b445fc00-9ce1-43a3-8ace-1a5fbbf7ce96",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "96756605-88ee-4bca-8bb0-049a69e160b8",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "96756605-88ee-4bca-8bb0-049a69e160b8",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hg3up4fy",
+      "id": "1",
+      "bbox": [
+        820,
+        0,
+        460,
+        460
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#F3DFC1",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/udsbupg7",
+      "id": "2",
+      "bbox": [
+        900,
+        300,
+        380,
+        380
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#DCEAF0",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fe1cnuxs",
+      "id": "3",
+      "bbox": [
+        60,
+        52,
+        320,
+        28
+      ],
+      "geometry": "rect",
+      "text": "SENTIO",
+      "textPreview": "SENTIO",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "+mn-lt",
+        "color": "#D97706",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SENTIO"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SENTIO",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "color": "#D97706",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "SENTIO",
+              "fontSize": 14,
+              "color": "#D97706",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4jut0jy9",
+      "id": "4",
+      "bbox": [
+        58,
+        150,
+        790,
+        170
+      ],
+      "geometry": "rect",
+      "text": "Emotion-adaptive\nchess intelligence",
+      "textPreview": "Emotion-adaptive | chess intelligence",
+      "resolvedFontSize": 58,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 58,
+        "typeface": "+mn-lt",
+        "color": "#211D18",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Emotion-adaptive"
+          },
+          {
+            "index": 2,
+            "text": "chess intelligence"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Emotion-adaptive",
+          "resolvedTextStyle": {
+            "fontSize": 58,
+            "color": "#211D18",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Emotion-adaptive",
+              "fontSize": 58,
+              "color": "#211D18",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "chess intelligence",
+          "resolvedTextStyle": {
+            "fontSize": 58,
+            "color": "#211D18",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "chess intelligence",
+              "fontSize": 58,
+              "color": "#211D18",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p43utofu",
+      "id": "5",
+      "bbox": [
+        62,
+        348,
+        680,
+        84
+      ],
+      "geometry": "rect",
+      "text": "A hybrid AI system combining perception, game search, symbolic reasoning, and natural-language coaching.",
+      "textPreview": "A hybrid AI system combining perception, game search, symbolic reasoning, and natural-language coaching.",
+      "resolvedFontSize": 23,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 23,
+        "typeface": "+mn-lt",
+        "color": "#746B60",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "A hybrid AI system combining perception, game search,"
+          },
+          {
+            "index": 2,
+            "text": "symbolic reasoning, and natural-language coaching."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "A hybrid AI system combining perception, game search, symbolic reasoning, and natural-language coaching.",
+          "resolvedTextStyle": {
+            "fontSize": 23,
+            "color": "#746B60",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "A hybrid AI system combining perception, game search, symbolic reasoning, and natural-language coaching.",
+              "fontSize": 23,
+              "color": "#746B60",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2hcby9gj",
+      "id": "6",
+      "bbox": [
+        62,
+        474,
+        210,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#D97706",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ilcrex4",
+      "id": "7",
+      "bbox": [
+        62,
+        496,
+        260,
+        24
+      ],
+      "geometry": "rect",
+      "text": "PROLOG SPOTLIGHT",
+      "textPreview": "PROLOG SPOTLIGHT",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "+mn-lt",
+        "color": "#B45309",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "PROLOG SPOTLIGHT"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "PROLOG SPOTLIGHT",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "color": "#B45309",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "PROLOG SPOTLIGHT",
+              "fontSize": 13,
+              "color": "#B45309",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/knqtofy5",
+      "id": "8",
+      "bbox": [
+        62,
+        532,
+        580,
+        54
+      ],
+      "geometry": "rect",
+      "text": "How live chess positions become transparent, prioritized advice.",
+      "textPreview": "How live chess positions become transparent, prioritized advice.",
+      "resolvedFontSize": 22,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 22,
+        "typeface": "+mn-lt",
+        "color": "#40382F",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "How live chess positions become transparent, prioritized"
+          },
+          {
+            "index": 2,
+            "text": "advice."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "How live chess positions become transparent, prioritized advice.",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "color": "#40382F",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "How live chess positions become transparent, prioritized advice.",
+              "fontSize": 22,
+              "color": "#40382F",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5ojahkzq",
+      "id": "9",
+      "bbox": [
+        62,
+        646,
+        460,
+        20
+      ],
+      "geometry": "rect",
+      "text": "AI FEATURES · TECHNICAL PRESENTATION",
+      "textPreview": "AI FEATURES · TECHNICAL PRESENTATION",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 11,
+        "typeface": "+mn-lt",
+        "color": "#746B60",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "AI FEATURES · TECHNICAL PRESENTATION"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "AI FEATURES · TECHNICAL PRESENTATION",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "color": "#746B60",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "AI FEATURES · TECHNICAL PRESENTATION",
+              "fontSize": 11,
+              "color": "#746B60",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pw3yxw72",
+      "id": "10",
+      "bbox": [
+        815,
+        118,
+        350,
+        420
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFDF9",
+      "lineColor": "#D8CEC0",
+      "lineWidth": 1
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ovuh4r6h",
+      "id": "11",
+      "bbox": [
+        890,
+        168,
+        200,
+        180
+      ],
+      "geometry": "rect",
+      "text": "♞",
+      "textPreview": "♞",
+      "resolvedFontSize": 136,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 136,
+        "typeface": "+mn-lt",
+        "color": "#D97706",
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "♞"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "♞",
+          "resolvedTextStyle": {
+            "fontSize": 136,
+            "color": "#D97706",
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "♞",
+              "fontSize": 136,
+              "color": "#D97706",
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ulgvmpw",
+      "id": "12",
+      "bbox": [
+        860,
+        382,
+        120,
+        22
+      ],
+      "geometry": "rect",
+      "text": "PERCEIVE",
+      "textPreview": "PERCEIVE",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "+mn-lt",
+        "color": "#22D3EE",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "PERCEIVE"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "PERCEIVE",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "color": "#22D3EE",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "PERCEIVE",
+              "fontSize": 12,
+              "color": "#22D3EE",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2tcz2hob",
+      "id": "13",
+      "bbox": [
+        1018,
+        382,
+        100,
+        22
+      ],
+      "geometry": "rect",
+      "text": "SEARCH",
+      "textPreview": "SEARCH",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "+mn-lt",
+        "color": "#34D399",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SEARCH"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SEARCH",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "color": "#34D399",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "SEARCH",
+              "fontSize": 12,
+              "color": "#34D399",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d0ni1g7y",
+      "id": "14",
+      "bbox": [
+        860,
+        432,
+        120,
+        22
+      ],
+      "geometry": "rect",
+      "text": "REASON",
+      "textPreview": "REASON",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "+mn-lt",
+        "color": "#B45309",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "REASON"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "REASON",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "color": "#B45309",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "REASON",
+              "fontSize": 12,
+              "color": "#B45309",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/czuh8b6d",
+      "id": "15",
+      "bbox": [
+        1018,
+        432,
+        100,
+        22
+      ],
+      "geometry": "rect",
+      "text": "EXPLAIN",
+      "textPreview": "EXPLAIN",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "+mn-lt",
+        "color": "#7C5CCB",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "EXPLAIN"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "EXPLAIN",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "color": "#7C5CCB",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "EXPLAIN",
+              "fontSize": 12,
+              "color": "#7C5CCB",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

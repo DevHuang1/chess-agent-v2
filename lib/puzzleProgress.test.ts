@@ -7,6 +7,7 @@ import {
   markPuzzleSolved,
   maxRatingForLevel,
   recordAnalyzedGame,
+  recordLessonAttempt,
   recordRunScore,
   tierForLevel,
   xpForLevel,
@@ -135,6 +136,53 @@ describe("puzzle progress - solve accounting", () => {
     expect(first.xpGained).toBeGreaterThan(0);
     const second = completeLesson(first.progress, "l1");
     expect(second.xpGained).toBe(0);
+  });
+
+  it("tracks quiz mastery and queues hinted attempts for review", () => {
+    const hinted = recordLessonAttempt(emptyProgress(), {
+      lessonId: "l1",
+      solved: true,
+      firstTry: false,
+      hintsUsed: 1,
+    });
+    expect(hinted.xpGained).toBeGreaterThan(0);
+    expect(hinted.progress.reviewLessonIds).toContain("l1");
+    expect(hinted.progress.lessonMastery.l1).toMatchObject({
+      attempts: 1,
+      solved: 1,
+      firstTrySolved: 0,
+      hintsUsed: 1,
+    });
+    expect(hinted.progress.quizTotals).toMatchObject({
+      attempted: 1,
+      solved: 1,
+      firstTrySolved: 0,
+      hintsUsed: 1,
+    });
+  });
+
+  it("clears a review item after perfect recall without granting XP twice", () => {
+    const failed = recordLessonAttempt(emptyProgress(), {
+      lessonId: "l1",
+      solved: false,
+      firstTry: false,
+      hintsUsed: 0,
+    });
+    expect(failed.progress.reviewLessonIds).toContain("l1");
+    const perfect = recordLessonAttempt(failed.progress, {
+      lessonId: "l1",
+      solved: true,
+      firstTry: true,
+      hintsUsed: 0,
+    });
+    expect(perfect.progress.reviewLessonIds).not.toContain("l1");
+    const repeated = recordLessonAttempt(perfect.progress, {
+      lessonId: "l1",
+      solved: true,
+      firstTry: true,
+      hintsUsed: 0,
+    });
+    expect(repeated.xpGained).toBe(0);
   });
 
   it("analyzed games add fixed XP and count", () => {

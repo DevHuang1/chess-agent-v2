@@ -1,0 +1,1399 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/432fbd",
+    "id": "432fbd",
+    "slide": 16,
+    "layoutId": "6128ae78-efa5-4802-b21a-e8e03912f4e9",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "a08cdf30-6fa5-4341-a22e-7c6545872102",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#F2EBD3",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Orange Beige Retro",
+    "colors": {
+      "accent1": "#FF6B18",
+      "accent2": "#AF3F00",
+      "accent3": "#FBC313",
+      "accent4": "#F2D9DE",
+      "accent5": "#EDE4C9",
+      "accent6": "#715F52",
+      "bg1": "#F2EBD3",
+      "bg2": "#EDE4C9",
+      "tx1": "#12100E",
+      "tx2": "#3A2B2B",
+      "dk1": "#12100E",
+      "dk2": "#3A2B2B",
+      "lt1": "#FFF9ED",
+      "lt2": "#F2EBD3",
+      "hlink": "#FF6B18",
+      "folHlink": "#AF3F00"
+    },
+    "typefaces": [
+      "Futura Condensed ExtraBold",
+      "Helvetica Neue",
+      "SignPainter"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "6128ae78-efa5-4802-b21a-e8e03912f4e9",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "a08cdf30-6fa5-4341-a22e-7c6545872102",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "a08cdf30-6fa5-4341-a22e-7c6545872102",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zmd4jupc",
+      "id": "1",
+      "name": "stripe-0",
+      "bbox": [
+        0,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0nm5czqx",
+      "id": "2",
+      "name": "stripe-1",
+      "bbox": [
+        150,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EFE6CC",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1ovml47i",
+      "id": "3",
+      "name": "stripe-2",
+      "bbox": [
+        300,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mp4ne983",
+      "id": "4",
+      "name": "stripe-3",
+      "bbox": [
+        450,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EFE6CC",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nax4nep8",
+      "id": "5",
+      "name": "stripe-4",
+      "bbox": [
+        600,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8b65gjqt",
+      "id": "6",
+      "name": "stripe-5",
+      "bbox": [
+        750,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EFE6CC",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9cfmpo7e",
+      "id": "7",
+      "name": "stripe-6",
+      "bbox": [
+        900,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/adoni98z",
+      "id": "8",
+      "name": "stripe-7",
+      "bbox": [
+        1050,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EFE6CC",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vex4repk",
+      "id": "9",
+      "name": "stripe-8",
+      "bbox": [
+        1200,
+        0,
+        54,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6EFD9",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vm9kv29c",
+      "id": "10",
+      "name": "section",
+      "bbox": [
+        48,
+        26,
+        620,
+        24
+      ],
+      "geometry": "rect",
+      "text": "SENTIO / CURRENT UPDATE / TRAINING",
+      "textPreview": "SENTIO / CURRENT UPDATE / TRAINING",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "Helvetica Neue",
+        "color": "#FF6B18",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SENTIO / CURRENT UPDATE / TRAINING"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SENTIO / CURRENT UPDATE / TRAINING",
+          "lineSpacingPercent": 105000,
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Helvetica Neue",
+            "color": "#FF6B18",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 1.05
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "SENTIO / CURRENT UPDATE / TRAINING",
+              "fontSize": 12,
+              "typeface": "Helvetica Neue",
+              "color": "#FF6B18",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 1.05
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ul0j2xsr",
+      "id": "11",
+      "name": "page-number",
+      "bbox": [
+        1168,
+        20,
+        64,
+        40
+      ],
+      "geometry": "rect",
+      "text": "16",
+      "textPreview": "16",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 28,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#AF3F00",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "16"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "16",
+          "lineSpacingPercent": 105000,
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#AF3F00",
+            "bold": true,
+            "alignment": "right",
+            "lineSpacing": 1.05
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "16",
+              "fontSize": 28,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#AF3F00",
+              "bold": true,
+              "alignment": "right",
+              "lineSpacing": 1.05
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hob2xsri",
+      "id": "12",
+      "name": "title-shadow",
+      "bbox": [
+        51,
+        68,
+        1080,
+        92
+      ],
+      "geometry": "rect",
+      "text": "TRAINING CLOSES THE LEARNING LOOP",
+      "textPreview": "TRAINING CLOSES THE LEARNING LOOP",
+      "resolvedFontSize": 43,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 43,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#12100E",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "TRAINING CLOSES THE LEARNING LOOP"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "TRAINING CLOSES THE LEARNING LOOP",
+          "lineSpacingPercent": 86000,
+          "resolvedTextStyle": {
+            "fontSize": 43,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#12100E",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.86
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "TRAINING CLOSES THE LEARNING LOOP",
+              "fontSize": 43,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#12100E",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.86
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gn2147qx",
+      "id": "13",
+      "name": "title",
+      "bbox": [
+        48,
+        65,
+        1080,
+        92
+      ],
+      "geometry": "rect",
+      "text": "TRAINING CLOSES THE LEARNING LOOP",
+      "textPreview": "TRAINING CLOSES THE LEARNING LOOP",
+      "resolvedFontSize": 43,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 43,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#AF3F00",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "TRAINING CLOSES THE LEARNING LOOP"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "TRAINING CLOSES THE LEARNING LOOP",
+          "lineSpacingPercent": 86000,
+          "resolvedTextStyle": {
+            "fontSize": 43,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#AF3F00",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.86
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "TRAINING CLOSES THE LEARNING LOOP",
+              "fontSize": 43,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#AF3F00",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.86
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7y9kri9g",
+      "id": "14",
+      "name": "accent",
+      "bbox": [
+        52,
+        123,
+        650,
+        46
+      ],
+      "geometry": "rect",
+      "text": "Play -> practice -> review -> improve",
+      "textPreview": "Play -> practice -> review -> improve",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "SignPainter",
+        "color": "#FF6B18",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Play -> practice -> review -> improve"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Play -> practice -> review -> improve",
+          "lineSpacingPercent": 90000,
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "SignPainter",
+            "color": "#FF6B18",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.9
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Play -> practice -> review -> improve",
+              "fontSize": 31,
+              "typeface": "SignPainter",
+              "color": "#FF6B18",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.9
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mx0jydsv",
+      "id": "15",
+      "name": "title-rule",
+      "bbox": [
+        48,
+        170,
+        1184,
+        3
+      ],
+      "geometry": "rect",
+      "fillColor": "#FF6B18",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/90r2tsr6",
+      "id": "16",
+      "name": "rush-card",
+      "bbox": [
+        65,
+        225,
+        345,
+        320
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#AF3F00",
+      "lineColor": "#12100E",
+      "lineWidth": 1.5
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8zi10nal",
+      "id": "17",
+      "name": "rush-heading",
+      "bbox": [
+        83,
+        241,
+        309,
+        44
+      ],
+      "geometry": "rect",
+      "text": "PUZZLE RUSH",
+      "textPreview": "PUZZLE RUSH",
+      "resolvedFontSize": 25,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 25,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#FFF9ED",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "PUZZLE RUSH"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "PUZZLE RUSH",
+          "lineSpacingPercent": 92000,
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#FFF9ED",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.92
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "PUZZLE RUSH",
+              "fontSize": 25,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#FFF9ED",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.92
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rutk3m9k",
+      "id": "18",
+      "name": "rush-body",
+      "bbox": [
+        83,
+        293,
+        309,
+        236
+      ],
+      "geometry": "rect",
+      "text": "Rush: 3-minute clock\nSurvival: 3 strikes\nDifficulty rises with level\nHints reveal theme and halve XP",
+      "textPreview": "Rush: 3-minute clock | Survival: 3 strikes | Difficulty rises with level | Hints reveal theme and halve XP",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 17,
+        "typeface": "Helvetica Neue",
+        "color": "#FFF9ED",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Rush: 3-minute clock"
+          },
+          {
+            "index": 2,
+            "text": "Survival: 3 strikes"
+          },
+          {
+            "index": 3,
+            "text": "Difficulty rises with level"
+          },
+          {
+            "index": 4,
+            "text": "Hints reveal theme and halve XP"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Rush: 3-minute clock",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Rush: 3-minute clock",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Survival: 3 strikes",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Survival: 3 strikes",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "Difficulty rises with level",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Difficulty rises with level",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "Hints reveal theme and halve XP",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Hints reveal theme and halve XP",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qtkjah8z",
+      "id": "19",
+      "name": "learn-card",
+      "bbox": [
+        468,
+        225,
+        345,
+        320
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FF6B18",
+      "lineColor": "#12100E",
+      "lineWidth": 1.5
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2pon2ls7",
+      "id": "20",
+      "name": "learn-heading",
+      "bbox": [
+        486,
+        241,
+        309,
+        44
+      ],
+      "geometry": "rect",
+      "text": "LEARN POSITIONS",
+      "textPreview": "LEARN POSITIONS",
+      "resolvedFontSize": 25,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 25,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#FFF9ED",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "LEARN POSITIONS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "LEARN POSITIONS",
+          "lineSpacingPercent": 92000,
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#FFF9ED",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.92
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "LEARN POSITIONS",
+              "fontSize": 25,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#FFF9ED",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.92
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nax4vqts",
+      "id": "21",
+      "name": "learn-body",
+      "bbox": [
+        486,
+        293,
+        309,
+        236
+      ],
+      "geometry": "rect",
+      "text": "Curated openings, endgames, and attacks\nEvery SAN sequence is validated by chess.js\nStep through narration or start a game from the lesson FEN",
+      "textPreview": "Curated openings, endgames, and attacks | Every SAN sequence is validated by chess.js | Step through narration or start a game from the l...",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 17,
+        "typeface": "Helvetica Neue",
+        "color": "#FFF9ED",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 6,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Curated openings, endgames, and"
+          },
+          {
+            "index": 2,
+            "text": "attacks"
+          },
+          {
+            "index": 3,
+            "text": "Every SAN sequence is validated by"
+          },
+          {
+            "index": 4,
+            "text": "chess.js"
+          },
+          {
+            "index": 5,
+            "text": "Step through narration or start a game"
+          },
+          {
+            "index": 6,
+            "text": "from the lesson FEN"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Curated openings, endgames, and attacks",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Curated openings, endgames, and attacks",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Every SAN sequence is validated by chess.js",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Every SAN sequence is validated by chess.js",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "Step through narration or start a game from the lesson FEN",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Step through narration or start a game from the lesson FEN",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ob654vad",
+      "id": "22",
+      "name": "progress-card",
+      "bbox": [
+        870,
+        225,
+        345,
+        320
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#AF3F00",
+      "lineColor": "#12100E",
+      "lineWidth": 1.5
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pcfmxgby",
+      "id": "23",
+      "name": "progress-heading",
+      "bbox": [
+        888,
+        241,
+        309,
+        44
+      ],
+      "geometry": "rect",
+      "text": "PROGRESS",
+      "textPreview": "PROGRESS",
+      "resolvedFontSize": 25,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 25,
+        "typeface": "Futura Condensed ExtraBold",
+        "color": "#FFF9ED",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "PROGRESS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "PROGRESS",
+          "lineSpacingPercent": 92000,
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "typeface": "Futura Condensed ExtraBold",
+            "color": "#FFF9ED",
+            "bold": true,
+            "alignment": "left",
+            "lineSpacing": 0.92
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "PROGRESS",
+              "fontSize": 25,
+              "typeface": "Futura Condensed ExtraBold",
+              "color": "#FFF9ED",
+              "bold": true,
+              "alignment": "left",
+              "lineSpacing": 0.92
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/adon6lsj",
+      "id": "24",
+      "name": "progress-body",
+      "bbox": [
+        888,
+        293,
+        309,
+        236
+      ],
+      "geometry": "rect",
+      "text": "XP + level + tier\nStreak and theme statistics\nOn-demand game analysis\nAccuracy, blunders, ACPL, and PGN export",
+      "textPreview": "XP + level + tier | Streak and theme statistics | On-demand game analysis | Accuracy, blunders, ACPL, and PGN export",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 17,
+        "typeface": "Helvetica Neue",
+        "color": "#FFF9ED",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 5,
+        "lines": [
+          {
+            "index": 1,
+            "text": "XP + level + tier"
+          },
+          {
+            "index": 2,
+            "text": "Streak and theme statistics"
+          },
+          {
+            "index": 3,
+            "text": "On-demand game analysis"
+          },
+          {
+            "index": 4,
+            "text": "Accuracy, blunders, ACPL, and PGN"
+          },
+          {
+            "index": 5,
+            "text": "export"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "XP + level + tier",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "XP + level + tier",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Streak and theme statistics",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Streak and theme statistics",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "On-demand game analysis",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "On-demand game analysis",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "Accuracy, blunders, ACPL, and PGN export",
+          "lineSpacingPercent": 112000,
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#FFF9ED",
+            "alignment": "left",
+            "lineSpacing": 1.12
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Accuracy, blunders, ACPL, and PGN export",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#FFF9ED",
+              "alignment": "left",
+              "lineSpacing": 1.12
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/beh4zqto",
+      "id": "25",
+      "name": "mood",
+      "bbox": [
+        145,
+        585,
+        990,
+        60
+      ],
+      "geometry": "roundRect",
+      "text": "SENTIO TWIST: live mood can adapt the puzzle difficulty when the player is tense.",
+      "textPreview": "SENTIO TWIST: live mood can adapt the puzzle difficulty when the player is tense.",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 21,
+        "typeface": "Helvetica Neue",
+        "color": "#3A2B2B",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 4,
+          "right": 4,
+          "bottom": 4,
+          "left": 4
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SENTIO TWIST: live mood can adapt the puzzle difficulty when the player is tense."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SENTIO TWIST: live mood can adapt the puzzle difficulty when the player is tense.",
+          "lineSpacingPercent": 105000,
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "typeface": "Helvetica Neue",
+            "color": "#3A2B2B",
+            "bold": true,
+            "alignment": "center",
+            "lineSpacing": 1.05
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "SENTIO TWIST: live mood can adapt the puzzle difficulty when the player is tense.",
+              "fontSize": 21,
+              "typeface": "Helvetica Neue",
+              "color": "#3A2B2B",
+              "bold": true,
+              "alignment": "center",
+              "lineSpacing": 1.05
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#FBC313",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

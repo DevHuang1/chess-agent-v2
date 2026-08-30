@@ -30,8 +30,8 @@ export interface ControllerPanelProps {
   // Shared tab state
   activeTab: SidebarTab;
   setActiveTab: (tab: SidebarTab) => void;
-  workspaceTab: "board" | "aiLab" | "train";
-  setWorkspaceTab: (tab: "board" | "aiLab" | "train") => void;
+  workspaceTab: "board" | "train";
+  setWorkspaceTab: (tab: "board" | "train") => void;
 
   // Game state
   chessRef: React.MutableRefObject<Chess>;
@@ -282,7 +282,7 @@ export default function ControllerPanel({
       {controllerExpanded ? (
         <div
           ref={contentRef}
-          className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+          className="controller-content min-h-0 flex-1 overflow-y-auto overscroll-contain"
         >
           <div className="mt-3 flex flex-wrap gap-1 rounded-xl border border-zinc-800 bg-zinc-900/90 p-1 light:border-slate-300 light:bg-slate-100">
             <Button

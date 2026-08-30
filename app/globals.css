@@ -442,3 +442,29 @@ body {
     transition: none;
   }
 }
+
+/* ── Myanmar script fallbacks ─────────────────────────────────────────── */
+/* Geist ships Latin-only glyphs. The next/font utility on <body> (see
+   app/layout.tsx) sets font-family to Geist, so on platforms without a
+   system Myanmar font, Burmese text (U+1000-U+109F) would render as tofu
+   boxes. `body.font-myanmar` (specificity 0,1,1) wins over the generated
+   next/font class (0,1,0) and appends Myanmar-capable families to the same
+   stack, keeping Latin text in Geist while guaranteeing Burmese glyphs. */
+body.font-myanmar {
+  font-family:
+    var(--font-geist-sans),
+    "Geist Sans", "Geist Sans Fallback",
+    "Myanmar Text", "Myanmar Sangam MN", "Noto Sans Myanmar", "Padauk",
+    "Pyidaungsu", system-ui, sans-serif;
+}
+
+body.font-myanmar .font-mono,
+body.font-myanmar code,
+body.font-myanmar pre,
+body.font-myanmar kbd {
+  font-family:
+    var(--font-geist-mono),
+    "Geist Mono", "Geist Mono Fallback",
+    "Myanmar Text", "Myanmar Sangam MN", "Noto Sans Myanmar", "Padauk",
+    "Pyidaungsu", ui-monospace, "SF Mono", monospace;
+}

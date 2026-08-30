@@ -86,5 +86,47 @@
       { "san": "Rxg8", "narration": "Forced. Black's own rook now blocks g8." },
       { "san": "Nf7#", "narration": "Mate! The knight checks from f7 while the king is buried by its own rook and pawns. Remember the recipe: knight check drives the king to the corner, then Qg8+ deflects the defender." }
     ]
+  },
+  {
+    "id": "mate-in-2-queen",
+    "title": "Queen Back-Rank Finish",
+    "category": "ready",
+    "intro": "The black king has no flight square. White to move and finish immediately with the queen.",
+    "startFen": "6k1/5ppp/8/8/8/8/5PPP/3Q2K1 w - - 0 1",
+    "steps": [
+      { "san": "Qd8#", "narration": "The queen lands on the back rank with check. Black's own pawns remove every escape square, so the king cannot run or interpose." }
+    ]
+  },
+  {
+    "id": "back-rank-ready",
+    "title": "Back-Rank Mating Net",
+    "category": "ready",
+    "intro": "A common mating pattern: the enemy king is trapped behind its own pawns. White to deliver mate in one.",
+    "startFen": "6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1",
+    "steps": [
+      { "san": "Re8#", "narration": "The rook invades the back rank. Black's pawns on f7, g7 and h7 become a prison. A luft square would have prevented the mate." }
+    ]
+  },
+  {
+    "id": "ladder-ready",
+    "title": "Ladder Mate Ready Position",
+    "category": "ready",
+    "intro": "Two rooks vs. lone king — the ladder technique forces the king to the edge. White to move and mate in 3 key moves.",
+    "startFen": "7k/8/8/8/8/8/R7/1R5K w - - 0 1",
+    "steps": [
+      { "san": "Rb7", "narration": "The first rook cuts off the seventh rank, leaving the king only the back rank." },
+      { "san": "Kg8", "narration": "The king slides along its only available rank." },
+      { "san": "Ra8#", "narration": "The second rook completes the ladder. One rook checks while the other protects it and seals the escape rank." }
+    ]
+  },
+  {
+    "id": "smothered-ready",
+    "title": "Smothered Mate Ready Position",
+    "category": "ready",
+    "intro": "The queen sacrifice has already pulled a rook onto g8. White to move and deliver the classic smothered mate.",
+    "startFen": "6rk/6pp/7N/8/8/8/8/6K1 w - - 0 1",
+    "steps": [
+      { "san": "Nf7#", "narration": "The knight checks from f7. Black's king is completely smothered by its own rook and pawns, so no capture, block, or flight square exists." }
+    ]
   }
 ]

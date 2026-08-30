@@ -1,0 +1,7 @@
+Source deck: Sentio_AI_Features_Prolog_Ember.pptx
+Slides: 18, all retained in their original order.
+Structure: fully slide-local editable objects; no inherited content placeholders were found in the source deck.
+Typography: preserve original Aptos Display and Menlo choices, sizes, weights, alignment, and geometry.
+Reusable patterns: title/claim, two-column comparison, three-column knowledge model, six-step bridge, product screenshot plus annotation rail.
+Requested revision: replace dark Ember surfaces with a light Ember palette and replace the three product screenshots with verified light-mode captures from the same local application.
+Insertion contract: no new slides and no copy changes. Preserve all slide geometry and speaker notes except local screenshot provenance paths.

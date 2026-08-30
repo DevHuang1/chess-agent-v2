@@ -1,0 +1,23 @@
+{
+  "outputSlides": [
+    {"outputSlide":1,"sourceSlide":1,"narrativeRole":"opening thesis","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":2,"sourceSlide":2,"narrativeRole":"adaptive loop","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":3,"sourceSlide":3,"narrativeRole":"AI layers","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":4,"sourceSlide":4,"narrativeRole":"architecture","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":5,"sourceSlide":5,"narrativeRole":"perception","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":6,"sourceSlide":6,"narrativeRole":"adaptation","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":7,"sourceSlide":7,"narrativeRole":"Prolog introduction","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":8,"sourceSlide":8,"narrativeRole":"knowledge base","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":9,"sourceSlide":9,"narrativeRole":"Prolog bridge","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":10,"sourceSlide":10,"narrativeRole":"worked example","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":11,"sourceSlide":11,"narrativeRole":"hybrid comparison","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":12,"sourceSlide":12,"narrativeRole":"search lab","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":13,"sourceSlide":13,"narrativeRole":"language coach","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":14,"sourceSlide":14,"narrativeRole":"voice AI","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":15,"sourceSlide":15,"narrativeRole":"product surface","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":16,"sourceSlide":16,"narrativeRole":"reliability","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":17,"sourceSlide":17,"narrativeRole":"team handoff","reuseMode":"preserve-layout","editTargets":[]},
+    {"outputSlide":18,"sourceSlide":18,"narrativeRole":"synthesis","reuseMode":"preserve-layout","editTargets":[]}
+  ],
+  "omittedSourceSlides": []
+}

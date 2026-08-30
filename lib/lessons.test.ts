@@ -17,11 +17,12 @@ describe("lessons - bundled content integrity", () => {
     }
   });
 
-  it("covers all three categories with at least one lesson", async () => {
+  it("covers all four categories with at least one lesson", async () => {
     const grouped = groupByCategory(await loadLessons());
     expect(grouped.openings.length).toBeGreaterThanOrEqual(1);
     expect(grouped.endgames.length).toBeGreaterThanOrEqual(1);
     expect(grouped.attacks.length).toBeGreaterThanOrEqual(1);
+    expect(grouped.ready.length).toBeGreaterThanOrEqual(1);
   });
 
   it("computes legal FENs after partial step counts", async () => {
@@ -37,6 +38,15 @@ describe("lessons - bundled content integrity", () => {
     const smothered = lessons.find((l) => l.id === "smothered-mate")!;
     const finalFen = fenAfterSteps(smothered, smothered.steps.length);
     expect(new Chess(finalFen).isCheckmate()).toBe(true);
+  });
+
+  it("every ready mating net ends in checkmate", async () => {
+    const ready = groupByCategory(await loadLessons()).ready;
+    expect(ready.length).toBeGreaterThanOrEqual(4);
+    for (const lesson of ready) {
+      const finalFen = fenAfterSteps(lesson, lesson.steps.length);
+      expect(new Chess(finalFen).isCheckmate(), lesson.id).toBe(true);
+    }
   });
 });
 

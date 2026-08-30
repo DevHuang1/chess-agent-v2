@@ -1,0 +1,3231 @@
+{
+  "outputSlides": [
+    {
+      "outputSlide": 1,
+      "sourceSlide": 1,
+      "narrativeRole": "opening title",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "keep",
+          "shapeId": "sh/547294r6"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/k3yl0zql"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/7qp4be9c"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/65g3298r"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ts7md4r2"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/sryl4zqx"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/fu94fe98"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/utg3698n"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/wn6dc7eh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/hofulsf2"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ul4vaxgb"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/vmdcj2xw"
+        }
+      ]
+    },
+    {
+      "outputSlide": 2,
+      "sourceSlide": 2,
+      "narrativeRole": "team ownership and responsibilities",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite",
+          "shapeId": "sh/9072xkry"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ozy1ofad"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/b29kza94"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/a10jqpsj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/x4r21kru"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/w3i1sfa9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/r65knqtk"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/q5wjelsz"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ove9o7yd"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/9wnqhczy"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/mtwrmxg7"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/nu58f2hs"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/wjy9sry9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/xk7qlczu"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ahwrqhgj"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/bip8jmho"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/cnupgny5"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/do3q9szq"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/t8byxkn2"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/s72xofmh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/76twva5c"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/65kfmpor"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/hcvy14ne"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/gbmxszmt"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/fadgzu58"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/u94fqp4n"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/p0vy54na"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/4zmxwzmp"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/mlgvq147"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/nmpcj6ls"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/onydsbmd"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/9o7ulg3y"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/a9gvulkj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ba9cn6l4"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/wbidwb29"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/xcrupg3u"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/id0vylkf"
+        }
+      ]
+    },
+    {
+      "outputSlide": 3,
+      "sourceSlide": 3,
+      "narrativeRole": "presentation roadmap",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite",
+          "shapeId": "sh/cza94vmx"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/d0jax03i"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/298ryl4v"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/3ah8rqlg"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/obq90bml"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/pcjqtg36"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/m5cra54z"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/n6ls3alk"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/n2l4fq98"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/m1c3mlsn"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/943mhgre"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/83ulovat"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/v6l4jq94"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/a5c3ql8z"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/x8nml0ra"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/w7ulsvqp"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ja54na9g"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/i9w3u58v"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/e10f2twf"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/f29gbyx0"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/03ix43e5"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/14ryd8fq"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/6d0fytg3"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/re9g7yxo"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/sfix03y9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/tgry9ofu"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/a9kfadwn"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/batgjixs"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/l4fi9cza"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/k3m1g7yp"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/z2d07mh4"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/y14jehgj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/x0vi5czy"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/czmhc7id"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/byd032h8"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ax4zax0n"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/hwzihwzi"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/wv61obyx"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/4nuhs7uh"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/po3ilcvm"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/21szqxcb"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/32l0j2dw"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/cruhwrud"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ds3ipcvy"
+        }
+      ]
+    },
+    {
+      "outputSlide": 4,
+      "sourceSlide": 13,
+      "narrativeRole": "What Sentio is and how the product works",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/q50nydsj"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/bq9orito"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/o3i5w3ad"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/p4r6p8by"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/21gnuts7"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/32ponyts"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/gzy5s3a1"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/1076lobm"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/hcfy9k3u"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/gb6x0zm9"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/vaxg7ulo"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/u9ofyp43"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/t8fy5k3i"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/876xwfmx"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7mdg3als"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/6l4fu547"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/lkvy103m"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/kjmxsfm1"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/cnqh8fux"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/xozyhkbi"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/q18f65cr"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/bmhgfatc"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/oz6x4vul"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/p0zyd0b6"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/2xof2lcv"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/3yxgbqdg"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8vahgzu5"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/9wjyp4bq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/jqlkfyds"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/ipcjmtw7"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/5cn2h8vy"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/4re1o3ed"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/re5kjydo"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/6dwjqtw3"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/tgn2l8vu"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/sfe1s3e9"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7i107edk"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/mhsje9wz"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/y1wju94v"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/z25kne5g"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/03e1wjm1"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/l4n2po3m"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/m5gjyt4r"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/n6pkrelc"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8ry10jmx"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/9s72to3i"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/atgj2t43"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/vupkvylo"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/50behwr2"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/4z2d8rah"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/jytcfmtw"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/ixkv6hsb"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/t4velwry"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/s3mdcrad"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/r2dwjm98"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/614va1sn"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/1svepgra"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/g7mdgbap"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/0buxcfil"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/lc3ylkz6"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/y9cfa50v"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/zalgjahg"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8zexgzix"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/90nypkzi"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/mdwfep0r"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/ne5gnuhc"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/43ax4vit"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/p4jed0zy"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7y90jy1w"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/6x0jqtkb"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/t0ril8jm"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/szi1s321"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/jup0fy1k"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/itgjmtkz"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/5wrihojq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/kvy1o325"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/v6p0be1o"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/a5gzi9k3"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/mlkredwv"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/nmtsnidg"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8nm9gne1"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/9ovapsvm"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/yxkratwz"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/zytsjydk"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/0z29c3e5"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/lkbal8vq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/it4bmxw3"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/juxsv2do"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/tozulwfq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/snqdcryl"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7mhcjmx0"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/6lovahgf"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/5kfuhwfu"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/kj6d8ry9"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/jixcfmxo"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ihob6hg3"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/pgjetgfy"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/4fadkbyd"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/h8j6ho3a"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/w7a5ojmp"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/v6hofel4"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ul8nm94j"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/9kz6d43y"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/8jq5kzmt"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/7ihobu58"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/mh8ni94n"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/lgzm94n2"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kf65gzmh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/al43a5kf"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/bmdkjq10"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/cnmlcv2l"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/xof2l0jq"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/2h436lk3"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/nidkfqlo"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ojml8v29"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/pkv2h03u"
+        },
+        {
+          "action": "add",
+          "newPrimitiveAllowed": true,
+          "primitive": "real-product-screenshot",
+          "zone": {
+            "left": 59.52,
+            "top": 184.32,
+            "width": 720,
+            "height": 427.2
+          },
+          "reason": "Replace the inherited pseudo UI with an authentic Sentio Analysis screenshot.",
+          "mustNotOverlapInherited": true
+        }
+      ]
+    },
+    {
+      "outputSlide": 5,
+      "sourceSlide": 4,
+      "narrativeRole": "problem and audience need",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/1cj2d8b6"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/0ba143al"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/rm1k7yt4"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ql8jytsj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/doj29oba"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/sna103ap"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/3ihk3et8"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ih8ju9sn"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/kbm987y5"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/5cva1cfq"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/i94r6xgz"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/jadsz2xk"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/w72947yt"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/x8vaxsfe"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/a5kr2xg3"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/v6tsv2xo"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/g36tgryd"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/h4fa9wfy"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/p0batw72"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/oz29krqh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/3ytsrmpw"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/2xkrih8b"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/1wbapc7q"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/gv29g7q5"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/fu9sn2p0"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/et0reh8f"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/tsrqlc7u"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/sri9s7q9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ilwf69kv"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/jm5gze1g"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/knex8j21"
+        }
+      ]
+    },
+    {
+      "outputSlide": 6,
+      "sourceSlide": 5,
+      "narrativeRole": "system objectives",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/dgbulwnm"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/cf2tcr61"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/z2tcnm5s"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/yhkbe1o7"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/l4bupwny"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/032tgr6d"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/n6dcr65o"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/m5kbi1oj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/w32dkbuh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/x4vedgvm"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ahkvi1cb"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/v2twb6dw"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/k7mxovud"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/58vehgvy"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/i54fmlc7"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/j6dwfqds"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/sb6xsvu9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/tcfel0vu"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/hgrmpwj2"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/gfi5grih"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/fe94nm1w"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ud0ne10b"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/pkr6tgjy"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/4ji5kbid"
+        }
+      ]
+    },
+    {
+      "outputSlide": 7,
+      "sourceSlide": 6,
+      "narrativeRole": "functional requirements",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/yhg7epsj"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/zi98nu94"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/87ipkzal"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/98rqt4r6"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ml07i9sv"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/7m98ru9g"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/oryp8fah"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/pc76hkr2"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/h4bupgn6"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/w32twb6l"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/v2tcn650"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/u1kbu1ov"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/5svutgni"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/47mt0b6x"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/j6dcr65c"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/i54bylor"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/twfux0ne"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/svmt4v6t"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/cbe5g3ih"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/dcnm98zm"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/qpwnet0b"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/bq547yhw"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/0fy5k3id"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/lg76d8zy"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ydgnit07"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/zep4byhs"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/gju58ji9"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/1k3mhozu"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/jet8nm1c"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/idk7ehkr"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/50bqpcj2"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/4f2pgr2h"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/va98j210"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/u907axkf"
+        }
+      ]
+    },
+    {
+      "outputSlide": 8,
+      "sourceSlide": 7,
+      "narrativeRole": "system architecture",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/cb2tkvap"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/dcbud0ra"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ydkbm5sv"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/zedcfa9g"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kzmdova1"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/l0vuh0rm"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/eh0ba1sr"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/fi9c369c"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/baxkjqlk"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/a9ojq5kz"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/xcz2l03q"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/cbq1sv25"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/n6x0fqlo"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/25ojml43"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/p8fih03e"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/o761ov2t"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/f2d0b6lc"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/eh4jil4r"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/id4ju1oz"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/jedkn654"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/4fm1wb6p"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/50v2pgna"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/q143ylov"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/r2dkrq5g"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/s3ml0v61"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/d4f2t0nm"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/e5o32lor"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/f6xkvq5c"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/p0zmlk7u"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ozq5szq9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/nyh4jupo"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/2x8nqp83"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/x4j6p47q"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/c3a5wzq5"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/b2h4nupk"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/a18nup8z"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/lsj6t47m"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/kra50jqh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/wneps3ap"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/honq18ru"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ulc7qdsj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/vm58zi94"
+        }
+      ]
+    },
+    {
+      "outputSlide": 9,
+      "sourceSlide": 8,
+      "narrativeRole": "emotion detection method",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/18byd4zy"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/g72x4zyd"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ri9g7uhw"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/6h0fypgb"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/tkby9kzm"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/sjix0zy1"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/je9g3ahk"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/id0fu50z"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/o7ydoret"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/98rehwve"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/m5gvmhwn"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/n6pwfmd8"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/0jydkreh"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/1k7edwv2"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ehgvihwr"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/zipwbmdc"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kfixwbe1"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/lgbepgvm"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/tw7e9gnq"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/svydgb65"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/7u5w765k"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/6twve1oz"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/5sne5wne"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kredcr6t"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/jq5w365o"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/i5wva1o3"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/x4ne1wni"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/w3ed8r6x"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/m9sb2x4v"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/na1sb2lg"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/8bat47ml"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/9w3uds36"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/y5sbed4j"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/z61s7il4"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/07atgnmp"
+        }
+      ]
+    },
+    {
+      "outputSlide": 10,
+      "sourceSlide": 9,
+      "narrativeRole": "emotion to engine adaptation",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/1cfmhgne"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/0b65obm9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/nex4jq5k"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/mdonql4z"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/9gzml0nq"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ofq5svm5"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/bih4na5w"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ah8nu54b"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/oza1gfyh"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/p0ji9kf2"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/2xsjepgb"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/3y107axw"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/cnu1kzyd"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/do3id4fy"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/qlcjipgn"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/bml0buxs"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/0ru1ozyp"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/lsn2h4fa"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/98ji147e"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/87a18zqt"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/76h0zup8"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ml8j6p8n"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/hcji5o7a"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/wba1cjqp"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/va103ep4"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/u9sja98z"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/xgzitk76"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/cf6h0fql"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/2l4faloj"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/nmdg3q54"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/onmxcv69"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/pofy50nu"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/apofe5of"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/bqxg7q50"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/cr6xgv6l"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/xcfy90n6"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/qtkf21ob"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/rutwv65w"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/7y14jyd8"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/mdsnatcn"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/903ml8be"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/8zu5c3ut"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/v2l4nitk"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/u1cnedcz"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/h43mp8ba"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/w3u5g3u5"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/j6l4ritg"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/i5cnidcv"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/0bel8na9"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/1wnm1sru"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/e9w36ds3"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/fa54zi9o"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/s7el4nax"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/t8nmx8ri"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/65c32ds7"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/r654vi9c"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/43ul03a1"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/5432t8rm"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/l0v2x4ja"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/kzm14z2p"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/jyd0vu14"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/yx4j2pkj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/xwvitkje"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/wvm10f2t"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/but0ra18"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/atkjypkn"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/hsf25oji"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/gr61cj2x"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ed0z6l0f"
+        }
+      ]
+    },
+    {
+      "outputSlide": 11,
+      "sourceSlide": 10,
+      "narrativeRole": "Stockfish and Prolog reasoning",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/xc3mho32"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/cbu58j2h"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/zelojyl8"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ydcnatkn"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/l036l83y"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kzu5c32t"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/725onyl4"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/m1cnetkj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/s7yt4b21"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/d87uxg3m"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/q5gb21kb"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/r6pcv6lw"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/0bit8b2d"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/1cru1g3y"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/e9gb61k7"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/fapcz6ls"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ozitcv29"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/p0ru503u"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/xwnupgvy"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/wvetgbud"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/bu5cnqd8"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/atwbelcn"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/lk7ut0va"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/kjytkvup"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/jypcrqd4"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/yxgbilcj"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/1o3ahwvq"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/0nut8rul"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/q9srixs3"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ru18r2to"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/cva9k7a9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/dwjqtcbu"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/exsrmhsf"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/zyl8vmt0"
+        }
+      ]
+    },
+    {
+      "outputSlide": 12,
+      "sourceSlide": 11,
+      "narrativeRole": "voice coach and voice moves",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/xcryxg7y"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/wbih4b6d"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/n69grmpw"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/250zy18b"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/98rytw72"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/o7ih0r6h"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/72t03qp0"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/61kzalof"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ofqtgnyt"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/9gza9sze"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/mdobedg3"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/nehs7iho"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/0b6tc3yx"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/1cfa58zi"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/epobatgr"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/zaxs3yhc"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/cn6t83y1"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/dofa18z6"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/tsnip0ny"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/87ehgv6d"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/7650nq5s"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/65wzelo7"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/l43ilgn2"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/k3uhcb6h"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/j2lgjq5w"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/y1czalob"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/p07ixkn6"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/4zyhofml"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/m58fih43"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/n61wbmlo"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/o7axk7m9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/98jedc3u"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/eh8fex47"
+        }
+      ]
+    },
+    {
+      "outputSlide": 13,
+      "sourceSlide": 12,
+      "narrativeRole": "implementation example",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/1gbm9s3a"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/0f2lgnmp"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ra943il8"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/q903ad4n"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/dcbm583y"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/sb2lcnmd"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/b6d4f2lc"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/a543mx4r"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/wvupgz6t"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/xw3q94ne"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/atc7epon"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/bulo7u58"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/orapcf6h"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/9sj65kn2"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/mps7a5or"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/nq1o3a5w"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/0nap8f6l"
+        }
+      ]
+    },
+    {
+      "outputSlide": 14,
+      "sourceSlide": 13,
+      "narrativeRole": "real system UI evidence",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/q50nydsj"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/bq9orito"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/o3i5w3ad"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/p4r6p8by"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/21gnuts7"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/32ponyts"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/gzy5s3a1"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/1076lobm"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/hcfy9k3u"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/gb6x0zm9"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/vaxg7ulo"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/u9ofyp43"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/t8fy5k3i"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/876xwfmx"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7mdg3als"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/6l4fu547"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/lkvy103m"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/kjmxsfm1"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/cnqh8fux"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/xozyhkbi"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/q18f65cr"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/bmhgfatc"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/oz6x4vul"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/p0zyd0b6"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/2xof2lcv"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/3yxgbqdg"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8vahgzu5"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/9wjyp4bq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/jqlkfyds"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/ipcjmtw7"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/5cn2h8vy"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/4re1o3ed"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/re5kjydo"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/6dwjqtw3"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/tgn2l8vu"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/sfe1s3e9"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7i107edk"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/mhsje9wz"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/y1wju94v"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/z25kne5g"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/03e1wjm1"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/l4n2po3m"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/m5gjyt4r"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/n6pkrelc"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8ry10jmx"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/9s72to3i"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/atgj2t43"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/vupkvylo"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/50behwr2"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/4z2d8rah"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/jytcfmtw"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/ixkv6hsb"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/t4velwry"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/s3mdcrad"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/r2dwjm98"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/614va1sn"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/1svepgra"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/g7mdgbap"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/0buxcfil"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/lc3ylkz6"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/y9cfa50v"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/zalgjahg"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8zexgzix"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/90nypkzi"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/mdwfep0r"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/ne5gnuhc"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/43ax4vit"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/p4jed0zy"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7y90jy1w"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/6x0jqtkb"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/t0ril8jm"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/szi1s321"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/jup0fy1k"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/itgjmtkz"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/5wrihojq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/kvy1o325"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/v6p0be1o"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/a5gzi9k3"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/mlkredwv"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/nmtsnidg"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8nm9gne1"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/9ovapsvm"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/yxkratwz"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/zytsjydk"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/0z29c3e5"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/lkbal8vq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/it4bmxw3"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/juxsv2do"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/tozulwfq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/snqdcryl"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7mhcjmx0"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/6lovahgf"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/5kfuhwfu"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/kj6d8ry9"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/jixcfmxo"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/ihob6hg3"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/pgjetgfy"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/4fadkbyd"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/h8j6ho3a"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/w7a5ojmp"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/v6hofel4"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/ul8nm94j"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/9kz6d43y"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/8jq5kzmt"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/7ihobu58"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/mh8ni94n"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/lgzm94n2"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/kf65gzmh"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/al43a5kf"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/bmdkjq10"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/cnmlcv2l"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/xof2l0jq"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/2h436lk3"
+        },
+        {
+          "action": "delete",
+          "shapeId": "sh/nidkfqlo"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ojml8v29"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/pkv2h03u"
+        },
+        {
+          "action": "add",
+          "newPrimitiveAllowed": true,
+          "primitive": "real-product-screenshot-collage",
+          "zone": {
+            "left": 59.52,
+            "top": 165,
+            "width": 1160.93,
+            "height": 470
+          },
+          "reason": "Use three authentic Sentio screenshots as the system UI evidence requested by the user.",
+          "mustNotOverlapInherited": true
+        }
+      ]
+    },
+    {
+      "outputSlide": 15,
+      "sourceSlide": 14,
+      "narrativeRole": "benefits and limitations",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/xc7eds76"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/wbydknq1"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/jepwf2pc"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/idgvmx8r"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/5grehs7i"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/kfidonqx"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/zi5c3y98"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ehwvat8n"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/c3e1gjyd"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/x4ni9ofy"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/a1wze9g7"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/b2507exs"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kre1k3y9"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ls7idofu"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/y5wjitgj"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/z650byxo"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/0buh8zy5"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/1w3i14fq"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/hsvy50re"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/grmxwvqt"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/fqdg3q98"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/up4fal83"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/pwvy90rq"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/4vmh0vq5"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/3udg7q9k"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/2t4fyl8z"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/d0fydk7m"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/cz6h4fq1"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/atg3idk7"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/bup4rils"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/cvylkn2d"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/xw7mts3y"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/yxgnmxkj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/jyp4fil4"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kzy5on2p"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/lkrmhsju"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/6l0nqxkf"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/7m94j210"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/fi5432t4"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/uhw3axcj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/h4nm5sba"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/gjelc7up"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/365472tg"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/25w3excv"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/p87m9cb6"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/47y5g7u1"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/jal4vidw"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/i9c32dcr"
+        }
+      ]
+    },
+    {
+      "outputSlide": 16,
+      "sourceSlide": 15,
+      "narrativeRole": "future work",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/547mhg3m"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/k3y5ov21"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/76p4jqls"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/65gnqlk7"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/t87ml0ji"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/s7y5sv2x"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/na5476l8"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/m9c3e1kn"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/wrm9kvep"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/hsvat0fa"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/upkrilwj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/vqdsrqx4"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/4vm9ovel"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/5wvax0f6"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/it4rm5wv"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/judsvqxg"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/0z29cbyh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/l0bqlgf2"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/1kjyt83e"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/gjax03m9"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/fi1grylo"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ehsfyt43"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/p8jyx83q"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/o7ah4nm5"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/361gvilk"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/25sf2d4z"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/dc3y1s3m"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/cbuh8nmh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/uh4v2pkj"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/vixcvu14"
+        }
+      ]
+    },
+    {
+      "outputSlide": 17,
+      "sourceSlide": 16,
+      "narrativeRole": "conclusion",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/8z2h8bq1"
+        },
+        {
+          "action": "rewrite-and-reposition",
+          "shapeId": "sh/9kby1g7m"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ytkf2h8j"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/zutgvm94"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kv2h4rqp"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/lwbyxwra"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/ip4zel83"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/3qdg7qpo"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/fm1gzq5o"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/e1sf65o3"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/1ojy10ne"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/gnax8v6t"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/nqlg3a5k"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/2pcfa5oz"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ps3y5knq"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/oruhcf65"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/bulg7u5g"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/atczepob"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/mpgj6t8j"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/7qp0zepo"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/8by18jq9"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/9c7i1o7u"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ylwj2987"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/zm50veps"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/kne14jqd"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/lo7ixo7y"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ih0jedob"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ji9k7ypw"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/tcbmdcre"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/sb2l47at"
+        }
+      ]
+    },
+    {
+      "outputSlide": 18,
+      "sourceSlide": 1,
+      "narrativeRole": "standalone thank you closing",
+      "reuseMode": "duplicate-slide",
+      "editTargets": [
+        {
+          "action": "keep",
+          "shapeId": "sh/547294r6"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/k3yl0zql"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/7qp4be9c"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/65g3298r"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ts7md4r2"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/sryl4zqx"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/fu94fe98"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/utg3698n"
+        },
+        {
+          "action": "keep",
+          "shapeId": "sh/wn6dc7eh"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/hofulsf2"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/ul4vaxgb"
+        },
+        {
+          "action": "rewrite",
+          "shapeId": "sh/vmdcj2xw"
+        }
+      ]
+    }
+  ],
+  "omittedSourceSlides": []
+}

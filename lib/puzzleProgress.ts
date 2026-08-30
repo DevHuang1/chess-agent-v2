@@ -17,7 +17,25 @@ export type PuzzleProgress = {
   themeStats: ThemeStats;
   bestScores: { rush: number; survival: number };
   lessonsCompleted: string[];
+  lessonMastery: Record<string, LessonMastery>;
+  reviewLessonIds: string[];
+  quizTotals: QuizTotals;
   gamesAnalyzed: number;
+};
+
+export type LessonMastery = {
+  attempts: number;
+  solved: number;
+  firstTrySolved: number;
+  hintsUsed: number;
+  lastAttemptAt: string;
+};
+
+export type QuizTotals = {
+  attempted: number;
+  solved: number;
+  firstTrySolved: number;
+  hintsUsed: number;
 };
 
 export const PROGRESS_STORAGE_KEY = "sentio-puzzle-progress-v1";
@@ -71,6 +89,9 @@ export function emptyProgress(): PuzzleProgress {
     themeStats: {},
     bestScores: { rush: 0, survival: 0 },
     lessonsCompleted: [],
+    lessonMastery: {},
+    reviewLessonIds: [],
+    quizTotals: { attempted: 0, solved: 0, firstTrySolved: 0, hintsUsed: 0 },
     gamesAnalyzed: 0,
   };
 }
@@ -80,7 +101,16 @@ export function loadProgress(): PuzzleProgress {
   try {
     const raw = window.localStorage.getItem(PROGRESS_STORAGE_KEY);
     if (!raw) return emptyProgress();
-    return { ...emptyProgress(), ...(JSON.parse(raw) as PuzzleProgress) };
+    const parsed = JSON.parse(raw) as Partial<PuzzleProgress>;
+    const empty = emptyProgress();
+    return {
+      ...empty,
+      ...parsed,
+      bestScores: { ...empty.bestScores, ...parsed.bestScores },
+      lessonMastery: parsed.lessonMastery ?? empty.lessonMastery,
+      reviewLessonIds: parsed.reviewLessonIds ?? empty.reviewLessonIds,
+      quizTotals: { ...empty.quizTotals, ...parsed.quizTotals },
+    };
   } catch {
     return emptyProgress();
   }
@@ -212,6 +242,62 @@ export function completeLesson(
   };
 }
 
+export type LessonAttemptInput = {
+  lessonId: string;
+  solved: boolean;
+  firstTry: boolean;
+  hintsUsed: number;
+};
+
+/** Record an interactive lesson attempt and maintain the spaced-review queue. */
+export function recordLessonAttempt(
+  previous: PuzzleProgress,
+  input: LessonAttemptInput,
+): SolveOutcome {
+  const existing = previous.lessonMastery[input.lessonId] ?? {
+    attempts: 0,
+    solved: 0,
+    firstTrySolved: 0,
+    hintsUsed: 0,
+    lastAttemptAt: "",
+  };
+  const lessonMastery = {
+    ...previous.lessonMastery,
+    [input.lessonId]: {
+      attempts: existing.attempts + 1,
+      solved: existing.solved + (input.solved ? 1 : 0),
+      firstTrySolved:
+        existing.firstTrySolved + (input.solved && input.firstTry ? 1 : 0),
+      hintsUsed: existing.hintsUsed + Math.max(0, input.hintsUsed),
+      lastAttemptAt: new Date().toISOString(),
+    },
+  };
+  const review = new Set(previous.reviewLessonIds);
+  if (input.solved && input.firstTry && input.hintsUsed === 0) {
+    review.delete(input.lessonId);
+  } else {
+    review.add(input.lessonId);
+  }
+  const quizTotals: QuizTotals = {
+    attempted: previous.quizTotals.attempted + 1,
+    solved: previous.quizTotals.solved + (input.solved ? 1 : 0),
+    firstTrySolved:
+      previous.quizTotals.firstTrySolved +
+      (input.solved && input.firstTry ? 1 : 0),
+    hintsUsed: previous.quizTotals.hintsUsed + Math.max(0, input.hintsUsed),
+  };
+  const tracked: PuzzleProgress = {
+    ...previous,
+    lessonMastery,
+    reviewLessonIds: [...review],
+    quizTotals,
+  };
+  if (!input.solved) {
+    return { progress: tracked, xpGained: 0, leveledUp: false };
+  }
+  return completeLesson(tracked, input.lessonId);
+}
+
 export function recordAnalyzedGame(previous: PuzzleProgress): SolveOutcome {
   const progress: PuzzleProgress = { ...previous };
   progress.gamesAnalyzed += 1;
@@ -243,4 +329,3 @@ export function recordRunScore(
     newBest,
   };
 }
-

@@ -3,18 +3,18 @@
 /**
  * TrainingWorkspace — the Train tab's entry hub and screen switcher.
  *
- * Owns lazy puzzle loading and renders one of four screens: the hub (level
- * profile + entry cards), Puzzle Rush, Learn positions, or Progress.
+ * Owns lazy puzzle loading and routes the hub into rush, quizzes, the position
+ * library, mistake review, and progress.
  * Progress state itself lives in page.tsx so the header badge stays live.
  */
 
 import { useEffect, useState } from "react";
 import type { Puzzle } from "@/lib/puzzles";
 import {
-  completeLesson,
   levelFromXp,
   maxRatingForLevel,
   recordAnalyzedGame,
+  recordLessonAttempt,
   tierForLevel,
   xpForLevel,
   type PuzzleProgress,
@@ -22,13 +22,13 @@ import {
 import { EMOTION_EMOJI } from "@/lib/emotionClassifier";
 import type { EmotionLabel } from "@/lib/engineProfiles";
 import PuzzleRush from "./PuzzleRush";
-import LearnPositions from "./LearnPositions";
+import PositionTraining from "./PositionTraining";
 import ProgressView from "./ProgressView";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-type View = "hub" | "rush" | "learn" | "progress";
+type View = "hub" | "rush" | "learn" | "quiz" | "review" | "progress";
 
 export default function TrainingWorkspace({
   progress,
@@ -43,14 +43,22 @@ export default function TrainingWorkspace({
 }) {
   const [view, setView] = useState<View>("hub");
   const [puzzles, setPuzzles] = useState<Puzzle[] | null>(null);
+  const [puzzleLoadError, setPuzzleLoadError] = useState<string | null>(null);
 
   // Load the puzzle set lazily — only when Rush is first opened.
   useEffect(() => {
     if (view === "rush" && !puzzles) {
       import("@/lib/puzzles")
         .then((mod) => mod.loadPuzzles())
-        .then(setPuzzles)
-        .catch((err) => console.error("Failed to load puzzles:", err));
+        .then((loaded) => {
+          setPuzzleLoadError(null);
+          setPuzzles(loaded);
+        })
+        .catch((error: unknown) =>
+          setPuzzleLoadError(
+            error instanceof Error ? error.message : "Unable to load puzzles.",
+          ),
+        );
     }
   }, [view, puzzles]);
 
@@ -60,7 +68,17 @@ export default function TrainingWorkspace({
   const xpForNext = Math.max(1, xpForLevel(level + 1) - xpForLevel(level));
 
   if (view === "rush") {
-    return puzzles ? (
+    return puzzleLoadError ? (
+      <CenteredMessage>
+        <div className="text-center">
+          <p className="text-red-300">Puzzle set could not be loaded.</p>
+          <p className="mt-1 max-w-sm text-xs">{puzzleLoadError}</p>
+          <Button variant="outline" className="mt-3" onClick={() => setView("hub")}>
+            Back to training
+          </Button>
+        </div>
+      </CenteredMessage>
+    ) : puzzles ? (
       <PuzzleRush
         puzzles={puzzles}
         progress={progress}
@@ -73,12 +91,14 @@ export default function TrainingWorkspace({
     );
   }
 
-  if (view === "learn") {
+  if (view === "learn" || view === "quiz" || view === "review") {
     return (
-      <LearnPositions
+      <PositionTraining
         progress={progress}
-        onCompleteLesson={(id) =>
-          onProgressUpdate(completeLesson(progress, id).progress)
+        initialMode={view === "learn" ? "study" : "practice"}
+        reviewOnly={view === "review"}
+        onPracticeResult={(result) =>
+          onProgressUpdate(recordLessonAttempt(progress, result).progress)
         }
         onPlayFromPosition={onPlayFromPosition}
         onExit={() => setView("hub")}
@@ -162,23 +182,62 @@ export default function TrainingWorkspace({
           </div>
         </Card>
 
+        <Card className="col-span-1 border-l-4 border-l-violet-400 p-5 sm:col-span-2">
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-0">
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-violet-300">
+                Today&apos;s training
+              </div>
+              <div className="mt-1 font-mono text-base font-bold">
+                One focused position, then a short puzzle run
+              </div>
+              <p className="mt-1 text-xs text-zinc-400 light:text-slate-600">
+                About 7 minutes · {progress.reviewLessonIds.length} position{progress.reviewLessonIds.length === 1 ? "" : "s"} waiting for review
+              </p>
+            </div>
+            <Button
+              variant="default"
+              onClick={() =>
+                setView(progress.reviewLessonIds.length > 0 ? "review" : "quiz")
+              }
+            >
+              Start workout →
+            </Button>
+          </CardContent>
+        </Card>
+
+        <HubCard
+          emoji="◇"
+          title="Quiz Arena"
+          description={`${progress.quizTotals.solved}/${progress.quizTotals.attempted} quizzes solved. Play the moves yourself with progressive hints.`}
+          onClick={() => setView("quiz")}
+        />
+        <HubCard
+          emoji="□"
+          title="Position Library"
+          description={`${progress.lessonsCompleted.length} mastered. Filter openings, endgames, attacks, and ready mating nets.`}
+          onClick={() => setView("learn")}
+        />
+        <HubCard
+          emoji="↻"
+          title="Mistake Review"
+          description={`${progress.reviewLessonIds.length} position${progress.reviewLessonIds.length === 1 ? "" : "s"} queued from misses and hints.`}
+          onClick={() => setView("review")}
+        />
         <HubCard
           emoji="⚡"
           title="Puzzle Rush"
-          description={`Rush the clock or survive the grind. Bests: ${progress.bestScores.rush} / ${progress.bestScores.survival}`}
-          onClick={() => setView("rush")}
+          description={`Timed and survival modes. Bests: ${progress.bestScores.rush} / ${progress.bestScores.survival}`}
+          onClick={() => {
+            setPuzzleLoadError(null);
+            setView("rush");
+          }}
         />
         <HubCard
-          emoji="📈"
+          emoji="↗"
           title="Progress & Analysis"
-          description={`${historyCountLabel(progress)} Analyze games, watch your accuracy trend.`}
+          description={`${historyCountLabel(progress)} Track quiz mastery and game accuracy.`}
           onClick={() => setView("progress")}
-        />
-        <HubCard
-          emoji="📖"
-          title="Learn Positions"
-          description={`${progress.lessonsCompleted.length} lessons completed. Openings, endgames, classic attacks.`}
-          onClick={() => setView("learn")}
           wide
         />
 

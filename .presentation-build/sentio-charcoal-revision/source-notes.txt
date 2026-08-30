@@ -1,0 +1,4 @@
+All product claims are based on the local Sentio repository (README.md, AI_SYSTEM.txt, backend/main.py, prolog/ai_system.pl, and current UI code).
+Screenshots are local captures from the running Sentio project: sentio-analysis.png, sentio-main.png, sentio-logician.png, and sentio-3d.png.
+Team responsibility wording comes directly from the user's message in this task.
+No external assets or external non-trivial claims were added.

@@ -1,0 +1,7 @@
+Source: Sentio_AI_Project_Charcoal.pptx (16 slides, 1280x720).
+Template: charcoal background, ember-orange accent, white Cambria titles, Calibri body copy.
+Insertion contract: duplicate every output slide from a source slide; edit inherited objects in place.
+New slides: What is Sentio? follows Contents and duplicates source slide 13; Thank You duplicates source slide 1.
+System UI: replace the illustrative interface with real locally captured Sentio screenshots.
+Typography: preserve families and hierarchy while increasing contrast to warm white/cream.
+No structural placeholders were reported in the source layouts.

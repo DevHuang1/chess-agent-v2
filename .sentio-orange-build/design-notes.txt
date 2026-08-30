@@ -1,0 +1,11 @@
+Communication job: By the end, a technical/project audience should understand how Sentio combines emotion perception, chess search, symbolic Prolog reasoning, language/voice, and learning features into one inspectable adaptive system.
+
+Visual contract:
+- 16:9 widescreen, 1280 x 720.
+- Orange/beige retro palette, condensed shadowed headlines, script-style orange accents.
+- Every decorative raster visual is cropped from the user-provided Orange Beige Retro Illustration Night Chess Presentation PDF.
+- No external stickers, icons, screenshots, photographs, or generated images are used.
+- Source stickers are intentionally reused because the user allowed reuse to reach 16-20 slides.
+
+Narrative: human signal -> adaptive system -> Prolog deep dive -> hybrid AI -> current product updates -> learning loop -> reliability -> synthesis.
+

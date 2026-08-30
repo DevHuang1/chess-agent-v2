@@ -15,7 +15,9 @@ export default defineConfig({
     viewport: { width: 1440, height: 900 },
     permissions: ["camera"],
     launchOptions: {
-      executablePath: "/usr/bin/chromium",
+      executablePath:
+        process.env.PW_CHROMIUM_EXECUTABLE_PATH ||
+        "/usr/bin/chromium",
       args: [
         "--use-fake-device-for-media-stream",
         "--use-fake-ui-for-media-stream",

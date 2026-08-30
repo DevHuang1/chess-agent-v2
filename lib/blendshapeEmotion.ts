@@ -48,6 +48,50 @@ function avg(
 export function valenceArousalFromBlendshapes(
   categories: BlendshapeCategory[],
 ): { valence: number; arousal: number } {
+  const f = blendshapeFeatureAverages(categories);
+  const w = BLENDSHAPE_WEIGHTS;
+
+  const valence =
+    w.smileValence * f.mouthSmile +
+    w.frownValence * f.mouthFrown +
+    w.browDownValence * f.browDown +
+    w.sneerValence * f.noseSneer;
+
+  const arousal = Math.max(
+    0,
+    Math.min(
+      1,
+      w.browDownArousal * f.browDown +
+        w.eyeWideArousal * f.eyeWide +
+        w.jawOpenArousal * f.jawOpen +
+        w.browRaiseArousal * f.browRaise +
+        w.mouthStretchArousal * f.mouthStretch,
+    ),
+  );
+
+  return { valence: Math.max(-1, Math.min(1, valence)), arousal };
+}
+
+/** Per-feature averages over left/right blendshape pairs (each 0..1). */
+export type BlendshapeFeatureAverages = {
+  mouthSmile: number;
+  mouthFrown: number;
+  browDown: number;
+  noseSneer: number;
+  eyeWide: number;
+  jawOpen: number;
+  browRaise: number;
+  mouthStretch: number;
+};
+
+/**
+ * Averages the left/right blendshape pairs into named anatomical features.
+ * Single source of truth for both the valence/arousal math above and the
+ * "why this emotion" explanations (lib/faceExplain.ts).
+ */
+export function blendshapeFeatureAverages(
+  categories: BlendshapeCategory[],
+): BlendshapeFeatureAverages {
   const byName = new Map<string, number>();
   for (const c of categories) {
     if (typeof c?.score === "number" && Number.isFinite(c.score)) {
@@ -55,27 +99,16 @@ export function valenceArousalFromBlendshapes(
     }
   }
 
-  const w = BLENDSHAPE_WEIGHTS;
-  const valence =
-    w.smileValence * avg(byName, ["mouthSmileLeft", "mouthSmileRight"]) +
-    w.frownValence * avg(byName, ["mouthFrownLeft", "mouthFrownRight"]) +
-    w.browDownValence * avg(byName, ["browDownLeft", "browDownRight"]) +
-    w.sneerValence * avg(byName, ["noseSneerLeft", "noseSneerRight"]);
-
-  const arousal = Math.max(
-    0,
-    Math.min(
-      1,
-      w.browDownArousal * avg(byName, ["browDownLeft", "browDownRight"]) +
-        w.eyeWideArousal * avg(byName, ["eyeWideLeft", "eyeWideRight"]) +
-        w.jawOpenArousal * (byName.get("jawOpen") ?? 0) +
-        w.browRaiseArousal * (byName.get("browInnerUp") ?? 0) +
-        w.mouthStretchArousal *
-          avg(byName, ["mouthStretchLeft", "mouthStretchRight"]),
-    ),
-  );
-
-  return { valence: Math.max(-1, Math.min(1, valence)), arousal };
+  return {
+    mouthSmile: avg(byName, ["mouthSmileLeft", "mouthSmileRight"]),
+    mouthFrown: avg(byName, ["mouthFrownLeft", "mouthFrownRight"]),
+    browDown: avg(byName, ["browDownLeft", "browDownRight"]),
+    noseSneer: avg(byName, ["noseSneerLeft", "noseSneerRight"]),
+    eyeWide: avg(byName, ["eyeWideLeft", "eyeWideRight"]),
+    jawOpen: byName.get("jawOpen") ?? 0,
+    browRaise: byName.get("browInnerUp") ?? 0,
+    mouthStretch: avg(byName, ["mouthStretchLeft", "mouthStretchRight"]),
+  };
 }
 
 /**

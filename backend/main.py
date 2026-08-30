@@ -13,7 +13,7 @@ near-maximum strength.
 
 Once the profile is determined, the module acquires a Stockfish instance from
 a small persistent pool (size configurable via STOCKFISH_POOL_SIZE) and fully
-reconfigures it for the request — set_depth, update_parameters, and
+reconfigures it for the request — set_depth, update_engine_parameters, and
 set_fen_position reset all search state, so no state leaks between moves.
 Stockfish is configured with the profile parameters plus Threads=2. The FEN is
 validated
@@ -33,6 +33,7 @@ import glob
 import os
 import platform
 import queue
+import re
 import shutil
 import stat
 import subprocess
@@ -149,6 +150,28 @@ WHISPER_INITIAL_PROMPT = (
     "မြင်း f3 ကို။ နိုင် e4 ကို။ ဘုရင် e1 ကနေ e2။ မိဖုရား d5 ဖမ်း။ "
     "ဆင် c4။ ကျီ a1။ လှေ h8 ဖမ်း။ O-O။"
 )
+MYANMAR_SCRIPT_RE = re.compile(r"[\u1000-\u109f\uAA60-\uAA7F\uA9E0-\uA9FF]")
+
+
+def looks_like_burmese(text: str) -> bool:
+    """True when a ``language=my`` transcription plausibly contains Burmese.
+
+    The fine-tuned Whisper model can hallucinate replacement-character soup
+    or a whole non-Burmese script (Thai, Devanagari) with HTTP 200. Such
+    output is treated as failure so callers fall through to a working tier
+    instead of showing tofu boxes.
+    """
+    t = (text or "").strip()
+    if not t:
+        return False
+    replacement_count = len(re.findall(r"\ufffd", t))
+    if replacement_count > 4 or replacement_count / len(t) > 0.1:
+        return False
+    if MYANMAR_SCRIPT_RE.search(t):
+        return True
+    return len(t) <= 3
+
+
 _transcribe_model = None
 _transcribe_model_lock = threading.Lock()
 
@@ -222,6 +245,15 @@ async def transcribe_audio(file: UploadFile = File(...), language: str = Form(""
         )
         segments = list(segments_iter)
         text = " ".join(segment.text for segment in segments).strip()
+        # Report unusable Burmese decodes as failure (empty text) so the
+        # Next.js route proceeds to the next provider instead of receiving
+        # replacement-character soup at HTTP 200.
+        if language == "my" and text and not looks_like_burmese(text):
+            print(
+                f"[sentio] transcribe result rejected (unusable Burmese "
+                f"output): {text[:80]!r}"
+            )
+            text = ""
         print(f"[sentio] transcribe result: {text!r}")
         return {"text": text}
     except HTTPException:
@@ -346,8 +378,8 @@ def resolve_strength_profile(emotion: str, purpose: str = "play"):
 #
 # Spawning a fresh Stockfish process per request costs ~100-300ms of process
 # startup plus UCI handshake. Instead we keep a small pool of persistent
-# instances and reconfigure them per request (set_depth / update_parameters /
-# set_fen_position fully reset search state).
+# instances and reconfigure them per request (set_depth /
+# update_engine_parameters / set_fen_position fully reset search state).
 # ---------------------------------------------------------------------------
 
 MAX_ENGINE_POOL_SIZE = max(1, int(os.environ.get("STOCKFISH_POOL_SIZE", "4")))
@@ -364,7 +396,11 @@ def _spawn_engine(path: str):
     )
 
 
-def _acquire_engine(path: str, timeout: float = 30.0):
+def _acquire_engine(path: str, timeout: float = 15.0):
+    # The wait timeout MUST stay below the frontend's 20s engine-request
+    # timeout (hooks/useChessGame.ts) so a saturated pool surfaces as a fast
+    # 503 ("All Stockfish engine instances are busy") instead of a silent
+    # client-side "Engine request timed out".
     global _engine_pool_size
     try:
         return _engine_pool.get_nowait()
@@ -390,6 +426,24 @@ def _release_engine(engine) -> None:
     _engine_pool.put(engine)
 
 
+def _discard_engine(engine) -> None:
+    """Terminate a broken engine and free its pool slot.
+
+    Without the size decrement the slot stays counted forever: after
+    MAX_ENGINE_POOL_SIZE failed requests the pool believes it is at capacity
+    while holding zero live instances, so every subsequent request blocks in
+    queue.get() until timeout — which manifests on the frontend as
+    "Engine request timed out".
+    """
+    global _engine_pool_size
+    try:
+        engine.send_quit_command()
+    except Exception:
+        pass
+    with _engine_pool_lock:
+        _engine_pool_size = max(0, _engine_pool_size - 1)
+
+
 @app.post("/api/bot-move")
 async def get_bot_move(request: MoveRequest):
     path = stockfish_path if _is_executable(stockfish_path) else resolve_stockfish_path()
@@ -412,7 +466,7 @@ async def get_bot_move(request: MoveRequest):
         # alongside UCI_LimitStrength/UCI_Elo keeps the profile explicit; when
         # UCI_LimitStrength is enabled Stockfish derives strength from UCI_Elo.
         engine.set_depth(profile["depth"])
-        engine.update_parameters(
+        engine.update_engine_parameters(
             {
                 "Threads": 2,
                 "Skill Level": profile["skillLevel"],
@@ -455,9 +509,12 @@ async def get_bot_move(request: MoveRequest):
         raise HTTPException(status_code=500, detail=f"Engine evaluation error: {str(e)}")
     finally:
         # Return healthy engines to the pool; discard engines that errored so a
-        # corrupted process can never be reused.
-        if engine is not None and engine_healthy:
-            _release_engine(engine)
+        # corrupted process can never be reused (and its pool slot is freed).
+        if engine is not None:
+            if engine_healthy:
+                _release_engine(engine)
+            else:
+                _discard_engine(engine)
 
 
 # ---------------------------------------------------------------------------
