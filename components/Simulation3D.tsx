@@ -1146,6 +1146,7 @@ type Simulation3DProps = {
   onReplaySelect?: (gameId: string) => void;
   onReplayStep?: (direction: -1 | 1) => void;
   onReplayPlayingChange?: (playing: boolean) => void;
+  progress?: { xp: number; level?: number };
   setStatusMessage: (msg: string) => void;
   onExit: () => void;
   theme?: "dark" | "light";
@@ -1170,6 +1171,7 @@ export default function Simulation3D({
   onReplaySelect,
   onReplayStep,
   onReplayPlayingChange,
+  progress,
   setStatusMessage,
   onExit,
   theme = "dark",
@@ -3049,6 +3051,13 @@ framePos.lerpVectors(cp0.pos, cp1.pos, a.t);
           <div className="mb-3 border-t border-zinc-700/60 pt-2 text-[10px] text-zinc-500 light:border-slate-200">{liveAiMode === "off" ? "Use pointer or hand gestures to play." : `Both sides will alternate ${liveAiMode} decisions.`}</div>
           {replayActive ? <div className="mb-3 rounded border border-violet-400/25 bg-violet-400/10 p-2">
             <div className="mb-2 flex items-center justify-between"><span className="font-semibold text-violet-200 light:text-violet-800">Replay studio</span><span className="font-mono text-[10px] text-violet-300">{Math.max(0, replayMoveIndex + 1)}/{replayGames.find((game) => game.id === replayGameId)?.moves.length ?? 0}</span></div>
+            {progress && (
+              <div className="mb-2 flex items-center gap-2 rounded bg-violet-400/10 px-2 py-1 text-[10px] font-mono text-violet-300 light:text-violet-700">
+                <span>🏆 Lv {progress.level ?? 1}</span>
+                <span className="text-violet-400/60">·</span>
+                <span>{progress.xp} XP</span>
+              </div>
+            )}
             <Select value={replayGameId} onValueChange={(value) => onReplaySelect?.(value)}>
               <SelectTrigger id="replay-game-select" className="mb-2" />
               <SelectContent>

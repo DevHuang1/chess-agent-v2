@@ -13,6 +13,7 @@ import type { Puzzle } from "@/lib/puzzles";
 import {
   levelFromXp,
   maxRatingForLevel,
+  progressLevel,
   recordAnalyzedGame,
   recordLessonAttempt,
   tierForLevel,
@@ -62,10 +63,14 @@ export default function TrainingWorkspace({
     }
   }, [view, puzzles]);
 
-  const level = levelFromXp(progress.xp);
+  const curveLevel = levelFromXp(progress.xp);
+  const level = progressLevel(progress);
   const tier = tierForLevel(level);
-  const xpIntoLevel = progress.xp - xpForLevel(level);
-  const xpForNext = Math.max(1, xpForLevel(level + 1) - xpForLevel(level));
+  const xpIntoLevel = progress.xp - xpForLevel(curveLevel);
+  const xpForNext = Math.max(
+    1,
+    xpForLevel(curveLevel + 1) - xpForLevel(curveLevel),
+  );
 
   if (view === "rush") {
     return puzzleLoadError ? (

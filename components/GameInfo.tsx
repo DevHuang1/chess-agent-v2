@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import type { Move } from "chess.js";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -19,12 +18,18 @@ const QUALITY_VARIANT: Record<string, "success" | "info" | "warning" | "destruct
   Blunder: "destructive",
 };
 
+export type GameInfoMove = {
+  san: string;
+  color: "w" | "b";
+  captured?: string;
+};
+
 export default function GameInfo({
   moves,
   moveQualities = {},
   openingName,
 }: {
-  moves: Move[];
+  moves: GameInfoMove[];
   moveQualities?: Record<number, string>;
   openingName?: string | null;
 }) {

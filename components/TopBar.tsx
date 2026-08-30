@@ -12,7 +12,7 @@ import { PIECE_DESIGNS, type PieceDesignKey } from "@/components/pieces";
 import type { EngineProfile } from "@/lib/gameTypes";
 import type { EmotionLabel } from "@/lib/engineProfiles";
 import type { PuzzleProgress } from "@/lib/puzzleProgress";
-import { levelFromXp, tierForLevel } from "@/lib/puzzleProgress";
+import { progressLevel, tierForLevel } from "@/lib/puzzleProgress";
 
 export interface TopBarProps {
   workspaceTab: "board" | "train";
@@ -133,10 +133,10 @@ export default function TopBar({
           <Badge
             variant="outline"
             className="font-mono text-[10px]"
-            style={{ color: tierForLevel(levelFromXp(trainProgress.xp)).color }}
-            title={`Training level ${levelFromXp(trainProgress.xp)} · ${trainProgress.xp} XP`}
+            style={{ color: tierForLevel(progressLevel(trainProgress)).color }}
+            title={`Training level ${progressLevel(trainProgress)} · ${trainProgress.xp} XP`}
           >
-            🏅 Lv {levelFromXp(trainProgress.xp)}
+            🏅 Lv {progressLevel(trainProgress)}
           </Badge>
         )}
         <Badge variant="muted" className="font-mono font-semibold">

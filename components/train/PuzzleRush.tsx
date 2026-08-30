@@ -25,8 +25,8 @@ import {
   applySolveResult,
   markPuzzleSolved,
   maxRatingForLevel,
+  progressLevel,
   recordRunScore,
-  levelFromXp,
   type PuzzleProgress,
 } from "@/lib/puzzleProgress";
 import { EMOTION_EMOJI } from "@/lib/emotionClassifier";
@@ -258,7 +258,7 @@ function PuzzleRushRun({
   const [current, setCurrent] = useState<Puzzle | null>(null);
   const [finished, setFinished] = useState<{ newBest: boolean } | null>(null);
 
-  const level = levelFromXp(progress.xp);
+  const level = progressLevel(progress);
   const maxRating = useMemo(
     () => (easeMode ? Math.max(800, maxRatingForLevel(level) - 350) : maxRatingForLevel(level)),
     [level, easeMode],

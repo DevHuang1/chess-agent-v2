@@ -54,12 +54,16 @@ import { type SidebarTab } from "@/hooks/useSidebarPreferences";
 import { useEmotionDetection } from "@/hooks/useEmotionDetection";
 import { useCoachAudio } from "@/hooks/useCoachAudio";
 import { useChessGame } from "@/hooks/useChessGame";
+import type { ProvenancedMove } from "@/lib/provenance";
+import { provenanceSummary } from "@/lib/provenance";
+import { colorForProvenance } from "@/lib/provenanceColors";
 import EmotionMonitor from "@/components/EmotionMonitor";
 import { EMOTION_EMOJI } from "@/lib/emotionClassifier";
 import {
   emptyProgress,
   levelFromXp,
   loadProgress,
+  recordGameWin,
   saveProgress,
   tierForLevel,
   type PuzzleProgress,
@@ -71,7 +75,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import type { ChatMessage } from "@/lib/gameTypes";
 import type { GameSignals } from "@/lib/emotionFusion";
-import type { Chess, Square } from "chess.js";
+import { Chess, type Square } from "chess.js";
 import TopBar from "@/components/TopBar";
 import BoardWorkspace from "@/components/BoardWorkspace";
 
@@ -91,14 +95,17 @@ function questionWantsMove(question: string): boolean {
   );
 }
 
-function serializeReplayMoves(chess: Chess): import("@/components/Simulation3D").ReplayMove[] {
-  return chess.history({ verbose: true }).map((move) => ({
+function serializeReplayMoves(
+  moves: ProvenancedMove[],
+): import("@/components/Simulation3D").ReplayMove[] {
+  return moves.map((move) => ({
     from: move.from,
     to: move.to,
     san: move.san,
     color: move.color,
     flags: move.flags,
     promotion: move.promotion,
+    provenance: move.provenance,
   }));
 }
 
@@ -111,6 +118,9 @@ export default function ChessPage() {
   const [pieceDesign, setPieceDesign] = useState<PieceDesignKey>("chesscom");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [soundMutedState, setSoundMutedState] = useState<boolean>(false);
+  const [showAnnotations, setShowAnnotations] = useState(false);
+  const [winXpGained, setWinXpGained] = useState<number | null>(null);
+  const winXpAwardedRef = useRef(false);
 
   const [chatInput, setChatInput] = useState("");
   const [isCoachThinking, setIsCoachThinking] = useState(false);
@@ -247,6 +257,8 @@ export default function ChessPage() {
     engineProfile,
     openingName,
     canUndo,
+    moveHistory,
+    moveHistoryRef,
     chessRef,
     lastMoveTimestampRef,
     boardWrapRef,
@@ -465,7 +477,6 @@ export default function ChessPage() {
       !replayPlaying ||
       replayBusy ||
       !currentReplayGame ||
-      currentReplayGame.id === "current" ||
       replayMoveIndex >= currentReplayGame.moves.length - 1
     ) {
       return;
@@ -480,10 +491,10 @@ export default function ChessPage() {
       setCurrentReplayGame({
         id: "current",
         label: "Current game",
-        moves: serializeReplayMoves(chessRef.current),
+        moves: serializeReplayMoves(moveHistoryRef.current),
       });
     }
-  }, [gamePosition, replayGameId, activeTab]);
+  }, [gamePosition, replayGameId, activeTab, moveHistoryRef]);
 
   function handleBoardTouchEndCapture(event: React.TouchEvent<HTMLDivElement>) {
     if (!event.cancelable) {
@@ -590,8 +601,41 @@ export default function ChessPage() {
       }
     : {};
 
+  const lastAnnotatedMove =
+    showAnnotations && moveHistory.length > 0
+      ? moveHistory[moveHistory.length - 1]
+      : null;
+  const lastMoveColor = lastAnnotatedMove
+    ? colorForProvenance(lastAnnotatedMove.provenance)
+    : null;
+  const lastMoveLabel = lastAnnotatedMove
+    ? provenanceSummary(lastAnnotatedMove.provenance)
+    : null;
+  const provenanceSquareStyles =
+    lastMoveColor && lastAnnotatedMove
+      ? {
+          [lastAnnotatedMove.from]: {
+            backgroundColor: `${lastMoveColor.hex}44`,
+          },
+          [lastAnnotatedMove.to]: {
+            boxShadow: `inset 0 0 0 3px ${lastMoveColor.hex}`,
+          },
+        }
+      : {};
+  const provenanceArrows =
+    lastMoveColor && lastAnnotatedMove
+      ? [
+          {
+            startSquare: lastAnnotatedMove.from,
+            endSquare: lastAnnotatedMove.to,
+            color: lastMoveColor.hex,
+          },
+        ]
+      : [];
+
   const customSquareStyles = {
     ...hintSquareStyles,
+    ...provenanceSquareStyles,
     ...(selectedSquare
       ? {
           [selectedSquare]: { backgroundColor: "rgba(245, 158, 11, 0.45)" },
@@ -637,6 +681,7 @@ export default function ChessPage() {
       return applyMove(sourceSquare, targetSquare, now);
     },
     squareStyles: customSquareStyles,
+    arrows: provenanceArrows,
     pieces: PIECE_DESIGNS[pieceDesign].pieces,
     allowDragging: true,
     animationDurationInMs: 200,
@@ -677,6 +722,26 @@ export default function ChessPage() {
         : gameOutcome === "draw"
           ? "Draw"
           : null;
+
+  // Award XP when the player wins a game.
+  useEffect(() => {
+    if (gameResultText === "You Win!" && !winXpAwardedRef.current) {
+      winXpAwardedRef.current = true;
+      const outcome = recordGameWin(trainProgress);
+      setTrainProgress(outcome.progress);
+      saveProgress(outcome.progress);
+      setWinXpGained(outcome.xpGained);
+    }
+  }, [gameResultText, trainProgress]);
+
+  // Reset win XP display when game is reset.
+  useEffect(() => {
+    if (gameOutcome === "active") {
+      winXpAwardedRef.current = false;
+      const id = requestAnimationFrame(() => setWinXpGained(null));
+      return () => cancelAnimationFrame(id);
+    }
+  }, [gameOutcome]);
 
   function exportPgn() {
     const pgn = chessRef.current.pgn();
@@ -750,6 +815,10 @@ export default function ChessPage() {
             handleBoardTouchEndCapture={handleBoardTouchEndCapture}
             latestFrame={latestFrame}
             latestFrameRef={latestFrameRef}
+            showAnnotations={showAnnotations}
+            setShowAnnotations={setShowAnnotations}
+            lastMoveColor={lastMoveColor}
+            lastMoveLabel={lastMoveLabel}
           />
         )}
       </section>
@@ -768,6 +837,7 @@ export default function ChessPage() {
           isBotThinking={isBotThinking}
           openingName={openingName}
           canUndo={canUndo}
+          moves={moveHistory}
           isHintLoading={isHintLoading}
           requestHint={requestHint}
           undoMovePair={undoMovePair}
@@ -811,7 +881,11 @@ export default function ChessPage() {
       {gameResultText && (
         <GameOverOverlay
           resultText={gameResultText}
+          xpGained={winXpGained}
           onPlayAgain={resetGame}
+          onDismiss={() => {
+            setGameOutcome("active");
+          }}
         />
       )}
 
@@ -854,6 +928,10 @@ export default function ChessPage() {
               onReplaySelect={selectReplayGame}
               onReplayStep={stepReplay}
               onReplayPlayingChange={setReplayPlaying}
+              progress={{
+                xp: trainProgress.xp,
+                level: levelFromXp(trainProgress.xp),
+              }}
               onAnimationStateChange={(animating) => {
                 liveAiTurnInFlightRef.current = animating;
                 setLiveAiAnimating(animating);

@@ -1,46 +1,82 @@
 # Minimax vs. MCTS Search Benchmarks
 
-Generated: 2026-08-15T12:13:01.644Z
-Runtime: v22.13.0 linux/x64  
+Generated: 2026-08-30T17:45:08.689Z  
+Runtime: v24.19.0 darwin/arm64  
 Samples per row: 5; warmups per row: 2
 
 Timing is wall-clock generation time for the local trace builders. Lower average milliseconds is faster; work-units/sec uses evaluated leaves for Minimax and rollout iterations for MCTS.
 
 | Position | Algorithm | Depth | Avg ms | Min ms | Max ms | Nodes | Evaluated / rollouts | Work units/s | Cutoffs | TT hits |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| opening response | minimax | 1 | 2.824 | 1.789 | 3.896 | 6 | 5 | 1770 | 0 | 0 |
-| opening response | mcts | 1 | 24.535 | 23.809 | 25.407 | 25 | 24 | 978 | 0 | 0 |
-| opening response | minimax | 2 | 8.066 | 7.658 | 8.739 | 31 | 14 | 1736 | 4 | 0 |
-| opening response | mcts | 2 | 84.002 | 80.535 | 87.948 | 49 | 48 | 571 | 0 | 0 |
-| opening response | minimax | 3 | 21.952 | 21.809 | 22.175 | 96 | 50 | 2278 | 8 | 0 |
-| opening response | mcts | 3 | 164.634 | 162.855 | 167.475 | 73 | 72 | 437 | 0 | 0 |
-| opening response | minimax | 4 | 76.069 | 74.101 | 77.594 | 296 | 122 | 1604 | 32 | 6 |
-| opening response | mcts | 4 | 268.091 | 265.795 | 273.493 | 97 | 96 | 358 | 0 | 0 |
-| opening response | minimax | 5 | 251.706 | 246.512 | 261.827 | 1146 | 420 | 1669 | 129 | 30 |
-| opening response | mcts | 5 | 414.864 | 409.185 | 424.202 | 121 | 120 | 289 | 0 | 0 |
-| opening response | minimax | 6 | 837.813 | 823.928 | 866.780 | 3438 | 1103 | 1317 | 423 | 82 |
-| opening response | mcts | 6 | 578.709 | 567.038 | 590.167 | 145 | 144 | 249 | 0 | 0 |
-| developed middlegame | minimax | 1 | 2.652 | 2.141 | 4.051 | 6 | 5 | 1885 | 0 | 0 |
-| developed middlegame | mcts | 1 | 37.353 | 37.028 | 37.695 | 25 | 24 | 643 | 0 | 0 |
-| developed middlegame | minimax | 2 | 9.172 | 8.943 | 9.473 | 31 | 17 | 1853 | 2 | 0 |
-| developed middlegame | mcts | 2 | 132.682 | 129.736 | 140.991 | 49 | 48 | 362 | 0 | 0 |
-| developed middlegame | minimax | 3 | 38.270 | 37.907 | 38.532 | 106 | 54 | 1411 | 9 | 0 |
-| developed middlegame | mcts | 3 | 265.401 | 257.226 | 274.242 | 73 | 72 | 271 | 0 | 0 |
-| developed middlegame | minimax | 4 | 105.022 | 98.167 | 127.727 | 361 | 121 | 1152 | 43 | 6 |
-| developed middlegame | mcts | 4 | 436.006 | 416.343 | 456.547 | 97 | 96 | 220 | 0 | 0 |
-| developed middlegame | minimax | 5 | 481.105 | 478.290 | 484.215 | 1419 | 545 | 1133 | 162 | 7 |
-| developed middlegame | mcts | 5 | 602.627 | 592.913 | 626.469 | 121 | 120 | 199 | 0 | 0 |
-| developed middlegame | minimax | 6 | 872.190 | 852.954 | 893.558 | 2947 | 899 | 1031 | 381 | 59 |
-| developed middlegame | mcts | 6 | 900.359 | 871.088 | 963.154 | 145 | 144 | 160 | 0 | 0 |
-| tactical position | minimax | 1 | 1.871 | 1.750 | 2.138 | 6 | 5 | 2673 | 0 | 0 |
-| tactical position | mcts | 1 | 31.516 | 29.336 | 36.913 | 25 | 24 | 762 | 0 | 0 |
-| tactical position | minimax | 2 | 10.765 | 10.688 | 10.851 | 31 | 17 | 1579 | 2 | 0 |
-| tactical position | mcts | 2 | 115.787 | 114.488 | 116.447 | 49 | 48 | 415 | 0 | 0 |
-| tactical position | minimax | 3 | 35.677 | 34.551 | 37.546 | 126 | 61 | 1710 | 12 | 0 |
-| tactical position | mcts | 3 | 234.219 | 232.040 | 239.910 | 73 | 72 | 307 | 0 | 0 |
-| tactical position | minimax | 4 | 140.667 | 137.133 | 142.173 | 432 | 184 | 1308 | 45 | 0 |
-| tactical position | mcts | 4 | 370.957 | 367.094 | 374.277 | 96 | 96 | 259 | 0 | 0 |
-| tactical position | minimax | 5 | 352.773 | 348.067 | 361.740 | 1370 | 473 | 1341 | 172 | 15 |
-| tactical position | mcts | 5 | 620.397 | 593.640 | 641.865 | 116 | 120 | 193 | 0 | 0 |
-| tactical position | minimax | 6 | 1076.191 | 1047.859 | 1111.566 | 3424 | 1172 | 1089 | 427 | 27 |
-| tactical position | mcts | 6 | 830.208 | 772.839 | 893.340 | 137 | 144 | 173 | 0 | 0 |
+| starting | minimax | 1 | 1.268 | 1.123 | 1.570 | 6 | 5 | 3942 | 0 | 0 |
+| starting | mcts | 1 | 14.276 | 14.118 | 14.446 | 25 | 24 | 1681 | 0 | 0 |
+| starting | minimax | 2 | 4.763 | 4.607 | 4.909 | 31 | 13 | 2729 | 3 | 0 |
+| starting | mcts | 2 | 47.003 | 46.154 | 48.109 | 49 | 48 | 1021 | 0 | 0 |
+| starting | minimax | 3 | 16.861 | 16.596 | 17.026 | 106 | 46 | 2728 | 11 | 0 |
+| starting | mcts | 3 | 92.281 | 91.194 | 93.553 | 73 | 72 | 780 | 0 | 0 |
+| starting | minimax | 4 | 45.054 | 44.726 | 45.238 | 301 | 101 | 2242 | 37 | 4 |
+| starting | mcts | 4 | 155.943 | 154.879 | 156.916 | 97 | 96 | 616 | 0 | 0 |
+| starting | minimax | 5 | 140.006 | 138.578 | 141.272 | 891 | 310 | 2214 | 103 | 27 |
+| starting | mcts | 5 | 231.305 | 229.637 | 234.293 | 121 | 120 | 519 | 0 | 0 |
+| starting | minimax | 6 | 462.749 | 458.574 | 466.931 | 2986 | 864 | 1867 | 388 | 129 |
+| starting | mcts | 6 | 329.622 | 328.029 | 330.957 | 145 | 144 | 437 | 0 | 0 |
+| tactical | minimax | 1 | 1.468 | 1.382 | 1.614 | 6 | 5 | 3407 | 0 | 0 |
+| tactical | mcts | 1 | 21.652 | 21.523 | 21.798 | 25 | 24 | 1108 | 0 | 0 |
+| tactical | minimax | 2 | 8.686 | 8.612 | 8.782 | 31 | 17 | 1957 | 2 | 0 |
+| tactical | mcts | 2 | 85.338 | 84.541 | 86.162 | 49 | 48 | 562 | 0 | 0 |
+| tactical | minimax | 3 | 28.772 | 28.398 | 29.372 | 126 | 61 | 2120 | 12 | 0 |
+| tactical | mcts | 3 | 181.326 | 179.095 | 183.381 | 73 | 72 | 397 | 0 | 0 |
+| tactical | minimax | 4 | 119.814 | 118.980 | 120.675 | 432 | 184 | 1536 | 45 | 0 |
+| tactical | mcts | 4 | 296.151 | 293.406 | 299.253 | 96 | 96 | 324 | 0 | 0 |
+| tactical | minimax | 5 | 314.456 | 309.127 | 320.053 | 1370 | 473 | 1504 | 172 | 15 |
+| tactical | mcts | 5 | 507.640 | 475.658 | 582.996 | 116 | 120 | 236 | 0 | 0 |
+| tactical | minimax | 6 | 958.330 | 929.715 | 995.486 | 3424 | 1172 | 1223 | 427 | 27 |
+| tactical | mcts | 6 | 625.743 | 622.649 | 634.314 | 137 | 144 | 230 | 0 | 0 |
+| quiet | minimax | 1 | 2.042 | 1.994 | 2.120 | 6 | 5 | 2448 | 0 | 0 |
+| quiet | mcts | 1 | 28.099 | 27.764 | 28.385 | 25 | 24 | 854 | 0 | 0 |
+| quiet | minimax | 2 | 7.523 | 7.415 | 7.703 | 31 | 17 | 2260 | 2 | 0 |
+| quiet | mcts | 2 | 102.390 | 100.502 | 107.632 | 49 | 48 | 469 | 0 | 0 |
+| quiet | minimax | 3 | 30.052 | 29.458 | 30.589 | 106 | 54 | 1797 | 9 | 0 |
+| quiet | mcts | 3 | 196.298 | 195.274 | 197.292 | 73 | 72 | 367 | 0 | 0 |
+| quiet | minimax | 4 | 84.035 | 83.298 | 84.786 | 361 | 121 | 1440 | 43 | 6 |
+| quiet | mcts | 4 | 333.634 | 329.437 | 345.427 | 97 | 96 | 288 | 0 | 0 |
+| quiet | minimax | 5 | 425.597 | 422.868 | 430.172 | 1419 | 545 | 1281 | 162 | 7 |
+| quiet | mcts | 5 | 477.453 | 474.268 | 484.928 | 121 | 120 | 251 | 0 | 0 |
+| quiet | minimax | 6 | 713.508 | 709.169 | 715.332 | 2947 | 899 | 1260 | 381 | 59 |
+| quiet | mcts | 6 | 693.968 | 687.560 | 699.520 | 145 | 144 | 208 | 0 | 0 |
+| high-branching | minimax | 1 | 2.787 | 2.749 | 2.880 | 6 | 5 | 1794 | 0 | 0 |
+| high-branching | mcts | 1 | 46.407 | 45.905 | 46.965 | 25 | 24 | 517 | 0 | 0 |
+| high-branching | minimax | 2 | 10.480 | 10.320 | 10.561 | 31 | 9 | 859 | 4 | 0 |
+| high-branching | mcts | 2 | 158.685 | 156.752 | 160.371 | 49 | 48 | 302 | 0 | 0 |
+| high-branching | minimax | 3 | 31.121 | 30.676 | 31.299 | 76 | 30 | 964 | 8 | 0 |
+| high-branching | mcts | 3 | 317.372 | 311.794 | 332.895 | 73 | 72 | 227 | 0 | 0 |
+| high-branching | minimax | 4 | 142.259 | 138.508 | 155.868 | 376 | 136 | 956 | 42 | 3 |
+| high-branching | mcts | 4 | 518.062 | 512.007 | 522.568 | 97 | 96 | 185 | 0 | 0 |
+| high-branching | minimax | 5 | 377.364 | 370.992 | 393.237 | 953 | 319 | 845 | 116 | 5 |
+| high-branching | mcts | 5 | 758.764 | 750.952 | 769.628 | 121 | 120 | 158 | 0 | 0 |
+| high-branching | minimax | 6 | 840.550 | 836.985 | 846.635 | 2375 | 767 | 912 | 308 | 25 |
+| high-branching | mcts | 6 | 1042.016 | 1030.766 | 1061.727 | 145 | 144 | 138 | 0 | 0 |
+| endgame | minimax | 1 | 1.698 | 1.564 | 1.829 | 6 | 5 | 2944 | 0 | 0 |
+| endgame | mcts | 1 | 12.862 | 12.640 | 13.427 | 25 | 24 | 1866 | 0 | 0 |
+| endgame | minimax | 2 | 5.848 | 5.784 | 5.955 | 31 | 13 | 2223 | 3 | 0 |
+| endgame | mcts | 2 | 39.511 | 39.406 | 39.653 | 49 | 48 | 1215 | 0 | 0 |
+| endgame | minimax | 3 | 16.770 | 16.582 | 16.886 | 96 | 33 | 1968 | 11 | 0 |
+| endgame | mcts | 3 | 79.491 | 75.193 | 83.591 | 73 | 72 | 906 | 0 | 0 |
+| endgame | minimax | 4 | 39.393 | 38.965 | 40.507 | 251 | 68 | 1726 | 34 | 4 |
+| endgame | mcts | 4 | 141.831 | 118.286 | 167.882 | 97 | 96 | 677 | 0 | 0 |
+| endgame | minimax | 5 | 93.375 | 90.461 | 96.644 | 531 | 181 | 1938 | 61 | 14 |
+| endgame | mcts | 5 | 181.403 | 177.568 | 191.333 | 121 | 120 | 662 | 0 | 0 |
+| endgame | minimax | 6 | 292.165 | 277.785 | 317.773 | 1554 | 468 | 1602 | 194 | 48 |
+| endgame | mcts | 6 | 240.799 | 227.514 | 266.069 | 145 | 144 | 598 | 0 | 0 |
+| forced-mate | minimax | 1 | 2.743 | 2.585 | 3.174 | 6 | 5 | 1823 | 0 | 0 |
+| forced-mate | mcts | 1 | 7.945 | 7.638 | 8.329 | 8 | 24 | 3021 | 0 | 0 |
+| forced-mate | minimax | 2 | 2.863 | 2.794 | 2.979 | 7 | 5 | 1746 | 1 | 0 |
+| forced-mate | mcts | 2 | 26.158 | 25.915 | 26.538 | 8 | 48 | 1835 | 0 | 0 |
+| forced-mate | minimax | 3 | 5.386 | 5.353 | 5.431 | 12 | 9 | 1671 | 1 | 0 |
+| forced-mate | mcts | 3 | 31.868 | 31.190 | 32.562 | 8 | 72 | 2259 | 0 | 0 |
+| forced-mate | minimax | 4 | 6.201 | 6.149 | 6.243 | 16 | 9 | 1451 | 4 | 0 |
+| forced-mate | mcts | 4 | 45.966 | 45.605 | 46.617 | 8 | 96 | 2088 | 0 | 0 |
+| forced-mate | minimax | 5 | 11.541 | 11.399 | 11.718 | 26 | 17 | 1473 | 4 | 0 |
+| forced-mate | mcts | 5 | 62.200 | 61.864 | 62.855 | 8 | 120 | 1929 | 0 | 0 |
+| forced-mate | minimax | 6 | 13.120 | 12.956 | 13.345 | 33 | 17 | 1296 | 9 | 0 |
+| forced-mate | mcts | 6 | 69.894 | 69.639 | 70.226 | 8 | 144 | 2060 | 0 | 0 |

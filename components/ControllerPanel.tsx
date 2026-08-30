@@ -5,7 +5,7 @@ import type { Chess } from "chess.js";
 import type { ChatMessage, CoachLlmConnection, EngineProfile } from "@/lib/gameTypes";
 import { useSidebarPreferences, type SidebarTab } from "@/hooks/useSidebarPreferences";
 import benchmarkReport from "@/benchmarks/search-benchmark.json";
-import GameInfo from "@/components/GameInfo";
+import GameInfo, { type GameInfoMove } from "@/components/GameInfo";
 import OverflowMenu from "@/components/OverflowMenu";
 import VoiceCoachControl from "@/components/VoiceCoachControl";
 import SpeechTab from "@/components/SpeechTab";
@@ -43,6 +43,7 @@ export interface ControllerPanelProps {
   openingName: string | null;
   canUndo: boolean;
   isHintLoading: boolean;
+  moves: GameInfoMove[];
 
   // Callbacks
   requestHint: () => Promise<void>;
@@ -93,6 +94,7 @@ export default function ControllerPanel({
   openingName,
   canUndo,
   isHintLoading,
+  moves,
   requestHint,
   undoMovePair,
   resetGame,
@@ -348,7 +350,7 @@ export default function ControllerPanel({
           <div className="mt-3 flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 backdrop-blur-md light:border-slate-300 light:bg-white/70">
               {activeTab === "game" ? (
                 <GameInfo
-                  moves={chessRef.current.history({ verbose: true })}
+                  moves={moves}
                   openingName={openingName}
                 />
               ) : activeTab === "coach" ? (

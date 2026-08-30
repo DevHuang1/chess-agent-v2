@@ -13,6 +13,7 @@ import { EMOTION_EMOJI, type EmotionScores } from "@/lib/emotionClassifier";
 import type { EmotionLabel } from "@/lib/engineProfiles";
 import type { EmotionTimelineEntry } from "@/hooks/useEmotionDetection";
 import type { FaceFrame } from "@/lib/faceExplain";
+import type { ProvenanceColor } from "@/lib/provenanceColors";
 import type { ChessboardOptions } from "react-chessboard";
 
 const Chessboard = dynamic(
@@ -46,6 +47,10 @@ interface BoardWorkspaceProps {
   handleBoardTouchEndCapture: (event: React.TouchEvent<HTMLDivElement>) => void;
   latestFrame: FaceFrame | null;
   latestFrameRef: RefObject<FaceFrame | null>;
+  showAnnotations: boolean;
+  setShowAnnotations: (v: boolean | ((prev: boolean) => boolean)) => void;
+  lastMoveColor: ProvenanceColor | null;
+  lastMoveLabel: string | null;
 }
 
 export default function BoardWorkspace({
@@ -64,6 +69,10 @@ export default function BoardWorkspace({
   handleBoardTouchEndCapture,
   latestFrame,
   latestFrameRef,
+  showAnnotations,
+  setShowAnnotations,
+  lastMoveColor,
+  lastMoveLabel,
 }: BoardWorkspaceProps) {
   // Face-marker overlay + "why this emotion" explanation toggles, rendered
   // beside the camera feed.
@@ -102,6 +111,33 @@ export default function BoardWorkspace({
         {pendingPromotion ? (
           <PromotionPicker onChoose={choosePromotion} />
         ) : null}
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Button
+          variant={showAnnotations ? "accent" : "outline"}
+          size="sm"
+          className="h-8 gap-1.5 px-2.5 text-xs"
+          title={showAnnotations ? "Hide move annotations" : "Show move annotations (provenance colors)"}
+          aria-pressed={showAnnotations}
+          onClick={() => setShowAnnotations((prev) => !prev)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+            <path d="m18 15-6-6-6 6" />
+          </svg>
+          Annotations
+        </Button>
+        {showAnnotations && lastMoveColor && (
+          <div className="flex items-center gap-1.5 rounded-md border border-zinc-700/40 bg-zinc-900/60 px-2.5 py-1 text-[10px] font-mono text-zinc-400 backdrop-blur-sm light:border-slate-300 light:bg-white/60 light:text-slate-500">
+            <span
+              className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: lastMoveColor.hex }}
+            />
+            <span className="truncate max-w-[260px]" title={lastMoveLabel ?? lastMoveColor.label}>
+              {lastMoveLabel ?? lastMoveColor.label}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col items-center gap-3">

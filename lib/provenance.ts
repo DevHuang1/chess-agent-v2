@@ -42,6 +42,8 @@ export type MoveProvenance = {
   timeBudgetMs?: number;
   searchTimeMs?: number;
   totalLatencyMs?: number;
+  elo?: number;
+  skillLevel?: number;
   evaluationBefore?: number;
   evaluationAfter?: number;
   nodesVisited?: number;
@@ -59,6 +61,8 @@ export type ProvenancedMove = {
   color: "w" | "b";
   flags: string;
   promotion?: string;
+  /** Piece type captured, if any (e.g. "q"). */
+  captured?: string;
   moveNumber: number;
   fen: string;
   provenance: MoveProvenance;
@@ -116,6 +120,8 @@ export function provenanceSummary(provenance: MoveProvenance): string {
     parts.push(provenance.algorithm);
   }
   if (provenance.profile) parts.push(provenance.profile);
+  if (provenance.elo != null) parts.push(`${provenance.elo} ELO`);
+  if (provenance.skillLevel != null) parts.push(`skill ${provenance.skillLevel}`);
   if (provenance.completedDepth != null || provenance.searchDepth != null) {
     parts.push(`d${provenance.completedDepth ?? provenance.searchDepth}`);
   }

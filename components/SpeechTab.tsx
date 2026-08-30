@@ -45,26 +45,49 @@ declare global {
 }
 
 const LANGUAGES = [
-  { code: "en-US", label: "English", langKey: "en" },
-  { code: "es-ES", label: "Español", langKey: "es" },
-  { code: "fr-FR", label: "Français", langKey: "fr" },
-  { code: "de-DE", label: "Deutsch", langKey: "de" },
-  { code: "it-IT", label: "Italiano", langKey: "it" },
-  { code: "pt-BR", label: "Português", langKey: "pt" },
-  { code: "zh-CN", label: "中文", langKey: "en" },
-  { code: "ja-JP", label: "日本語", langKey: "en" },
-  { code: "ru-RU", label: "Русский", langKey: "en" },
   { code: "my-MM", label: "မြန်မာ", langKey: "my" },
+  { code: "ko-KR", label: "한국어", langKey: "ko" },
+  { code: "ja-JP", label: "日本語", langKey: "ja" },
+  { code: "ar-SA", label: "العربية", langKey: "ar" },
+  { code: "zh-CN", label: "中文", langKey: "zh" },
 ];
 
 const SPEECH_EXAMPLES: Record<string, string[]> = {
-  en: ["knight f3", "pawn to e4", "e2 to e4", "queen takes d5", "castle"],
-  es: ["caballo f3", "peón a e4", "dama come d5", "enroque"],
-  fr: ["cavalier f3", "pion en e4", "dame prend d5", "petit roque"],
-  de: ["springer f3", "bauer e4", "dame schlägt d5", "kurze rochade"],
-  it: ["cavallo f3", "pedone e4", "regina prende d5", "arrocco"],
-  pt: ["cavalo f3", "peão e4", "rainha captura d5", "roque"],
-  my: ["မြင်း f3 ကို", "နိုင် e4 ကို", "ဘုရင် e1 ကနေ e2", "မိဖုရား d5 ဖမ်း", "O-O"],
+  my: [
+    "မြင်း f3 ကို",
+    "နိုင် e4 ကို",
+    "ဘုရင် e1 ကနေ e2",
+    "မိဖုရား d5 ဖမ်း",
+    "O-O",
+  ],
+  ko: [
+    "나이트 f3",
+    "폰 e4",
+    "e2에서 e4로",
+    "퀸이 d5를 잡다",
+    "캐슬링",
+  ],
+  ja: [
+    "ナイト f3",
+    "ポーン e4",
+    "e2からe4",
+    "クイーン d5を取る",
+    "キャスリング",
+  ],
+  ar: [
+    "حصان f3",
+    "بيون e4",
+    "e2 إلى e4",
+    "ملكة تأخذ d5",
+    "قلعة",
+  ],
+  zh: [
+    "马 f3",
+    "兵 e4",
+    "e2 到 e4",
+    "后吃 d5",
+    "王车易位",
+  ],
 };
 
 type SpeechMode = "browser" | "groq" | "elevenlabs" | "assemblyai";
@@ -95,7 +118,7 @@ export default function SpeechTab({
 }: SpeechTabProps) {
   const [mode, setMode] = useState<SpeechMode>("groq");
   const [isListening, setIsListening] = useState(false);
-  const [language, setLanguage] = useState("en-US");
+  const [language, setLanguage] = useState("my-MM");
   const [transcript, setTranscript] = useState("");
   const [lastMove, setLastMove] = useState("");
   const [autoExecute, setAutoExecute] = useState(true);
@@ -374,10 +397,23 @@ export default function SpeechTab({
       {showSpeechHelp && (
         <div className="mb-3 rounded border border-amber-500/20 bg-amber-950/20 p-3 text-xs light:border-amber-300 light:bg-amber-100">
           <p className="mb-1.5 font-bold text-amber-300 light:text-amber-700">
-            What to say ({langEntry.label}):
+            Voice Commands — {langEntry.label}
           </p>
-          <ul className="space-y-1 text-zinc-300 light:text-slate-700">
-            {(SPEECH_EXAMPLES[langEntry.langKey] ?? SPEECH_EXAMPLES.en).map(
+
+          <p className="mb-1 text-[11px] font-semibold text-zinc-300 light:text-slate-700">
+            How to say a move:
+          </p>
+          <ul className="mb-2 space-y-0.5 text-zinc-300 light:text-slate-700">
+            <li className="font-mono">• {langEntry.langKey === "my" ? "<iece name> <file><rank> ကို" : langEntry.langKey === "ko" ? "<기물> <file><rank>" : langEntry.langKey === "ja" ? "<駒名> <file><rank>" : langEntry.langKey === "ar" ? "<piece> <file><rank>" : "<棋子> <file><rank>"}</li>
+            <li className="font-mono">• {langEntry.langKey === "my" ? "<iece name> <from> ကနေ <to>" : langEntry.langKey === "ko" ? "<기물> <from>에서 <to>로" : langEntry.langKey === "ja" ? "<駒名> <from>から<to>" : langEntry.langKey === "ar" ? "<piece> <from> إلى <to>" : "<棋子> <from> 到 <to>"}</li>
+            <li className="font-mono">• {langEntry.langKey === "my" ? "UCI: e2e4, g1f3" : langEntry.langKey === "ko" ? "UCI: e2e4, g1f3" : langEntry.langKey === "ja" ? "UCI: e2e4, g1f3" : langEntry.langKey === "ar" ? "UCI: e2e4, g1f3" : "UCI: e2e4, g1f3"}</li>
+          </ul>
+
+          <p className="mb-1 text-[11px] font-semibold text-zinc-300 light:text-slate-700">
+            Example commands:
+          </p>
+          <ul className="mb-2 space-y-0.5 text-zinc-300 light:text-slate-700">
+            {(SPEECH_EXAMPLES[langEntry.langKey] ?? SPEECH_EXAMPLES.my).map(
               (example) => (
                 <li key={example} className="font-mono">
                   • {example}
@@ -385,9 +421,68 @@ export default function SpeechTab({
               ),
             )}
           </ul>
-          <p className="mt-1.5 text-[11px] italic text-zinc-500 light:text-slate-500">
-            Say the piece, then the destination square (e.g. file + rank).
+
+          <p className="mb-1 text-[11px] font-semibold text-zinc-300 light:text-slate-700">
+            {langEntry.langKey === "my" ? "Pieces (မြန်မာ):" : langEntry.langKey === "ko" ? "Pieces (기물):" : langEntry.langKey === "ja" ? "Pieces (駒):" : langEntry.langKey === "ar" ? "Pieces (قطع):" : "Pieces (棋子):"}
           </p>
+          <ul className="mb-2 grid grid-cols-2 gap-x-2 gap-y-0.5 text-zinc-300 light:text-slate-700">
+            {langEntry.langKey === "my" ? (
+              <>
+                <li className="font-mono">ဘုရင် = King</li>
+                <li className="font-mono">မိဖုရား = Queen</li>
+                <li className="font-mono">ကျီ = Rook</li>
+                <li className="font-mono">ဆင် = Bishop</li>
+                <li className="font-mono">မြင်း = Knight</li>
+                <li className="font-mono">နိုင် = Pawn</li>
+              </>
+            ) : langEntry.langKey === "ko" ? (
+              <>
+                <li className="font-mono">킹 = King</li>
+                <li className="font-mono">퀸 = Queen</li>
+                <li className="font-mono">룩 = Rook</li>
+                <li className="font-mono">비숍 = Bishop</li>
+                <li className="font-mono">나이트 = Knight</li>
+                <li className="font-mono">폰 = Pawn</li>
+              </>
+            ) : langEntry.langKey === "ja" ? (
+              <>
+                <li className="font-mono">キング = King</li>
+                <li className="font-mono">クイーン = Queen</li>
+                <li className="font-mono">ルーク = Rook</li>
+                <li className="font-mono">ビショップ = Bishop</li>
+                <li className="font-mono">ナイト = Knight</li>
+                <li className="font-mono">ポーン = Pawn</li>
+              </>
+            ) : langEntry.langKey === "ar" ? (
+              <>
+                <li className="font-mono">ملك = King</li>
+                <li className="font-mono">ملكة = Queen</li>
+                <li className="font-mono">قلعة = Rook</li>
+                <li className="font-mono">فيل = Bishop</li>
+                <li className="font-mono">حصان = Knight</li>
+                <li className="font-mono">بيون = Pawn</li>
+              </>
+            ) : (
+              <>
+                <li className="font-mono">王 = King</li>
+                <li className="font-mono">后 = Queen</li>
+                <li className="font-mono">車 = Rook</li>
+                <li className="font-mono">象 = Bishop</li>
+                <li className="font-mono">马 = Knight</li>
+                <li className="font-mono">兵 = Pawn</li>
+              </>
+            )}
+          </ul>
+
+          <p className="mb-1 text-[11px] font-semibold text-zinc-300 light:text-slate-700">
+            Tips:
+          </p>
+          <ul className="space-y-0.5 text-zinc-400 light:text-slate-600">
+            <li>• Say the piece name clearly, then the target square.</li>
+            <li>• You can also say &quot;takes&quot; / &quot;ဖမ်း&quot; / &quot;잡다&quot; / &quot;を取る&quot; / &quot;تأخذ&quot; / &quot;吃&quot; for captures.</li>
+            <li>• For castling, say &quot;castle&quot; / &quot;O-O&quot; / &quot;캐슬링&quot; / &quot;キャスリング&quot; / &quot;قلعة&quot; / &quot;王车易位&quot;.</li>
+            <li>• UCI notation (e.g. e2e4) always works in any language.</li>
+          </ul>
         </div>
       )}
 

@@ -1,5 +1,3 @@
-import type { ReplayMove } from "@/components/Simulation3D";
-
 export type ChatMessage = {
   id: string;
   role: "user" | "assistant";
@@ -37,6 +35,7 @@ export type EngineDiagnostics = {
   completedDepth?: number;
   timeBudgetMs?: number;
   searchTimeMs?: number;
+  totalLatencyMs?: number;
   nodesVisited?: number;
   cacheHit?: boolean;
   cancelled?: boolean;

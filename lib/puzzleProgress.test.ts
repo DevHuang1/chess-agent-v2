@@ -6,11 +6,14 @@ import {
   levelFromXp,
   markPuzzleSolved,
   maxRatingForLevel,
+  migrateProgress,
+  progressLevel,
   recordAnalyzedGame,
   recordLessonAttempt,
   recordRunScore,
   tierForLevel,
   xpForLevel,
+  type PuzzleProgress,
 } from "./puzzleProgress";
 
 describe("puzzle progress - leveling curve", () => {
@@ -197,5 +200,52 @@ describe("puzzle progress - solve accounting", () => {
     const b = recordRunScore(a.progress, "rush", 5);
     expect(b.newBest).toBe(false);
     expect(b.progress.bestScores.rush).toBe(7);
+  });
+});
+
+describe("puzzle progress - rebalanced curve & migration", () => {
+  it("rebalanced curve is steeper at high levels than the legacy curve", () => {
+    // The new curve needs more cumulative XP at level 20 than legacy did.
+    expect(xpForLevel(20)).toBeGreaterThan(120 * 19 + (12 * 19 * 18) / 2);
+    // Early levels stay approachable.
+    expect(xpForLevel(2)).toBe(100);
+  });
+
+  it("migrates legacy progress by stamping the version and a level floor", () => {
+    // A profile with no curve fields is treated as legacy.
+    const legacy = { xp: 5000 } as unknown as PuzzleProgress;
+    const migrated = migrateProgress(legacy);
+    expect(migrated.curveVersion).toBe(2);
+    // Floor preserves the old level: raw XP 5000 => old level ~22 under v1.
+    expect(migrated.levelFloor).toBeGreaterThanOrEqual(
+      progressLevel(migrated),
+    );
+  });
+
+  it("migration is idempotent for already-migrated data", () => {
+    const first = migrateProgress(emptyProgress());
+    const second = migrateProgress(first);
+    expect(second).toEqual(first);
+  });
+
+  it("progressLevel never reports a level below the migration floor", () => {
+    // Simulate a legacy player on the old (cheaper) curve.
+    const legacyFloor = 22;
+    const progress = {
+      xp: 5000,
+      levelFloor: legacyFloor,
+      curveVersion: 2,
+    };
+    expect(progressLevel(progress)).toBe(legacyFloor);
+    // Even a huge XP should not push below the floor.
+    expect(progressLevel({ ...progress, xp: 7000 })).toBeGreaterThanOrEqual(
+      legacyFloor,
+    );
+  });
+
+  it("fresh empty progress has no legacy demotion", () => {
+    const fresh = emptyProgress();
+    expect(progressLevel(fresh)).toBe(1);
+    expect(migrateProgress(fresh)).toEqual(fresh);
   });
 });

@@ -2,6 +2,7 @@ import { Chess } from "chess.js";
 import { NextResponse } from "next/server";
 import { EMOTION_PROFILES, normalizeEmotion } from "@/lib/engineProfiles";
 import { buildMinimaxTrace } from "@/lib/minimax";
+import type { EngineDiagnostics } from "@/lib/gameTypes";
 
 const BACKEND_BOT_MOVE_API_URL = process.env.BOT_MOVE_API_URL;
 
@@ -66,6 +67,22 @@ function classifyMoveQuality(scoreDelta: number, isBlack: boolean): string {
   return "Blunder";
 }
 
+function jsDiagnostics(
+  emotion: string,
+  requestedDepth: number,
+  startedAt: number,
+): EngineDiagnostics {
+  return {
+    engineId: "sentio-js",
+    engineName: "Sentio (JS minimax)",
+    algorithm: "minimax",
+    requestedDepth,
+    totalLatencyMs: performance.now() - startedAt,
+    cacheHit: false,
+    fallbackUsed: true,
+  };
+}
+
 function calculateJsBotMove(
   fen: string,
   emotion: string,
@@ -74,8 +91,10 @@ function calculateJsBotMove(
   botMove: string | null;
   engineProfile: Profile & { emotion: string };
   status?: string;
+  diagnostics?: EngineDiagnostics;
 } {
   const normEmotion = normalizeEmotion(emotion);
+  const startedAt = performance.now();
   // Hints ignore the adaptive profile and use the strongest settings.
   const profile =
     purpose === "hint"
@@ -88,6 +107,7 @@ function calculateJsBotMove(
       botMove: null,
       status: "Checkmate or Draw",
       engineProfile: { emotion: normEmotion, ...profile },
+      diagnostics: jsDiagnostics(normEmotion, profile.depth, startedAt),
     };
   }
 
@@ -104,17 +124,20 @@ function calculateJsBotMove(
     return {
       botMove: uci,
       engineProfile: { emotion: normEmotion, ...profile },
+      diagnostics: jsDiagnostics(normEmotion, profile.depth, startedAt),
     };
   }
 
   // Reuse the full search implementation from lib/minimax.ts (transposition
   // table, killer moves, history heuristic, move ordering) instead of a
   // separate naive minimax.
+  const searchStartedAt = performance.now();
   const trace = buildMinimaxTrace(fen, {
     depth: searchDepth,
     branchLimit: 5,
     aiColor: chess.turn(),
   });
+  const searchTimeMs = performance.now() - searchStartedAt;
 
   let botMove: string | null = trace.selectedMove
     ? trace.selectedMove.uci
@@ -144,6 +167,17 @@ function calculateJsBotMove(
       emotion: normEmotion,
       ...profile,
       moveQuality: classifyMoveQuality(scoreAfter - currentScore, isBlack),
+    },
+    diagnostics: {
+      engineId: "sentio-js",
+      engineName: "Sentio (JS minimax)",
+      algorithm: "minimax",
+      requestedDepth: searchDepth,
+      completedDepth: trace.nodes?.length ? searchDepth : undefined,
+      searchTimeMs,
+      totalLatencyMs: performance.now() - startedAt,
+      nodesVisited: trace.nodes?.length,
+      cacheHit: false,
     },
   };
 }

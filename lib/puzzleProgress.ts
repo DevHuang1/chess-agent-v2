@@ -11,6 +11,14 @@ import type { ThemeStats } from "./puzzles";
 
 export type PuzzleProgress = {
   xp: number;
+  /** Curve release used when this progress was last migrated/saved. */
+  curveVersion?: number;
+  /**
+   * Backward-compatibility floor: a player who levelled under the old
+   * (cheaper) curve is never displayed below this level, even though the
+   * rebalanced curve needs more XP per level. Set once at migration time.
+   */
+  levelFloor?: number;
   currentStreak: number;
   bestStreak: number;
   solvedIds: string[];
@@ -40,6 +48,22 @@ export type QuizTotals = {
 
 export const PROGRESS_STORAGE_KEY = "sentio-puzzle-progress-v1";
 
+/**
+ * Current leveling-curve release. v2 is the rebalanced curve; it needs more
+ * XP per level than v1 at high levels so progression slows down meaningfully.
+ * We never delete stored XP, and a legacy floor keeps old players from being
+ * demoted.
+ */
+export const CURVE_VERSION = 2;
+
+/** Leveling-curve parameters used before the rebalance (kept for migration). */
+const LEGACY_LEVEL_STEP = 120;
+const LEGACY_LEVEL_GROWTH = 12;
+
+/** Rebalanced curve: rewards feel quick early, then slow down. */
+const LEVEL_BASE_XP = 100;
+const LEVEL_GROWTH = 25;
+
 export const TIERS = [
   { name: "Bronze", minLevel: 1, color: "#cd7f32" },
   { name: "Silver", minLevel: 5, color: "#c0c0c0" },
@@ -49,22 +73,60 @@ export const TIERS = [
   { name: "Legend", minLevel: 31, color: "#f472b6" },
 ] as const;
 
-/** Per-level XP increment base; total cost grows gently quadratic. */
-const LEVEL_STEP = 120;
-
-/** Cumulative XP required to have reached `level`. */
+/** Cumulative XP required to have reached `level` under the current curve. */
 export function xpForLevel(level: number): number {
-  let total = 0;
-  for (let l = 1; l < level; l++) {
-    total += LEVEL_STEP + (l - 1) * 12;
-  }
-  return total;
+  if (level <= 1) return 0;
+  const k = level - 1;
+  return LEVEL_BASE_XP * k + (LEVEL_GROWTH * k * (k - 1)) / 2;
 }
 
+/** Highest level a given (non-migrated) XP reaches under the current curve. */
 export function levelFromXp(xp: number): number {
   let level = 1;
   while (xp >= xpForLevel(level + 1) && level < 99) level++;
   return level;
+}
+
+/** Cumulative XP required for `level` under the pre-rebalance curve. */
+function legacyXpForLevel(level: number): number {
+  let total = 0;
+  for (let l = 1; l < level; l++) {
+    total += LEGACY_LEVEL_STEP + (l - 1) * LEGACY_LEVEL_GROWTH;
+  }
+  return total;
+}
+
+/** Level a given XP reached under the old curve (used for the migration floor). */
+function legacyLevelFromXp(xp: number): number {
+  let level = 1;
+  while (xp >= legacyXpForLevel(level + 1) && level < 99) level++;
+  return level;
+}
+
+/**
+ * Effective level for a stored profile: the rebalanced-curve result, never
+ * lower than a legacy migration floor so an established player is not demoted.
+ */
+export function progressLevel(
+  progress: Pick<PuzzleProgress, "xp" | "levelFloor">,
+): number {
+  const current = levelFromXp(progress.xp);
+  const floor = progress.levelFloor ?? 1;
+  return Math.max(current, Math.min(99, floor));
+}
+
+/**
+ * Rewrite legacy (v1) storage in place: stamp the current curve version and,
+ * when needed, capture a level floor derived from the old curve so the
+ * rebalance never demotes an established player. Idempotent for current data.
+ */
+export function migrateProgress(progress: PuzzleProgress): PuzzleProgress {
+  if (progress.curveVersion === CURVE_VERSION) return progress;
+  const floor =
+    progress.levelFloor != null
+      ? progress.levelFloor
+      : legacyLevelFromXp(progress.xp);
+  return { ...progress, curveVersion: CURVE_VERSION, levelFloor: floor };
 }
 
 export function tierForLevel(level: number): { name: string; color: string } {
@@ -83,6 +145,8 @@ export function maxRatingForLevel(level: number): number {
 export function emptyProgress(): PuzzleProgress {
   return {
     xp: 0,
+    curveVersion: CURVE_VERSION,
+    levelFloor: 1,
     currentStreak: 0,
     bestStreak: 0,
     solvedIds: [],
@@ -103,14 +167,19 @@ export function loadProgress(): PuzzleProgress {
     if (!raw) return emptyProgress();
     const parsed = JSON.parse(raw) as Partial<PuzzleProgress>;
     const empty = emptyProgress();
-    return {
+    const merged: PuzzleProgress = {
       ...empty,
       ...parsed,
       bestScores: { ...empty.bestScores, ...parsed.bestScores },
       lessonMastery: parsed.lessonMastery ?? empty.lessonMastery,
       reviewLessonIds: parsed.reviewLessonIds ?? empty.reviewLessonIds,
       quizTotals: { ...empty.quizTotals, ...parsed.quizTotals },
+      // Pass stored curve fields through explicitly (not the empty defaults) so
+      // legacy data without them is recognised and gets a migration floor.
+      curveVersion: parsed.curveVersion,
+      levelFloor: parsed.levelFloor,
     };
+    return migrateProgress(merged);
   } catch {
     return emptyProgress();
   }
@@ -220,6 +289,7 @@ export function markPuzzleSolved(
 
 export const LESSON_XP = 40;
 export const ANALYSIS_XP = 15;
+export const GAME_WIN_XP = 25;
 
 /** First completion of a lesson grants bonus XP; repeats are free. */
 export function completeLesson(
@@ -306,6 +376,18 @@ export function recordAnalyzedGame(previous: PuzzleProgress): SolveOutcome {
   return {
     progress,
     xpGained: ANALYSIS_XP,
+    leveledUp: levelFromXp(progress.xp) > beforeLevel,
+  };
+}
+
+/** Winning a board game grants XP toward the overall training level. */
+export function recordGameWin(previous: PuzzleProgress): SolveOutcome {
+  const progress: PuzzleProgress = { ...previous };
+  const beforeLevel = levelFromXp(progress.xp);
+  progress.xp += GAME_WIN_XP;
+  return {
+    progress,
+    xpGained: GAME_WIN_XP,
     leveledUp: levelFromXp(progress.xp) > beforeLevel,
   };
 }

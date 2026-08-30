@@ -23,11 +23,7 @@ import type {
 } from "@/lib/gameTypes";
 import type { ReplayGame, ReplayMove } from "@/components/Simulation3D";
 import type { MoveAlgorithm, MoveProvenance, ProvenancedMove } from "@/lib/provenance";
-import {
-  actorLabel,
-  playerMoveProvenance,
-  unknownMoveProvenance,
-} from "@/lib/provenance";
+import { playerMoveProvenance } from "@/lib/provenance";
 
 const BOT_MOVE_API_URL = "/api/bot-move";
 
@@ -45,7 +41,7 @@ function serializeReplayMoves(moves: ProvenancedMove[]): ReplayMove[] {
 
 /** Build a ProvenancedMove from an applied chess.js Move, tagging it with provenance. */
 function toProvenancedMove(
-  move: { from: string; to: string; san: string; color: "w" | "b"; flags: string; promotion?: string },
+  move: { from: string; to: string; san: string; color: "w" | "b"; flags: string; promotion?: string; captured?: string },
   fen: string,
   provenance: MoveProvenance,
 ): ProvenancedMove {
@@ -57,6 +53,7 @@ function toProvenancedMove(
     color: move.color,
     flags: move.flags,
     promotion: move.promotion,
+    captured: move.captured,
     moveNumber: 0,
     fen,
     provenance,
@@ -150,6 +147,7 @@ export function useChessGame(
       color: "w" | "b";
       flags: string;
       promotion?: string;
+      captured?: string;
     },
     fen: string,
     provenance: MoveProvenance,
@@ -274,9 +272,11 @@ export function useChessGame(
       {
         from: applied.from,
         to: applied.to,
+        san: applied.san,
         color: applied.color,
         flags: applied.flags,
         promotion: applied.promotion,
+        captured: applied.captured,
       },
       nextFen,
       liveProvenance,
@@ -418,7 +418,7 @@ export function useChessGame(
       engineId = diag?.engineId;
       engineName = diag?.engineName;
       engineVersion = diag?.engineVersion;
-      algorithm = diag?.algorithm;
+      algorithm = diag?.algorithm as MoveAlgorithm | undefined;
       requestedDepth = diag?.requestedDepth;
       completedDepth = diag?.completedDepth;
       nodesVisited = diag?.nodesVisited;
@@ -470,7 +470,15 @@ export function useChessGame(
       let appliedBotSan = "";
       let appliedBotUci = lower.substring(0, 4);
       let appliedMoveMeta:
-        | { from: string; to: string; color: "w" | "b"; flags: string; promotion?: string }
+        | {
+            from: string;
+            to: string;
+            san: string;
+            color: "w" | "b";
+            flags: string;
+            promotion?: string;
+            captured?: string;
+          }
         | undefined;
       try {
         const from = lower.substring(0, 2);
@@ -491,9 +499,11 @@ export function useChessGame(
           appliedMoveMeta = {
             from: appliedMove.from,
             to: appliedMove.to,
+            san: appliedMove.san,
             color: appliedMove.color,
             flags: appliedMove.flags,
             promotion: appliedMove.promotion,
+            captured: appliedMove.captured,
           };
         }
       } catch {
@@ -508,9 +518,11 @@ export function useChessGame(
             appliedMoveMeta = {
               from: fallbackMove.from,
               to: fallbackMove.to,
+              san: fallbackMove.san,
               color: fallbackMove.color,
               flags: fallbackMove.flags,
               promotion: fallbackMove.promotion,
+              captured: fallbackMove.captured,
             };
           }
         }
@@ -531,6 +543,8 @@ export function useChessGame(
         engineVersion,
         algorithm: algorithm ?? (fallbackUsed ? "minimax" : undefined),
         profile: backendEngineProfile?.emotion ?? emotion,
+        elo: backendEngineProfile?.elo,
+        skillLevel: backendEngineProfile?.skillLevel,
         searchDepth: requestedDepth,
         completedDepth,
         searchTimeMs,
@@ -672,6 +686,7 @@ export function useChessGame(
     setSelectedSquare(null);
     setLegalMoveTargets([]);
     setGamePosition(chess.fen());
+    truncateHistory(chess.history().length);
     updateGameOutcome(chess);
     clearExternalTelemetry();
     setStatusMessage("Took back your last move.");
@@ -824,9 +839,11 @@ export function useChessGame(
         {
           from: move.from,
           to: move.to,
+          san: move.san,
           color: move.color,
           flags: move.flags,
           promotion: move.promotion,
+          captured: move.captured,
         },
         nextFen,
         {
@@ -918,7 +935,7 @@ export function useChessGame(
   }
 
   function resetGame() {
-    const completedMoves = serializeReplayMoves(chessRef.current);
+    const completedMoves = serializeReplayMoves(moveHistory);
     if (completedMoves.length > 0) {
       const id = `game-${replayCounterRef.current++}`;
       setSavedReplayGames((previous) =>
@@ -946,17 +963,24 @@ export function useChessGame(
     setLastBotMove(null);
     setSelectedSquare(null);
     setLegalMoveTargets([]);
+    replaceHistory([]);
     clearExternalTelemetry();
     setStatusMessage("New game started.");
   }
 
   const openingName = useMemo(
-    () => lookupOpening(chessRef.current.history())?.name ?? null,
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- recompute when the position changes
-    [gamePosition],
+    () => lookupOpening(moveHistory.map((move) => move.san))?.name ?? null,
+    [moveHistory],
   );
 
-  const canUndo = chessRef.current.history().length > 0;
+  const canUndo = moveHistory.length > 0;
+
+  // Non-reactive mirror so external sync effects can read the latest history
+  // without re-triggering the set-state-in-effect lint rule.
+  const moveHistoryRef = useRef<ProvenancedMove[]>(moveHistory);
+  useEffect(() => {
+    moveHistoryRef.current = moveHistory;
+  }, [moveHistory]);
 
   function startTrainingGame(fen: string): void {
     if (!fen) return;
@@ -974,6 +998,7 @@ export function useChessGame(
     chessRef.current = chess;
     clearExternalTelemetry();
     botMoveAtRef.current = 0;
+    replaceHistory([]);
     setPendingPromotion(null);
     setHintMove(null);
     setSelectedSquare(null);
@@ -1067,6 +1092,9 @@ export function useChessGame(
     engineProfile,
     openingName,
     canUndo,
+    moveHistory,
+    moveHistoryRef,
+    replaceHistory,
     chessRef,
     lastMoveTimestampRef,
     boardWrapRef,

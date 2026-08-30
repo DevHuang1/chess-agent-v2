@@ -36,6 +36,7 @@ import queue
 import re
 import shutil
 import stat
+import time
 import subprocess
 import sys
 import tarfile
@@ -397,10 +398,10 @@ def _spawn_engine(path: str):
 
 
 def _acquire_engine(path: str, timeout: float = 15.0):
-    # The wait timeout MUST stay below the frontend's 20s engine-request
-    # timeout (hooks/useChessGame.ts) so a saturated pool surfaces as a fast
-    # 503 ("All Stockfish engine instances are busy") instead of a silent
-    # client-side "Engine request timed out".
+    # The wait timeout MUST stay below the frontend's 8s engine-request
+    # budget (hooks/useChessGame.ts, botTimeBudgetMs) so a saturated pool
+    # surfaces as a fast 503 ("All Stockfish engine instances are busy")
+    # instead of a silent client-side "Engine request timed out".
     global _engine_pool_size
     try:
         return _engine_pool.get_nowait()
@@ -457,6 +458,7 @@ async def get_bot_move(request: MoveRequest):
 
     emotion, profile = resolve_strength_profile(request.emotion, request.purpose)
 
+    request_start = time.perf_counter()
     engine = None
     engine_healthy = False
     try:
@@ -481,7 +483,9 @@ async def get_bot_move(request: MoveRequest):
             raise HTTPException(
                 status_code=400, detail="Invalid FEN position received."
             )
+        search_start = time.perf_counter()
         best_move = engine.get_best_move()
+        search_time_ms = (time.perf_counter() - search_start) * 1000.0
         engine_healthy = True
 
         engine_profile = {
@@ -491,16 +495,53 @@ async def get_bot_move(request: MoveRequest):
             "elo": profile["elo"],
         }
 
+        # Structured latency/identity metadata (never includes secrets). Node
+        # counts and versions come straight from the live engine process.
+        # Parse completed depth and real node count from the raw Stockfish output
+        # since python-stockfish's info() method was removed in recent versions.
+        completed_depth = profile["depth"]
+        nodes_visited = 0
+        try:
+            raw_lines = engine.raw_stockfish_output(engine.get_best_move)
+            for line in reversed(raw_lines):
+                if line.startswith("info depth"):
+                    depth_m = re.search(r"depth (\d+)", line)
+                    nodes_m = re.search(r"nodes (\d+)", line)
+                    if depth_m:
+                        completed_depth = int(depth_m.group(1))
+                    if nodes_m:
+                        nodes_visited = int(nodes_m.group(1))
+                    break
+        except Exception:
+            pass  # fall back to defaults
+
+        diagnostics = {
+            "engineId": "stockfish",
+            "engineName": "Stockfish",
+            "engineVersion": engine.get_stockfish_major_version(),
+            "algorithm": "stockfish",
+            "requestedDepth": profile["depth"],
+            "completedDepth": completed_depth,
+            "searchTimeMs": round(search_time_ms, 2),
+            "totalLatencyMs": round(
+                (time.perf_counter() - request_start) * 1000.0, 2
+            ),
+            "nodesVisited": nodes_visited,
+            "cacheHit": False,
+        }
+
         if not best_move:
             return {
                 "botMove": None,
                 "status": "Checkmate or Draw",
                 "engineProfile": engine_profile,
+                "diagnostics": diagnostics,
             }
 
         return {
             "botMove": best_move,
             "engineProfile": engine_profile,
+            "diagnostics": diagnostics,
         }
 
     except HTTPException:

@@ -38,19 +38,34 @@ export type SearchBenchmarkReport = {
 
 export const DEFAULT_BENCHMARK_CASES: SearchBenchmarkCase[] = [
   {
-    name: "opening response",
-    fen: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+    name: "starting",
+    fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    aiColor: "w",
+  },
+  {
+    name: "tactical",
+    fen: "r2q1rk1/ppp1bppp/2np1n2/8/2BPP3/2N2N2/PPP2PPP/R1BQ1RK1 b - - 0 1",
     aiColor: "b",
   },
   {
-    name: "developed middlegame",
+    name: "quiet",
     fen: "r1bq1rk1/ppp2ppp/2nppn2/8/2PP4/2N2N2/PP2BPPP/R1BQK2R w KQ - 0 1",
     aiColor: "w",
   },
   {
-    name: "tactical position",
-    fen: "r2q1rk1/ppp1bppp/2np1n2/8/2BPP3/2N2N2/PPP2PPP/R1BQ1RK1 b - - 0 1",
-    aiColor: "b",
+    name: "high-branching",
+    fen: "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
+    aiColor: "w",
+  },
+  {
+    name: "endgame",
+    fen: "8/5p2/4k3/8/8/3K4/5P2/8 w - - 0 1",
+    aiColor: "w",
+  },
+  {
+    name: "forced-mate",
+    fen: "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1",
+    aiColor: "w",
   },
 ];
 
